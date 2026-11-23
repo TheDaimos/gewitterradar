@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {normalizeLegendHub,normalizeLegendOptions,LEGEND_OPTIONS,LEGEND_IDS} from '../frontend/modules/weather/legend-hub-model.js';
+import {LEGEND_HUB_TRANSLATIONS} from '../frontend/modules/weather/legend-hub-locales.js';
+const defaults=normalizeLegendOptions();assert.equal(defaults.glassOpacity,45);assert.equal(defaults.frameVisible,true);assert.equal(defaults.frameMaterial,'platinum');
+for(const [value,expected]of [[0,0],[50.5,50.5],[100,100],[-1,0],[101,100],[NaN,45],[Infinity,45],['50',45]])assert.equal(normalizeLegendOptions({glassOpacity:value}).glassOpacity,expected);
+for(const key of ['frameMaterial','frameWeight','glassEffect']){for(const value of LEGEND_OPTIONS[key])assert.equal(normalizeLegendOptions({[key]:value})[key],value);assert.equal(normalizeLegendOptions({[key]:'unknown'})[key],defaults[key]);}
+const old={schema:1,legends:{wind:{size:'XL',material:'gold',foreground:'mint'}},extraPositions:{synoptic:{x:.4,y:.3}}},config=normalizeLegendHub(old);assert.equal(config.legends.wind.size,'XL');assert.equal(config.legends.wind.frameMaterial,'platinum');assert.deepEqual(config.extraPositions.synoptic,old.extraPositions.synoptic);
+const independent=normalizeLegendHub({legends:Object.fromEntries(LEGEND_IDS.map((id,i)=>[id,{glassOpacity:i*19,frameVisible:i%2===0,frameMaterial:i%2?'gold':'platinum'}]))});assert.equal(new Set(LEGEND_IDS.map(id=>independent.legends[id].glassOpacity)).size,6);assert.equal(independent.legends.wind.frameMaterial,'gold');
+const keys=['glassFrame','glassOpacity','frameVisible','frameMaterial','frameWeight','glassEffect','frame_platinum','frame_gold','frame_fine','frame_medium','frame_strong','glass_clear','glass_milky','glass_frosted'];assert.equal(Object.keys(LEGEND_HUB_TRANSLATIONS).length,19);for(const [language,texts]of Object.entries(LEGEND_HUB_TRANSLATIONS))for(const key of keys)assert(typeof texts[key]==='string'&&texts[key].length>1,language+' '+key);
+console.log('PASS glass model: old profiles, finite range/clamping, enum defaults, six independent legends and 19 complete locales');

@@ -38,3 +38,19 @@ for invalid in [{'glassTransparency': -1}, {'glassTransparency': 101}, {'glassTr
     else:
         raise AssertionError(f'Invalid Legend Hub accepted: {invalid}')
 print('PASS: actual Vault schema round-trips Legend Hub appearance, position, empty slots; rejects unsafe values')
+
+for opacity in [0, 50.5, 100]:
+    for material in ['platinum', 'gold']:
+        value = {'legends': {'wind': {'presentation': 'compact', 'glassOpacity': opacity,
+            'frameVisible': False, 'frameMaterial': material, 'frameWeight': 'strong', 'glassEffect': 'clear'}}}
+        assert schema.validate_settings({hub: value}) == {hub: value}
+        assert schema.decode_value(hub, schema.encode_value(hub, value)) == value
+for patch in [{'glassOpacity': -1}, {'glassOpacity': 101}, {'glassOpacity': '50'}, {'glassOpacity': True},
+              {'frameVisible': 'false'}, {'frameMaterial': 'brass'}, {'frameWeight': 'huge'}, {'glassEffect': 'unknown'}]:
+    try:
+        schema.validate_settings({hub: {'legends': {'wind': patch}}})
+    except schema.VaultError:
+        pass
+    else:
+        raise AssertionError(f'Invalid glass/frame option accepted: {patch}')
+print('PASS: actual Vault schema validates independent glass/frame settings and rejects invalid types/ranges/enums')

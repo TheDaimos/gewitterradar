@@ -1,0 +1,145 @@
+{
+  "baselineSource": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+  "baselineDocumentation": "60da476a9e6a3bbaecc817af40937bc86486dc51",
+  "scope": "Legend instrument placement/surface, individual form/preview/swatches, five additive legend settings and 19-language labels",
+  "unchangedBodies": [
+    "frontend/modules/core/card-lifecycle.js",
+    "frontend/modules/core/settings-vault.js",
+    "frontend/modules/diagnostics/cockpit.js",
+    "frontend/modules/diagnostics/raster-lab.js",
+    "frontend/modules/fullscreen/map-display.js",
+    "frontend/modules/instruments/compass-selector.js",
+    "frontend/modules/map/clusters-recent.js",
+    "frontend/modules/ui/controls.js",
+    "frontend/modules/ui/first-steps.js",
+    "frontend/modules/ui/i18n-settings.js",
+    "frontend/modules/ui/pro-welcome.js",
+    "frontend/modules/ui/settings-vault-view.js",
+    "frontend/modules/ui/skeleton.js",
+    "frontend/modules/weather/clouds-control.js",
+    "frontend/modules/weather/display-menu.js",
+    "frontend/modules/weather/display-quick.js",
+    "frontend/modules/weather/eye-hub-locales.js",
+    "frontend/modules/weather/eye-hub-view.js",
+    "frontend/modules/weather/eye-hub.js",
+    "frontend/modules/weather/legend-hub.js",
+    "frontend/modules/weather/legend-overlay.js",
+    "frontend/modules/weather/legend-precipitation.js",
+    "frontend/modules/weather/legend-preferences.js",
+    "frontend/modules/weather/legend-scale.js",
+    "frontend/modules/weather/precipitation-control.js",
+    "frontend/modules/weather/precipitation-layer.js",
+    "frontend/modules/weather/premium-legend.js",
+    "frontend/modules/weather/premium-ui.js",
+    "frontend/modules/weather/storm-bubble.js",
+    "frontend/modules/weather/synoptic-display.js",
+    "frontend/modules/weather/temperature-display.js",
+    "frontend/modules/weather/temperature-legend.js",
+    "frontend/modules/weather/wind-display.js",
+    "frontend/modules/weather/wind-legend.js",
+    "frontend/modules/weather/wind-studio.js",
+    "frontend/modules/weather/eye-hub-model.js",
+    "frontend/modules/weather/eye-hub-registry.js",
+    "frontend/modules/weather/eye-neon.js",
+    "frontend/modules/weather/eye-neon-wow.js",
+    "frontend/modules/weather/eye-neon-energy.js",
+    "frontend/modules/weather/control-touch.js",
+    "frontend/modules/weather/legend-registry.js",
+    "frontend/modules/fullscreen/compass-preview-style.js"
+  ],
+  "reusedBaselineRuns": [
+    {
+      "id": 45224108689,
+      "testedCommit": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+      "name": "GR Synoptik Hi-Res Close - targeted DEV check",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45224108689"
+    },
+    {
+      "id": 45224108674,
+      "testedCommit": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+      "name": "GR TEST70-55 Unified Precipitation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45224108674"
+    },
+    {
+      "id": 45224108794,
+      "testedCommit": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+      "name": "GR Settings Vault DEV acceptance",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45224108794"
+    },
+    {
+      "id": 45224108765,
+      "testedCommit": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+      "name": "GR TEST70-58 WR authority contracts",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45224108765"
+    },
+    {
+      "id": 45224108708,
+      "testedCommit": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+      "name": "Validate Gewitterradar integration",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45224108708"
+    },
+    {
+      "id": 45224108691,
+      "testedCommit": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+      "name": "Validate shared Gewitterradar frontend",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45224108691"
+    },
+    {
+      "id": 45224108482,
+      "testedCommit": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+      "name": "V4.11.40 module consistency and Android map preservation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45224108482"
+    },
+    {
+      "id": 45224108507,
+      "testedCommit": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+      "name": "TEST70-76 full repository 900-second audit",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45224108507"
+    },
+    {
+      "id": 45224108481,
+      "testedCommit": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+      "name": "P7-010 isolierte Raster-Mosaik-Abnahme",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45224108481"
+    },
+    {
+      "id": 45224108494,
+      "testedCommit": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+      "name": "GR Synoptik DEV - targeted regression",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45224108494"
+    },
+    {
+      "id": 45224108450,
+      "testedCommit": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+      "name": "GR Synoptik - synchronize public DEV delivery",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45224108450"
+    },
+    {
+      "id": 45224108638,
+      "testedCommit": "707e7c15adf6ab303b7f7b318c4e022c091944a4",
+      "name": "V4.11.106 settings navigation and runtime identity",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45224108638"
+    }
+  ],
+  "guards": [
+    "all Eye/Aura CSS and functions exact",
+    "all shared premium/skeleton CSS exact",
+    "all numerical renderer/palette/provider bodies exact",
+    "entire shared touch binder exact",
+    "all old/native schema fields exact",
+    "initial collision solver exact; stable acceptance tested functionally",
+    "all original assets exact"
+  ]
+}

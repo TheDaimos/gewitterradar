@@ -1,0 +1,108 @@
+/* Focused UI smoke: real frontend, synthetic HA/WR; mobile/tablet are emulations. */
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const {temperatureFixture}=require('./temperature-browser-fixture.cjs');
+const out=process.env.GR_GLASS_EVIDENCE||path.resolve('.task412-glass/evidence');fs.mkdirSync(out,{recursive:true});
+const nasa=JSON.parse(fs.readFileSync('tests/fixtures/legend-nasa-native-4129.json','utf8'));
+const {readFileSync}=fs,{randomUUID}=require('node:crypto');
+const legacy = JSON.parse(readFileSync(path.join(__dirname, '../tests/settings-vault-v181.json'), 'utf8'));
+const build = readFileSync(path.join(__dirname, '../frontend/version.js'), 'utf8').match(/version:"([^"]+)"/)[1];
+const EYE = 'gewitterradar:eye-bubble:v1';
+const SYNOPTIC = 'gewitterradar:synoptic-ui:v1';
+const CLOUDS = 'gewitterradar:clouds-ui:v1';
+const HUB = 'gewitterradar:legend-hub:v1';
+const settingsKeys = [...Object.keys(legacy), SYNOPTIC, CLOUDS, HUB];
+const jsonKeys = [...Object.keys(legacy).filter(key => legacy[key].startsWith('{')), SYNOPTIC, CLOUDS, HUB];
+const mock = {profiles: {}, migrationIssues: new Map(), receipts: new Map(), log: [], offline: false, deferGet: null, loseCreateReply: false};
+
+const view = profile => Object.fromEntries(Object.entries(profile).filter(([key]) => key !== 'settings'));
+const decode = (key, raw) => jsonKeys.includes(key) ? JSON.parse(raw) : raw;
+function serverCall(user, message) {
+  return (async () => {
+    const op = message.type.split('/').at(-1);
+    assert.equal(message.schema, 1);
+    assert.match(message.build,/^4\.12\./);
+    mock.log.push({user, op, request: message.request});
+    if (mock.offline) return {error: 'disconnected'};
+    const request = message.request;
+    const profiles = mock.profiles[user] ||= {};
+    if (op === 'get') {
+      if (mock.deferGet) await mock.deferGet;
+      const profile = profiles[request.profileId];
+      if (request.profileId && !profile) return {error: 'settings_not_found'};
+      return {
+        schema: 1, settingsKeys, jsonSettingsKeys: jsonKeys,
+        recovery: false, profiles: Object.values(profiles).map(view), profile,
+        migrationIssues: mock.migrationIssues.get(request.profileId) || [],
+      };
+    }
+    if (op === 'migration_preview') return {keys: Object.keys(request.legacy), issues: []};
+    if (op === 'create' || op === 'copy') {
+      const receipt = user + ':' + request.requestId;
+      if (mock.receipts.has(receipt)) return {profile: profiles[mock.receipts.get(receipt)]};
+      const id = randomUUID().replaceAll('-', '');
+      const settings = op === 'copy' ? profiles[request.profileId].settings : Object.fromEntries(
+        Object.entries(request.legacy || {}).map(([key, value]) => [key, decode(key, value)]),
+      );
+      const profile = {id, name: request.name, revision: 1, updatedAt: new Date().toISOString(), settings};
+      profiles[id] = structuredClone(profile);
+      mock.receipts.set(receipt, id);
+      if (mock.loseCreateReply) {
+        mock.loseCreateReply = false;
+        return {error: 'settings_storage'};
+      }
+      return {profile};
+    }
+    if (op === 'patch') {
+      const profile = profiles[request.profileId];
+      if (!profile) return {error: 'settings_not_found'};
+      for (const [key, pair] of Object.entries(request.changes)) {
+        if (pair.after === null) delete profile.settings[key];
+        else profile.settings[key] = decode(key, pair.after);
+      }
+      profile.revision++;
+      return {profile};
+    }
+    return {error: 'unknown_command'};
+  })();
+}
+
+async function install(page){await page.evaluate(async nasa=>{card._setMapDisplayMode('fullscreen',{persist:false});const revision=(await import('/frontend/version.js')).APPLICATION_RELEASE.runtimeRevision;window.prefs=await import('/frontend/modules/weather/legend-preferences.js?v='+revision);window.views=await import('/frontend/modules/weather/legend-hub-view.js?v='+revision);window.scales=await import('/frontend/modules/weather/legend-overlay.js?v='+revision);window.showOnly=id=>{for(const kind of ['precipitation','wind','temperature','advection','synoptic','other'])prefs.patchLegend(card,kind,{mode:kind===id?'on':'off'});};const layers=[{source_id:'dwd/radar_precipitation',semantics:{quantity:'precipitation_rate',unit:'mm/h'},legend:{title:'DWD / OPERA · Radar-Niederschlag',entries:scales.PRECIPITATION_LEGEND_ENTRIES},times:{valid_at:'2026-11-23T11:00:00Z'},attribution:'DWD'}, {source_id:'nasa_gibs/imerg',semantics:{quantity:'precipitation_rate',unit:'mm/h'},legend:{title:'NASA IMERG',scales:nasa.scales},attribution:'<a href="https://www.earthdata.nasa.gov/data/tools/gibs">NASA EOSDIS GIBS</a>',times:{valid_at:'2026-11-23T09:00:00Z'}}];card._weatherRadarState().v2Snapshot={layers};card._weatherLegendSetModel('precipitation',{family:'precipitation',title:'Niederschlag',scales:scales.precipitationLegendScales(layers,card._t.bind(card)),priority:100});showOnly('precipitation');},nasa);}
+async function boot(browser,ref,width,height,touch){const user=randomUUID(),f=temperatureFixture({ref,decorate:html=>html.replace('card.hass={states:',"card.hass={user:{id:window.testUser},auth:{},connection:Object.assign(new EventTarget(),{connected:true,sendMessagePromise:query=>card.hass.callWS(query)}),connected:true,states:").replace('callWS:async query=>{',"callWS:async query=>{if(query.type.startsWith('gewitterradar/settings/')){const result=await window.settingsVaultTestCall(query);if(result.error)throw Object.assign(new Error(result.error),{code:result.error});return result;}")});await new Promise(r=>f.server.listen(0,'127.0.0.1',r));const context=await browser.newContext({viewport:{width,height},hasTouch:touch,deviceScaleFactor:1}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));await context.addInitScript(user=>window.testUser=user,user);await page.exposeFunction('settingsVaultTestCall',q=>serverCall(user,q));await f.route(page);await page.goto('http://127.0.0.1:'+f.server.address().port);await page.getByRole('button',{name:'Mit Standardeinstellungen starten',exact:true}).click();await page.getByRole('button',{name:'Profil erstellen',exact:true}).click();await page.waitForFunction(()=>window.ready&&card._mapReady&&card.__proBranding?.eyeReady);await install(page);return {page,context,errors,async close(){await context.close();f.server.closeAllConnections();await new Promise(r=>f.server.close(r));}};}
+
+const shot=(page,name)=>page.screenshot({path:path.join(out,name+'.png')});
+const close=async page=>{await page.locator('[data-lh-close]').click();await page.locator('.lh-dialog').waitFor({state:'detached'});};
+const selector=id=>'#weather-'+(id==='precipitation'?'':id+'-')+'legend-overlay';
+async function ready(page){await install(page);await page.evaluate(()=>{window.instrumentFor=id=>(id==='precipitation'?card:id==='wind'?card._weatherWindState().legend:['temperature','advection'].includes(id)?card._weatherTemperatureState().legends[id]:card.__legendHub.extra.get(id))._weatherLegendState().instrument;for(const id of ['precipitation','wind','temperature'])prefs.patchLegend(card,id,{mode:'on'});});}
+async function positions(page){return page.locator('.lh-instrument:not([hidden])').evaluateAll(ns=>Object.fromEntries(ns.map(n=>[n.dataset.legendId,{left:parseFloat(n.style.left),top:parseFloat(n.style.top)}])));}
+async function quiet(page,count=90){return page.evaluate(async count=>{const ids=[...card.shadow.querySelectorAll('.lh-instrument:not([hidden])')].map(n=>n.dataset.legendId),first=Object.fromEntries(ids.map(id=>[id,{left:instrumentFor(id).host.style.left,top:instrumentFor(id).host.style.top}])),changes=[];for(let frame=0;frame<count;frame++){if(frame%3===0){const m=card._weatherLegendState().models.get('precipitation');if(m)card._weatherLegendSetModel('precipitation',{...m,valid_at:new Date(1795431600000+frame*1000).toISOString()});card._weatherLegendSyncUi();card._legendHubRefresh();}await new Promise(requestAnimationFrame);for(const id of ids){const h=instrumentFor(id).host;if(h.style.left!==first[id].left||h.style.top!==first[id].top)changes.push({frame,id,left:h.style.left,top:h.style.top});}}return {frames:count,dataUpdates:Math.ceil(count/3),changes};},count);}
+async function drag(page,id,to,touch,info=false){const host=page.locator(selector(id)),b=await host.locator(info?'.lh-instrument-info':'.lh-instrument-body').boundingBox(),from={x:b.x+Math.min(18,b.width/2),y:b.y+Math.min(10,b.height/2)};if(touch){const input=await page.context().newCDPSession(page);await input.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...from,id:1}]});for(let i=1;i<=8;i++)await input.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:from.x+(to.x-from.x)*i/8,y:from.y+(to.y-from.y)*i/8,id:1}]});await input.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await input.detach();}else{await page.mouse.move(from.x,from.y);await page.mouse.down();await page.mouse.move(to.x,to.y,{steps:8});await page.mouse.up();}await page.waitForTimeout(60);}
+const saved=page=>page.evaluate(()=>({precipitation:card._weatherLegendState().position,wind:card._weatherWindState().config.legendPosition,temperature:card._weatherTemperatureState().config.legendPositions.temperature,advection:card._weatherTemperatureState().config.legendPositions.advection,synoptic:card.__legendHub.config.extraPositions.synoptic,other:card.__legendHub.config.extraPositions.other}));
+async function reload(page){await page.reload();await page.waitForFunction(()=>window.ready&&card._mapReady&&card.__legendHub);await ready(page);}
+async function choose(page,key,value){await page.locator('[data-lh-choice='+key+']>summary').click();await page.locator('[data-lh-choice='+key+'] input[value='+value+']').check();}
+async function surface(page,query){return page.locator(query).evaluate(n=>{const s=getComputedStyle(n),f=getComputedStyle(n,'::before'),r=n.getBoundingClientRect();return {width:r.width,height:r.height,alpha:s.getPropertyValue('--lh-surface-alpha'),blur:s.backdropFilter,frame:f.backgroundImage,frameVisible:f.opacity,weight:f.paddingTop,opacity:s.opacity,padding:s.padding,shadow:s.boxShadow};});}
+(async()=>{const browser=await chromium.launch({headless:true,...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{})}),results=[];try{
+for(const [name,width,height,touch]of [['desktop',1280,900,false],['tablet',1024,768,true],['android',393,851,true]]){
+ if(name==='desktop'&&!process.env.GR_GLASS_SKIP_BEFORE&&!fs.existsSync(path.join(out,'desktop-before-position.png'))){const old=await boot(browser,'707e7c15adf6ab303b7f7b318c4e022c091944a4',width,height,touch);try{await ready(old.page);await old.page.evaluate(()=>{for(const id of ['precipitation','wind','temperature'])instrumentFor(id).setPosition({x:.35,y:.3});});const before=await positions(old.page),activity=await quiet(old.page,45);activity.manualOffsets=await old.page.evaluate(async()=>{const version=(await import('/frontend/version.js')).APPLICATION_RELEASE.runtimeRevision,{instrumentBounds}=await import('/frontend/modules/weather/legend-instrument.js?v='+version);return ['precipitation','wind','temperature'].map(id=>{const host=instrumentFor(id).host,b=instrumentBounds(card,host).storage;return {id,dx:parseFloat(host.style.left)-(b.left+(b.right-b.left)*.35),dy:parseFloat(host.style.top)-(b.top+(b.bottom-b.top)*.3)};});});await shot(old.page,'desktop-before-position');await old.page.evaluate(()=>views.openLegendConfig(card,'wind'));await old.page.locator('[data-lh-choice=foreground]>summary').click();await shot(old.page,'desktop-before-colors');results.push({baseline:'4.12.12',before,activity});}finally{await old.close();}}
+ const f=await boot(browser,null,width,height,touch),{page}=f;try{await ready(page);
+ const mapBefore=await page.evaluate(()=>({center:card._map.getCenter(),zoom:card._map.getZoom()}));
+ // Real drags deliberately place two and then three instruments on overlapping
+ // rectangles. Place the next source separately before grabbing its body.
+ const map=await page.locator('#map').boundingBox(),target={x:map.x+Math.min(360,width*.2),y:map.y+Math.min(300,height*.3)};
+ for(const [i,id]of ['precipitation','wind','temperature'].entries()){await page.evaluate(({id,i})=>instrumentFor(id).setPosition({x:.1+i*.3,y:.75}),{id,i});await drag(page,id,{x:target.x+18+i*5,y:target.y+10+i*5},touch);if(i===1){const two=await positions(page);await page.waitForTimeout(100);assert.deepEqual(await positions(page),two,'two close legends stable');}}
+ const clustered=await positions(page);assert(Math.max(...Object.values(clustered).map(p=>p.left))-Math.min(...Object.values(clustered).map(p=>p.left))<20,JSON.stringify(clustered));assert.deepEqual(await page.evaluate(()=>({center:card._map.getCenter(),zoom:card._map.getZoom()})),mapBefore,'map never pans/zooms during drag');const activity=await quiet(page);assert.deepEqual(activity.changes,[],'no flapping through 30 data updates');
+ for(const [i,id]of ['advection','synoptic','other'].entries()){await page.evaluate(({id,i})=>{prefs.patchLegend(card,id,{mode:'on'});instrumentFor(id).setPosition({x:.1+i*.3,y:.7});},{id,i});await drag(page,id,{x:target.x+38+i*5,y:target.y+20+i*5},touch);}assert.equal(await page.locator('.lh-instrument:visible').count(),6);assert.deepEqual((await quiet(page,45)).changes,[],'all six instruments stay independently fixed');await page.evaluate(()=>{for(const id of ['advection','synoptic','other'])prefs.patchLegend(card,id,{mode:'off'});});
+ await page.locator(selector('temperature')+' .lh-instrument-info').click();await page.locator('#weather-temperature-legend-overlay-info').waitFor({state:'visible'});assert.deepEqual(await positions(page),clustered,'info open stable');await page.keyboard.press('Escape');await page.evaluate(()=>prefs.patchLegend(card,'wind',{mode:'off'}));await page.evaluate(()=>prefs.patchLegend(card,'wind',{mode:'on'}));assert.deepEqual(await positions(page),clustered,'hide/show never displaces peers');if(name==='desktop')await shot(page,'desktop-after-position');
+ // An Info-i drag is a drag, never a click. It uses the unchanged shared binder.
+ const infoBox=await page.locator(selector('temperature')+' .lh-instrument-info').boundingBox();await drag(page,'temperature',{x:infoBox.x+50,y:infoBox.y+25},touch,true);assert.equal(await page.locator('.lh-instrument-popup:visible').count(),0);assert.deepEqual((await quiet(page,30)).changes,[]);
+ // Edge placement and rotation clamp only when necessary, then remain quiet.
+ await page.evaluate(()=>instrumentFor('wind').setPosition({x:1,y:1}));await page.setViewportSize({width:height,height:width});await page.waitForTimeout(200);const inBounds=await page.locator('.lh-instrument:not([hidden])').evaluateAll(ns=>{const m=ns[0].getRootNode().getElementById('map').getBoundingClientRect();return ns.every(n=>{const r=n.getBoundingClientRect();return r.left>=m.left-1&&r.right<=m.right+1&&r.top>=m.top-1&&r.bottom<=m.bottom+1;});});assert(inBounds,'rotation leaves legends within real map area');assert.deepEqual((await quiet(page,45)).changes,[],'rotation settles once');await page.setViewportSize({width,height});await page.waitForTimeout(100);
+ // Compact settings and real map surface share one presentation helper.
+ await page.evaluate(()=>views.openLegendConfig(card,'wind'));assert.equal(await page.locator('.lh-glass-settings').count(),0);const premium=await surface(page,selector('wind'));await page.locator('[data-lh-key=presentation]').selectOption('compact');assert.equal(await page.locator('.lh-glass-settings').count(),1);const states=[];for(const value of [0,50,100]){await page.locator('[data-lh-key=glassOpacity]').fill(String(value));await page.locator('[data-lh-key=glassOpacity]').dispatchEvent('input');const preview=await surface(page,'.lh-surface-preview'),actual=await surface(page,selector('wind'));assert.equal(actual.alpha,String(value/100));assert.equal(preview.alpha,actual.alpha);assert.equal(actual.opacity,'1');assert.equal(await page.locator(selector('wind')+' .lh-color-bar').evaluate(n=>getComputedStyle(n).opacity),'1');assert.equal(await page.locator(selector('wind')+' .lh-instrument-info').evaluate(n=>getComputedStyle(n).opacity),'1');assert.equal(actual.frameVisible,'1');if(states.length)assert.equal(actual.frame,states[0].actual.frame,'glass opacity cannot alter the frame');states.push({value,preview,actual});}await choose(page,'frameMaterial','gold');const dimensions=[];for(const value of ['fine','medium','strong']){await page.locator('[data-lh-key=frameWeight]').selectOption(value);dimensions.push(await surface(page,selector('wind')));}assert(dimensions.every(d=>d.width===dimensions[0].width&&d.height===dimensions[0].height));assert.deepEqual(dimensions.map(d=>d.weight),['0.8px','1.5px','2.5px']);const gold=await surface(page,'.lh-surface-preview');assert(gold.frame.includes('227, 193, 125'));await page.locator('[data-lh-key=frameVisible]').uncheck();assert.equal((await surface(page,selector('wind'))).frameVisible,'0');await page.locator('[data-lh-key=frameVisible]').check();for(const effect of ['clear','milky','frosted'])await page.locator('[data-lh-key=glassEffect]').selectOption(effect);await page.locator('[data-lh-key=glassOpacity]').fill('50');await page.locator('[data-lh-key=glassOpacity]').dispatchEvent('input');const compact=await surface(page,selector('wind'));assert.notEqual(compact.padding,premium.padding);assert.notEqual(compact.shadow,premium.shadow);assert.equal(await page.locator('.lh-form').evaluate(n=>n.scrollWidth>n.clientWidth+1),false);assert(await page.locator('.lh-preview .lh-scale').evaluate(n=>parseFloat(n.style.getPropertyValue('--lh-length'))>200));if(name!=='tablet'){await page.locator('.lh-preview').scrollIntoViewIfNeeded();await shot(page,name+'-after-glass-preview');}await choose(page,'foreground','mint');await page.locator('[data-lh-choice=foreground]>summary').click();const gradients=await page.locator('[data-lh-choice=foreground] .lh-material-chip').evaluateAll(ns=>ns.map(n=>getComputedStyle(n).backgroundImage));assert(gradients.every(s=>s.startsWith('linear-gradient(90deg')));if(name==='desktop')await shot(page,'desktop-after-premium-colors');for(const gradient of gradients){const colors=gradient.match(/rgb\([^)]*\)/g);assert.equal(colors[0],colors[2]);assert.notEqual(colors[0],colors[1]);}await page.locator('[data-lh-choice=material]>summary').click();const materials=await page.locator('[data-lh-choice=material] .lh-swatch-option i').evaluateAll(ns=>ns.map(n=>getComputedStyle(n).backgroundImage));assert.equal(materials.length,5);for(const gradient of materials){const colors=gradient.match(/rgb\([^)]*\)/g);assert.equal(colors[0],colors[2]);assert.notEqual(colors[0],colors[1]);}if(name==='desktop')await shot(page,'desktop-after-premium-materials');await close(page);if(name!=='tablet')await shot(page,name+'-after-compact');
+ // Save actual user coordinates after all deliberate size/style changes.
+ await page.evaluate(()=>instrumentFor('wind').setPosition({x:.15,y:.75}));await drag(page,'wind',{x:target.x+18,y:target.y+10},touch);await page.evaluate(()=>card._settingsVault.flush());await page.waitForFunction(()=>card._settingsVault.status==='saved');const originalSaved=await saved(page),profileA=await page.evaluate(()=>card._settingsVault.profileId);await reload(page);assert.deepEqual(await saved(page),originalSaved,'native position stores reload');assert.equal(await page.evaluate(()=>card.__legendHub.config.legends.wind.glassOpacity),50);
+ if(name!=='tablet'){const profileB=await page.evaluate(async()=>{const v=card._settingsVault;return (await v.create('copy',{profileId:v.profileId,name:'Compact profile B'},{activate:false})).id;});await page.evaluate(id=>card._settingsVault.choose(id),profileB);await reload(page);await page.evaluate(()=>prefs.patchLegend(card,'wind',{glassOpacity:17,frameMaterial:'platinum'}));await page.evaluate(()=>instrumentFor('wind').setPosition({x:.9,y:.15}));await drag(page,'wind',{x:map.x+width*.55,y:map.y+height*.4},touch);await page.evaluate(()=>card._settingsVault.flush());await page.waitForFunction(()=>card._settingsVault.status==='saved');const b=await saved(page);assert.notDeepEqual(b.wind,originalSaved.wind);await page.evaluate(id=>card._settingsVault.choose(id),profileA);await reload(page);assert.deepEqual(await saved(page),originalSaved,'profile A restores independent positions');assert.equal(await page.evaluate(()=>card.__legendHub.config.legends.wind.glassOpacity),50);await page.evaluate(id=>card._settingsVault.choose(id),profileB);await reload(page);assert.deepEqual(await saved(page),b);assert.equal(await page.evaluate(()=>card.__legendHub.config.legends.wind.glassOpacity),17);}
+ assert.deepEqual(f.errors,[]);results.push({name,width,height,touchEmulation:touch,clustered,activity,mapUnchanged:true,infoStable:true,infoDrag:true,hideShowStable:true,rotationSettled:true,reload:true,profiles:name!=='tablet',premium,compact,opacityStates:states,frameWeights:dimensions.map(d=>d.weight),frameGeometryConstant:true,gradients,errors:f.errors});console.log('PASS stable positions and Compact Glass '+name);
+ }finally{await f.close();}
+}
+}finally{await browser.close();}fs.writeFileSync(path.join(out,'glass-results.json'),JSON.stringify(results,null,2)+'\n');})().catch(e=>{console.error(e);process.exitCode=1;});

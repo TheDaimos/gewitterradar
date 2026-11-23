@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.12",
-  "build": "V4.12.12-DEV-2026-11-23",
-  "runtimeRevision": "41212r1",
-  "moduleSetId": "E412-12A1",
-  "baselineFeatureHead": "33631a6798d9c697bf361ab0060eb9e72c61c9b1",
+  "productVersion": "4.12.13",
+  "build": "V4.12.13-DEV-2026-11-23",
+  "runtimeRevision": "41213r1",
+  "moduleSetId": "E412-13A1",
+  "baselineFeatureHead": "60da476a9e6a3bbaecc817af40937bc86486dc51",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Legend Hub visual color choices, compact Synoptic settings and original Aura gold frame",
+    "purpose": "Legend Hub stable user positions, independent Compact Glass frames and premium swatches",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

@@ -1,9 +1,9 @@
-import {installWeatherLegendOverlay} from './legend-overlay.js?v=41212r1';
-import {createLegendInstrument} from './legend-instrument.js?v=41212r1';
-import {legendOptions} from './legend-preferences.js?v=41212r1';
+import {installWeatherLegendOverlay} from './legend-overlay.js?v=41213r1';
+import {createLegendInstrument} from './legend-instrument.js?v=41213r1';
+import {legendOptions} from './legend-preferences.js?v=41213r1';
 import {legendDescriptor} from './legend-registry.js?v=4126r1';
 import {renderLegendInformation,safeLegendParagraphs} from './legend-information.js?v=41210r1';
-import {renderLegendScale} from './legend-scale.js?v=41211r1';
+import {renderLegendScale} from './legend-scale.js?v=41213r1';
 class ScientificLegend{}installWeatherLegendOverlay(ScientificLegend,{});
 // Shared minimal instrument; native render callbacks still supply all scientific
 // classes, symbols, provenance and explanatory content to the explicit info popup.
