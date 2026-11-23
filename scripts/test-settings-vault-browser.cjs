@@ -440,7 +440,7 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     const hubBefore = await android.page.evaluate(async () => {
       const {saveLegendHub,patchLegend} = await import('/frontend/modules/weather/legend-preferences.js?v='+
         (await import('/frontend/version.js')).APPLICATION_RELEASE.runtimeRevision);
-      saveLegendHub(card,{glassTransparency:77,icon:2,direction:'vertical',position:{x:.9,y:.1},slots:['wind',null,'temperature','advection']});
+      saveLegendHub(card,{legends:{...card.__legendHub.config.legends,precipitation:{...card.__legendHub.config.legends.precipitation,showCaption:false},wind:{...card.__legendHub.config.legends.wind,showCaption:false}},glassTransparency:77,icon:2,direction:'vertical',position:{x:.9,y:.1},slots:['wind',null,'temperature','advection']});
       patchLegend(card,'temperature',{presentation:'compact',orientation:'vertical',size:'XL',density:'detailed',style:'thermometer',material:'brass',labels:'inside',ticks:'inside',foreground:'mint',autoInvert:true,mode:'on'});
       return card.__legendHub.config;
     });
@@ -495,6 +495,8 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     await android.page.evaluate(()=>card._settingsVault.flush());
     await android.page.waitForFunction(()=>card._settingsVault.status==='saved');
     assert.equal(mock.profiles.a[androidId].settings[HUB].glassTransparency,77);
+    assert.equal(mock.profiles.a[androidId].settings[HUB].legends.precipitation.showCaption,false);
+    assert.equal(mock.profiles.a[androidId].settings[HUB].legends.wind.showCaption,false);
     assert.deepEqual(mock.profiles.a[androidId].settings['gewitterradar:weather-legend-position:v1'],positions.precipitation);
     assert.deepEqual(mock.profiles.a[androidId].settings['gewitterradar:wind-ui:v1'].legendPosition,positions.wind);
     for(const id of ['temperature','advection'])assert.deepEqual(mock.profiles.a[androidId].settings['gewitterradar:temperature-ui:v1'].legendPositions[id],positions[id]);
@@ -502,9 +504,11 @@ async function exerciseProfileName(page, {enter, heading, previous, name, touch 
     await android.page.evaluate(id=>card._settingsVault.choose(id),copiedId);await android.page.reload();
     await android.page.waitForFunction(()=>window.card?._map&&card._settingsVault?.profile);
     assert.equal(await android.page.evaluate(()=>card.__legendHub.config.glassTransparency),65,'other profile keeps its default');
+    assert.equal(await android.page.evaluate(()=>card.__legendHub.config.legends.precipitation.showCaption),true);
     await android.page.evaluate(id=>card._settingsVault.choose(id),androidId);await android.page.reload();
     await android.page.waitForFunction(()=>window.card?._map&&card._settingsVault?.profile);
     assert.equal(await android.page.evaluate(()=>card.__legendHub.config.glassTransparency),77);
+    assert.equal(await android.page.evaluate(()=>card.__legendHub.config.legends.precipitation.showCaption),false);
     assert.deepEqual(await android.page.evaluate(()=>({precipitation:card._weatherLegendState().position,wind:card._weatherWindState().config.legendPosition,temperature:card._weatherTemperatureState().config.legendPositions.temperature,advection:card._weatherTemperatureState().config.legendPositions.advection,synoptic:card.__legendHub.config.extraPositions.synoptic,other:card.__legendHub.config.extraPositions.other})),positions,'profile switch restores all six positions');
     // Startup connection failure stays recoverable and never writes defaults.
     mock.offline = true;

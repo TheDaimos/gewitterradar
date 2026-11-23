@@ -1,6 +1,6 @@
 import {STORM_EYE_ICON} from './eye-hub-registry.js?v=411230r1';
 import {eyeBubbleAuraEnabled,visibleEyeSlots} from './eye-hub-model.js?v=4121r1';
-import {bindPremiumPanelDrag,enhancePremiumSections,ensurePremiumUi,premiumAction,premiumEscape as escape} from './premium-ui.js?v=4128r1';
+import {bindPremiumPanelDrag,enhancePremiumSections,ensurePremiumUi,premiumAction,premiumEscape as escape} from './premium-ui.js?v=4129r1';
 
 export const stormLayout=owner=>owner._mapWindowMode?'window':owner._mapDisplayMode==='fullscreen'?'fullscreen':'standard';
 

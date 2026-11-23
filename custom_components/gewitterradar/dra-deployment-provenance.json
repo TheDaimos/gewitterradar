@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.8",
-  "build": "V4.12.8-DEV-2026-11-22",
-  "runtimeRevision": "4128r1",
-  "moduleSetId": "E412-8A1",
-  "baselineFeatureHead": "8a35cba4d7c65a4c2bf84c964dc7312433ad95ec",
+  "productVersion": "4.12.9",
+  "build": "V4.12.9-DEV-2026-11-23",
+  "runtimeRevision": "4129r1",
+  "moduleSetId": "E412-9A1",
+  "baselineFeatureHead": "5d040c538bedd0a04ee783b4bf8cf2bcc6ccc913",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Minimallegenden: erreichbare Standardpositionen ohne Überlagerung von Kartenkontrollen; WeatherRouter unverändert",
+    "purpose": "Legend Hub: stable sources, live preview, clear glass and structured source information",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

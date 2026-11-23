@@ -1,12 +1,15 @@
-import {settingsStorage} from '../core/settings-vault.js?v=4128r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4129r1';
 import { defineModule } from "../core/runtime.js?v=41114r1";
-import {createLegendInstrument,instrumentBounds} from './legend-instrument.js?v=4128r1';
-import {legendOptions} from './legend-preferences.js?v=4128r1';
-import {renderLegendScale} from './legend-scale.js?v=4127r1';
+import {createLegendInstrument,instrumentBounds} from './legend-instrument.js?v=4129r1';
+import {legendOptions} from './legend-preferences.js?v=4129r1';
+import {renderLegendScale} from './legend-scale.js?v=4129r1';
+
+import {precipitationPresentation,precipitationMetadata,precipitationSourceId,precipitationKind,renderPrecipitationScales,lowerDetectionLimits} from './legend-precipitation.js?v=4129r1';
+import {renderLegendInformation} from './legend-information.js?v=4129r1';
 
 export const MODULE_META=Object.freeze({
   id:"weather.legend-overlay",
-  version:"0.1.60",
+  version:"0.1.61",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellungslegende",
   subfunctions:["generisches Legendenmodell","Auto/Ein/Aus","WR-Metadaten","Bildlegenden","strukturierte Skalen","Kartenoverlay","mehrere aktive Legenden","sichere Kartenposition"],
@@ -219,7 +222,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     const mode=this._weatherLegendMode();
     if(mode==="off")return [];
     const active=this._weatherLegendActiveModels();
-    if(mode==="on"&&!active.some(model=>model.family==="precipitation"))active.unshift(normalizeLegendModel("precipitation",precipitationModel));
+    if(mode==="on"&&!active.some(model=>["precipitation","snow"].includes(model.family)))active.unshift(normalizeLegendModel("precipitation",precipitationModel));
     return mode==="auto"?(["precipitation","snow"].includes(active[0]?.family)?active.filter(model=>["precipitation","snow"].includes(model.family)):active.slice(0,1)):active;
   },
 
@@ -227,7 +230,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
   _weatherLegendEnsureUi(){
     if(!this.shadow?.getElementById('map-card'))return null;
     const state=this._weatherLegendState();
-    state.instrument||=createLegendInstrument(this,{id:'precipitation',elementId:'weather-legend-overlay',title:()=>this._t('weather.legend.rainIntensity'),position:state.position,savePosition:p=>{state.position=p;try{settingsStorage(this).setItem(POSITION_KEY,JSON.stringify(p));}catch(_){}},onResize:()=>this._weatherLegendSyncUi()});
+    state.instrument||=createLegendInstrument(this,{id:'precipitation',inlineCaptions:true,elementId:'weather-legend-overlay',title:()=>this._t('weather.legend.precipitation'),position:state.position,savePosition:p=>{state.position=p;try{settingsStorage(this).setItem(POSITION_KEY,JSON.stringify(p));}catch(_){}},onResize:()=>this._weatherLegendSyncUi()});
     state.mounted=true;return state.instrument.host;
   },
   _weatherLegendPosition(){this._weatherLegendState().instrument?.place();},
@@ -244,7 +247,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
         const node=document.createElement("span");node.className="weather-legend-entry";
         const swatch=document.createElement("i");swatch.className="weather-legend-swatch";
         if(entry.color)swatch.style.setProperty("--weather-legend-color",entry.color);
-        const label=document.createElement("span");label.className="weather-legend-entry-label";label.textContent=(entry.label||entry.value)+(model.lowerBoundaryNote&&entry===entries[0]?"*":"");
+        const label=document.createElement("span");label.className="weather-legend-entry-label";label.textContent=(entry.label||entry.value);
         node.append(swatch,label);scale.append(node);
       }
       return scale;
@@ -265,21 +268,31 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     }
     const ticks=document.createElement("div");ticks.className="weather-legend-bar-ticks";
     const labels=model.ticks.length?model.ticks:entries.filter((_entry,index)=>index===0||index===entries.length-1||index%2===0).map(entry=>({position:entries.indexOf(entry)/entries.length,label:entries.indexOf(entry)===entries.length-1?"≥"+entry.value:entry.value==="0"?">0":entry.value||entry.label}));
-    for(const tick of labels){const label=document.createElement("span");label.style.left=(tick.position*100)+"%";label.textContent=tick.label+(model.lowerBoundaryNote&&tick===labels[0]?"*":"");if(tick.position>=.92)label.className="last";ticks.append(label);}
+    for(const tick of labels){const label=document.createElement("span");label.style.left=(tick.position*100)+"%";label.textContent=tick.label;if(tick.position>=.92)label.className="last";ticks.append(label);}
     box.append(ticks);return box;
   },
 
+  _weatherLegendPresentation(preview=false){
+    const models=(preview?this._weatherLegendActiveModels():this._weatherLegendVisibleModels()).filter(m=>['precipitation','snow'].includes(m.family));
+    // The existing forced reference is available only when there is no active
+    // source at all. A metadata-deficient RY never borrows this palette.
+    if(preview&&!models.length)models.push(normalizeLegendModel('precipitation',{...precipitationModel,title:this._t('weather.legend.rainIntensity')+' · '+this._t('weather.legend.reference')}));
+    return precipitationPresentation(models,groupIdenticalLegendScales,this._t.bind(this));
+  },
   _weatherLegendSyncUi(){
     const host=this._weatherLegendEnsureUi();if(!host)return;
-    const state=this._weatherLegendState(),instrument=state.instrument,models=groupIdenticalLegendScales(this._weatherLegendVisibleModels().filter(m=>['precipitation','snow'].includes(m.family)),this._t.bind(this));
-    instrument.setVisible(models.length>0);if(!models.length)return;
-    const c=legendOptions(this,'precipitation'),map=this.shadow.getElementById('map'),available=c.orientation==='vertical'?(map.clientHeight-55)/models.length:map.clientWidth-74,nodes=[];
-    for(const model of models){
-      const item=document.createElement('div');item.dataset.weatherLegendSource=model.source;item.dataset.weatherLegendSources=(model.sources||[model.source]).join(' ');
-      if(models.length>1){const caption=document.createElement('p');caption.className='lh-instrument-caption';caption.textContent=model.title;item.append(caption);}
-      item.append(renderLegendScale(model,c,available));if(model.lowerBoundaryNote){const note=document.createElement('span');note.className='lh-instrument-caption';note.textContent='*';item.append(note);}nodes.push(item);
-    }
-    instrument.update(nodes,box=>{for(const model of models){const title=document.createElement('h4');title.textContent=model.title;box.append(title,this._weatherLegendRenderVisual(model,{nativeOnly:true}));for(const text of [model.subtitle,model.details,model.lowerBoundaryNote,model.timeNote,model.legendTime])if(text){const p=document.createElement('p');p.textContent=text;box.append(p);}}});
+    const state=this._weatherLegendState(),instrument=state.instrument,presentation=this._weatherLegendPresentation(),{models,omitted,originals}=presentation;
+    instrument.setVisible(models.length+omitted.length>0);if(!models.length&&!omitted.length)return;
+    const c=legendOptions(this,'precipitation'),map=this.shadow.getElementById('map'),nodes=[renderPrecipitationScales(models,c,{width:map.clientWidth-74,height:map.clientHeight-24})];
+    if(!models.length&&c.showCaption){const caption=document.createElement('p');caption.className='lh-instrument-caption';caption.textContent=this._t('weather.legend.precipitation');nodes.push(caption);}
+    instrument.update(nodes,box=>{
+      const metadata=precipitationMetadata(this),seen=new Set(),sources=[];
+      for(const model of originals){const id=precipitationSourceId(model);if(seen.has(id))continue;seen.add(id);const source=metadata.find(layer=>layer.source_id===id),status=omitted.find(m=>precipitationSourceId(m)===id)?.presentationStatus;
+        sources.push({...source,source_id:id,title:source?.legend?.source_title||source?.legend?.title||model.title,legendTime:source?undefined:model.legendTime,presentationStatus:status});
+      }
+      const scales=models.map(model=>({title:model.title,unit:model.unit,visual:this._weatherLegendRenderVisual(model,{nativeOnly:true}),meaning:precipitationKind(model)==='snow'?this._t(model.quantity==='liquid_water_equivalent_snowfall_rate'?'weather.legend.snowEquivalent':'weather.legend.snowRate'):this._t(precipitationSourceId(model).startsWith('nasa_gibs/')?'weather.legend.estimatedSatellite':'weather.legend.originalColors')}));
+      box.append(renderLegendInformation(this,{scales,sources,notes:[lowerDetectionLimits(originals,this._t.bind(this),this._locale?.())],technical:{models:originals,omitted}}));
+    });
   },
 
   _weatherLegendDiagnostics(){

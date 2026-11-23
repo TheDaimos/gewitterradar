@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {precipitationPresentation,precipitationRank,precipitationSourceId,precipitationMetadata,lowerDetectionLimits} from '../frontend/modules/weather/legend-precipitation.js';
+import {precipitationLegendScales,groupIdenticalLegendScales,PRECIPITATION_LEGEND_ENTRIES} from '../frontend/modules/weather/legend-overlay.js';
+import {normalizeLegendHub,LEGEND_IDS} from '../frontend/modules/weather/legend-hub-model.js';
+import {LEGEND_HUB_TRANSLATIONS} from '../frontend/modules/weather/legend-hub-locales.js';
+import {localLegendTime} from '../frontend/modules/weather/legend-information.js';
+const nasa=JSON.parse(readFileSync('tests/fixtures/legend-nasa-native-4129.json','utf8'));
+const t=(key,vars={})=>String(LEGEND_HUB_TRANSLATIONS.Deutsch[key.replace('legendHub.','')]||({'weather.legend.fromThreshold':'ab {low}'}[key])||key).replace(/\{(\w+)\}/g,(_,k)=>vars[k]);
+const radar=structuredClone(PRECIPITATION_LEGEND_ENTRIES),dwd=structuredClone(radar);dwd[0]={...dwd[0],value:.1,label:'0.1–<0.2'};
+const layer=(source_id,entries,extra={})=>({source_id,semantics:{quantity:'precipitation_rate',unit:'mm/h'},legend:{title:source_id,entries},...extra});
+const layers=[layer('dwd/radar_precipitation',dwd),layer('opera/opera_rate_raster',radar),layer('nasa_gibs/imerg',[],{legend:{title:'NASA IMERG',scales:nasa.scales}}),layer('dwd/radar_precipitation_quality_checked',[],{legend:{title:'RY',url:'https://example.test/legend'},semantics:{quantity:'precipitation_rate',unit:null}})];
+const models=precipitationLegendScales(layers).map(m=>({...m,source:'precipitation:'+m.id,family:m.kind==='snow'?'snow':'precipitation',updatedAt:1}));
+const frozen=JSON.stringify(models),present=values=>precipitationPresentation(values,groupIdenticalLegendScales,t);
+let result=present(models);assert.deepEqual(result.models.map(precipitationRank),[0,1,3]);assert.equal(result.omitted.length,1);assert.equal(result.omitted[0].presentationStatus,'missingColors');assert.equal(result.models[0].sharedRadar,true);
+assert.match(lowerDetectionLimits(models,t,'de-DE'),/^Untere Nachweisgrenzen: DWD ab 0,1 mm\/h; OPERA größer als 0 mm\/h\.$/);
+for(let turn=0;turn<20;turn++){const updated=models.map((m,i)=>({...m,updatedAt:turn*100+i}));if(turn%2)updated.reverse();assert.deepEqual(present(updated).models.map(m=>m.source),result.models.map(m=>m.source));}
+for(const removed of models)assert.deepEqual(present(models.filter(m=>m!==removed)).models.map(precipitationRank),present(models.filter(m=>m!==removed)).models.map(precipitationRank).sort());
+const ry={...models.at(-1),entries:[{value:2,label:'2',color:'#123456'}],ticks:[],unit:'mm/h'};
+assert.deepEqual(present([...models.slice(0,-1),ry]).models.map(precipitationRank),[0,1,2,3]);
+const identical={...ry,entries:models[0].entries,radarComparison:models[0].radarComparison};result=present([models[0],identical]);assert.equal(result.models.length,1);assert.equal(result.omitted[0].presentationStatus,'coveredScale');assert(result.models[0].sources.some(s=>s.endsWith('radar_precipitation_quality_checked')));
+assert.equal(present([models[0],{...identical,unit:null}]).models.length,2,'unknown unit is never presumed equivalent');
+const sharedWithRy=present([models[0],models[1],identical]);assert.equal(sharedWithRy.models.length,1,'RY identical to a complete constituent table is covered by the already qualified shared radar scale');assert.equal(sharedWithRy.omitted[0].presentationStatus,'coveredScale');
+const unknown=['zeta/x','alpha/x'].map(id=>({...ry,source:'precipitation:'+id,id}));assert.deepEqual(present(unknown.reverse()).models.map(precipitationSourceId),['alpha/x','zeta/x']);
+assert.equal(JSON.stringify(models),frozen,'presentation never mutates received scientific metadata');
+const v1={resource:{payload:{legend:{entries:dwd},attribution:'DWD'},semantics:{quantity:'precipitation_rate',unit:'mm/h'}},provenance:{provider_id:'dwd',layer_id:'radar_precipitation'},freshness:{data_time:'2026-11-23T11:30:00Z',age_seconds:300,stale:false}};
+const meta=precipitationMetadata({_weatherRadarState:()=>({lastReady:{answer:v1}})})[0];assert.equal(meta.source_id,'dwd/radar_precipitation');assert.deepEqual(meta.semantics,v1.resource.semantics);assert.equal(meta.times.valid_at,v1.freshness.data_time);assert.equal(meta.attribution,'DWD');
+for(const id of LEGEND_IDS){assert.equal(normalizeLegendHub().legends[id].showCaption,true);assert.equal(normalizeLegendHub({legends:{[id]:{showCaption:false}}}).legends[id].showCaption,false);}
+for(const copy of Object.values(LEGEND_HUB_TRANSLATIONS))for(const key of ['showCaption','preview','scaleExplanation','dataSources','timeliness','technicalDetails','lowerLimits','greaterThan','timeMatching','timeMismatch','coveredScale','reportedAge','missingColors'])assert(copy[key]?.length,key);
+assert.equal(localLegendTime('not a date','de-DE'),null);assert.equal(localLegendTime('2026-11-23T12:00:00','de-DE'),null);assert.match(localLegendTime('2026-11-23T12:00:00Z','de-DE'),/2026.*\(.+\)/);
+console.log('PASS source presentation: update-stable known/unknown ordering, missing sources, RY A/B/C, original 110-class NASA tables, metadata immutability, exact detection limits, six caption defaults, 19 locales, explicit local timezone');

@@ -254,7 +254,7 @@ JSON_SETTINGS = {
             "material": choice("brass", "platinum", "gold", "silver", "black"),
             "labels": choice("before", "inside", "after"), "ticks": choice("before", "inside", "after"),
             "foreground": choice("auto", "white", "black", "ice", "mint", "champagne", "gold"), "autoInvert": BOOL, "shadow": BOOL, "outline": BOOL,
-            "mode": choice("inherit", "on", "off"),
+            "mode": choice("inherit", "on", "off"), "showCaption": BOOL,
         }), 6),
     }),
     "gewitterradar:eye-bubble:v1": EYE,

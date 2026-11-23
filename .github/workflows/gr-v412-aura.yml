@@ -25,6 +25,7 @@ jobs:
           pip install PyYAML
           node scripts/test-v412-aura-model.mjs
           node scripts/test-v412-legend-model.mjs
+          node scripts/test-v412-sources-model.mjs
           node scripts/test-v412-legend-isolation.mjs
           node scripts/test-eye-hub-model.mjs
           node scripts/test-eye-wow-model.mjs
@@ -43,10 +44,12 @@ jobs:
           GR_AURA_EVIDENCE: ${{ runner.temp }}/aura-evidence
           GR_LEGEND_EVIDENCE: ${{ runner.temp }}/legend-evidence
           GR_MINIMAL_EVIDENCE: ${{ runner.temp }}/minimal-evidence
+          GR_SOURCES_EVIDENCE: ${{ runner.temp }}/source-evidence
         run: |
           node scripts/test-v412-aura-browser.cjs
           node scripts/test-v412-legend-browser.cjs
           node scripts/test-v412-minimal-browser.cjs
+          node scripts/test-v412-sources-browser.cjs
           node scripts/test-v412-placement-browser.cjs
           node scripts/test-eye-edge-browser.cjs
           node scripts/test-delayed-eye-recovery-browser.cjs
@@ -60,4 +63,5 @@ jobs:
             ${{ runner.temp }}/aura-evidence
             ${{ runner.temp }}/legend-evidence
             ${{ runner.temp }}/minimal-evidence
+            ${{ runner.temp }}/source-evidence
           if-no-files-found: ignore

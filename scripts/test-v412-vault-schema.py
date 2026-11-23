@@ -26,11 +26,11 @@ settings = {hub: {'schema': 1, 'icon': 2, 'glassTransparency': 65, 'slots': ['wi
                  'legends': {'temperature': {'presentation': 'compact', 'orientation': 'vertical',
                      'size': 'XL', 'density': 'detailed', 'style': 'thermometer', 'material': 'platinum',
                      'labels': 'inside', 'ticks': 'inside', 'foreground': 'auto',
-                     'shadow': True, 'outline': True, 'mode': 'on'}}}}
+                     'shadow': True, 'outline': True, 'mode': 'on', 'showCaption': False}}}}
 assert schema.validate_settings(settings) == settings
 assert schema.decode_value(hub, schema.encode_value(hub, settings[hub])) == settings[hub]
 for invalid in [{'glassTransparency': -1}, {'glassTransparency': 101}, {'glassTransparency': '65'}, {'icon': 3}, {'slots': ['invented']}, {'slots': ['wind'] * 13},
-                {'legends': {'wind': {'size': 'XXL'}}}, {'position': {'x': 2, 'y': 0}}]:
+                {'legends': {'wind': {'size': 'XXL'}}}, {'legends': {'wind': {'showCaption': 'false'}}}, {'position': {'x': 2, 'y': 0}}]:
     try:
         schema.validate_settings({hub: invalid})
     except schema.VaultError:

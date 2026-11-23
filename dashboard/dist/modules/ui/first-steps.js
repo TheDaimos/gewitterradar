@@ -1,4 +1,4 @@
-import {premiumEscape} from '../weather/premium-ui.js?v=4128r1';
+import {premiumEscape} from '../weather/premium-ui.js?v=4129r1';
 
 export const FIRST_STEPS_DISMISSED = 'gewitterradar-first-steps-dismissed';
 const INFO_ICON = new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
