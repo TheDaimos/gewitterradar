@@ -22,3 +22,13 @@ Exakter Scope-Guard: native Form-/Slot-/Glas-Handler und Optionsdefinitionen unv
 Versionsstand: Frontend 4.12.10 / HA 0.25.171 / Runtime `41210r1` / Modulset `E412-10A1`, 37 Module. Ein lokaler konsistenter Release-Spiegelbau durchgeführt. PASS: 210 Kern-Frontenddateien/Spiegel/Checksummen, DRA-Vertrag, 60 geschützte Hi-Res-Identitäten/61 Pfade, Syntax/JSON/YAML, 19 Sprachkataloge, bestehende Hub-/Quellen-Modelle und geschützte Aura-/Wetterkörper.
 
 OFFEN: Quellcommit auf deploy/dev, öffentliche verbindliche Abschlussgates samt gezieltem UI-Smoke, zwei kanonische Git-Blob-Pakete, kurzer Bericht und DEV-Prerelease. Installation/physische Abnahme weiter beim Betreiber; keine VM101-Aktion.
+
+
+## Native Auswahlfarben vor Auslieferung
+
+Die native Select-Textfarbe bleibt explizit lesbar. Nur die dekorative, nichtinteraktive Wertfläche überdeckt die geschlossene native Anzeige; die geöffneten betriebssystemeigenen Optionen müssen dadurch keine transparente geerbte Textfarbe korrigieren. Keine neuen Handler, keine Optionsänderungen. Dafür war ein zusätzlicher gezielter CSS-/Spiegel-Abgleich vor Auslieferung erforderlich; kein neuer vollständiger Browserlauf unveränderter Module. Der gezielte Drei-Viewport-Smoke wird auf dieser tatsächlichen finalen Oberfläche bestätigt.
+
+
+## Konkreter öffentlicher Regressionstest-Konflikt
+
+HA-Runtime-Gate auf c3bb6f98: 80 PASS, ein historischer Test untersagt jede weitere Verwendung des rechten Silber-Chevrons. Die neu ausdrücklich beauftragte Wiederverwendung wird gezielt im bestehenden Retentionsvertrag freigegeben: ab 4.12.10 ausschließlich zusätzlicher Consumer `legend-hub-view.js` für genau dieses eine Asset. Alle vier Originalbytes, Lossless-WebP/104×104/Größenbegrenzungen, die drei übrigen exklusiven Consumer und vollständiger Kompasscode bleiben geschützt. Kein pauschales Löschen/Abschwächen des Tests. Gleicher Cache-Schlüssel wie beim ursprünglichen Consumer verhindert doppeltes Laden desselben Moduls.

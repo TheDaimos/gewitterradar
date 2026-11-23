@@ -82,7 +82,9 @@ def test_v41001_compass_picker_contract():
     ):
         assert marker in source
 
-    # Picker-only contract: four local Retina modules are imported only by map-display.
+    # Original Retina modules stay byte/size/geometry protected. V4.12.10's
+    # explicit design order additionally reuses only the right silver original
+    # in the shared Legend Hub dialog; the other three remain picker-only.
     # Static picker assets preserve their own revision independently of the app.
     picker_revision = re.search(r'compass-picker-chevron-left-brass\.js\?v=(\d{5}r\d+)', map_display)
     assert picker_revision
@@ -110,8 +112,12 @@ def test_v41001_compass_picker_contract():
             for js_path in FRONTEND.rglob("*.js")
             if js_path.name != module_name and module_name in js_path.read_text(encoding="utf-8")
         ]
-        assert references == [PICKER_DIR / "map-display.js"], (
-            f"{module_name} must only be referenced by the compass picker"
+        expected_references = {PICKER_DIR / "map-display.js"}
+        if (is_v411 and tuple(map(int, product.split("."))) >= (4, 12, 10)
+                and module_name == "compass-picker-chevron-right-silver.js"):
+            expected_references.add(FRONTEND / "modules" / "weather" / "legend-hub-view.js")
+        assert set(references) == expected_references, (
+            f"{module_name} must retain exactly its explicitly approved consumers"
         )
 
     # Kompass und Medaillon verwenden die lokalen silbernen 2x-Retina-Chevrons.
