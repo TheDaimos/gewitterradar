@@ -5,6 +5,7 @@ on:
       - freeze/v4.12-final-candidate
     paths:
       - '.github/workflows/prepare-v4.12-final.yml'
+      - 'scripts/prepare-v412-final.py'
 permissions:
   contents: write
   actions: read
