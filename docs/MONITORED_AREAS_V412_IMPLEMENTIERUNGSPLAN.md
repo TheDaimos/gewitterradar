@@ -1,6 +1,8 @@
-# GewitterRadar V4.12 — Monitored Areas: Codex-Implementierungsplan
+# GewitterRadar V4.13 — Monitored Areas: Codex-Implementierungsplan
+> **Versionsbeschluss 23.11.2026:** Monitored Areas wird als fachlich eigenständiges Modul in **V4.13** entwickelt. **V4.12 wird separat mit Legend Hub finalisiert**; Monitored Areas ist ausdrücklich kein V4.12-Release-Blocker. Die historischen Dateinamen bleiben als unveränderliche Verweise erhalten; MA-001 bis MA-056 und T0–T3 bleiben inhaltlich und hinsichtlich ihrer IDs gültig. Keine Codex-Aufträge sind dadurch automatisch freigegeben. Module intern isolieren, bestehende Ortssuche und WR-Verträge nutzen statt duplizieren.
 
-**Stand:** 23.11.2026 · **Status:** Entwicklungsplanung, noch keine Umsetzung freigegeben.
+
+**Stand:** 23.11.2026 · **Zielversion:** V4.13 · **Status:** Entwicklungsplanung, noch keine Umsetzung freigegeben.
 **Repo:** `TheDaimos/gewitterradar` · **Doku-Branch:** `deploy/dev` · **Realtests:** HA DEV VM109.
 
 **Verbindliche Fachvorgaben:** [MONITORED_AREAS_V412_KONZEPT_2026-11-23.md](MONITORED_AREAS_V412_KONZEPT_2026-11-23.md) und dort verlinkte Havanna-Referenz. Dieser Implementierungsplan ändert keine Produktentscheidungen. Historische offene To-dos aus `V4_12_TODO.md` sind gegen das neuere Konzept abzugleichen.
