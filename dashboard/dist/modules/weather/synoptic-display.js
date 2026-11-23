@@ -1,7 +1,7 @@
-import {settingsStorage} from '../core/settings-vault.js?v=41215r1';
+import {settingsStorage} from '../core/settings-vault.js?v=41215r2';
 import {defineModule} from '../core/runtime.js?v=41114r1';
 import {EYE_COLORS} from './eye-hub-model.js?v=4121r1';
-import {ensurePremiumUi,premiumAction,PREMIUM_CLOSE,bindPremiumPanelDrag,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=41215r1';
+import {ensurePremiumUi,premiumAction,PREMIUM_CLOSE,bindPremiumPanelDrag,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=41215r2';
 import {canonicalWindBounds} from './wind-field.js?v=411211r1';
 
 export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.66',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});

@@ -1,7 +1,7 @@
-import {settingsStorage} from '../core/settings-vault.js?v=41215r1';
+import {settingsStorage} from '../core/settings-vault.js?v=41215r2';
 import { defineModule } from "../core/runtime.js?v=41114r1";
-import {createLegendInstrument,instrumentBounds,instrumentScaleSpace} from './legend-instrument.js?v=41215r1';
-import {legendOptions} from './legend-preferences.js?v=41215r1';
+import {createLegendInstrument,instrumentBounds,instrumentScaleSpace} from './legend-instrument.js?v=41215r2';
+import {legendOptions} from './legend-preferences.js?v=41215r2';
 import {renderLegendScale} from './legend-scale.js?v=41213r1';
 
 import {precipitationPresentation,precipitationMetadata,precipitationSourceId,precipitationKind,renderPrecipitationScales,lowerDetectionLimits} from './legend-precipitation.js?v=41213r1';

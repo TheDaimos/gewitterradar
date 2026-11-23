@@ -1,4 +1,4 @@
-import {settingsStorage} from '../core/settings-vault.js?v=41215r1';
+import {settingsStorage} from '../core/settings-vault.js?v=41215r2';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([

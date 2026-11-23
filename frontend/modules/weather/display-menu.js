@@ -1,11 +1,11 @@
 import {controlTouchPoint,installControlTouchTracking,stopControlTouchTracking} from './control-touch.js?v=411216r1';
-import {settingsStorage} from '../core/settings-vault.js?v=41215r1';
-import {quickMethods,QUICK_CSS} from './display-quick.js?v=41215r1';
-import {eyeHubMethods} from './eye-hub.js?v=41215r1';
-import {stormBubbleMethods} from './storm-bubble.js?v=41215r1';
-import {cloudsControlMethods} from './clouds-control.js?v=41215r1';
-import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=41215r1';
-import {ensurePremiumUi,premiumAction,premiumEscape,PREMIUM_INFO} from './premium-ui.js?v=41215r1';
+import {settingsStorage} from '../core/settings-vault.js?v=41215r2';
+import {quickMethods,QUICK_CSS} from './display-quick.js?v=41215r2';
+import {eyeHubMethods} from './eye-hub.js?v=41215r2';
+import {stormBubbleMethods} from './storm-bubble.js?v=41215r2';
+import {cloudsControlMethods} from './clouds-control.js?v=41215r2';
+import {precipitationControlMethods,normalizePrecipitationControl} from './precipitation-control.js?v=41215r2';
+import {ensurePremiumUi,premiumAction,premiumEscape,PREMIUM_INFO} from './premium-ui.js?v=41215r2';
 import { defineModule } from "../core/runtime.js?v=41127r1";
 import { WEATHER_ROUTER_CAPABILITIES } from "./consumer-client.js?v=411229r1";
 

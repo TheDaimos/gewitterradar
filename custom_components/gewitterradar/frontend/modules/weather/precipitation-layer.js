@@ -1,5 +1,5 @@
-import {settingsStorage} from '../core/settings-vault.js?v=41215r1';
-import {precipitationLegendScales} from "./legend-overlay.js?v=41215r1";
+import {settingsStorage} from '../core/settings-vault.js?v=41215r2';
+import {precipitationLegendScales} from "./legend-overlay.js?v=41215r2";
 import { defineModule } from "../core/runtime.js?v=41113r1";
 import {prepareRasterMosaicV2,BoundedMosaicRequests} from "./p7-010/raster-mosaic-consumer.js?v=411229r1";
 import {measureRasterViewportCoverage,measureV1RasterCoverage,decideV1RasterSwap} from "./p7-010/raster-mosaic-coverage.js?v=411229r1";

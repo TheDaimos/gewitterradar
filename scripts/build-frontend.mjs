@@ -22,7 +22,8 @@ export async function expectedPayload(){
   const revision=release.runtimeRevision?.match(new RegExp(`^${series}${releasePatch}r([1-9][0-9]*)$`))?.[1];
   const identityIsDev=release.displayVersion===`V${release.version} DEV`;
   const identityIsFinal=release.version==='4.11.249'&&release.displayVersion==='V4.11 FINAL'&&/^V4\.11-FINAL-\d{4}-\d\d-\d\d$/.test(release.build);
-  if(!(identityIsDev||identityIsFinal)||!revision||release.moduleSetId!==`E${series}-${releasePatch}A${revision}`)throw Error('Canonical release identity mismatch');
+  const identityIs412Final=release.version==='4.12.15'&&release.displayVersion==='V4.12 FINAL'&&/^V4\.12-FINAL-\d{4}-\d\d-\d\d$/.test(release.build);
+  if(!(identityIsDev||identityIsFinal||identityIs412Final)||!revision||release.moduleSetId!==`E${series}-${releasePatch}A${revision}`)throw Error('Canonical release identity mismatch');
   for(const [key,value] of Object.entries({productVersion:release.version,build:release.build,runtimeRevision:release.runtimeRevision,moduleSetId:release.moduleSetId,displayVersion:release.displayVersion}))if(runtime[key]!==value)throw Error('Runtime manifest mismatch: '+key);
   const match=manifestText.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/);
   if(!match)throw Error('Cannot read current module contract');

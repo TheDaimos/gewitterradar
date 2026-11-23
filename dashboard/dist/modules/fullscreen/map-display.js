@@ -1,4 +1,4 @@
-import {settingsStorage} from '../core/settings-vault.js?v=41215r1';
+import {settingsStorage} from '../core/settings-vault.js?v=41215r2';
 import {compassPreviewHalo,compassDialogSurface} from './compass-preview-style.js?v=411174r1';
 import { defineModule } from "../core/runtime.js?v=41108r1";
 import COMPASS_PICKER_LEFT_BRASS from "./compass-picker-chevron-left-brass.js?v=41108r1";

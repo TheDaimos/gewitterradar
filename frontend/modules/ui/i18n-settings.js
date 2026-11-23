@@ -1,6 +1,6 @@
 import {appendHelpProLabel,appendWeatherHelp,createHelpProMapNote,createHelpSections} from './help-topics.js?v=411248r1';
-import {settingsStorage} from '../core/settings-vault.js?v=41215r1';
-import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=41215r1';
+import {settingsStorage} from '../core/settings-vault.js?v=41215r2';
+import {EYE_HUB_TRANSLATIONS} from '../weather/eye-hub-locales.js?v=41215r2';
 import {LEGEND_HUB_TRANSLATIONS} from '../weather/legend-hub-locales.js?v=41213r1';
 import {PRESENTATION_LOCALES} from './presentation-locales.js?v=411231r1';
 import { defineModule } from "../core/runtime.js?v=41144r1";

@@ -1,11 +1,11 @@
-import {ensureInstrumentStyle,applyInstrumentSurface} from './legend-instrument.js?v=41215r1';
-import {settingsStorage} from '../core/settings-vault.js?v=41215r1';
+import {ensureInstrumentStyle,applyInstrumentSurface} from './legend-instrument.js?v=41215r2';
+import {settingsStorage} from '../core/settings-vault.js?v=41215r2';
 import {LEGEND_OPTIONS,assignLegendSlot} from './legend-hub-model.js?v=41213r1';
-import {legendHubState,saveLegendHub,legendOptions,patchLegend} from './legend-preferences.js?v=41215r1';
+import {legendHubState,saveLegendHub,legendOptions,patchLegend} from './legend-preferences.js?v=41215r2';
 import {legendEntries,legendTitle,legendDescriptor} from './legend-registry.js?v=4126r1';
 import {ensureLegendScaleStyle,renderLegendScale} from './legend-scale.js?v=41213r1';
 import {renderPrecipitationScales} from './legend-precipitation.js?v=41213r1';
-import {PREMIUM_CLOSE} from './premium-ui.js?v=41215r1';
+import {PREMIUM_CLOSE} from './premium-ui.js?v=41215r2';
 import SILVER_CHEVRON from '../fullscreen/compass-picker-chevron-right-silver.js?v=41108r1';
 import {legendInk} from './legend-contrast.js?v=4124r1';
 export const legendText=(owner,key)=>owner._t('legendHub.'+key);

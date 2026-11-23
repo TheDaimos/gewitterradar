@@ -1,5 +1,5 @@
-import {settingsStorage} from './settings-vault.js?v=41215r1';
-import {resumeLegendHub,teardownLegendHub} from '../weather/legend-hub.js?v=41215r1';
+import {settingsStorage} from './settings-vault.js?v=41215r2';
+import {resumeLegendHub,teardownLegendHub} from '../weather/legend-hub.js?v=41215r2';
 import { defineModule } from "./runtime.js?v=41110r1";
 export const MODULE_META=Object.freeze({
   "id": "core.card-lifecycle",
