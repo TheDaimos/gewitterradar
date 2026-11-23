@@ -1,0 +1,64 @@
+{
+  "sourceCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+  "documentationCommit": "058bfd5052b506a2e7537763da2b575764ac9d3c",
+  "remoteHead": "058bfd5052b506a2e7537763da2b575764ac9d3c",
+  "release": {
+    "url": "https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.11-dev",
+    "tag": "v4.12.11-dev",
+    "prerelease": true,
+    "draft": false,
+    "assets": [
+      {
+        "name": "deployment.json",
+        "size": 827,
+        "digest": "sha256:e05408cfef1e15078fff4a6640ea8ca9fd95b21d5aa4fa5b9731df8b53779867",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.11-dev/deployment.json"
+      },
+      {
+        "name": "gewitterradar-0.25.172-dev.zip",
+        "size": 43535550,
+        "digest": "sha256:e28def9ec0d796996c1b30081e49d3f4baf7d4886f0dec3d1cf1bec2deaf4905",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.11-dev/gewitterradar-0.25.172-dev.zip"
+      },
+      {
+        "name": "gewitterradar-dashboard-4.12.11-dev.zip",
+        "size": 42939586,
+        "digest": "sha256:b86712e999d36a18043656de6b8a5905ee65a2a3f981c5c701034e3efc322d03",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.11-dev/gewitterradar-dashboard-4.12.11-dev.zip"
+      },
+      {
+        "name": "GR_V4.12.11_DEV_Pruefbericht.md",
+        "size": 8678,
+        "digest": "sha256:1678a689265d87acf328eb57b384f10e002727e59f5c97130c9a7db4acc37d0a",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.11-dev/GR_V4.12.11_DEV_Pruefbericht.md"
+      },
+      {
+        "name": "SHA256SUMS.txt",
+        "size": 285,
+        "digest": "sha256:88f9e6b59c20930e1fbfecfeffbdcb2113654e3ebdbc1fcf8a9e1aa14442d74d",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.11-dev/SHA256SUMS.txt"
+      }
+    ]
+  },
+  "protectedReferences": {
+    "v4.11.3": "af70fe2bf85a88fdea402cf46e3bd6a11903189b",
+    "v4.12.3-dev": "b96f1e350eb054972bfffe3e9a631069c4c5d358",
+    "v4.12.9-dev": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+    "v4.12.10-dev": "98fd56b0ca75ec06c95d9e8e14ab63f978015081"
+  },
+  "identicalTestedTrees": {
+    "frontend": "3a45014b73dcccfb063423e58746fab3f5264fe8",
+    "custom_components/gewitterradar": "2a0f15fde195c85258605ce4522b968220a37e60",
+    "dashboard/dist": "9bf14c36ba7f29d3ef6689f579a7542ea8308eb2",
+    "scripts": "fc5e965e5bb161603023060e4b126288b7b274f0",
+    "tests": "e7f200c0fcc85c355e549f4a7407d8d0cec32a9f",
+    ".github": "484e7d9b024968682d4fb434cbdbb89d7ef9410f"
+  },
+  "physicalDeviceAcceptance": "operator",
+  "vm101": "untouched"
+}
