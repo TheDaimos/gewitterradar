@@ -1,0 +1,566 @@
+[
+  {
+    "name": "desktop",
+    "width": 1280,
+    "height": 900,
+    "emulated": false,
+    "geometry": {
+      "width": 856,
+      "columns": 2,
+      "overflow": false,
+      "fields": [
+        {
+          "kind": "BUTTON",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        }
+      ]
+    },
+    "platinumCloseAllSix": true,
+    "nativeKeyboard": true,
+    "materialPreview": true,
+    "unitProof": [
+      {
+        "id": "precipitation",
+        "orientation": "horizontal",
+        "captions": [
+          "DWD / OPERA · Radar-Niederschlag · mm/h",
+          "NASA IMERG · Regenrate · mm/h",
+          "NASA IMERG · Schneerate (Wasseräquivalent) · mm/h SWE"
+        ]
+      },
+      {
+        "id": "precipitation",
+        "orientation": "vertical",
+        "captions": [
+          "DWD / OPERA · Radar-Niederschlag · mm/h",
+          "NASA IMERG · Regenrate · mm/h",
+          "NASA IMERG · Schneerate (Wasseräquivalent) · mm/h SWE"
+        ]
+      },
+      {
+        "id": "wind",
+        "orientation": "horizontal",
+        "captions": [
+          "Wind · 10 m · km/h"
+        ]
+      },
+      {
+        "id": "wind",
+        "orientation": "vertical",
+        "captions": [
+          "Wind · 10 m · km/h"
+        ]
+      },
+      {
+        "id": "temperature",
+        "orientation": "horizontal",
+        "captions": [
+          "Temperatur · 2 m · °C"
+        ]
+      },
+      {
+        "id": "temperature",
+        "orientation": "vertical",
+        "captions": [
+          "Temperatur · 2 m · °C"
+        ]
+      },
+      {
+        "id": "advection",
+        "orientation": "horizontal",
+        "captions": [
+          "Thermische Advektion · 850 hPa · K/h"
+        ]
+      },
+      {
+        "id": "advection",
+        "orientation": "vertical",
+        "captions": [
+          "Thermische Advektion · 850 hPa · K/h"
+        ]
+      }
+    ],
+    "nasaDestination": "https://nasa-gibs.github.io/gibs-api-docs/",
+    "synopticAlignment": [
+      {
+        "display": "flex",
+        "align": "center",
+        "height": 34,
+        "transform": "matrix(1, 0, 0, 1, 0, 2)"
+      },
+      {
+        "display": "flex",
+        "align": "center",
+        "height": 34,
+        "transform": "matrix(1, 0, 0, 1, 0, 2)"
+      },
+      {
+        "display": "flex",
+        "align": "center",
+        "height": 34,
+        "transform": "matrix(1, 0, 0, 1, 0, 2)"
+      },
+      {
+        "display": "flex",
+        "align": "center",
+        "height": 34,
+        "transform": "matrix(1, 0, 0, 1, 0, 2)"
+      }
+    ],
+    "emptyTechnicalDetailsRemoved": true,
+    "reload": true,
+    "errors": []
+  },
+  {
+    "name": "tablet",
+    "width": 1024,
+    "height": 768,
+    "emulated": true,
+    "geometry": {
+      "width": 856,
+      "columns": 2,
+      "overflow": false,
+      "fields": [
+        {
+          "kind": "BUTTON",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 184,
+          "height": 46
+        }
+      ]
+    },
+    "platinumCloseAllSix": true,
+    "nativeKeyboard": true,
+    "materialPreview": true,
+    "unitProof": [
+      {
+        "id": "precipitation",
+        "orientation": "horizontal",
+        "captions": [
+          "DWD / OPERA · Radar-Niederschlag · mm/h",
+          "NASA IMERG · Regenrate · mm/h",
+          "NASA IMERG · Schneerate (Wasseräquivalent) · mm/h SWE"
+        ]
+      },
+      {
+        "id": "precipitation",
+        "orientation": "vertical",
+        "captions": [
+          "DWD / OPERA · Radar-Niederschlag · mm/h",
+          "NASA IMERG · Regenrate · mm/h",
+          "NASA IMERG · Schneerate (Wasseräquivalent) · mm/h SWE"
+        ]
+      },
+      {
+        "id": "wind",
+        "orientation": "horizontal",
+        "captions": [
+          "Wind · 10 m · km/h"
+        ]
+      },
+      {
+        "id": "wind",
+        "orientation": "vertical",
+        "captions": [
+          "Wind · 10 m · km/h"
+        ]
+      },
+      {
+        "id": "temperature",
+        "orientation": "horizontal",
+        "captions": [
+          "Temperatur · 2 m · °C"
+        ]
+      },
+      {
+        "id": "temperature",
+        "orientation": "vertical",
+        "captions": [
+          "Temperatur · 2 m · °C"
+        ]
+      },
+      {
+        "id": "advection",
+        "orientation": "horizontal",
+        "captions": [
+          "Thermische Advektion · 850 hPa · K/h"
+        ]
+      },
+      {
+        "id": "advection",
+        "orientation": "vertical",
+        "captions": [
+          "Thermische Advektion · 850 hPa · K/h"
+        ]
+      }
+    ],
+    "nasaDestination": "https://nasa-gibs.github.io/gibs-api-docs/",
+    "synopticAlignment": [
+      {
+        "display": "flex",
+        "align": "center",
+        "height": 34,
+        "transform": "matrix(1, 0, 0, 1, 0, 2)"
+      },
+      {
+        "display": "flex",
+        "align": "center",
+        "height": 34,
+        "transform": "matrix(1, 0, 0, 1, 0, 2)"
+      },
+      {
+        "display": "flex",
+        "align": "center",
+        "height": 34,
+        "transform": "matrix(1, 0, 0, 1, 0, 2)"
+      },
+      {
+        "display": "flex",
+        "align": "center",
+        "height": 34,
+        "transform": "matrix(1, 0, 0, 1, 0, 2)"
+      }
+    ],
+    "emptyTechnicalDetailsRemoved": true,
+    "reload": true,
+    "errors": []
+  },
+  {
+    "name": "android",
+    "width": 393,
+    "height": 851,
+    "emulated": true,
+    "geometry": {
+      "width": 359,
+      "columns": 1,
+      "overflow": false,
+      "fields": [
+        {
+          "kind": "BUTTON",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "kind": "SELECT",
+          "width": 150.40625,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 150.40625,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 150.40625,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 150.40625,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 150.40625,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 150.40625,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 150.40625,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 150.40625,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 150.40625,
+          "height": 46
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "INPUT",
+          "width": 24,
+          "height": 24
+        },
+        {
+          "kind": "SELECT",
+          "width": 150.40625,
+          "height": 46
+        },
+        {
+          "kind": "SELECT",
+          "width": 150.40625,
+          "height": 46
+        }
+      ]
+    },
+    "platinumCloseAllSix": true,
+    "nativeKeyboard": true,
+    "materialPreview": true,
+    "unitProof": [
+      {
+        "id": "precipitation",
+        "orientation": "horizontal",
+        "captions": [
+          "DWD / OPERA · Radar-Niederschlag · mm/h",
+          "NASA IMERG · Regenrate · mm/h",
+          "NASA IMERG · Schneerate (Wasseräquivalent) · mm/h SWE"
+        ]
+      },
+      {
+        "id": "precipitation",
+        "orientation": "vertical",
+        "captions": [
+          "DWD / OPERA · Radar-Niederschlag · mm/h",
+          "NASA IMERG · Regenrate · mm/h",
+          "NASA IMERG · Schneerate (Wasseräquivalent) · mm/h SWE"
+        ]
+      },
+      {
+        "id": "wind",
+        "orientation": "horizontal",
+        "captions": [
+          "Wind · 10 m · km/h"
+        ]
+      },
+      {
+        "id": "wind",
+        "orientation": "vertical",
+        "captions": [
+          "Wind · 10 m · km/h"
+        ]
+      },
+      {
+        "id": "temperature",
+        "orientation": "horizontal",
+        "captions": [
+          "Temperatur · 2 m · °C"
+        ]
+      },
+      {
+        "id": "temperature",
+        "orientation": "vertical",
+        "captions": [
+          "Temperatur · 2 m · °C"
+        ]
+      },
+      {
+        "id": "advection",
+        "orientation": "horizontal",
+        "captions": [
+          "Thermische Advektion · 850 hPa · K/h"
+        ]
+      },
+      {
+        "id": "advection",
+        "orientation": "vertical",
+        "captions": [
+          "Thermische Advektion · 850 hPa · K/h"
+        ]
+      }
+    ],
+    "nasaDestination": "https://nasa-gibs.github.io/gibs-api-docs/",
+    "synopticAlignment": [
+      {
+        "display": "flex",
+        "align": "center",
+        "height": 34,
+        "transform": "matrix(1, 0, 0, 1, 0, 2)"
+      },
+      {
+        "display": "flex",
+        "align": "center",
+        "height": 34,
+        "transform": "matrix(1, 0, 0, 1, 0, 2)"
+      },
+      {
+        "display": "flex",
+        "align": "center",
+        "height": 34,
+        "transform": "matrix(1, 0, 0, 1, 0, 2)"
+      },
+      {
+        "display": "flex",
+        "align": "center",
+        "height": 34,
+        "transform": "matrix(1, 0, 0, 1, 0, 2)"
+      }
+    ],
+    "emptyTechnicalDetailsRemoved": true,
+    "reload": true,
+    "errors": []
+  }
+]

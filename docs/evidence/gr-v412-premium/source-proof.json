@@ -1,0 +1,229 @@
+{
+  "baselineSource": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+  "baselineDocumentation": "8f12ed76deb5c45b46ed27f3a4f8fb151a779558",
+  "scope": "eight presentation adapters; no functional changes to weather, Eye, Vault, gestures, metadata, palettes or source grouping",
+  "unchangedBodies": [
+    {
+      "file": "frontend/modules/core/card-lifecycle.js",
+      "normalizedSha256": "7911af38d8ef2b4da3c2788612f674d794a39ccaa30820b1c05fe59a5a7da167"
+    },
+    {
+      "file": "frontend/modules/core/settings-vault.js",
+      "normalizedSha256": "988facfc323c8c550f259efad741002def955c4c1af577dc01751ad5aed70173"
+    },
+    {
+      "file": "frontend/modules/diagnostics/cockpit.js",
+      "normalizedSha256": "844f6f3d6fae419d43d82a6f701ec7dbe2f25910ea5a19bb3bf71ba7a2d0979f"
+    },
+    {
+      "file": "frontend/modules/diagnostics/raster-lab.js",
+      "normalizedSha256": "53bee3240e3717d67cc7d1a5a208f93aaf07aa6e850de145bbaef6f4e3030db8"
+    },
+    {
+      "file": "frontend/modules/fullscreen/map-display.js",
+      "normalizedSha256": "a10d6e090589077cc285a44808f99bfd841666f972a6000549f57a72fdb9d169"
+    },
+    {
+      "file": "frontend/modules/instruments/compass-selector.js",
+      "normalizedSha256": "42b71cfdc556c4e306e27a4fbe5eca5f54286e38908aa64854aa4a15a3d2b988"
+    },
+    {
+      "file": "frontend/modules/map/clusters-recent.js",
+      "normalizedSha256": "1f22f1cc88bd5b41d69db3be767d50fe555dedb0c551be6063c71cc1b3953eab"
+    },
+    {
+      "file": "frontend/modules/ui/controls.js",
+      "normalizedSha256": "a6ce8c76ba005007129315e8cb94190cece652c148fea3e9221923b8a38bf3f0"
+    },
+    {
+      "file": "frontend/modules/ui/first-steps.js",
+      "normalizedSha256": "eedfc9118338191f7a0a6f59b6b86b820af359e25c5b0a9f41115204b658f082"
+    },
+    {
+      "file": "frontend/modules/ui/i18n-settings.js",
+      "normalizedSha256": "b5a4b7aa3241860d12d75157a1e65c9404e85383583a94b6960f5f20482c2cf1"
+    },
+    {
+      "file": "frontend/modules/ui/pro-welcome.js",
+      "normalizedSha256": "d149a63a14017bfcd8dbd408852e3b2bec7a492e59cc1cdfc64c1611088195e8"
+    },
+    {
+      "file": "frontend/modules/ui/settings-vault-view.js",
+      "normalizedSha256": "45fa6fa71a2b5b9bb84c0a343541e506b92a7fa80712f1df64b3d45cf5b1d96e"
+    },
+    {
+      "file": "frontend/modules/ui/skeleton.js",
+      "normalizedSha256": "1a91acd7dd896545e5da9f032f5195a53db72388ceb06a148b16e43524179b1c"
+    },
+    {
+      "file": "frontend/modules/weather/clouds-control.js",
+      "normalizedSha256": "85062ba5665b15a73e042e3e83785a529a648a4e7375718052f360821dbbf847"
+    },
+    {
+      "file": "frontend/modules/weather/display-menu.js",
+      "normalizedSha256": "0618cb8dea9c9f6256d15053e2f72ea85c3d19f97585ab4516fe50e5987921f2"
+    },
+    {
+      "file": "frontend/modules/weather/display-quick.js",
+      "normalizedSha256": "d8ad34592eaebb50b4b53e85dbcfb23e2fda063e09aacb7efd8cad1d8504fc52"
+    },
+    {
+      "file": "frontend/modules/weather/eye-hub-locales.js",
+      "normalizedSha256": "417835e06e07500bf195bd44833720712a0f920a360d4e4d1d15387ecc214b4a"
+    },
+    {
+      "file": "frontend/modules/weather/eye-hub-view.js",
+      "normalizedSha256": "e12c9189ffe51aac307a51d4bdf0d4042703a6a14d7db9f7a645c0b4a25f3826"
+    },
+    {
+      "file": "frontend/modules/weather/eye-hub.js",
+      "normalizedSha256": "c47ae4fdccf4e14915d74746e2391e16fd467c59a2d0e30741324a0d1a737ae8"
+    },
+    {
+      "file": "frontend/modules/weather/legend-preferences.js",
+      "normalizedSha256": "7cd9e0c7b9536f04591098e1d4b84095060f681c12067755edb3a49501d0a0de"
+    },
+    {
+      "file": "frontend/modules/weather/precipitation-control.js",
+      "normalizedSha256": "a7d9df723f6e5780e5802e81a3f4303c04e08b6b6d853c963f9950d06c9fb374"
+    },
+    {
+      "file": "frontend/modules/weather/precipitation-layer.js",
+      "normalizedSha256": "02788f5f3c7cb3a69d1bf8882a279ce069dd2a6bd91a306e9a0a817f372be397"
+    },
+    {
+      "file": "frontend/modules/weather/premium-ui.js",
+      "normalizedSha256": "1a537f7f24bf1ee2f08bbca9029b337ac54bbef415760636f16114a6aeaebaf7"
+    },
+    {
+      "file": "frontend/modules/weather/storm-bubble.js",
+      "normalizedSha256": "7e4e40d911098136c87241ea2ea3cfa8c33381188384692e9ca4e92520d59db8"
+    },
+    {
+      "file": "frontend/modules/weather/synoptic-display.js",
+      "normalizedSha256": "be5654ef944d7428ebe1133b889baa5d395aae1f294126fdca20412ceef5191c"
+    },
+    {
+      "file": "frontend/modules/weather/temperature-display.js",
+      "normalizedSha256": "721cef06975c48eff78da47a309ada99e06d93a026a0e96bac7a5f0d18e276a8"
+    },
+    {
+      "file": "frontend/modules/weather/temperature-legend.js",
+      "normalizedSha256": "32351638abfe6c208299c02d8daf032749ffb4499758e855d2324ee18b04f8bb"
+    },
+    {
+      "file": "frontend/modules/weather/wind-display.js",
+      "normalizedSha256": "38b12d2d30838011320ea9c09355e1a008429b657938eb6811427f527e704797"
+    },
+    {
+      "file": "frontend/modules/weather/wind-legend.js",
+      "normalizedSha256": "2698e78cf74731cdb1404c042af353d50905fa3c94eb5df239bf53989954ca91"
+    },
+    {
+      "file": "frontend/modules/weather/wind-studio.js",
+      "normalizedSha256": "2fbfbf7574be57a8d6a6fe43f9b1a8e100ddc66f7ac0acd61b39d34ea5a2c19f"
+    },
+    {
+      "file": "frontend/modules/weather/legend-hub-model.js",
+      "normalizedSha256": "d174c7b893977a924e250a1c415c1fc0acee38a45a5969f825fa85e54adbc6da"
+    },
+    {
+      "file": "custom_components/gewitterradar/vault_schema.py",
+      "normalizedSha256": "d3d38e757338adcd2ff3dce01ec3894da55bafedc3475a43bda30fdb70564e8d"
+    }
+  ],
+  "reusedBaselineRuns": [
+    {
+      "id": 45150337632,
+      "testedCommit": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+      "name": "GR Synoptik - synchronize public DEV delivery",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45150337632"
+    },
+    {
+      "id": 45150333168,
+      "testedCommit": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+      "name": "GR TEST70-55 Unified Precipitation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45150333168"
+    },
+    {
+      "id": 45150328332,
+      "testedCommit": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+      "name": "GR Synoptik Hi-Res Close - targeted DEV check",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45150328332"
+    },
+    {
+      "id": 45150322948,
+      "testedCommit": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+      "name": "P7-010 isolierte Raster-Mosaik-Abnahme",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45150322948"
+    },
+    {
+      "id": 45150018832,
+      "testedCommit": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+      "name": "GR TEST70-58 WR authority contracts",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45150018832"
+    },
+    {
+      "id": 45150018716,
+      "testedCommit": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+      "name": "V4.11.40 module consistency and Android map preservation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45150018716"
+    },
+    {
+      "id": 45150018838,
+      "testedCommit": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+      "name": "TEST70-76 full repository 900-second audit",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45150018838"
+    },
+    {
+      "id": 45150018655,
+      "testedCommit": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+      "name": "V4.11.106 settings navigation and runtime identity",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45150018655"
+    },
+    {
+      "id": 45150018677,
+      "testedCommit": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+      "name": "Validate Gewitterradar integration",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45150018677"
+    },
+    {
+      "id": 45150018874,
+      "testedCommit": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+      "name": "GR Synoptik DEV - targeted regression",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45150018874"
+    },
+    {
+      "id": 45150018752,
+      "testedCommit": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+      "name": "GR Settings Vault DEV acceptance",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45150018752"
+    },
+    {
+      "id": 45150018638,
+      "testedCommit": "82fbbb2de8ef69eb41bc067531074aacb864f165",
+      "name": "Validate shared Gewitterradar frontend",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45150018638"
+    }
+  ],
+  "guards": [
+    "unchanged form values and event handlers",
+    "unchanged drag/popover/lifecycle",
+    "unchanged scientific renderer except unit decoration",
+    "unchanged precipitation metadata and RY cases",
+    "no empty details; 0/false metadata retained",
+    "only exact NASA GIBS source path resolved"
+  ]
+}

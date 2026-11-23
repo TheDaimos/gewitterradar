@@ -32,3 +32,8 @@ Die native Select-Textfarbe bleibt explizit lesbar. Nur die dekorative, nichtint
 ## Konkreter öffentlicher Regressionstest-Konflikt
 
 HA-Runtime-Gate auf c3bb6f98: 80 PASS, ein historischer Test untersagt jede weitere Verwendung des rechten Silber-Chevrons. Die neu ausdrücklich beauftragte Wiederverwendung wird gezielt im bestehenden Retentionsvertrag freigegeben: ab 4.12.10 ausschließlich zusätzlicher Consumer `legend-hub-view.js` für genau dieses eine Asset. Alle vier Originalbytes, Lossless-WebP/104×104/Größenbegrenzungen, die drei übrigen exklusiven Consumer und vollständiger Kompasscode bleiben geschützt. Kein pauschales Löschen/Abschwächen des Tests. Gleicher Cache-Schlüssel wie beim ursprünglichen Consumer verhindert doppeltes Laden desselben Moduls.
+
+
+## Abgeschlossener technischer Lieferstand
+
+ERLEDIGT: Quellcommit `98fd56b0ca75ec06c95d9e8e14ab63f978015081`, gezielte Desktop-/Tablet-/Android-Abnahme im öffentlichen Linux-Browserlauf erfolgreich; alle 8 aktuellen Pflichtketten grün. Zwölf unveränderliche V4.12.9-Nachweise per striktem Scope-Guard geprüft/wiederverwendet. Originale Master, Messwerte, Paletten, Provider, Vault, Gesten und geschützte Tags erhalten. Zwei installierbare kanonische Pakete, vollständiger Git-Blob-/CRC-Abgleich und Bytegleichheit mit Linux CI bestanden. [Kurzer Prüfbericht](GR_412_PREMIUM_DIALOG_REPORT_2026-11-23.md) mit zwölf repräsentativen Bildern. Dokumentationsabschluss verändert die getesteten Produktbäume nicht. DEV-Prerelease v4.12.10-dev, keine FINAL-Freigabe; reale VM109-/Android-Abnahme weiterhin beim Betreiber, VM101 unangetastet.
