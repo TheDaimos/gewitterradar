@@ -21,7 +21,7 @@ export function ensureLegendScaleStyle(shadow){
 }
 const SIZES={S:200,M:280,L:360,XL:440};
 export function renderLegendScale(model,options={},available=430){
- const c=normalizeLegendOptions(options),vertical=c.orientation==='vertical',length=Math.max(60,Math.min(SIZES[c.size],available)),root=document.createElement('div'),split=c.labels==='inside'&&c.ticks==='inside';
+ const c=normalizeLegendOptions(options),vertical=c.orientation==='vertical',length=Math.max(60,Math.min(options.preview?Math.max(SIZES[c.size],available*({S:.72,M:.82,L:.92,XL:1})[c.size]):SIZES[c.size],available)),root=document.createElement('div'),split=c.labels==='inside'&&c.ticks==='inside';
  root.className='lh-scale '+c.orientation+' '+c.style;root.dataset.labels=c.labels;root.dataset.ticks=c.ticks;root.dataset.split=String(split);root.style.setProperty('--lh-length',length+'px');root.style.setProperty('--lh-metal',({brass:'#b99c57',platinum:'#e5e4e2',gold:'#f4c65d',silver:'#bfc7d1',black:'#111318'})[c.material]);
  const entries=model.entries||[],ticks=model.ticks?.length?model.ticks:entries.map((e,i)=>({position:i/Math.max(1,entries.length),label:String(e.value??e.label)})),labels=fitLegendLabels(ticks,length,{vertical,density:c.density,measureText:measure}),textWidth=Math.ceil(Math.max(0,...labels.map(t=>measure(t.label))))+4;
  const needsUnit=model.unit&&!labels.every(t=>String(t.label).includes(model.unit)),unitNeeded=needsUnit&&!options.unitInCaption,unitHeight=unitNeeded?14:0;root.dataset.unit=model.unit||'';root.dataset.needsUnit=String(!!needsUnit);

@@ -1,0 +1,13 @@
+# Legend Hub – Vorschau-/Zentrierungsfeinschliff
+
+Vor Produktänderungen: `deploy/dev` lokal/remote `11a1376f9b9e1a9079ef62e80b87048341651e7f`, Produktquelle `98fd56b0`, V4.12.10 / HA 0.25.171. Keine bestehenden Änderungen versionierter Dateien. Unversionierte Arbeitsordner bleiben erhalten. WR-HEAD `728cf9ff8291fdb2e56b95e62ca1d48af7217039`; nur Schutzregel gelesen, keine WR-/VM-Aktion. Bootstrap, Modulschutz, Referenzpaar und Aura-Akte gelesen.
+
+Konkrete Ursache: `openDialog` rendert vor `showModal`; `form.clientWidth` ist 0. Beim Niederschlag wird daraus `Math.min(430, -28)`, anschließend greifen 60 px Mindestlänge. Zusätzlich begrenzen der pauschale 430-px-Cap und ein für Karteninstrumente bestimmtes Max-Content-Grid die Vorschau. Korrektur ausschließlich im Dialog: sichtbare Containermaße, responsive Vorschaukacheln, ein optionales Vorschaulängenbudget im bestehenden Renderer. Ohne Vorschaumarker bleibt dessen Kartenpfad exakt gleich; kein Transform-Scaling und keine Änderung der Overlay-Renderer.
+
+Die fünf benutzten Icon-Dateien einmalig anhand ihrer sichtbaren Alpha-Kontur (Schwelle 32 wie vorhandene Metriken) vermessen. Wind/Temperatur sind mittig; die drei PNG-Motive haben unterschiedliche Konturzentren. Nur Legend-Hub-Slots erhalten daraus abgeleitete quellenspezifische Subpixelkorrekturen bei unveränderter Motivgröße. Eye-Metriken, Originaldateien und Hauptsymbol bleiben unverändert. Keine Laufzeit-Pixelanalyse/Animierungsarbeit.
+
+Weitere Grenze: gemeinsame Platin-Dialog-CSS kompaktieren, vorhandene rechte Silber-Runtime-Chevrons richtungsgetreu für die Slotbuttons drehen. Keine neue Grafik/Assetkopie. Native Formular-/Move-/Drag-/Vault-Handler, Profile und Konfigurationsschlüssel bleiben erhalten. Alle tatsächlichen Legenden auf der Karte werden per exaktem Körpervergleich geschützt.
+
+OFFEN: drei UI-Komponenten korrigieren, gezielter Scope-/Browsernachweis Desktop/Tablet/Android, nächste reguläre Version, kanonische Pakete und DEV-Release mit kurzem Bericht. Reale VM109-/Android-Abnahme weiter beim Betreiber; VM101 und geschützte Referenzen unangetastet.
+
+ERLEDIGT: fünf UI-Punkte; V4.12.11 / HA 0.25.172 / 41211r1 / E412-11A1, einmal gebaut. Scope-/Originalasset-Guard, reale lokale Frontend-Prüfung mit synthetischem HA/WR in drei Viewports, alle sechs Icon-Zentren, Maus-/emulierter Touch-Long-Press, Sortierung/Reload, Original-Karteninhalt bei Preview/Resize, S/M/L/XL, drei Stile, horizontal/vertikal bestanden. Syntax, Identität, Quellen/Hub-Modelle, Aura-/FINAL-Isolation, Hi-Res-Retention und DRA-Vertrag bestanden. Nachweise unter docs/evidence/gr-v412-polish. OFFEN: Quellcommit/push, Pflicht-CI, Original-Git-Pakete, kurzer Abschlussbericht und DEV-Prerelease. Keine reale VM-/Geräteabnahme behauptet.

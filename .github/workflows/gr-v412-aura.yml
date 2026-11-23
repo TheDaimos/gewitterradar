@@ -20,14 +20,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Verify presentation-only scope before reusing V4.12.9 browser evidence
+      - name: Verify presentation-only scope before reusing pinned browser evidence
         id: ui_scope
         env:
           GR_PREMIUM_PROOF: ${{ runner.temp }}/premium-evidence/source-proof.json
+          GR_POLISH_PROOF: ${{ runner.temp }}/polish-evidence/source-proof.json
         run: |
           if node -e "process.exit(require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.12.10\"')?0:1)"; then
             node scripts/test-v412-premium-scope.mjs
             echo "focused=true" >> "$GITHUB_OUTPUT"
+          elif node -e "process.exit(require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.12.11\"')?0:1)"; then
+            node scripts/test-v412-polish-scope.mjs
+            echo "focused=true" >> "$GITHUB_OUTPUT"
+            echo "polish=true" >> "$GITHUB_OUTPUT"
           else
             echo "focused=false" >> "$GITHUB_OUTPUT"
           fi
@@ -68,11 +73,17 @@ jobs:
           node scripts/test-settings-vault-browser.cjs
           node scripts/test-eye-wow-browser.cjs
       - name: Focused premium dialog, units and source information acceptance
-        if: steps.ui_scope.outputs.focused == 'true'
+        if: steps.ui_scope.outputs.focused == 'true' && steps.ui_scope.outputs.polish != 'true'
         env:
           NODE_PATH: ${{ runner.temp }}/aura/node_modules
           GR_PREMIUM_EVIDENCE: ${{ runner.temp }}/premium-evidence
         run: node scripts/test-v412-premium-browser.cjs
+      - name: Focused icon centers, compact settings and live previews
+        if: steps.ui_scope.outputs.polish == 'true'
+        env:
+          NODE_PATH: ${{ runner.temp }}/aura/node_modules
+          GR_POLISH_EVIDENCE: ${{ runner.temp }}/polish-evidence
+        run: node scripts/test-v412-polish-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -83,4 +94,5 @@ jobs:
             ${{ runner.temp }}/minimal-evidence
             ${{ runner.temp }}/source-evidence
             ${{ runner.temp }}/premium-evidence
+            ${{ runner.temp }}/polish-evidence
           if-no-files-found: ignore

@@ -1,6 +1,6 @@
-import {ensureLegendScaleStyle} from './legend-scale.js?v=41210r1';
-import {PREMIUM_INFO} from './premium-ui.js?v=41210r1';
-import {legendOptions} from './legend-preferences.js?v=41210r1';
+import {ensureLegendScaleStyle} from './legend-scale.js?v=41211r1';
+import {PREMIUM_INFO} from './premium-ui.js?v=41211r1';
+import {legendOptions} from './legend-preferences.js?v=41211r1';
 import {legendInk} from './legend-contrast.js?v=4124r1';
 
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));

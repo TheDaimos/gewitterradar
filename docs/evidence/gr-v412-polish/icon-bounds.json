@@ -1,0 +1,72 @@
+[
+  {
+    "file": "gr-wind-animation-toggle-premium-v1-272.webp",
+    "size": [
+      272,
+      272
+    ],
+    "bounds": [
+      8,
+      8,
+      264,
+      264
+    ],
+    "sha256": "442dc4da797d12b756ee1dbf9bd2b18e5c09e1ec829ab0bdc08fef2d72b69b2a"
+  },
+  {
+    "file": "gr-temperature-premium-v1-272.webp",
+    "size": [
+      272,
+      272
+    ],
+    "bounds": [
+      8,
+      8,
+      264,
+      264
+    ],
+    "sha256": "544a76ead85e426b235c89d88237244c00f1884ee789f4f0ba7eff0022daa782"
+  },
+  {
+    "file": "gr-precipitation-premium-original.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "bounds": [
+      125,
+      126,
+      1102,
+      1118
+    ],
+    "sha256": "df68d55dd9defe16e6df55c7a4b97fe62df4ae4cd04fcfd5f23c62cc6f8bc274"
+  },
+  {
+    "file": "gr-synoptic-high-low-isobars-premium-original.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "bounds": [
+      6,
+      4,
+      1220,
+      1238
+    ],
+    "sha256": "ed600af5c6d7cfeeb053a1442cca5126a905b453193530e2f553898a99a80437"
+  },
+  {
+    "file": "gr-weather-display-premium-original.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "bounds": [
+      37,
+      52,
+      1182,
+      1220
+    ],
+    "sha256": "c0c18f4f283e350fb9612ed620af426f2ac9f8d270e8a36016c29b1fc48cecf2"
+  }
+]

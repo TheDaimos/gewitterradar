@@ -1,0 +1,110 @@
+{
+  "baselineSource": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+  "baselineDocumentation": "11a1376f9b9e1a9079ef62e80b87048341651e7f",
+  "scope": "three presentation modules; preview-only length budget and cached slot centers",
+  "unchangedBodies": [
+    "frontend/modules/core/card-lifecycle.js",
+    "frontend/modules/core/settings-vault.js",
+    "frontend/modules/diagnostics/cockpit.js",
+    "frontend/modules/diagnostics/raster-lab.js",
+    "frontend/modules/fullscreen/map-display.js",
+    "frontend/modules/instruments/compass-selector.js",
+    "frontend/modules/map/clusters-recent.js",
+    "frontend/modules/ui/controls.js",
+    "frontend/modules/ui/first-steps.js",
+    "frontend/modules/ui/i18n-settings.js",
+    "frontend/modules/ui/pro-welcome.js",
+    "frontend/modules/ui/settings-vault-view.js",
+    "frontend/modules/ui/skeleton.js",
+    "frontend/modules/weather/clouds-control.js",
+    "frontend/modules/weather/display-menu.js",
+    "frontend/modules/weather/display-quick.js",
+    "frontend/modules/weather/eye-hub-locales.js",
+    "frontend/modules/weather/eye-hub-view.js",
+    "frontend/modules/weather/eye-hub.js",
+    "frontend/modules/weather/legend-instrument.js",
+    "frontend/modules/weather/legend-overlay.js",
+    "frontend/modules/weather/legend-precipitation.js",
+    "frontend/modules/weather/legend-preferences.js",
+    "frontend/modules/weather/precipitation-control.js",
+    "frontend/modules/weather/precipitation-layer.js",
+    "frontend/modules/weather/premium-legend.js",
+    "frontend/modules/weather/premium-ui.js",
+    "frontend/modules/weather/storm-bubble.js",
+    "frontend/modules/weather/synoptic-display.js",
+    "frontend/modules/weather/temperature-display.js",
+    "frontend/modules/weather/temperature-legend.js",
+    "frontend/modules/weather/wind-display.js",
+    "frontend/modules/weather/wind-legend.js",
+    "frontend/modules/weather/wind-studio.js",
+    "frontend/modules/weather/legend-information.js",
+    "frontend/modules/weather/legend-hub-model.js",
+    "frontend/modules/weather/eye-hub-model.js",
+    "custom_components/gewitterradar/vault_schema.py"
+  ],
+  "reusedBaselineRuns": [
+    {
+      "id": 45192108965,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "GR TEST70-58 WR authority contracts",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108965"
+    },
+    {
+      "id": 45192108650,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "TEST70-76 full repository 900-second audit",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108650"
+    },
+    {
+      "id": 45192109100,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "V4.11.40 module consistency and Android map preservation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192109100"
+    },
+    {
+      "id": 45192108591,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "V4.11.106 settings navigation and runtime identity",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108591"
+    },
+    {
+      "id": 45192108460,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "Validate Gewitterradar integration",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108460"
+    },
+    {
+      "id": 45192108826,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "GR Settings Vault DEV acceptance",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108826"
+    },
+    {
+      "id": 45192108685,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "GR Synoptik DEV - targeted regression",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108685"
+    },
+    {
+      "id": 45192108684,
+      "testedCommit": "98fd56b0ca75ec06c95d9e8e14ab63f978015081",
+      "name": "Validate shared Gewitterradar frontend",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45192108684"
+    }
+  ],
+  "guards": [
+    "original slot sizing and source assets",
+    "unchanged native Hub/form/drag handlers",
+    "exact nonpreview renderer",
+    "unchanged map overlay bodies",
+    "unchanged Eye/Vault/configuration contracts"
+  ]
+}
