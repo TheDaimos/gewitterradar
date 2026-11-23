@@ -6,7 +6,11 @@ import {withoutLegendPresentation} from '../tests/with-legend-presentation.mjs';
 const aura='b184aa475d7dede993bf9ed7e699c9dfffba7248',final='af70fe2bf85a88fdea402cf46e3bd6a11903189b';
 const old=(ref,path)=>execFileSync('git',['show',ref+':'+path],{encoding:'utf8',maxBuffer:30*1024*1024});
 for(const name of ['eye-hub.js','eye-hub-model.js','eye-hub-registry.js','eye-hub-view.js','eye-hub-locales.js','eye-neon.js','eye-neon-wow.js','eye-neon-energy.js','control-touch.js','storm-bubble.js','display-menu.js','display-quick.js','premium-ui.js']){
- const path='frontend/modules/weather/'+name;assert.equal(normaliseGeneratedModule(readFileSync(path,'utf8')),normaliseGeneratedModule(old(aura,path)),name+' protected technical Aura body');
+ const path='frontend/modules/weather/'+name;let current=readFileSync(path,'utf8');
+ // The explicitly requested V4.12.12 frame reuse changes this one section's
+ // classes only. All Aura markup, colours, handlers, geometry and CSS stay exact.
+ if(name==='eye-hub-view.js')current=current.replace('<section class="eye-aura-palette gr-premium-metal-surface" role="dialog" aria-label="${esc(this.t(\'color\'))}">','<section role="dialog" aria-label="${esc(this.t(\'color\'))}">');
+ assert.equal(normaliseGeneratedModule(current),normaliseGeneratedModule(old(aura,path)),name+' protected technical Aura body');
 }
 for(const name of ['wind-display.js','temperature-display.js','synoptic-display.js','precipitation-layer.js','wind-data.js','wind-field.js','wind-canvas.js','temperature-data.js','temperature-field.js','temperature-canvas.js','snake-canvas.js','snake-geometry.js','snake-config.js']){
  const path='frontend/modules/weather/'+name;assert.equal(normaliseGeneratedModule(withoutLegendPresentation(readFileSync(path,'utf8'),path)),normaliseGeneratedModule(old(final,path)),name+' protected FINAL weather logic');

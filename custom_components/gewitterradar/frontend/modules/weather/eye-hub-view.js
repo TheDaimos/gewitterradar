@@ -1,6 +1,6 @@
 import {bindTouchDragFallback} from './control-touch.js?v=411216r1';
 import {NEON_CSS} from './eye-neon.js?v=4121r1';
-import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi,ensurePremiumUi,enhancePremiumSections} from './premium-ui.js?v=41211r1';
+import {premiumAction,premiumEscape as esc,PREMIUM_CLOSE,readPremiumUi,savePremiumUi,ensurePremiumUi,enhancePremiumSections} from './premium-ui.js?v=41212r1';
 import {compassDialogSurface} from '../fullscreen/compass-preview-style.js?v=411174r1';
 import {EYE_NO_COLOR,EYE_COLORS,EYE_MATERIALS,EYE_ENERGY_MODES,EYE_UI_SLOTS,eyeSizePercent,eyeSizePixels,eyeGlowExtent,visibleEyeSlots,eyeRingRadius,eyeAuraOn,eyeAuraRings,eyeBubbleAuraEnabled,eyeBubbleLayout,eyeIconBox,eyeIconTarget,eyeBackdropDiameter,eyeStudioExtent} from './eye-hub-model.js?v=4121r1';
 import {eyeEntryEnabled,EYE_MASTERS} from './eye-hub-registry.js?v=411230r1';
@@ -181,7 +181,7 @@ export class EyeConfigurator{
    return `<button class="eye-color-choice" type="button" data-eye-paint="${color}" data-eye-paint-id="${id}" aria-pressed="${config.colors[id]===color}"><i aria-hidden="true" style="--eye-color:${color}${preview}"></i><span>${esc(this.t(material?.key||names[index]))}</span></button>`;
   }).join('')+`<button class="eye-color-choice" type="button" data-eye-paint="${EYE_NO_COLOR}" data-eye-paint-id="${id}" aria-pressed="${config.colors[id]===EYE_NO_COLOR}"><i data-no-color aria-hidden="true"></i><span>${esc(this.t('noColor'))}</span></button>`;
   popup.className='eye-hub-popup';
-  popup.innerHTML=`<section role="dialog" aria-label="${esc(this.t('color'))}"><label class="eye-bubble-aura-setting">${esc(this.t('bubbleAura'))}<input type="checkbox" role="switch" data-eye-bubble-aura ${eyeBubbleAuraEnabled(config,id)?'checked':''}></label><h3>${esc(this.t('color'))}</h3><div class="eye-colors">${swatches}</div><button class="eye-metal-button" type="button" data-eye-dismiss>${esc(this.t('cancel'))}</button></section>`;
+  popup.innerHTML=`<section class="eye-aura-palette gr-premium-metal-surface" role="dialog" aria-label="${esc(this.t('color'))}"><label class="eye-bubble-aura-setting">${esc(this.t('bubbleAura'))}<input type="checkbox" role="switch" data-eye-bubble-aura ${eyeBubbleAuraEnabled(config,id)?'checked':''}></label><h3>${esc(this.t('color'))}</h3><div class="eye-colors">${swatches}</div><button class="eye-metal-button" type="button" data-eye-dismiss>${esc(this.t('cancel'))}</button></section>`;
   this.colorOpener=opener;this.popup=popup;this.dialog.append(popup);
   popup.querySelector('[data-eye-dismiss]').onclick=()=>this.closePopup();
   popup.querySelector('[data-eye-bubble-aura]').onchange=event=>this.owner._eyeHubSetBubbleAura(id,event.target.checked);

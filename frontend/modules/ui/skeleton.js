@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
-import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=41211r1';
-import { FIRST_STEPS_DISMISSED, openFirstSteps } from './first-steps.js?v=41211r1';
-import { settingsStorage } from '../core/settings-vault.js?v=41211r1';
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=41212r1';
+import { FIRST_STEPS_DISMISSED, openFirstSteps } from './first-steps.js?v=41212r1';
+import { settingsStorage } from '../core/settings-vault.js?v=41212r1';
 const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
 const SETTINGS_ABOUT_INFO = new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const PRO_DISCOVERY_TIMEOUT = 8000;
@@ -19,7 +19,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.68",
+  "version": "1.1.69",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
@@ -6204,6 +6204,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           /* V4.06 accepted UI polish: premium frame and symmetric action tiles. */
           /* V4.06 pass2: Welcome-derived 2px metal frame, reduced diffuse gold shadow. */
           .settings-dialog,
+          .eye-hub-popup>section.eye-aura-palette.gr-premium-metal-surface,
           .gr-pro-welcome.gr-premium-metal-surface,.gr-pro-feature.gr-premium-metal-surface,
           .weather-legend-overlay.gr-premium-metal-surface,
           .weather-display-panel.gr-premium-metal-surface,

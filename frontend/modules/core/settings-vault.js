@@ -1,4 +1,4 @@
-import {APPLICATION_RELEASE} from '../../version.js?v=41211r1';
+import {APPLICATION_RELEASE} from '../../version.js?v=41212r1';
 
 export const VAULT_SCHEMA = 1;
 const PREFIX = 'gewitterradar/settings/';

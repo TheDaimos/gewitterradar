@@ -1,0 +1,142 @@
+{
+  "baselineSource": "cf64b3352eaceefe99552573f23722712a47c66f",
+  "baselineDocumentation": "33631a6798d9c697bf361ab0060eb9e72c61c9b1",
+  "scope": "one legend form/decorator; one Aura section class; one additional consumer of unchanged gold CSS",
+  "unchangedBodies": [
+    "frontend/modules/core/card-lifecycle.js",
+    "frontend/modules/core/settings-vault.js",
+    "frontend/modules/diagnostics/cockpit.js",
+    "frontend/modules/diagnostics/raster-lab.js",
+    "frontend/modules/fullscreen/map-display.js",
+    "frontend/modules/instruments/compass-selector.js",
+    "frontend/modules/map/clusters-recent.js",
+    "frontend/modules/ui/controls.js",
+    "frontend/modules/ui/first-steps.js",
+    "frontend/modules/ui/i18n-settings.js",
+    "frontend/modules/ui/pro-welcome.js",
+    "frontend/modules/ui/settings-vault-view.js",
+    "frontend/modules/weather/clouds-control.js",
+    "frontend/modules/weather/display-menu.js",
+    "frontend/modules/weather/display-quick.js",
+    "frontend/modules/weather/eye-hub-locales.js",
+    "frontend/modules/weather/eye-hub.js",
+    "frontend/modules/weather/legend-hub.js",
+    "frontend/modules/weather/legend-instrument.js",
+    "frontend/modules/weather/legend-overlay.js",
+    "frontend/modules/weather/legend-preferences.js",
+    "frontend/modules/weather/precipitation-control.js",
+    "frontend/modules/weather/precipitation-layer.js",
+    "frontend/modules/weather/premium-legend.js",
+    "frontend/modules/weather/premium-ui.js",
+    "frontend/modules/weather/storm-bubble.js",
+    "frontend/modules/weather/synoptic-display.js",
+    "frontend/modules/weather/temperature-display.js",
+    "frontend/modules/weather/temperature-legend.js",
+    "frontend/modules/weather/wind-display.js",
+    "frontend/modules/weather/wind-legend.js",
+    "frontend/modules/weather/wind-studio.js",
+    "frontend/modules/weather/legend-scale.js",
+    "frontend/modules/weather/legend-precipitation.js",
+    "frontend/modules/weather/legend-hub-model.js",
+    "frontend/modules/weather/eye-hub-model.js",
+    "frontend/modules/weather/eye-neon.js",
+    "frontend/modules/weather/eye-neon-wow.js",
+    "frontend/modules/weather/eye-neon-energy.js",
+    "frontend/modules/weather/control-touch.js",
+    "custom_components/gewitterradar/vault_schema.py"
+  ],
+  "reusedBaselineRuns": [
+    {
+      "id": 45203833908,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "Validate Gewitterradar integration",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203833908"
+    },
+    {
+      "id": 45203833982,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "GR Settings Vault DEV acceptance",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203833982"
+    },
+    {
+      "id": 45203833900,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "GR Synoptik DEV - targeted regression",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203833900"
+    },
+    {
+      "id": 45203833886,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "GR Synoptik Hi-Res Close - targeted DEV check",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203833886"
+    },
+    {
+      "id": 45203834088,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "V4.11.40 module consistency and Android map preservation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203834088"
+    },
+    {
+      "id": 45203834301,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "GR TEST70-55 Unified Precipitation",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203834301"
+    },
+    {
+      "id": 45203833902,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "TEST70-76 full repository 900-second audit",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203833902"
+    },
+    {
+      "id": 45203834003,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "GR Synoptik - synchronize public DEV delivery",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203834003"
+    },
+    {
+      "id": 45203833980,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "GR TEST70-58 WR authority contracts",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203833980"
+    },
+    {
+      "id": 45203834093,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "V4.11.106 settings navigation and runtime identity",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203834093"
+    },
+    {
+      "id": 45203834008,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "P7-010 isolierte Raster-Mosaik-Abnahme",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203834008"
+    },
+    {
+      "id": 45203834028,
+      "testedCommit": "cf64b3352eaceefe99552573f23722712a47c66f",
+      "name": "Validate shared Gewitterradar frontend",
+      "conclusion": "success",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45203834028"
+    }
+  ],
+  "guards": [
+    "all native saves/slot/drag handlers exact",
+    "all configuration keys retained",
+    "all numerical and map renderers exact",
+    "entire Eye body except one class exact",
+    "all existing skeleton and gold CSS declarations exact",
+    "all source assets exact"
+  ]
+}

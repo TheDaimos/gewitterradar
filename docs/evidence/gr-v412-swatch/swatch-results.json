@@ -1,0 +1,1151 @@
+[
+  {
+    "name": "desktop",
+    "width": 1280,
+    "height": 900,
+    "touchEmulation": false,
+    "dialogs": [
+      {
+        "id": "precipitation",
+        "geometry": {
+          "width": 620,
+          "columns": 2,
+          "overflow": false,
+          "fields": [
+            {
+              "kind": "BUTTON",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            }
+          ]
+        },
+        "preview": {
+          "width": 598,
+          "overflow": false,
+          "lengths": [
+            280,
+            280,
+            473.96
+          ]
+        }
+      },
+      {
+        "id": "wind",
+        "geometry": {
+          "width": 620,
+          "columns": 2,
+          "overflow": false,
+          "fields": [
+            {
+              "kind": "BUTTON",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            }
+          ]
+        },
+        "preview": {
+          "width": 598,
+          "overflow": false,
+          "lengths": [
+            473.96
+          ]
+        }
+      },
+      {
+        "id": "temperature",
+        "geometry": {
+          "width": 620,
+          "columns": 2,
+          "overflow": false,
+          "fields": [
+            {
+              "kind": "BUTTON",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            }
+          ]
+        },
+        "preview": {
+          "width": 598,
+          "overflow": false,
+          "lengths": [
+            473.96
+          ]
+        }
+      },
+      {
+        "id": "synoptic",
+        "geometry": {
+          "width": 620,
+          "columns": 2,
+          "overflow": false,
+          "fields": [
+            {
+              "kind": "BUTTON",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            }
+          ]
+        },
+        "preview": {
+          "width": 598,
+          "overflow": false,
+          "lengths": []
+        }
+      }
+    ],
+    "swatchCounts": {
+      "material": 5,
+      "foreground": 7
+    },
+    "nativeKeyboard": true,
+    "selectionPreview": true,
+    "synopticHiddenValuesPreserved": true,
+    "synopticMapBodyIdentical": true,
+    "auraFrame": {
+      "border": "2px",
+      "background": "radial-gradient(circle at 15% 0%, rgba(230, 184, 85, 0.09), rgba(0, 0, 0, 0) 34%), linear-gradient(rgba(20, 28, 38, 0.99), rgba(7, 12, 18, 0.996)), linear-gradient(145deg, rgb(227, 193, 125), rgb(128, 96, 45) 16%, rgb(249, 227, 173) 29%, rgb(115, 80, 36) 45%, rgb(186, 145, 68) 57%, rgb(255, 229, 160) 74%, rgb(97, 71, 35) 86%, rgb(203, 163, 92))",
+      "shadow": "rgba(0, 0, 0, 0.72) 0px 30px 90px 0px, rgba(255, 236, 181, 0.08) 0px 0px 0px 1px inset, rgba(255, 244, 213, 0.1) 0px 1px 0px 0px inset, rgba(215, 164, 67, 0.055) 0px 0px 8px 0px",
+      "overflow": false
+    },
+    "auraChoiceCount": 11,
+    "reload": true,
+    "errors": []
+  },
+  {
+    "name": "tablet",
+    "width": 1024,
+    "height": 768,
+    "touchEmulation": true,
+    "dialogs": [
+      {
+        "id": "precipitation",
+        "geometry": {
+          "width": 620,
+          "columns": 2,
+          "overflow": false,
+          "fields": [
+            {
+              "kind": "BUTTON",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            }
+          ]
+        },
+        "preview": {
+          "width": 598,
+          "overflow": false,
+          "lengths": [
+            280,
+            280,
+            473.96
+          ]
+        }
+      },
+      {
+        "id": "wind",
+        "geometry": {
+          "width": 620,
+          "columns": 2,
+          "overflow": false,
+          "fields": [
+            {
+              "kind": "BUTTON",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            }
+          ]
+        },
+        "preview": {
+          "width": 598,
+          "overflow": false,
+          "lengths": [
+            473.96
+          ]
+        }
+      },
+      {
+        "id": "temperature",
+        "geometry": {
+          "width": 620,
+          "columns": 2,
+          "overflow": false,
+          "fields": [
+            {
+              "kind": "BUTTON",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            }
+          ]
+        },
+        "preview": {
+          "width": 598,
+          "overflow": false,
+          "lengths": [
+            473.96
+          ]
+        }
+      },
+      {
+        "id": "synoptic",
+        "geometry": {
+          "width": 620,
+          "columns": 2,
+          "overflow": false,
+          "fields": [
+            {
+              "kind": "BUTTON",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "SELECT",
+              "width": 129.796875,
+              "height": 46
+            }
+          ]
+        },
+        "preview": {
+          "width": 598,
+          "overflow": false,
+          "lengths": []
+        }
+      }
+    ],
+    "swatchCounts": {
+      "material": 5,
+      "foreground": 7
+    },
+    "nativeKeyboard": true,
+    "selectionPreview": true,
+    "synopticHiddenValuesPreserved": true,
+    "synopticMapBodyIdentical": true,
+    "auraFrame": {
+      "border": "2px",
+      "background": "radial-gradient(circle at 15% 0%, rgba(230, 184, 85, 0.09), rgba(0, 0, 0, 0) 34%), linear-gradient(rgba(20, 28, 38, 0.99), rgba(7, 12, 18, 0.996)), linear-gradient(145deg, rgb(227, 193, 125), rgb(128, 96, 45) 16%, rgb(249, 227, 173) 29%, rgb(115, 80, 36) 45%, rgb(186, 145, 68) 57%, rgb(255, 229, 160) 74%, rgb(97, 71, 35) 86%, rgb(203, 163, 92))",
+      "shadow": "rgba(0, 0, 0, 0.72) 0px 30px 90px 0px, rgba(255, 236, 181, 0.08) 0px 0px 0px 1px inset, rgba(255, 244, 213, 0.1) 0px 1px 0px 0px inset, rgba(215, 164, 67, 0.055) 0px 0px 8px 0px",
+      "overflow": false
+    },
+    "auraChoiceCount": 11,
+    "reload": true,
+    "errors": []
+  },
+  {
+    "name": "android",
+    "width": 393,
+    "height": 851,
+    "touchEmulation": true,
+    "dialogs": [
+      {
+        "id": "precipitation",
+        "geometry": {
+          "width": 359,
+          "columns": 1,
+          "overflow": false,
+          "fields": [
+            {
+              "kind": "BUTTON",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            }
+          ]
+        },
+        "preview": {
+          "width": 337,
+          "overflow": false,
+          "lengths": [
+            280,
+            280,
+            280
+          ]
+        }
+      },
+      {
+        "id": "wind",
+        "geometry": {
+          "width": 359,
+          "columns": 1,
+          "overflow": false,
+          "fields": [
+            {
+              "kind": "BUTTON",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            }
+          ]
+        },
+        "preview": {
+          "width": 337,
+          "overflow": false,
+          "lengths": [
+            280
+          ]
+        }
+      },
+      {
+        "id": "temperature",
+        "geometry": {
+          "width": 359,
+          "columns": 1,
+          "overflow": false,
+          "fields": [
+            {
+              "kind": "BUTTON",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            }
+          ]
+        },
+        "preview": {
+          "width": 337,
+          "overflow": false,
+          "lengths": [
+            280
+          ]
+        }
+      },
+      {
+        "id": "synoptic",
+        "geometry": {
+          "width": 359,
+          "columns": 1,
+          "overflow": false,
+          "fields": [
+            {
+              "kind": "BUTTON",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            },
+            {
+              "kind": "SELECT",
+              "width": 0,
+              "height": 0
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "INPUT",
+              "width": 24,
+              "height": 24
+            },
+            {
+              "kind": "SELECT",
+              "width": 140,
+              "height": 46
+            }
+          ]
+        },
+        "preview": {
+          "width": 337,
+          "overflow": false,
+          "lengths": []
+        }
+      }
+    ],
+    "swatchCounts": {
+      "material": 5,
+      "foreground": 7
+    },
+    "nativeKeyboard": true,
+    "selectionPreview": true,
+    "synopticHiddenValuesPreserved": true,
+    "synopticMapBodyIdentical": true,
+    "auraFrame": {
+      "border": "2px",
+      "background": "radial-gradient(circle at 15% 0%, rgba(230, 184, 85, 0.09), rgba(0, 0, 0, 0) 34%), linear-gradient(rgba(20, 28, 38, 0.99), rgba(7, 12, 18, 0.996)), linear-gradient(145deg, rgb(227, 193, 125), rgb(128, 96, 45) 16%, rgb(249, 227, 173) 29%, rgb(115, 80, 36) 45%, rgb(186, 145, 68) 57%, rgb(255, 229, 160) 74%, rgb(97, 71, 35) 86%, rgb(203, 163, 92))",
+      "shadow": "rgba(0, 0, 0, 0.72) 0px 30px 90px 0px, rgba(255, 236, 181, 0.08) 0px 0px 0px 1px inset, rgba(255, 244, 213, 0.1) 0px 1px 0px 0px inset, rgba(215, 164, 67, 0.055) 0px 0px 8px 0px",
+      "overflow": false
+    },
+    "auraChoiceCount": 11,
+    "reload": true,
+    "errors": []
+  }
+]

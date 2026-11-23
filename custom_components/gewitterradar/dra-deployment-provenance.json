@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.11",
-  "build": "V4.12.11-DEV-2026-11-23",
-  "runtimeRevision": "41211r1",
-  "moduleSetId": "E412-11A1",
-  "baselineFeatureHead": "11a1376f9b9e1a9079ef62e80b87048341651e7f",
+  "productVersion": "4.12.12",
+  "build": "V4.12.12-DEV-2026-11-23",
+  "runtimeRevision": "41212r1",
+  "moduleSetId": "E412-12A1",
+  "baselineFeatureHead": "33631a6798d9c697bf361ab0060eb9e72c61c9b1",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Legend Hub icon centers, compact settings and large live previews",
+    "purpose": "Legend Hub visual color choices, compact Synoptic settings and original Aura gold frame",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
