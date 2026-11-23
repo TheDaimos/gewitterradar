@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.9",
-  "build": "V4.12.9-DEV-2026-11-23",
-  "runtimeRevision": "4129r1",
-  "moduleSetId": "E412-9A1",
-  "baselineFeatureHead": "5d040c538bedd0a04ee783b4bf8cf2bcc6ccc913",
+  "productVersion": "4.12.10",
+  "build": "V4.12.10-DEV-2026-11-23",
+  "runtimeRevision": "41210r1",
+  "moduleSetId": "E412-10A1",
+  "baselineFeatureHead": "020481e4f880c4f90779c8434b29418691cb5cb9",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Legend Hub: stable sources, live preview, clear glass and structured source information",
+    "purpose": "Legend Hub Premium dialogs, compact units and source information",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

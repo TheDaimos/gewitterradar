@@ -1,9 +1,9 @@
-import {installWeatherLegendOverlay} from './legend-overlay.js?v=4129r1';
-import {createLegendInstrument} from './legend-instrument.js?v=4129r1';
-import {legendOptions} from './legend-preferences.js?v=4129r1';
+import {installWeatherLegendOverlay} from './legend-overlay.js?v=41210r1';
+import {createLegendInstrument} from './legend-instrument.js?v=41210r1';
+import {legendOptions} from './legend-preferences.js?v=41210r1';
 import {legendDescriptor} from './legend-registry.js?v=4126r1';
-import {renderLegendInformation,safeLegendParagraphs} from './legend-information.js?v=4129r1';
-import {renderLegendScale} from './legend-scale.js?v=4129r1';
+import {renderLegendInformation,safeLegendParagraphs} from './legend-information.js?v=41210r1';
+import {renderLegendScale} from './legend-scale.js?v=41210r1';
 class ScientificLegend{}installWeatherLegendOverlay(ScientificLegend,{});
 // Shared minimal instrument; native render callbacks still supply all scientific
 // classes, symbols, provenance and explanatory content to the explicit info popup.
@@ -15,7 +15,7 @@ export function createScientificLegend(owner,{prefix,id=prefix.replace(/^weather
  view._weatherLegendSyncUi=function(){
   this._weatherLegendEnsureUi();const state=this._weatherLegendState(),instrument=state.instrument,shown=this._weatherLegendVisibleModels().length>0;instrument.setVisible(shown);owner._legendHubStatus?.();if(!shown)return;
   const c=legendOptions(owner,id),model=legendDescriptor(owner,id),native=model?null:render(state.ui.view),map=owner.shadow.getElementById('map'),available=c.orientation==='vertical'?map.clientHeight-(c.showCaption?76:55):map.clientWidth-74;
-  const nodes=[model?renderLegendScale(model,c,available):native.visual];
+  const nodes=[model?renderLegendScale(model,{...c,unitInCaption:true},available):native.visual];
   // Native symbol examples and full class tables remain in the explicit info popup.
   instrument.update(nodes,box=>{const detail=render(state.ui.view);box.append(renderLegendInformation(owner,{visual:detail.visual,explanation:detail.explanation,sourceLines:detail.source?.__legendLines||[],technical:{models:[...state.models.values()]}}));});
  };

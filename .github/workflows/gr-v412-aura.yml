@@ -20,6 +20,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Verify presentation-only scope before reusing V4.12.9 browser evidence
+        id: ui_scope
+        env:
+          GR_PREMIUM_PROOF: ${{ runner.temp }}/premium-evidence/source-proof.json
+        run: |
+          if node -e "process.exit(require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.12.10\"')?0:1)"; then
+            node scripts/test-v412-premium-scope.mjs
+            echo "focused=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "focused=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Model, schema, source isolation and delivery
         run: |
           pip install PyYAML
@@ -39,6 +50,7 @@ jobs:
           npm install --prefix "$RUNNER_TEMP/aura" --no-audit --no-fund playwright@1.56.1 leaflet@1.9.4
           "$RUNNER_TEMP/aura/node_modules/.bin/playwright" install --with-deps chromium
       - name: Aura, edges, recovery, profiles and neon pixels
+        if: steps.ui_scope.outputs.focused != 'true'
         env:
           NODE_PATH: ${{ runner.temp }}/aura/node_modules
           GR_AURA_EVIDENCE: ${{ runner.temp }}/aura-evidence
@@ -55,6 +67,12 @@ jobs:
           node scripts/test-delayed-eye-recovery-browser.cjs
           node scripts/test-settings-vault-browser.cjs
           node scripts/test-eye-wow-browser.cjs
+      - name: Focused premium dialog, units and source information acceptance
+        if: steps.ui_scope.outputs.focused == 'true'
+        env:
+          NODE_PATH: ${{ runner.temp }}/aura/node_modules
+          GR_PREMIUM_EVIDENCE: ${{ runner.temp }}/premium-evidence
+        run: node scripts/test-v412-premium-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -64,4 +82,5 @@ jobs:
             ${{ runner.temp }}/legend-evidence
             ${{ runner.temp }}/minimal-evidence
             ${{ runner.temp }}/source-evidence
+            ${{ runner.temp }}/premium-evidence
           if-no-files-found: ignore

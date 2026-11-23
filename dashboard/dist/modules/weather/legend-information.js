@@ -2,6 +2,8 @@ import {weatherSourceText} from './source-text.js?v=411150r1';
 
 const isoPattern=/\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})\b/g;
 const unique=values=>[...new Set(values.filter(Boolean))];
+export function resolveLegendSourceUrl(value){const url=new URL(value);return ['earthdata.nasa.gov','www.earthdata.nasa.gov'].includes(url.hostname)&&url.protocol==='https:'&&url.pathname.replace(/\/$/,'')==='/data/tools/gibs'?'https://nasa-gibs.github.io/gibs-api-docs/':url.href;}
+export function hasLegendInformation(value){return Array.isArray(value)?value.some(hasLegendInformation):value&&typeof value==='object'?Object.values(value).some(hasLegendInformation):value!==null&&value!==undefined&&value!=='';}
 function plainInformation(value){
  let text=typeof value==='string'?value:'';
  if(typeof DOMParser!=='function')return weatherSourceText(text);
@@ -18,8 +20,8 @@ export function safeSourceLinks(value){
  if(!parsed.querySelector('a')&&parsed.body.textContent.includes('<'))parsed=new DOMParser().parseFromString(parsed.body.textContent,'text/html');
  parsed.querySelectorAll('script,style,template,iframe,object,svg,math').forEach(n=>n.remove());
  const links=new Map();
- for(const anchor of parsed.querySelectorAll('a[href]')){try{const url=new URL(anchor.getAttribute('href'));if(!['https:','http:'].includes(url.protocol)||url.username||url.password)continue;links.set(url.href,{url:url.href,label:weatherSourceText(anchor.textContent)||url.hostname});}catch(_){}}
- for(const match of weatherSourceText(parsed.body.textContent).matchAll(/https?:\/\/[^\s<>"']+/g)){try{const url=new URL(match[0].replace(/[),.;]+$/,''));if(!url.username&&!url.password&&!links.has(url.href))links.set(url.href,{url:url.href,label:url.hostname});}catch(_){}}
+ for(const anchor of parsed.querySelectorAll('a[href]')){try{const url=new URL(anchor.getAttribute('href'));if(!['https:','http:'].includes(url.protocol)||url.username||url.password)continue;const href=resolveLegendSourceUrl(url.href);links.set(href,{url:href,label:weatherSourceText(anchor.textContent)||url.hostname});}catch(_){}}
+ for(const match of weatherSourceText(parsed.body.textContent).matchAll(/https?:\/\/[^\s<>"']+/g)){try{const url=new URL(match[0].replace(/[),.;]+$/,'')),href=resolveLegendSourceUrl(url.href);if(!url.username&&!url.password&&!links.has(href))links.set(href,{url:href,label:url.hostname});}catch(_){}}
  return [...links.values()];
 }
 export function localLegendTime(raw,locale){
@@ -70,6 +72,6 @@ export function renderLegendInformation(owner,{scales=[],sources=[],visual,expla
  appendSources(data,plain,t);
  if(timeliness.childElementCount===1)paragraph(timeliness,t('weather.legend.notTimed'),t);
  if(data.childElementCount===1)data.remove();
- const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');summary.textContent=t('legendHub.technicalDetails');pre.textContent=JSON.stringify({sources,sourceLines,...technical},null,2);details.append(summary,pre);box.append(details);return box;
+ const raw={sources,sourceLines,...technical};if(hasLegendInformation(raw)){const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');summary.textContent=t('legendHub.technicalDetails');pre.textContent=JSON.stringify(raw,null,2);details.append(summary,pre);box.append(details);}return box;
 }
 export function safeLegendParagraphs(lines){const box=document.createElement('div');box.__legendLines=lines.filter(Boolean);for(const text of box.__legendLines){const p=document.createElement('p');p.textContent=plainInformation(text);for(const link of safeSourceLinks(text)){const a=document.createElement('a');a.href=link.url;a.textContent=link.label;a.target='_blank';a.rel='noopener noreferrer';p.append(document.createTextNode(' · '),a);}box.append(p);}return box;}

@@ -1,15 +1,15 @@
-import {settingsStorage} from '../core/settings-vault.js?v=4129r1';
+import {settingsStorage} from '../core/settings-vault.js?v=41210r1';
 import { defineModule } from "../core/runtime.js?v=41114r1";
-import {createLegendInstrument,instrumentBounds,instrumentScaleSpace} from './legend-instrument.js?v=4129r1';
-import {legendOptions} from './legend-preferences.js?v=4129r1';
-import {renderLegendScale} from './legend-scale.js?v=4129r1';
+import {createLegendInstrument,instrumentBounds,instrumentScaleSpace} from './legend-instrument.js?v=41210r1';
+import {legendOptions} from './legend-preferences.js?v=41210r1';
+import {renderLegendScale} from './legend-scale.js?v=41210r1';
 
-import {precipitationPresentation,precipitationMetadata,precipitationSourceId,precipitationKind,renderPrecipitationScales,lowerDetectionLimits} from './legend-precipitation.js?v=4129r1';
-import {renderLegendInformation} from './legend-information.js?v=4129r1';
+import {precipitationPresentation,precipitationMetadata,precipitationSourceId,precipitationKind,renderPrecipitationScales,lowerDetectionLimits} from './legend-precipitation.js?v=41210r1';
+import {renderLegendInformation} from './legend-information.js?v=41210r1';
 
 export const MODULE_META=Object.freeze({
   id:"weather.legend-overlay",
-  version:"0.1.61",
+  version:"0.1.62",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellungslegende",
   subfunctions:["generisches Legendenmodell","Auto/Ein/Aus","WR-Metadaten","Bildlegenden","strukturierte Skalen","Kartenoverlay","mehrere aktive Legenden","sichere Kartenposition"],
@@ -236,11 +236,11 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
   _weatherLegendPosition(){this._weatherLegendState().instrument?.place();},
   _weatherLegendBounds(host){return instrumentBounds(this,host).storage;},
 
-  _weatherLegendRenderVisual(model,{nativeOnly=false,view=this._weatherLegendState().ui.view}={}){
+  _weatherLegendRenderVisual(model,{nativeOnly=false,unitInCaption=false,view=this._weatherLegendState().ui.view}={}){
     const entries=model.entries;
     if(!entries.length){const text=document.createElement("div");text.className="weather-legend-note";text.textContent=this._t("weather.legend.missingColors");return text;}
     const classes=view==="classes";
-    if(!nativeOnly){const c=legendOptions(this,['precipitation','snow'].includes(model.family)?'precipitation':'other'),map=this.shadow?.getElementById('map');return renderLegendScale(model,c,Math.max(60,c.orientation==='vertical'?(map?.clientHeight||600)-55:(map?.clientWidth||430)-74));}
+    if(!nativeOnly){const c=legendOptions(this,['precipitation','snow'].includes(model.family)?'precipitation':'other'),map=this.shadow?.getElementById('map');return renderLegendScale(model,{...c,unitInCaption},Math.max(60,c.orientation==='vertical'?(map?.clientHeight||600)-55:(map?.clientWidth||430)-74));}
     if(classes&&entries.length<=24){
       const scale=document.createElement("div");scale.className="weather-legend-entries";
       for(const entry of entries){

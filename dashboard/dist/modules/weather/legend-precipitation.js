@@ -1,4 +1,4 @@
-import {renderLegendScale} from './legend-scale.js?v=4129r1';
+import {renderLegendScale} from './legend-scale.js?v=41210r1';
 
 // Presentation only: never sort/mutate the router snapshot or raster layers.
 export const precipitationSourceId=model=>String(model.source_id||model.source||model.id||'').replace(/^precipitation:/,'').replace(/#(?:rain|snow)$/,'');
@@ -42,11 +42,11 @@ export function renderPrecipitationScales(models,c,{width=430,height=600,columns
  const grid=document.createElement('div');grid.className='lh-precipitation-scales';
  const vertical=c.orientation==='vertical',columns=vertical?(preferredColumns||Math.min(models.length||1,Math.max(1,Math.floor(width/104)))):1,rows=Math.ceil(models.length/columns)||1;
  grid.style.cssText='display:grid;align-items:start;gap:8px;grid-template-columns:repeat('+columns+',minmax(0,max-content))';
- const available=vertical?Math.max(60,(height-16)/rows-(c.showCaption?42:8)-22):Math.max(60,width);
+ const available=vertical?Math.max(60,(height-16)/rows-(c.showCaption?56:8)-22):Math.max(60,width);
  for(const model of models){const item=document.createElement('div');item.className='lh-precipitation-scale';item.dataset.weatherLegendSource=model.source||model.id;item.dataset.weatherLegendSources=(model.sources||[model.source||model.id]).join(' ');
-  const scale=renderLegendScale(model,c,available);item.style.maxWidth=vertical?Math.max(96,parseFloat(scale.style.width)||96)+'px':'100%';
-  if(c.showCaption){const caption=document.createElement('p');caption.className='lh-instrument-caption';caption.textContent=model.title;caption.title=model.title;caption.style.cssText='display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden';item.append(caption);}
-  item.append(scale);grid.append(item);
+  const scale=renderLegendScale(model,{...c,unitInCaption:true},available);item.style.maxWidth=vertical?Math.max(96,parseFloat(scale.style.width)||96)+'px':'100%';
+  if(c.showCaption){const caption=document.createElement('p');caption.className='lh-instrument-caption';caption.textContent=model.title+(model.unit?' · '+model.unit:'');caption.title=caption.textContent;item.append(caption);}
+  if(!c.showCaption&&scale.dataset.needsUnit==='true'){const unit=document.createElement('span');unit.className='lh-instrument-unit';unit.textContent=model.unit;item.append(unit);}item.append(scale);grid.append(item);
  }
  return grid;
 }
