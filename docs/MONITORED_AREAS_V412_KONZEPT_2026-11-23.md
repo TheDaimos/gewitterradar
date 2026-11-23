@@ -1,7 +1,9 @@
-# GewitterRadar V4.12 — Monitored Areas
+# GewitterRadar V4.13 — Monitored Areas
+> **Versionsbeschluss 23.11.2026:** Der gesamte Monitored-Areas-Funktionsumfang wird von V4.12 nach **V4.13** verlegt und als eigenständiges, gekapseltes Modul entwickelt. **Legend Hub bleibt in V4.12** und wird unabhängig finalisiert. Bestehende Entscheidungen und Havanna-Referenz bleiben unverändert verbindlich. Der frühere Dateiname mit V412 wird aus Kompatibilitätsgründen beibehalten. Kein Eingriff in die laufende Legendenentwicklung; Entwicklung von Monitored Areas beginnt erst mit dem Grundgerüst MA-001 bis MA-005.
+
 ## Verbindliches Fachkonzept und Entscheidungssammlung
 
-**Stand:** 23.11.2026 · **Status:** beschlossenes Konzept, nicht implementiert oder freigegeben zum Release  
+**Stand:** 23.11.2026 · **Zielversion:** V4.13 · **Status:** beschlossenes Konzept, nicht implementiert oder freigegeben zum Release  
 **Repository / Zielbranch:** `TheDaimos/gewitterradar` / `deploy/dev`  
 **Schutz:** GewitterRadar 4.11 FINAL, WeatherRouter 1.0.2 FINAL, bestehende Ortssuche, Kartenflug, Eye Hub und parallel laufende Legendenentwicklung bleiben unverändert. Implementierung erst separat freigeben, auf HA DEV VM109 real testen; PROD VM101 schützen.
 
