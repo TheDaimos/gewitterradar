@@ -5,6 +5,7 @@ Run on the freeze candidate only; regenerate mirrors using scripts/build-fronten
 """
 from pathlib import Path
 import json
+import hashlib
 
 ROOT=Path(__file__).resolve().parents[1]
 OLD_REV="41215r1"
@@ -51,6 +52,17 @@ for target in (ROOT/"frontend").rglob("*"):
     except UnicodeDecodeError: continue
     if OLD_REV in content:
         target.write_text(content.replace(OLD_REV,NEW_REV),encoding="utf-8")
+
+assets_manifest=ROOT/"frontend/assets.json"
+assets=json.loads(assets_manifest.read_text(encoding="utf-8"))
+runtime_bytes=(ROOT/"frontend/assets/gewitterradar-runtime-manifest.json").read_bytes()
+for asset in assets:
+    if asset.get("file")=="assets/gewitterradar-runtime-manifest.json":
+        asset["sha256"]=hashlib.sha256(runtime_bytes).hexdigest()
+        asset["sizeBytes"]=len(runtime_bytes)
+        break
+else: raise RuntimeError("runtime manifest not present in asset inventory")
+assets_manifest.write_text(json.dumps(assets,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 
 path=ROOT/"scripts/build-frontend.mjs"
 content=path.read_text(encoding="utf-8")
