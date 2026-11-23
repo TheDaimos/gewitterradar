@@ -1,0 +1,3 @@
+d4101a3080fef5aecffded557e792d5526077f8f50d3423960d5e6ea6ebfc42a  gewitterradar-0.25.170-dev.zip
+c0fb3cc48f4ccde55b54e4963b8a0d0c781c7a80f11f8afc9e719ef4d4b283c4  gewitterradar-dashboard-4.12.9-dev.zip
+e04b7806f5a934c3bb342d040d6a2b18fc13087792e5d5c6bf7fb3f79b59521a  deployment.json

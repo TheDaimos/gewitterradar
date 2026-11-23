@@ -1,0 +1,47 @@
+[
+  {
+    "name": "desktop",
+    "independentLayers": true,
+    "layouts": 112,
+    "longPress": true,
+    "slotEditing": true,
+    "freeMapOnly": true,
+    "edgeDrags": 8,
+    "appearances": 72,
+    "eyeCoexistence": true,
+    "categorical": true,
+    "fieldIsolation": true,
+    "reducedMotion": true,
+    "reload": true
+  },
+  {
+    "name": "portrait",
+    "independentLayers": true,
+    "layouts": 112,
+    "longPress": true,
+    "slotEditing": true,
+    "freeMapOnly": true,
+    "edgeDrags": 8,
+    "appearances": 72,
+    "eyeCoexistence": true,
+    "categorical": true,
+    "fieldIsolation": false,
+    "reducedMotion": true,
+    "reload": true
+  },
+  {
+    "name": "landscape",
+    "independentLayers": true,
+    "layouts": 112,
+    "longPress": true,
+    "slotEditing": true,
+    "freeMapOnly": true,
+    "edgeDrags": 8,
+    "appearances": 72,
+    "eyeCoexistence": true,
+    "categorical": true,
+    "fieldIsolation": false,
+    "reducedMotion": true,
+    "reload": true
+  }
+]

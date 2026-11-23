@@ -1,0 +1,499 @@
+[
+  {
+    "name": "desktop",
+    "transport": "synthetic HA/WR",
+    "mobileEmulated": false,
+    "nativePopover": true,
+    "before": {
+      "precipitation": {
+        "x": 488,
+        "y": 596,
+        "width": 304,
+        "height": 264.84375
+      },
+      "wind": {
+        "x": 488,
+        "y": 8,
+        "width": 304,
+        "height": 853
+      },
+      "temperature": {
+        "x": 8,
+        "y": 503.875,
+        "width": 304,
+        "height": 347
+      }
+    },
+    "after": {
+      "precipitation": {
+        "x": 470.5,
+        "y": 787,
+        "width": 339,
+        "height": 74
+      },
+      "wind": {
+        "x": 470.5,
+        "y": 799,
+        "width": 339,
+        "height": 62
+      },
+      "temperature": {
+        "x": 60,
+        "y": 783.171875,
+        "width": 339,
+        "height": 62
+      }
+    },
+    "glass": [
+      0,
+      65,
+      100
+    ],
+    "motifs": [
+      {
+        "id": "precipitation",
+        "diameter": 39.99009419856459,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "wind",
+        "diameter": 40,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "temperature",
+        "diameter": 40,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "advection",
+        "diameter": 40,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "synoptic",
+        "diameter": 39.994716905901115,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "other",
+        "diameter": 39.98996959728868,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      }
+    ],
+    "alphaMotifs": [
+      {
+        "id": "precipitation",
+        "visibleDiameter": 40.604066985645936,
+        "centerOffsetX": -0.5525755083732058,
+        "centerOffsetY": -0.2046575956937799
+      },
+      {
+        "id": "wind",
+        "visibleDiameter": 40,
+        "centerOffsetX": 0,
+        "centerOffsetY": 0
+      },
+      {
+        "id": "temperature",
+        "visibleDiameter": 40,
+        "centerOffsetX": 0,
+        "centerOffsetY": 0
+      },
+      {
+        "id": "advection",
+        "visibleDiameter": 40,
+        "centerOffsetX": 0,
+        "centerOffsetY": 0
+      },
+      {
+        "id": "synoptic",
+        "visibleDiameter": 40.65360845295056,
+        "centerOffsetX": -0.46122408293460926,
+        "centerOffsetY": -0.19766746411483255
+      },
+      {
+        "id": "other",
+        "visibleDiameter": 40.7932615629984,
+        "centerOffsetX": -0.6112004086921851,
+        "centerOffsetY": 0.31433163875598086
+      }
+    ],
+    "dragged": [
+      "precipitation",
+      "wind",
+      "temperature",
+      "advection",
+      "synoptic",
+      "other"
+    ],
+    "infoDrag": true,
+    "threeFingerRecovery": true,
+    "viewportReflow": true,
+    "mapUnaffected": true,
+    "reloadPositions": {
+      "precipitation": {
+        "x": 0.3581081081081081,
+        "y": 0.36553273427471117
+      },
+      "wind": {
+        "x": 0.3581081081081081,
+        "y": 0.3637800252844501
+      },
+      "temperature": {
+        "x": 0.33936550491510276,
+        "y": 0.4157458563535912
+      },
+      "advection": {
+        "x": 0.3581081081081081,
+        "y": 0.3658301158301158
+      },
+      "synoptic": {
+        "x": 0.3660092807424594,
+        "y": 0.3783880171184023
+      },
+      "other": {
+        "x": 0.3540582726326743,
+        "y": 0.3643583227445997
+      }
+    },
+    "simultaneous": 6
+  },
+  {
+    "name": "portrait",
+    "transport": "synthetic HA/WR",
+    "mobileEmulated": true,
+    "nativePopover": true,
+    "before": {
+      "precipitation": {
+        "x": 44.5,
+        "y": 511.421875,
+        "width": 304,
+        "height": 264.84375
+      },
+      "wind": {
+        "x": 44.5,
+        "y": 8.421875,
+        "width": 304,
+        "height": 768
+      },
+      "temperature": {
+        "x": 8,
+        "y": 420.984375,
+        "width": 304,
+        "height": 347
+      }
+    },
+    "after": {
+      "precipitation": {
+        "x": 27,
+        "y": 598.421875,
+        "width": 339,
+        "height": 74
+      },
+      "wind": {
+        "x": 27,
+        "y": 610.421875,
+        "width": 339,
+        "height": 62
+      },
+      "temperature": {
+        "x": 8,
+        "y": 610.421875,
+        "width": 339,
+        "height": 62
+      }
+    },
+    "glass": [
+      0,
+      65,
+      100
+    ],
+    "motifs": [
+      {
+        "id": "precipitation",
+        "diameter": 39.99009419856459,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "wind",
+        "diameter": 40,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "temperature",
+        "diameter": 40,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "advection",
+        "diameter": 40,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "synoptic",
+        "diameter": 39.994716905901115,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "other",
+        "diameter": 39.98996959728868,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      }
+    ],
+    "alphaMotifs": [
+      {
+        "id": "precipitation",
+        "visibleDiameter": 40.604066985645936,
+        "centerOffsetX": -0.5525755083732058,
+        "centerOffsetY": -0.2046575956937799
+      },
+      {
+        "id": "wind",
+        "visibleDiameter": 40,
+        "centerOffsetX": 0,
+        "centerOffsetY": 0
+      },
+      {
+        "id": "temperature",
+        "visibleDiameter": 40,
+        "centerOffsetX": 0,
+        "centerOffsetY": 0
+      },
+      {
+        "id": "advection",
+        "visibleDiameter": 40,
+        "centerOffsetX": 0,
+        "centerOffsetY": 0
+      },
+      {
+        "id": "synoptic",
+        "visibleDiameter": 40.65360845295056,
+        "centerOffsetX": -0.46122408293460926,
+        "centerOffsetY": -0.19766746411483255
+      },
+      {
+        "id": "other",
+        "visibleDiameter": 40.7932615629984,
+        "centerOffsetX": -0.6112004086921851,
+        "centerOffsetY": 0.31433163875598086
+      }
+    ],
+    "dragged": [
+      "precipitation",
+      "wind",
+      "temperature",
+      "advection",
+      "synoptic",
+      "other"
+    ],
+    "infoDrag": true,
+    "threeFingerRecovery": true,
+    "viewportReflow": true,
+    "mapUnaffected": true,
+    "reloadPositions": {
+      "precipitation": {
+        "x": 1,
+        "y": 0.3795876966001395
+      },
+      "wind": {
+        "x": 1,
+        "y": 0.37738638826834175
+      },
+      "temperature": {
+        "x": 0.7247456896551724,
+        "y": 0.31606476021677626
+      },
+      "advection": {
+        "x": 1,
+        "y": 0.3799619993230283
+      },
+      "synoptic": {
+        "x": 0.25,
+        "y": 0.4074780608724541
+      },
+      "other": {
+        "x": 1,
+        "y": 0.37811180068957845
+      }
+    },
+    "simultaneous": 6
+  },
+  {
+    "name": "landscape",
+    "transport": "synthetic HA/WR",
+    "mobileEmulated": true,
+    "nativePopover": false,
+    "before": null,
+    "after": {
+      "precipitation": {
+        "x": 256,
+        "y": 276.625,
+        "width": 339,
+        "height": 74
+      },
+      "wind": {
+        "x": 256,
+        "y": 288.625,
+        "width": 339,
+        "height": 62
+      },
+      "temperature": {
+        "x": 60,
+        "y": 283,
+        "width": 339,
+        "height": 62
+      }
+    },
+    "glass": [
+      0,
+      65,
+      100
+    ],
+    "motifs": [
+      {
+        "id": "precipitation",
+        "diameter": 39.99009419856459,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "wind",
+        "diameter": 40,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "temperature",
+        "diameter": 40,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "advection",
+        "diameter": 40,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "synoptic",
+        "diameter": 39.994716905901115,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      },
+      {
+        "id": "other",
+        "diameter": 39.98996959728868,
+        "centerX": 0,
+        "centerY": 0,
+        "slot": 48
+      }
+    ],
+    "alphaMotifs": [
+      {
+        "id": "precipitation",
+        "visibleDiameter": 40.604066985645936,
+        "centerOffsetX": -0.5525755083732058,
+        "centerOffsetY": -0.2046575956937799
+      },
+      {
+        "id": "wind",
+        "visibleDiameter": 40,
+        "centerOffsetX": 0,
+        "centerOffsetY": 0
+      },
+      {
+        "id": "temperature",
+        "visibleDiameter": 40,
+        "centerOffsetX": 0,
+        "centerOffsetY": 0
+      },
+      {
+        "id": "advection",
+        "visibleDiameter": 40,
+        "centerOffsetX": 0,
+        "centerOffsetY": 0
+      },
+      {
+        "id": "synoptic",
+        "visibleDiameter": 40.65360845295056,
+        "centerOffsetX": -0.46122408293460926,
+        "centerOffsetY": -0.19766746411483255
+      },
+      {
+        "id": "other",
+        "visibleDiameter": 40.7932615629984,
+        "centerOffsetX": -0.6112004086921851,
+        "centerOffsetY": 0.31433163875598086
+      }
+    ],
+    "dragged": [
+      "precipitation",
+      "wind",
+      "temperature",
+      "advection",
+      "synoptic",
+      "other"
+    ],
+    "infoDrag": true,
+    "threeFingerRecovery": true,
+    "viewportReflow": true,
+    "mapUnaffected": true,
+    "reloadPositions": {
+      "precipitation": {
+        "x": 0.45161290322580644,
+        "y": 0.7296416938110749
+      },
+      "wind": {
+        "x": 0.45161290322580644,
+        "y": 0.6984409799554566
+      },
+      "temperature": {
+        "x": 0.43768115942028984,
+        "y": 1
+      },
+      "advection": {
+        "x": 0.45161290322580644,
+        "y": 0.7351148616971401
+      },
+      "synoptic": {
+        "x": 0.4809468822170901,
+        "y": 1
+      },
+      "other": {
+        "x": 0.43796992481203006,
+        "y": 0.7085404428377767
+      }
+    },
+    "simultaneous": 6
+  }
+]

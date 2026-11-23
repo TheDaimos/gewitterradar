@@ -40,3 +40,8 @@ ERLEDIGT: Quellcommit `8f6bbe50d51ace44f5f88645b0940106d3cfe18a`, zwölf öffent
 Die zwölf grünen Ketten auf `8f6bbe50` ersetzen keine Bildprüfung: die endgültigen Linux-Bilder zeigten eine zu hohe Mehrquellen-Vertikallegende mit Überdeckung der Android-Kartenbedienung. Veröffentlichung dieses Zwischenstands unterblieb. Konkrete Nachbesserung: aus den vorhandenen Hindernisrechtecken einen freien Instrumentbereich bestimmen, Spaltenzahl und Längsbudget gemeinsam wählen; kompakte Quellencaptions auf zwei Zeilen begrenzen (vollständiger Name in Titel und Info). Nativer Placer, Drag, Pointer und Wetterlogik bleiben unverändert.
 
 Gezielt ERLEDIGT: Desktop und Android erneut mit 48 Layoutkombinationen geprüft, jetzt zusätzlich explizite Rechteck-Kollisionen gegen Eye, Hub, Kompass, Zoom und Kartenbedienung für sämtliche vertikalen Größen/Stile. Keine Überlagerung. Modell- und exakte Schutzgates bestanden. OFFEN: neuer Quellcommit, öffentliche Endregression und neue kanonische Pakete/Beweise; Beweise des vorherigen Zwischenstands nicht als Nachweis der geänderten Produktbäume ausgeben.
+
+
+## Abschließende technische Lieferung
+
+ERLEDIGT: Quellcommit `82fbbb2de8ef69eb41bc067531074aacb864f165`, zwölf öffentliche Prüfketten auf exakt diesem SHA erfolgreich. Browserbeweise aus öffentlichem Linux-Lauf archiviert. Beide kanonischen ZIPs vollständig gegen Original-Git-Blobs und bytegleich gegen die Linux-CI-Pakete geprüft. Prüfbericht: [GR_412_LEGEND_SOURCES_REPORT_2026-11-23.md](GR_412_LEGEND_SOURCES_REPORT_2026-11-23.md). DEV-Release v4.12.9-dev; keine FINAL-Promotion. Eine abschließende reine Dokumentationsversion ändert diese Produktbäume nicht. Physische Betreiberabnahme bleibt beim Betreiber, VM101 unangetastet.

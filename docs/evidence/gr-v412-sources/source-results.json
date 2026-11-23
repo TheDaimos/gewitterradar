@@ -1,0 +1,222 @@
+[
+  {
+    "name": "desktop",
+    "width": 1280,
+    "height": 900,
+    "touchEmulated": false,
+    "syntheticTransport": true,
+    "order": [
+      "precipitation:opera/opera_rate_raster",
+      "precipitation:nasa_gibs/imerg#rain",
+      "precipitation:nasa_gibs/imerg#snow"
+    ],
+    "maximal": {
+      "alpha": 0,
+      "backdrop": "blur(0px) saturate(1)",
+      "slot": "rgba(7, 19, 32, 0)",
+      "icon": "1",
+      "border": "rgba(183, 213, 237, 0.533)"
+    },
+    "sourceLinks": [
+      {
+        "text": "Deutscher Wetterdienst (DWD)",
+        "url": "https://www.dwd.de/",
+        "rel": "noopener noreferrer",
+        "target": "_blank"
+      },
+      {
+        "text": "EUMETNET OPERA",
+        "url": "https://www.eumetnet.eu/opera/",
+        "rel": "noopener noreferrer",
+        "target": "_blank"
+      },
+      {
+        "text": "NASA EOSDIS GIBS",
+        "url": "https://earthdata.nasa.gov/",
+        "rel": "noopener noreferrer",
+        "target": "_blank"
+      },
+      {
+        "text": "Deutscher Wetterdienst (DWD)",
+        "url": "https://www.dwd.de/",
+        "rel": "noopener noreferrer",
+        "target": "_blank"
+      }
+    ],
+    "previewLast": true,
+    "liveControls": [
+      [
+        "size",
+        "XL"
+      ],
+      [
+        "orientation",
+        "vertical"
+      ],
+      [
+        "density",
+        "detailed"
+      ],
+      [
+        "style",
+        "thermometer"
+      ],
+      [
+        "material",
+        "gold"
+      ],
+      [
+        "foreground",
+        "mint"
+      ],
+      [
+        "labels",
+        "inside"
+      ],
+      [
+        "ticks",
+        "inside"
+      ]
+    ],
+    "layoutCombinations": 24,
+    "ryValid": true,
+    "ryInvalidInfoOnly": true,
+    "sourceSecurity": {
+      "links": [
+        [
+          {
+            "url": "https://www.dwd.de/",
+            "label": "DWD"
+          }
+        ],
+        [
+          {
+            "url": "https://earthdata.nasa.gov/",
+            "label": "NASA"
+          }
+        ],
+        []
+      ],
+      "handlers": 0,
+      "live": [
+        "https://www.dwd.de/",
+        "https://earthdata.nasa.gov/"
+      ],
+      "math": "0–<0.2 mm/h; >0 mm/h",
+      "pwned": 0
+    },
+    "sixCaptions": true,
+    "reload": true,
+    "errors": []
+  },
+  {
+    "name": "android",
+    "width": 393,
+    "height": 851,
+    "touchEmulated": true,
+    "syntheticTransport": true,
+    "order": [
+      "precipitation:opera/opera_rate_raster",
+      "precipitation:nasa_gibs/imerg#rain",
+      "precipitation:nasa_gibs/imerg#snow"
+    ],
+    "maximal": {
+      "alpha": 0,
+      "backdrop": "blur(0px) saturate(1)",
+      "slot": "rgba(7, 19, 32, 0)",
+      "icon": "1",
+      "border": "rgba(183, 213, 237, 0.533)"
+    },
+    "sourceLinks": [
+      {
+        "text": "Deutscher Wetterdienst (DWD)",
+        "url": "https://www.dwd.de/",
+        "rel": "noopener noreferrer",
+        "target": "_blank"
+      },
+      {
+        "text": "EUMETNET OPERA",
+        "url": "https://www.eumetnet.eu/opera/",
+        "rel": "noopener noreferrer",
+        "target": "_blank"
+      },
+      {
+        "text": "NASA EOSDIS GIBS",
+        "url": "https://earthdata.nasa.gov/",
+        "rel": "noopener noreferrer",
+        "target": "_blank"
+      },
+      {
+        "text": "Deutscher Wetterdienst (DWD)",
+        "url": "https://www.dwd.de/",
+        "rel": "noopener noreferrer",
+        "target": "_blank"
+      }
+    ],
+    "previewLast": true,
+    "liveControls": [
+      [
+        "size",
+        "XL"
+      ],
+      [
+        "orientation",
+        "vertical"
+      ],
+      [
+        "density",
+        "detailed"
+      ],
+      [
+        "style",
+        "thermometer"
+      ],
+      [
+        "material",
+        "gold"
+      ],
+      [
+        "foreground",
+        "mint"
+      ],
+      [
+        "labels",
+        "inside"
+      ],
+      [
+        "ticks",
+        "inside"
+      ]
+    ],
+    "layoutCombinations": 24,
+    "ryValid": true,
+    "ryInvalidInfoOnly": true,
+    "sourceSecurity": {
+      "links": [
+        [
+          {
+            "url": "https://www.dwd.de/",
+            "label": "DWD"
+          }
+        ],
+        [
+          {
+            "url": "https://earthdata.nasa.gov/",
+            "label": "NASA"
+          }
+        ],
+        []
+      ],
+      "handlers": 0,
+      "live": [
+        "https://www.dwd.de/",
+        "https://earthdata.nasa.gov/"
+      ],
+      "math": "0–<0.2 mm/h; >0 mm/h",
+      "pwned": 0
+    },
+    "sixCaptions": true,
+    "reload": true,
+    "errors": []
+  }
+]
