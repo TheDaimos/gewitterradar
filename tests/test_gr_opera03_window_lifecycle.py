@@ -53,5 +53,7 @@ def test_pinned_version_identity_is_consistent():
         assert f'version:"{expected}"' in version
         assert runtime["productVersion"] == expected
         series = "".join(expected.split(".")[:2])
-        assert runtime["moduleSetId"] == "E" + series + "-" + expected.rsplit(".", 1)[1] + "A1"
+        revision_match = re.fullmatch(re.escape(series + expected.rsplit(".", 1)[1]) + r"r([1-9][0-9]*)", runtime["runtimeRevision"])
+        assert revision_match
+        assert runtime["moduleSetId"] == "E" + series + "-" + expected.rsplit(".", 1)[1] + "A" + revision_match.group(1)
         assert sum(x["id"] == "weather.consumer-client" for x in runtime["modules"]) == 1
