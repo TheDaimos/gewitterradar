@@ -5,6 +5,22 @@ import {legendInk} from './legend-contrast.js?v=4124r1';
 
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const controlObstacles='.leaflet-control,#weather-display-eye-control,#map-display-control,#map-display-menu-toggle,#map-instrument-controls,#compass-instrument,#map-location-overlay,#map-cluster-jump-overlay,.eye-hub-bubble,.lh-main,.lh-popout,[data-weather-radar-player],button[data-weather-display-eye-drag-bound="1"]:not(.lh-slot):not(.lh-instrument-info)';
+// Reserve a real clear rectangle before laying out several tall scales. The
+// existing placer still owns the final position and all native drag behavior.
+export function instrumentScaleSpace(owner,count,c){
+ const map=owner.shadow.getElementById('map'),r=map.getBoundingClientRect(),sx=r.width/map.clientWidth||1,sy=r.height/map.clientHeight||1;
+ const fallback={width:map.clientWidth-74,height:map.clientHeight-24};if(c.orientation!=='vertical'||count<2)return fallback;
+ const obstacles=[...owner.shadow.querySelectorAll(controlObstacles)].filter(n=>!n.hidden&&n.getBoundingClientRect().width).map(n=>{const b=n.getBoundingClientRect();return {left:(b.left-r.left)/sx-3,right:(b.right-r.left)/sx+3,top:(b.top-r.top)/sy-3,bottom:(b.bottom-r.top)/sy+3};});
+ let best=null;const target=({S:200,M:280,L:360,XL:440})[c.size];
+ for(let columns=1;columns<=Math.min(count,Math.max(1,Math.floor(fallback.width/104)));columns++){
+  const width=columns*96+(columns-1)*8+60;if(width>map.clientWidth-16)continue;
+  const xs=[8,map.clientWidth-8-width,...obstacles.flatMap(o=>[o.right,o.left-width])];
+  for(const x of xs){if(x<8||x+width>map.clientWidth-8)continue;const spans=obstacles.filter(o=>o.right>x&&o.left<x+width).map(o=>[Math.max(8,o.top),Math.min(map.clientHeight-8,o.bottom)]).filter(([a,b])=>b>a).sort((a,b)=>a[0]-b[0]);let top=8;
+   for(const [a,b]of [...spans,[map.clientHeight-8,map.clientHeight-8]]){const height=a-top,rows=Math.ceil(count/columns),length=Math.min(target,(height-16)/rows-(c.showCaption?42:8)-22);if(length>=60&&(!best||length>best.length||length===best.length&&width*height<best.area))best={width:width-60,height:height-2,columns,length,area:width*height};top=Math.max(top,b);}
+  }
+ }
+ return best||fallback;
+}
 // The same instrument shell serves numeric scales, categorical symbols and WR images.
 // Positions remain in the owning legend's existing profile settings.
 export function ensureInstrumentStyle(shadow){

@@ -1,6 +1,6 @@
 import {settingsStorage} from '../core/settings-vault.js?v=4129r1';
 import { defineModule } from "../core/runtime.js?v=41114r1";
-import {createLegendInstrument,instrumentBounds} from './legend-instrument.js?v=4129r1';
+import {createLegendInstrument,instrumentBounds,instrumentScaleSpace} from './legend-instrument.js?v=4129r1';
 import {legendOptions} from './legend-preferences.js?v=4129r1';
 import {renderLegendScale} from './legend-scale.js?v=4129r1';
 
@@ -283,7 +283,7 @@ export const installWeatherLegendOverlay=defineModule(MODULE_META,()=>({
     const host=this._weatherLegendEnsureUi();if(!host)return;
     const state=this._weatherLegendState(),instrument=state.instrument,presentation=this._weatherLegendPresentation(),{models,omitted,originals}=presentation;
     instrument.setVisible(models.length+omitted.length>0);if(!models.length&&!omitted.length)return;
-    const c=legendOptions(this,'precipitation'),map=this.shadow.getElementById('map'),nodes=[renderPrecipitationScales(models,c,{width:map.clientWidth-74,height:map.clientHeight-24})];
+    const c=legendOptions(this,'precipitation'),nodes=[renderPrecipitationScales(models,c,instrumentScaleSpace(this,models.length,c))];
     if(!models.length&&c.showCaption){const caption=document.createElement('p');caption.className='lh-instrument-caption';caption.textContent=this._t('weather.legend.precipitation');nodes.push(caption);}
     instrument.update(nodes,box=>{
       const metadata=precipitationMetadata(this),seen=new Set(),sources=[];
