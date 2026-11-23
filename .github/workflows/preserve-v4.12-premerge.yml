@@ -1,0 +1,44 @@
+name: Preserve V4.12 PRE-MERGE recovery with official release
+on:
+  push:
+    branches:
+      - ops/v4.12-preserve-premerge
+    paths:
+      - '.github/workflows/preserve-v4.12-premerge.yml'
+permissions:
+  contents: write
+  actions: read
+jobs:
+  archive:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Confirm official V4.12 FINAL identity and original PRE-MERGE run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/45274845031 --jq .conclusion)" = success
+          test "$(gh api repos/${GITHUB_REPOSITORY}/git/ref/tags/v4.12 --jq .object.sha)" = c712a2526faeb55b9cc1926a656268611f56e776
+          test "$(gh api repos/${GITHUB_REPOSITORY}/branches/main --jq .commit.sha)" = c712a2526faeb55b9cc1926a656268611f56e776
+      - name: Retrieve exact verified immutable PRE-MERGE recovery archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist/premerge
+          gh run download 45274845031 --name GewitterRadar_V4.12_PRE_MERGE_af70fe2b --dir dist/premerge
+          (cd dist/premerge && for sums in *_SHA256SUMS.txt; do sha256sum -c "$sums"; done)
+          unzip -tq dist/premerge/*.zip
+          git bundle verify dist/premerge/*.bundle
+      - name: Preserve original predecessor recovery on official release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release upload v4.12 dist/premerge/*
+          gh release view v4.12 --json tagName,isDraft,isPrerelease,assets
