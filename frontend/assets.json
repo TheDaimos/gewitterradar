@@ -566,6 +566,18 @@
     "referenced": true
   },
   {
+    "file": "assets/moon/gr_moon_scale_icon_expand_256.png",
+    "sha256": "c68f38066a37bd00842337902b431c8784f044ade194fdb95707a7da613f4f9a"
+  },
+  {
+    "file": "assets/moon/gr_moon_scale_icon_moon_256.png",
+    "sha256": "1d74aa8a12ea1b7551a7f1d96f264b360c7be6076e2d06539b3f329f24b4d958"
+  },
+  {
+    "file": "assets/moon/gr_moon_scale_icon_ruler_256.png",
+    "sha256": "a74f5bdf47b679e67b333f635b61c67e425d0d5ab529cf5bcc2499aaa570dbae"
+  },
+  {
     "file": "assets/moon/gr-moon-close-platinum-premium-128.png",
     "sizeBytes": 21735,
     "sha256": "252fa8a6180a66bd58ceae7ec2571aef8d9b0e9be4729ce05708f9e093177459"
@@ -596,17 +608,5 @@
     "file": "assets/weather-router-emblem-v004-256.png",
     "sha256": "c7b7d01ae9cfa4dad908d3ce1c2afdb332fc67ec9de71ed83bc4d1537738f96d",
     "protected": false
-  },
-  {
-    "file": "assets/moon/gr_moon_scale_icon_expand_256.png",
-    "sha256": "c68f38066a37bd00842337902b431c8784f044ade194fdb95707a7da613f4f9a"
-  },
-  {
-    "file": "assets/moon/gr_moon_scale_icon_moon_256.png",
-    "sha256": "1d74aa8a12ea1b7551a7f1d96f264b360c7be6076e2d06539b3f329f24b4d958"
-  },
-  {
-    "file": "assets/moon/gr_moon_scale_icon_ruler_256.png",
-    "sha256": "a74f5bdf47b679e67b333f635b61c67e425d0d5ab529cf5bcc2499aaa570dbae"
   }
 ]
