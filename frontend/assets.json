@@ -472,5 +472,53 @@
     "file": "assets/weather-router-emblem-v004-256.png",
     "sha256": "c7b7d01ae9cfa4dad908d3ce1c2afdb332fc67ec9de71ed83bc4d1537738f96d",
     "protected": false
+  },
+  {
+    "file": "assets/moon/00_neumond_512.png",
+    "sha256": "dbfca7f20fbb068bba1de9563a9adce6031b72b5fa2c7507654cff06072cc2c6",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/01_zunehmende_sichel_512.png",
+    "sha256": "d81dd2c830211fd45857cc33430542ec352a84db9ca89e1e6aa515d16b252afc",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/02_erstes_viertel_512.png",
+    "sha256": "d7012ba6acb0cbbe426335f9d6580874417563dbb31d5f33db9ab33dccd88b7b",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/03_zunehmender_mond_512.png",
+    "sha256": "847696ece72cd1a4dbad8857b22cdab4472d0af881ea8d0750f0ef039ebcc570",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/04_vollmond_512.png",
+    "sha256": "975ababa9322f11aea3c40f5054c0abd0926983ab9f7cd44a7b661824c67b67d",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/05_abnehmender_mond_512.png",
+    "sha256": "9f5125cb547a681aeea7a5c162c539a0cee5947b1234378b3851343a5ec2ca6d",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/06_letztes_viertel_512.png",
+    "sha256": "e323ddec4bff2aa7ed1f934fca71c998ac5d233b39a26bc08ce81f2b84c16ad2",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/07_abnehmende_sichel_512.png",
+    "sha256": "a32a1b5dcae679179a68779601b78c23f83f47a09f902b3bacad137f4b6124d8",
+    "protected": true,
+    "referenced": true
   }
 ]

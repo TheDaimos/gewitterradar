@@ -1,0 +1,3 @@
+# Moon Legend integration corrections – DEV source candidate
+
+Baseline 8c0168723aad753817b46aec7013f81a57a6af9b. Nonmodal card overlay, pointer-captured drag, bounded position, Vault slot/position/mode extensions, one-minute refresh, stale response rejection, local response timezone display, premium surface and close asset, explicit build asset references and inventory. All three frontend module trees updated together. Weather providers and Eye code not modified. Build and browser/HA checks not yet executed; no release or DRA package claimed. Coordinate timezone lookup requires corresponding WR implementation.

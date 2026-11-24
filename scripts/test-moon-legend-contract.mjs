@@ -28,3 +28,10 @@ for(const relative of ['modules/weather/moon-legend.js','modules/weather/legend-
  for(const dir of ['frontend/','dashboard/dist/'])assert.ok(reference.equals(fs.readFileSync(dir+relative)),relative+' mirrored');
 }
 console.log('Moon Legend integration/asset checks: OK');
+
+assert.doesNotMatch(moon,/showModal\(/);
+assert.match(moon,/setInterval/);
+assert.match(moon,/clearInterval/);
+assert.match(moon,/normalizeLongitude/);
+assert.match(moon,/PREMIUM_CLOSE/);
+assert.match(moon,/extraPositions/);
