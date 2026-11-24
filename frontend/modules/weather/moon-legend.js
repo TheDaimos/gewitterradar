@@ -94,6 +94,7 @@ function place(o,s,p=legendHubState(o).config.extraPositions.moon){
   const w=s.dialog.offsetWidth*plan.scale,h=s.dialog.offsetHeight*plan.scale;
   s.host.style.width=w+'px';s.host.style.height=h+'px';
   s.host.style.left=(b.x+Math.max(0,b.w-w)*p.x)+'px';s.host.style.top=(b.y+Math.max(0,availableHeight-h)*p.y)+'px';
+  if(s.controlAnchor&&!s.controlAnchor.element.getClientRects().length)s.controlAnchor=null;
   if(s.controlAnchor){const a=s.controlAnchor,r=a.element.getBoundingClientRect();s.host.style.left=b.x+clamp(parseFloat(s.host.style.left)-b.x+(a.x-r.left-r.width/2)/b.sx,Math.max(0,b.w-w))+'px';s.host.style.top=b.y+clamp(parseFloat(s.host.style.top)-b.y+(a.y-r.top-r.height/2)/b.sy,Math.max(0,availableHeight-h))+'px';const next=storedPosition(s,b),old=legendHubState(o).config.extraPositions.moon;if(Math.abs(next.x-old.x)>1e-6||Math.abs(next.y-old.y)>1e-6)saveLegendHub(o,{extraPositions:{...legendHubState(o).config.extraPositions,moon:next}});}
   if(s.sizeSelect){s.sizeSelect.value=pref.scaleMode==='auto'?'auto':String(pref.scalePercent);s.sizeSelect.options[0].textContent='Auto · '+Math.round(plan.scale*100)+' %';}
   s.scaleOutput.textContent=Math.round(plan.scale*100)+' %';

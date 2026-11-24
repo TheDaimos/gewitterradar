@@ -5,8 +5,48 @@ on:
 permissions:
   contents: read
 jobs:
+  scope:
+    runs-on: ubuntu-latest
+    outputs:
+      targeted: ${{ steps.detect.outputs.targeted }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: detect
+        run: |
+          if grep -q 'version:"4.13.2"' frontend/version.js; then
+            echo 'targeted=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'targeted=false' >> "$GITHUB_OUTPUT"
+          fi
+  moon-4132-targeted:
+    needs: scope
+    if: needs.scope.outputs.targeted == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify focused scope, delivery and optional schema
+        run: |
+          node scripts/test-moon-4132-scope.mjs
+          node scripts/verify-current-frontend.mjs
+          python scripts/test-moon-4132-schema.py
+      - name: Build deterministic install packages
+        run: python scripts/build-dev-packages.py "$RUNNER_TEMP/moon-packages"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: moon-4132-dev-packages
+          path: ${{ runner.temp }}/moon-packages/
   aura:
-    if: github.repository == 'TheDaimos/gewitterradar'
+    needs: scope
+    if: github.repository == 'TheDaimos/gewitterradar' && needs.scope.outputs.targeted != 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
