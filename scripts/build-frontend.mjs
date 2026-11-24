@@ -21,7 +21,8 @@ export async function expectedPayload(){
   const release=APPLICATION_RELEASE,releasePatch=release.version.split('.')[2],series=release.version.split('.').slice(0,2).join(''),patch=['412','413'].includes(series)?999:releasePatch;
   const revision=release.runtimeRevision?.match(new RegExp(`^${series}${releasePatch}r([1-9][0-9]*)$`))?.[1];
   const identityIsDev=release.displayVersion===`V${release.version} DEV`;
-  const identityIsFinal=release.version==='4.11.249'&&release.displayVersion==='V4.11 FINAL'&&/^V4\.11-FINAL-\d{4}-\d\d-\d\d$/.test(release.build);
+  const finalSeries={'4.11.249':'4.11','4.12.15':'4.12','4.13.7':'4.13'}[release.version];
+  const identityIsFinal=Boolean(finalSeries)&&release.displayVersion===`V${finalSeries} FINAL`&&release.build.startsWith(`V${finalSeries}-FINAL-`)&&/^\d{4}-\d\d-\d\d$/.test(release.build.slice(`V${finalSeries}-FINAL-`.length));
   if(!(identityIsDev||identityIsFinal)||!revision||release.moduleSetId!==`E${series}-${releasePatch}A${revision}`)throw Error('Canonical release identity mismatch');
   for(const [key,value] of Object.entries({productVersion:release.version,build:release.build,runtimeRevision:release.runtimeRevision,moduleSetId:release.moduleSetId,displayVersion:release.displayVersion}))if(runtime[key]!==value)throw Error('Runtime manifest mismatch: '+key);
   const match=manifestText.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/);
