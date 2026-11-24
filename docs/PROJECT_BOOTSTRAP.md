@@ -29,3 +29,7 @@ Bei jeder V4.13-FINAL-Aufgabe zuerst [diese verbindliche Fehler- und Übergabeak
 ## Eigenständige technische Korrekturen (Pflicht für neue Chats)
 
 Bei einem beauftragten Entwicklungs- oder FINAL-Auftrag **nicht** nach dem ersten roten Test abbrechen. Die verbindliche [Korrekturschleife in FINAL_RELEASE_AUTOMATION.md](FINAL_RELEASE_AUTOMATION.md#eigenständige-fehlerbehebung-statt-abbruch-verbindliche-agentenregel) lesen und anwenden: echte CI-Logs → Ursache → kleinste sichere Korrektur selbst implementieren → committen → GitHub-Runner-Build und erneute Tests auf neuem SHA → ggf. wiederholen. Veraltete Release-Identitäten, Test-Erwartungen und generierte Inventare selbstständig, unter Erhaltung der historischen Regressionen, aktualisieren. **Unverifizierte Offsite-Backups, fehlende Sicherheitsfreigaben oder funktionale Änderungen niemals stillschweigend übergehen.**
+
+## Eigenständige FINAL-Durchführung – ausführbares Protokoll
+
+**Verpflichtend:** [AGENT_FINAL_EXECUTION_PLAYBOOK.md](AGENT_FINAL_EXECUTION_PLAYBOOK.md) vor jeder FINAL-Fortsetzung vollständig lesen. Nicht beim Lesen der Anleitung stehenbleiben: bei technischen CI-Fehlern auf dem autorisierten Kandidatenbranch selbst korrigieren, committen, erneut prüfen und dokumentieren. V4.13: genaue Reihenfolge für Asset-Hash, Legend-Hub-Mondtest, interne/öffentliche FINAL-Version, GitHub-Workflow und Offsite-Backup beachten. Keine Lockerung der geschützten Verträge.
