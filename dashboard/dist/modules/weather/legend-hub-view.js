@@ -1,12 +1,12 @@
-import {createMoonPreview,applyMoonMaterial,refreshMoonAppearance} from './moon-legend.js?v=4131r1';
-import {ensureInstrumentStyle,applyInstrumentSurface} from './legend-instrument.js?v=4131r1';
-import {settingsStorage} from '../core/settings-vault.js?v=4131r1';
-import {LEGEND_OPTIONS,assignLegendSlot} from './legend-hub-model.js?v=4131r1';
-import {legendHubState,saveLegendHub,legendOptions,patchLegend} from './legend-preferences.js?v=4131r1';
-import {legendEntries,legendTitle,legendDescriptor} from './legend-registry.js?v=4131r1';
-import {ensureLegendScaleStyle,renderLegendScale} from './legend-scale.js?v=4131r1';
-import {renderPrecipitationScales} from './legend-precipitation.js?v=4131r1';
-import {PREMIUM_CLOSE} from './premium-ui.js?v=4131r1';
+import {createMoonPreview,applyMoonMaterial,refreshMoonAppearance} from './moon-legend.js?v=4132r1';
+import {ensureInstrumentStyle,applyInstrumentSurface} from './legend-instrument.js?v=4132r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4132r1';
+import {LEGEND_OPTIONS,assignLegendSlot} from './legend-hub-model.js?v=4132r1';
+import {legendHubState,saveLegendHub,legendOptions,patchLegend} from './legend-preferences.js?v=4132r1';
+import {legendEntries,legendTitle,legendDescriptor} from './legend-registry.js?v=4132r1';
+import {ensureLegendScaleStyle,renderLegendScale} from './legend-scale.js?v=4132r1';
+import {renderPrecipitationScales} from './legend-precipitation.js?v=4132r1';
+import {PREMIUM_CLOSE} from './premium-ui.js?v=4132r1';
 import SILVER_CHEVRON from '../fullscreen/compass-picker-chevron-right-silver.js?v=41108r1';
 import {legendInk} from './legend-contrast.js?v=4124r1';
 export const legendText=(owner,key)=>owner._t('legendHub.'+key);
@@ -14,7 +14,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 // Decoration around the existing native selects; all options, handlers and
 // keyboard/touch selection remain owned by the original form.
 function decorateLegendSelects(form){
- const metals={brass:'#9e833d',platinum:'#8896a4',gold:'#c59a39',silver:'#a2aab5',black:'#111318'};
+ const metals={goldClassic:"#c9a050",brass:'#9e833d',platinum:'#8896a4',gold:'#c59a39',silver:'#a2aab5',black:'#111318'};
  for(const select of form.querySelectorAll('select')){
   const shell=document.createElement('span'),value=document.createElement('span'),text=document.createElement('span'),arrow=document.createElement('img');shell.className='lh-select-shell';value.className='lh-select-value';value.setAttribute('aria-hidden','true');text.textContent=select.selectedOptions[0]?.textContent||'';
   if(['material','foreground','frameMaterial'].includes(select.dataset.lhKey)){
@@ -53,8 +53,9 @@ export const LEGEND_HUB_ICONS=[new URL('../../assets/gr-legend-hub-1-original.pn
 export function openMoonConfig(owner){const t=k=>legendText(owner,k);return openDialog(owner,t('configureMoon'),form=>{
  form.closest('dialog').classList.add('lh-moon-settings');
  const render=()=>{const c=legendHubState(owner).config.moonUi;form.innerHTML=
-  select(t('frameMaterial'),'frameMaterial',['platinum','gold'],c.frameMaterial,v=>t('frame_'+v))+
+  select(t('frameMaterial'),'frameMaterial',['platinum','gold','goldClassic'],c.frameMaterial,v=>v==='goldClassic'?t('moonClassicGold'):t('frame_'+v))+
   select(t('moonGlass'),'glass',['night','mineral'],c.glass,v=>t(v==='night'?'moonNight':'moonMineral'))+
+  select(t('moonDistanceUnit'),'distanceUnit',['auto','km','m','mi','ft'],c.distanceUnit,v=>v==='auto'?t('auto'):t(({km:'moonKilometers',m:'moonMeter',mi:'moonMiles',ft:'moonFeet'})[v])+' ('+v+')')+
   select(t('moonScale'),'scaleMode',['auto','manual'],c.scaleMode,v=>t(v==='auto'?'auto':'moonManual'))+
   '<label><span>'+esc(t('size'))+'</span><span class="lh-glass-control"><input type="range" data-lh-key="scalePercent" min="50" max="125" step="5" value="'+c.scalePercent+'" '+(c.scaleMode==='auto'?'disabled':'')+'><output>'+c.scalePercent+' %</output></span></label>'+
   check(t('moonPhases'),'phasesExpanded',c.phasesExpanded)+check(t('moonReflections'),'reflections',c.reflections)+

@@ -781,10 +781,10 @@
     },
     "resources": [
       {
-        "repository_path": "docs/design/legend-hub/moon/assets/master/moon-material-definitions.css",
-        "sha256": "82f4734f057b6a6320eb82e3a0ac38f25eb9cf0f222c77c368080d0b4405deea",
-        "bytes": 17376,
-        "purpose": "Exact complete reusable Moon CSS including frame, glass, asymmetric rows, Hero, badge, phases, zoom hint and preview; original master images unchanged."
+        "repository_path": "docs/design/legend-hub/moon/assets/optimized/moon-material-definitions-4132.css",
+        "sha256": "efc1f31d44c494da1706b1ea2cdbcdac892d72ec8bc69a300f34b6d1b67879be",
+        "bytes": 19935,
+        "purpose": "Active 4.13.2 Moon CSS; previous master definition unchanged in archive."
       },
       {
         "repository_path": "docs/design/legend-hub/moon/assets/master/moon-frame-gradients.json",
@@ -823,6 +823,21 @@
         "bytes": 2479968,
         "purpose": "Existing original hero and zoom hint motif; identical reference master, no duplicate image."
       }
-    ]
+    ],
+    "previous_revisions": [
+      {
+        "repository_path": "docs/design/legend-hub/moon/assets/master/moon-material-definitions.css",
+        "sha256": "82f4734f057b6a6320eb82e3a0ac38f25eb9cf0f222c77c368080d0b4405deea",
+        "bytes": 17376,
+        "purpose": "Exact complete reusable Moon CSS including frame, glass, asymmetric rows, Hero, badge, phases, zoom hint and preview; original master images unchanged."
+      }
+    ],
+    "classic_frame_origin": {
+      "repository_path": "frontend/modules/fullscreen/compass-preview-style.js",
+      "export": "COMPASS_DIALOG_FRAME",
+      "border": "1px solid #c9a050",
+      "shadow": "0 24px 90px #000c,inset 0 0 0 3px #cda9500c",
+      "sha256": "9c285cfc8986fe34de172a959d00c222f5a2fa3e3e26e18b06b064c28511a989"
+    }
   }
 }

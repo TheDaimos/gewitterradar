@@ -71,3 +71,5 @@ Weiterhin maßgeblich: [Projekt-Bootstrap](../../../PROJECT_BOOTSTRAP.md), [Modu
 - [Implementierungs- und Prüfbericht 4.13](../../../GR_413_MOON_PREMIUM_2026-11-24.md). Runtime und Live-Vorschau verwenden dieselbe Funktion `applyMoonMaterial`. Benutzeroptionen liegen rückwärtskompatibel im vorhandenen Settings Vault.
 
 Die Erweiterung ist ausschließlich DEV. Keine Änderung des stabilen Branches oder historischer Tags und keine neue Betreiberfreigabe.
+
+4.13.2 ergänzt die vorhandenen Materialien gezielt: aktiver [CSS-Stand](assets/optimized/moon-material-definitions-4132.css), deutlicheres Mineralglas und klassische Goldfassung aus den unveränderten Eye-/Kompass-Menütokens. Die frühere Master-CSS bleibt als historische Referenz erhalten. Bildmaster und Rasterassets bleiben unverändert; aktuelle Herkunft und Hashes stehen im Manifest.

@@ -1,8 +1,8 @@
-import {settingsStorage} from '../core/settings-vault.js?v=4131r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4132r1';
 import { defineModule } from "../core/runtime.js?v=41108r1";
 export const MODULE_META=Object.freeze({
   "id": "instruments.compass-selector",
-  "version": "1.1.63",
+  "version": "1.1.64",
   "group": "Instrumente",
   "function": "Kompassauswahl",
   "subfunctions": [

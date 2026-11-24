@@ -109,4 +109,26 @@ const moonRows={
  "Sächs’sch": "Mondlegende einsdelln|Glashindergrund|Glassisches Nachdglas|Mineralisches Premium-Glas|Fensdergröße|Manuell|Mondphasen standardmäßig zeign|Premium-Lichdreflexe|Mond-Aura|Fensderbosidion zurücksedzn|Mond",
  "Schwäbisch": "Mondlegende eistella|Glashintergrund|Klassischs Nachtglas|Mineralischs Premium-Glas|Fenschtergröße|Manuell|Mondphasa standardmäßig zeiga|Premium-Lichtreflexe|Mond-Aura|Fenschterposition zrucksetza|Mond"
 };
-export const LEGEND_HUB_TRANSLATIONS=Object.freeze(Object.fromEntries(Object.entries(rows).map(([language,text])=>[language,Object.freeze({...Object.fromEntries(moonKeys.map((key,i)=>[key,moonRows[language].split('|')[i]])),...Object.fromEntries(surfaceKeys.map((key,i)=>[key,surfaceRows[language].split('|')[i]])),...Object.fromEntries(keys.map((key,i)=>[key,text.split('|')[i]])),...Object.fromEntries(optionKeys.map((key,i)=>[key,(options[language]||options.Deutsch).split('|')[i]])),...Object.fromEntries(['ice','mint','champagne','autoInvert'].map((key,i)=>[key,ink[language].split('|')[i]])),...Object.fromEntries(sourceKeys.map((key,i)=>[key,sourceRows[language].split('|')[i]])),categorical:categorical[language],glassTransparency:glass[language],title:'Legend Hub',premium:'Premium',compact:'Compact Glass',clean:'Clean',precision:'Precision',thermometer:'Thermometer Premium'})])));
+const moonDistanceKeys=["moonDistance", "moonDistanceUnit", "moonMeter", "moonFeet", "moonClassicGold", "moonKilometers", "moonMiles"];
+const moonDistanceRows={
+ "English": "Moon distance|Distance unit|Meters|Feet|Classic premium gold|Kilometers|Miles",
+ "Deutsch": "Mondentfernung|Entfernungseinheit|Meter|Fuß|Klassisches Premium-Gold|Kilometer|Meilen",
+ "Dansk": "Måneafstand|Afstandsenhed|Meter|Fod|Klassisk premiumguld|Kilometer|Mil",
+ "Español": "Distancia lunar|Unidad de distancia|Metros|Pies|Oro premium clásico|Kilómetros|Millas",
+ "Français": "Distance lunaire|Unité de distance|Mètres|Pieds|Or premium classique|Kilomètres|Miles",
+ "Nederlands": "Maanafstand|Afstandseenheid|Meters|Voeten|Klassiek premiumgoud|Kilometers|Mijlen",
+ "Polski": "Odległość Księżyca|Jednostka odległości|Metry|Stopy|Klasyczne złoto premium|Kilometry|Mile",
+ "Português": "Distância lunar|Unidade de distância|Metros|Pés|Ouro premium clássico|Quilómetros|Milhas",
+ "Svenska": "Månavstånd|Avståndsenhet|Meter|Fot|Klassiskt premiumguld|Kilometer|Miles",
+ "Italiano": "Distanza lunare|Unità di distanza|Metri|Piedi|Oro premium classico|Chilometri|Miglia",
+ "Norsk bokmål": "Måneavstand|Avstandsenhet|Meter|Fot|Klassisk premiumgull|Kilometer|Miles",
+ "Suomi": "Kuun etäisyys|Etäisyysyksikkö|Metrit|Jalat|Klassinen premiumkulta|Kilometrit|Mailit",
+ "Čeština": "Vzdálenost Měsíce|Jednotka vzdálenosti|Metry|Stopy|Klasické prémiové zlato|Kilometry|Míle",
+ "Ελληνικά": "Απόσταση Σελήνης|Μονάδα απόστασης|Μέτρα|Πόδια|Κλασικός premium χρυσός|Χιλιόμετρα|Μίλια",
+ "Magyar": "Holdtávolság|Távolságegység|Méter|Láb|Klasszikus prémium arany|Kilométer|Mérföld",
+ "Boarisch": "Mondentfernung|Entfernungseinheit|Meter|Fuaß|Klassischs Premium-Gold|Kilometer|Meilen",
+ "Plattdüütsch": "Maanafstand|Afstandseenheit|Meter|Foot|Klassisch Premium-Gold|Kilometer|Mielen",
+ "Sächs’sch": "Mondendfernung|Endfernungseinheid|Meder|Fuß|Glassisches Premium-Gold|Kilomeder|Meilen",
+ "Schwäbisch": "Mondentfernung|Entfernungseinheit|Meter|Fuaß|Klassischs Premium-Gold|Kilometer|Meila"
+};
+export const LEGEND_HUB_TRANSLATIONS=Object.freeze(Object.fromEntries(Object.entries(rows).map(([language,text])=>[language,Object.freeze({...Object.fromEntries(moonDistanceKeys.map((key,i)=>[key,moonDistanceRows[language].split('|')[i]])),...Object.fromEntries(moonKeys.map((key,i)=>[key,moonRows[language].split('|')[i]])),...Object.fromEntries(surfaceKeys.map((key,i)=>[key,surfaceRows[language].split('|')[i]])),...Object.fromEntries(keys.map((key,i)=>[key,text.split('|')[i]])),...Object.fromEntries(optionKeys.map((key,i)=>[key,(options[language]||options.Deutsch).split('|')[i]])),...Object.fromEntries(['ice','mint','champagne','autoInvert'].map((key,i)=>[key,ink[language].split('|')[i]])),...Object.fromEntries(sourceKeys.map((key,i)=>[key,sourceRows[language].split('|')[i]])),categorical:categorical[language],glassTransparency:glass[language],title:'Legend Hub',premium:'Premium',compact:'Compact Glass',clean:'Clean',precision:'Precision',thermometer:'Thermometer Premium'})])));

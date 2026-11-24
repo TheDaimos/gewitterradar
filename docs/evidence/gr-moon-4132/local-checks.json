@@ -1,0 +1,39 @@
+{
+  "baseline": "afea83c8c5e53e8cd93870e879d28aefa642d902",
+  "version": "4.13.2",
+  "integrationVersion": "0.25.180",
+  "wrCommit": "850c3542a8b3b181edc5837205bbeb374ed72eab",
+  "wrVersion": "0.10.330",
+  "targetedPass": [
+    "drag-data-and-zoom-with-active-resize",
+    "five-defaults-and-existing-slot-preservation",
+    "topocentric-vector-distance",
+    "websocket-six-tests",
+    "four-distance-conversions-and-unavailable-fallback",
+    "live-auto-KM-MI-manual-override-and-reload",
+    "stationary-pointer-three-plus-three-minus-clicks",
+    "native-percentage-choice-and-keyboard",
+    "six-frame-glass-combinations",
+    "full-resolution-header-and-27px-chevron",
+    "phone-seven-rows-without-scroll-fallback",
+    "15-schema-combinations",
+    "unchanged-Eye-classic-frame-CSS-output"
+  ],
+  "fullRegressionMatrixRepeated": false,
+  "realHAInstallation": false,
+  "operatorGraphicApproval": false,
+  "screenshots": [
+    {
+      "file": "classic-gold-preview.png",
+      "sha256": "3bb7be8be1f2fc838f407b60bfd4847d231eb6f699099fd733b155a21e58dbe2"
+    },
+    {
+      "file": "desktop.png",
+      "sha256": "3e3a966323c5346d10be27b4a407f4a03a84aa5000384a04e6b4905f386c741a"
+    },
+    {
+      "file": "phone.png",
+      "sha256": "d46c2428681d90a1aa4144ebd239dd258ab280eb13872c318ace975c43da9163"
+    }
+  ]
+}

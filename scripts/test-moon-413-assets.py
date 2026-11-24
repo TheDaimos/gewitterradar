@@ -32,6 +32,6 @@ for r in d['premium_materials']['resources']:
     p=Path(r['repository_path']);assert hashlib.sha256(p.read_bytes()).hexdigest()==r['sha256'],r['repository_path']
     if r.get('runtime_path'):assert p.read_bytes()==Path(r['runtime_path']).read_bytes()
 css=Path('frontend/modules/weather/moon-legend.js').read_text(encoding='utf-8').split('el.textContent=`',1)[1].split('`;shadow.append(el);}',1)[0]
-assert (base/'assets/master/moon-material-definitions.css').read_text(encoding='utf-8')==css,'archived material definition must equal actual runtime style'
+assert Path(d['premium_materials']['resources'][0]['repository_path']).read_text(encoding='utf-8').strip()==css.strip(),'archived material definition must equal actual runtime style'
 assert len(d['phases'])==8
 print('PASS complete archive: supplied master SHA-256, PNG CRC/decoded genuine alpha, 3 HiDPI variants/3 mirrors, 8 original phase mappings, material/zoom/chevron provenance')

@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
 export const MODULE_META=Object.freeze({
   "id": "ui.render",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "group": "Oberfläche",
   "function": "Hauptrendering",
   "subfunctions": [
@@ -45,6 +45,7 @@ export const installRender=defineModule(MODULE_META,(deps)=>{const { CARD_VERSIO
         languageButton.setAttribute('aria-label',this._t('settings.language_menu_aria'));
       }
       const distanceUnit = this._distanceUnitValue();
+      this.__grMoon?.renderDistance?.();
       const distanceUnitHelperAvailable = !!this._hass.states[this._distanceUnitEntity()];
       const distanceUnitLabel = $('settings-distance-unit-label');
       const distanceUnitControl = $('settings-distance-unit-control');
