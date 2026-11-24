@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.15",
-  "build": "V4.12.15-DEV-2026-11-23",
-  "runtimeRevision": "41215r1",
-  "moduleSetId": "E412-15A1",
-  "baselineFeatureHead": "761bf3d290bf63dd6d4be60eebf3fe450438e916",
+  "productVersion": "4.12.16",
+  "build": "V4.12.16-DEV-2026-11-24",
+  "runtimeRevision": "41216r1",
+  "moduleSetId": "E412-16A1",
+  "baselineFeatureHead": "c70faed47e1a888f3bcbebc62fd7bbcef202e453",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "User-facing release history for dynamic Auras and Legend Hub",
+    "purpose": "Legend Hub Premium Moon Legend: validated geographic ephemeris consumer, nonmodal bounded window, original silver-platinum design and lifecycle checks.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

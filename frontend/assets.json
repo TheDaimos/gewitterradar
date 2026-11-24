@@ -94,7 +94,7 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "3841043e54ff13f12474af0bce3b90779f753f1c04cf2cb82612e63b8b4ad460",
+    "sha256": "7a12cc6b77576e77d501c64a7de0cfacce5e0a76a11bbc598401aea746f59ced",
     "protected": false,
     "sizeBytes": 2958
   },
@@ -518,6 +518,62 @@
   {
     "file": "assets/moon/07_abnehmende_sichel_512.png",
     "sha256": "a32a1b5dcae679179a68779601b78c23f83f47a09f902b3bacad137f4b6124d8",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/moon_full_silver_platinum_master.png",
+    "sizeBytes": 2479968,
+    "sha256": "d74592ad1f104cad2c102c06fedf87e66b4c6c61dd7d26bb880d87caf506c9b9",
+    "referenced": true,
+    "protected": true
+  },
+  {
+    "file": "assets/moon/00_neumond.png",
+    "sha256": "1d7632f206ef3c84fb22aa2c818f9aed0e27a358df69968b3ec5e6be08911b51",
+    "sizeBytes": 906278,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/01_zunehmende_sichel.png",
+    "sha256": "08db803675b173c879475ba1bd304bb93477d2f8826b44d8312a2456521b1200",
+    "sizeBytes": 1253349,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/02_erstes_viertel.png",
+    "sha256": "de0b4af24f099832136a8c7c4a910f78238c29fd00213a40f1918043d218191d",
+    "sizeBytes": 1664925,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/03_zunehmender_mond.png",
+    "sha256": "46fa83aa0aef2e64391c3914f4135230c817eccf4fb161c6a1dbbde4ca925cad",
+    "sizeBytes": 1980826,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/05_abnehmender_mond.png",
+    "sha256": "c938699fdf51c2ab1637bae9cca262f6d442909ef5a222ead56e50c7cf41db5a",
+    "sizeBytes": 1989893,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/06_letztes_viertel.png",
+    "sha256": "826a2004fbdcc889cbfc84cbf7f02f1b0fbbc9a898302f3c901f7db50d63bddd",
+    "sizeBytes": 1674513,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/07_abnehmende_sichel.png",
+    "sha256": "0c18f009a9ae6b8cf6968b8557c72726690366ea1bdccd09aeacb8e556abffe4",
+    "sizeBytes": 1261191,
     "protected": true,
     "referenced": true
   }

@@ -54,3 +54,18 @@ for patch in [{'glassOpacity': -1}, {'glassOpacity': 101}, {'glassOpacity': '50'
     else:
         raise AssertionError(f'Invalid glass/frame option accepted: {patch}')
 print('PASS: actual Vault schema validates independent glass/frame settings and rejects invalid types/ranges/enums')
+
+moon_value = {'schema': 1, 'slots': ['moon', None, 'wind'],
+              'legends': {'moon': {'mode': 'on'}},
+              'extraPositions': {'moon': {'x': .75, 'y': .25}}}
+assert schema.validate_settings({hub: moon_value}) == {hub: moon_value}
+assert schema.decode_value(hub, schema.encode_value(hub, moon_value)) == moon_value
+for invalid in [{'extraPositions': {'moon': {'x': 1.1, 'y': 0}}},
+                {'legends': {'moon': {'mode': 'invalid'}}}]:
+    try:
+        schema.validate_settings({hub: invalid})
+    except schema.VaultError:
+        pass
+    else:
+        raise AssertionError(f'Invalid Moon preference accepted: {invalid}')
+print('PASS: actual Vault schema round-trips Moon slot, visibility and normalized window position; rejects invalid values')

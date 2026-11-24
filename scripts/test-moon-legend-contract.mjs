@@ -1,6 +1,7 @@
 // Run with: node scripts/test-moon-legend-contract.mjs
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {createHash} from 'node:crypto';
 const base='custom_components/gewitterradar/frontend/';
 const moon=fs.readFileSync(base+'modules/weather/moon-legend.js','utf8');
 const model=fs.readFileSync(base+'modules/weather/legend-hub-model.js','utf8');
@@ -33,5 +34,19 @@ assert.doesNotMatch(moon,/showModal\(/);
 assert.match(moon,/setInterval/);
 assert.match(moon,/clearInterval/);
 assert.match(moon,/normalizeLongitude/);
-assert.match(moon,/PREMIUM_CLOSE/);
+assert.match(moon,/closeIcon=icon\('close'\)/);
 assert.match(moon,/extraPositions/);
+
+const assetManifest=JSON.parse(fs.readFileSync('docs/design/legend-hub/moon/manifest.json','utf8'));
+for(const phase of assetManifest.phases){
+ const original=phase.phase_id==='full_moon'?'references/moon_full_silver_platinum_master.png':phase.master.path;
+ const filename=original.split('/').at(-1),source=fs.readFileSync('docs/design/legend-hub/moon/'+original);
+ for(const dir of [base,'frontend/','dashboard/dist/']){
+  const bytes=fs.readFileSync(dir+'assets/moon/'+filename);
+  assert(bytes.equals(source),'byte-identical high-resolution Moon '+filename);
+  assert.equal(bytes.readUInt32BE(16),1254);assert.equal(bytes.readUInt32BE(20),1254);assert.equal(bytes[25],6,'RGBA original');
+  const entry=JSON.parse(fs.readFileSync('frontend/assets.json')).find(a=>a.file==='assets/moon/'+filename);
+  assert.equal(createHash('sha256').update(bytes).digest('hex'),entry.sha256);
+ }
+}
+console.log('PASS: eight original 1254px RGBA hero graphics, runtime hashes and all three delivery trees');

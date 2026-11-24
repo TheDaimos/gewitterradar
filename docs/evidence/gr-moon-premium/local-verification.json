@@ -1,0 +1,111 @@
+{
+  "environment": "Windows / Python 3.12 / installed Chrome / Playwright, actual GR card and Leaflet, synthetic HA transport",
+  "grBaseline": "c70faed47e1a888f3bcbebc62fd7bbcef202e453",
+  "wrTestCommit": "cfdc8c722ff4aef9d919e7cc3e0a783314473334",
+  "wrRuntimeVersion": "0.10.329",
+  "localExecutedPass": {
+    "wrMoonEngine": 11,
+    "wrMoonWebsocketHandlerAdapter": 6,
+    "weatherAndMenuNodeTests": 30,
+    "sharedWorkflowNodeCommands": 17,
+    "moonBrowserScenarios": 4,
+    "auraBrowserScenarios": 3,
+    "currentHubScenarios": 3,
+    "authenticatedMoonProfileSwitch": true,
+    "settingsVaultBrowser": true,
+    "eyeEdgeBrowser": true,
+    "delayedEyeRecovery": "5 cycles at 0/1/2/3/5/10 seconds",
+    "moonAssetContract": true,
+    "moonIsolationProtectedBodies": 111,
+    "vaultActualSchema": true,
+    "legendModelLayouts": 2184,
+    "auraModelGeometryCases": 1458,
+    "eyeHubModel": true,
+    "eyeWowModel": true,
+    "sourceModel": true,
+    "protectedAuraFinalIsolation": true,
+    "hiresRetention": true,
+    "staticPythonJsonYaml": true,
+    "regularFrontendBuild": true,
+    "deterministicRebuildNegativeProbes": true,
+    "registeredModules": 37
+  },
+  "knownLegacyTestFailure": {
+    "script": "scripts/test-v412-legend-browser.cjs",
+    "result": "fails on missing historical Synoptic density control",
+    "baselineReproduction": "same failure reproduced on c70faed47e1a888f3bcbebc62fd7bbcef202e453",
+    "currentCoverage": "actual current Hub/slot/authenticated-profile suite plus exact 111-body isolation; legacy test not modified or represented as PASS"
+  },
+  "notPerformed": [
+    "physical Android",
+    "installed Home Assistant VM109 authenticated WebSocket",
+    "operator visual acceptance",
+    "PROD changes"
+  ],
+  "screenshots": [
+    {
+      "file": "desktop-before.png",
+      "sha256": "bd5ce75cd8776f0453d6d4bfc370bf21b7cae6cbab6df80f66016780350a409d"
+    },
+    {
+      "file": "desktop-moon.png",
+      "sha256": "ec06afbbb477df92ea23d61fa3633b8067cf9971f22d292110bb6e037a6d30db"
+    },
+    {
+      "file": "desktop-phases.png",
+      "sha256": "2b8f88539eaa8b84d58af2b63f96b553f939724dd9c7ab200fbddd662e52ea08"
+    },
+    {
+      "file": "desktop-zoom.png",
+      "sha256": "f3dc7428c21bd67d6d424fe587e58ed755f07fc3c36537579d31856cca6ffcf6"
+    },
+    {
+      "file": "phone-landscape-before.png",
+      "sha256": "f0bea28a15ded43430dc43f21a3efe62c396e13d40f98d7329d42c39cf16f529"
+    },
+    {
+      "file": "phone-landscape-moon.png",
+      "sha256": "e1436d71e8d9746325d775515af51897d50330ad39213161bcfe9b5936f0bbbf"
+    },
+    {
+      "file": "phone-landscape-phases.png",
+      "sha256": "f055d5ebcfaeb2f5004444cf8d41fa50b411d50f569968d97e825ac17c4d9df8"
+    },
+    {
+      "file": "phone-landscape-zoom.png",
+      "sha256": "c974b168dc5939cf3e9eccc694e5ffa000e33842892a94bfba5ae34e1f247cca"
+    },
+    {
+      "file": "smartphone-before.png",
+      "sha256": "f2f038b13b100d551c3e1c713752cb7921c6b91c85330b9eab2d9db46a93ec8a"
+    },
+    {
+      "file": "smartphone-moon.png",
+      "sha256": "1272f1f1c459e5f24628096a63e91c97dd0b2490b06766428e0a4b6a0dc98558"
+    },
+    {
+      "file": "smartphone-phases.png",
+      "sha256": "e14288f30b4d5ea3740675222b133b9129a98e6229e3ffbf242e2365d735879f"
+    },
+    {
+      "file": "smartphone-zoom.png",
+      "sha256": "4b0d0291bc47c2842f8c8f9bfb53eb08a208b48806819dbcf8dbe8866f893f30"
+    },
+    {
+      "file": "tablet-before.png",
+      "sha256": "cec3c0072a12b0ab6e693b20dd342fabdcb586e5e298f980db0fd53cf9d6e07f"
+    },
+    {
+      "file": "tablet-moon.png",
+      "sha256": "85515b1c5b5c36d7a9c60db27fb03acb87e225da3bb60e6583003263085529f5"
+    },
+    {
+      "file": "tablet-phases.png",
+      "sha256": "5413e585622b1292ec79d20bdc0b8a52d8d757fa355e023adebec252338278bf"
+    },
+    {
+      "file": "tablet-zoom.png",
+      "sha256": "d92793e2ef20e28365b8e5007f9e06d4395401f91e636405cc758b7796db3178"
+    }
+  ]
+}

@@ -1,13 +1,13 @@
-import {openMoon,closeMoon,moonOpen} from './moon-legend.js?v=412moon2';
+import {openMoon,closeMoon,moonOpen} from './moon-legend.js?v=41216r1';
 import {EYE_ICON_METRICS} from './eye-hub-model.js?v=4123r1';
-import {legendHubState,saveLegendHub,legendVisible,patchLegend,legendOptions} from './legend-preferences.js?v=41215r1';
-import {legendEntries,legendTitle} from './legend-registry.js?v=4126r1';
+import {legendHubState,saveLegendHub,legendVisible,patchLegend,legendOptions} from './legend-preferences.js?v=41216r1';
+import {legendEntries,legendTitle} from './legend-registry.js?v=41216r1';
 import {legendHubLayout,intersects} from './legend-hub-layout.js?v=4124r1';
-import {ensureLegendHubStyle,LEGEND_HUB_ICONS,openHubConfig,openLegendConfig,legendText} from './legend-hub-view.js?v=41215r1';
-import {createWindLegend,updateWindLegend} from './wind-legend.js?v=41215r1';
-import {updateTemperatureLegends} from './temperature-legend.js?v=41215r1';
-import {createScientificLegend,legendParagraphs} from './premium-legend.js?v=41215r1';
-import {frontSymbolPaths} from './synoptic-display.js?v=41215r1';
+import {ensureLegendHubStyle,LEGEND_HUB_ICONS,openHubConfig,openLegendConfig,legendText} from './legend-hub-view.js?v=41216r1';
+import {createWindLegend,updateWindLegend} from './wind-legend.js?v=41216r1';
+import {updateTemperatureLegends} from './temperature-legend.js?v=41216r1';
+import {createScientificLegend,legendParagraphs} from './premium-legend.js?v=41216r1';
+import {frontSymbolPaths} from './synoptic-display.js?v=41216r1';
 // Centers of the original alpha>=32 contour, measured once in source pixels.
 const SLOT_ICON_CENTERS=Object.freeze({wind:[136,136],temperature:[136,136],precipitation:[613.5,622],synoptic:[613,621],'weather-display':[609.5,636]});
 const controls='.leaflet-control,#weather-display-eye-control,#map-display-control,#map-instrument-controls,#compass-instrument,#map-location-overlay,.eye-hub-bubble';
@@ -42,6 +42,7 @@ function refresh(owner){const s=legendHubState(owner);if(s.refreshing||s.suspend
    s.slotSignature=signature;
   }for(const b of s.popout.querySelectorAll('[data-legend-id]'))if(b.dataset.legendId)b.setAttribute('aria-pressed',String(actualVisible(owner,b.dataset.legendId)));positionHub(owner);
  }
+ if(s.config.slots.includes('moon')&&s.config.legends.moon.mode==='on'&&owner.__proBranding?.eyeReady&&!moonOpen(owner))openMoon(owner);
  }finally{s.refreshing=false;}}
 export function resumeLegendHub(owner){const s=legendHubState(owner),g=geometry(owner);if(!g)return;s.suspended=false;ensureLegendHubStyle(owner);owner._legendHubRefresh=()=>refresh(owner);owner._legendHubStatus=()=>{for(const b of s.popout?.querySelectorAll('[data-legend-id]')||[])if(b.dataset.legendId)b.setAttribute('aria-pressed',String(actualVisible(owner,b.dataset.legendId)));};owner._legendHubSyncExtra=()=>{for(const view of s.extra?.values()||[])view._weatherLegendSyncUi();};owner._legendHubTranslate=()=>{const language=owner._languageValue?.();if(s.language===language)return;s.language=language;s.slotSignature=null;refresh(owner);};
  if(!s.button){const button=s.button=document.createElement('button');button.type='button';button.id='legend-hub-control';button.className='lh-main';button.setAttribute('aria-label',legendText(owner,'title'));button.setAttribute('aria-controls','legend-hub-popout');const img=document.createElement('img');img.alt='';button.append(img);g.card.append(button);const popout=s.popout=document.createElement('div');popout.id='legend-hub-popout';popout.className='lh-popout';popout.setAttribute('role','group');popout.setAttribute('aria-label',legendText(owner,'title'));g.card.append(popout);
@@ -51,7 +52,7 @@ export function resumeLegendHub(owner){const s=legendHubState(owner),g=geometry(
  }
  if(!s.abort){s.abort=new AbortController();const options={signal:s.abort.signal};g.card.addEventListener('click',event=>{if(!s.open||!s.config.autoClose)return;const path=event.composedPath();if(!path.includes(g.map)||path.some(n=>n?.matches?.('button,a,input,select,textarea,summary,dialog:not(#map-fullscreen-dialog),[role=menu],[role=button],.leaflet-control,.leaflet-interactive,.weather-display-panel,#map-display-control,#map-instrument-controls,#map-location-overlay,.weather-legend-overlay,.lh-popout,.lh-main,[data-weather-radar-player]')))return;s.open=false;s.locked=null;refresh(owner);},{...options,capture:true});const resize=()=>{if(!s.frame)s.frame=requestAnimationFrame(()=>{s.frame=null;refresh(owner);});};window.addEventListener('resize',resize,options);window.visualViewport?.addEventListener('resize',resize,options);s.observer=new ResizeObserver(resize);s.observer.observe(g.map);
   // Branding readiness changes independently of weather data; no polling loop.
-  const reposition=()=>{if(s.suspended||s.positionFrame)return;s.positionFrame=requestAnimationFrame(()=>{s.positionFrame=null;positionHub(owner);});};s.readyObserver=new MutationObserver(()=>{const hidden=!owner.__proBranding?.eyeReady;if(s.button.hidden!==hidden)s.button.hidden=hidden;reposition();});const eye=owner.shadow.getElementById('weather-display-eye-control'),bubbles=owner.shadow.getElementById('eye-hub-bubbles');if(eye)s.readyObserver.observe(eye,{attributes:true,attributeFilter:['hidden','class','style']});if(bubbles)s.readyObserver.observe(bubbles,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','style']});window.addEventListener('scroll',reposition,{...options,capture:true,passive:true});window.visualViewport?.addEventListener('scroll',reposition,options);
+  const reposition=()=>{if(s.suspended||s.positionFrame)return;s.positionFrame=requestAnimationFrame(()=>{s.positionFrame=null;positionHub(owner);});};s.readyObserver=new MutationObserver(()=>{const hidden=!owner.__proBranding?.eyeReady;if(s.button.hidden!==hidden){s.button.hidden=hidden;if(!hidden)refresh(owner);}reposition();});const eye=owner.shadow.getElementById('weather-display-eye-control'),bubbles=owner.shadow.getElementById('eye-hub-bubbles');if(eye)s.readyObserver.observe(eye,{attributes:true,attributeFilter:['hidden','class','style']});if(bubbles)s.readyObserver.observe(bubbles,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','style']});window.addEventListener('scroll',reposition,{...options,capture:true,passive:true});window.visualViewport?.addEventListener('scroll',reposition,options);
  }refresh(owner);if(s.config.slots.includes('moon')&&s.config.legends.moon.mode==='on'&&owner.__proBranding?.eyeReady&&!moonOpen(owner))openMoon(owner);
 }
 export function teardownLegendHub(owner){const s=owner.__legendHub;if(!s)return;s.suspended=true;s.abort?.abort();s.abort=null;s.observer?.disconnect();s.readyObserver?.disconnect();cancelAnimationFrame(s.frame);cancelAnimationFrame(s.positionFrame);s.frame=null;s.positionFrame=null;owner._weatherDisplayCancelEyeDrag?.(s.options);for(const options of s.slotOptions||[])owner._weatherDisplayCancelEyeDrag?.(options);for(const view of s.extra?.values()||[])view._teardownWeatherLegend();closeMoon(owner,false);s.open=false;s.locked=null;if(s.popout)s.popout.hidden=true;owner.__legendConfig?.close();}
