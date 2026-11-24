@@ -33,11 +33,11 @@
     },
     {
       "file": "desktop-history-de.png",
-      "sha256": "bad759ea385d5c201e28d0d320908a23c3a853162cf34380e411ba184cef3d0f"
+      "sha256": "5b47f217f7c88b4c4c8cb537d2bd11cdbedd9e1cb4d9be22ec89fbe9162c6040"
     },
     {
       "file": "desktop-history-en.png",
-      "sha256": "633a56640618aaed823acff014606a7ca5e6e65ecf37fc3a42880a562f05ae99"
+      "sha256": "d8ce27bdf1ecedf287b5d80a98fed25563dfc773a34240e38b0dc6a1eda59509"
     },
     {
       "file": "desktop-platinum-night.png",
@@ -65,11 +65,11 @@
     },
     {
       "file": "phone-history-de.png",
-      "sha256": "59ad3dbb67222e231d891aed1279e8908753726e5a6a37cc243430903a9ab44c"
+      "sha256": "bab8d519e7ba7c967323a03932b8df3ca85451f2ae26ee71cbbeea29dc225a81"
     },
     {
       "file": "phone-history-en.png",
-      "sha256": "b601eeaf75167e8acf46de0c264a677dd4cf4f839d4f9cefbe3be375884e40ef"
+      "sha256": "35056e19efdabdcd0216797dd341a9dd7accbe18712ed3254ea91ad75dda5c08"
     },
     {
       "file": "phone-platinum-night.png",
@@ -95,5 +95,7 @@
       "file": "tablet-platinum-night.png",
       "sha256": "5633afb8ff5d8c0fbfa727e50fda7edd3378826222351202732785e8aef12c73"
     }
-  ]
+  ],
+  "dedicatedBilingualHistoryLayouts": 6,
+  "historyTypographyMatchesExisting": true
 }

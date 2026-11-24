@@ -163,7 +163,7 @@ jobs:
           GR_MOON_FINISH_EVIDENCE: ${{ runner.temp }}/moon-finish-evidence
         run: |
           node scripts/test-moon-finish-browser.cjs
-          if [ "${{ steps.ui_scope.outputs.moon_413 }}" = "true" ]; then node scripts/test-moon-413-browser.cjs; fi
+          if [ "${{ steps.ui_scope.outputs.moon_413 }}" = "true" ]; then node scripts/test-moon-413-browser.cjs; node scripts/test-moon-413-history.cjs; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -182,4 +182,5 @@ jobs:
             ${{ runner.temp }}/moon-evidence
             ${{ runner.temp }}/moon-finish-evidence
             .task413/evidence
+            .task413/history-final
           if-no-files-found: ignore
