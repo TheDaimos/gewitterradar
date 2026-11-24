@@ -1,4 +1,4 @@
-import {openMoon,closeMoon,moonOpen,refreshMoonAppearance} from './moon-legend.js?v=4135r1';
+import {openMoon,closeMoon,moonOpen,refreshMoonAppearance} from './moon-legend.js?v=4136r1';
 import {EYE_ICON_METRICS} from './eye-hub-model.js?v=4123r1';
 import {legendHubState,saveLegendHub,legendVisible,patchLegend,legendOptions} from './legend-preferences.js?v=4135r1';
 import {legendEntries,legendTitle} from './legend-registry.js?v=4135r1';
