@@ -21,3 +21,7 @@
 ## Release-/DNS-Fallback für neue Entwicklungschats (Pflicht)
 
 Vor jeder Version-FINALisierung **[FINAL_RELEASE_AUTOMATION.md](FINAL_RELEASE_AUTOMATION.md)** lesen. `main` führt die remote GitHub-Actions-Workflows `gr-release-premerge.yml` und `gr-release-final.yml`; sie benötigen kein lokales DNS im Chat. GitHub-Connector für SHA-Checks, Branches, Commits und PR/Merge nutzen; bei fehlendem Workflow-Dispatch die dokumentierten PRE-MERGE- und Publish-Request-PRs verwenden. Exakte CI, PRE-MERGE-Offsite-Sicherung, geschützte Referenzen und Golden Master bleiben zwingend. Nichts als FINAL melden, bevor ein tatsächliches offizielles Release belegt ist.
+
+## V4.13 FINAL – gesicherte Analyse statt erneuter Ursachen-Ratesuche
+
+Bei jeder V4.13-FINAL-Aufgabe zuerst [diese verbindliche Fehler- und Übergabeakte](GR_413_FINAL_BLOCKERS_AND_AGENT_RUNBOOK_2026-11-24.md) lesen. Vorhandenen PRE-MERGE-CI-Run und Betreiberabnahme wiederverwenden, unverifizierte externe Sicherung nicht bestätigen, veraltete versionsspezifische Release-/Build-Gates nach Repo-Befund **selbstständig additiv aktualisieren**. Ein lokaler ClientError ist kein Beleg für einen Quellcodefehler und keine automatische Abbruchbegründung. Produktcode, Protected-Pairs und PROD unverändert lassen, sofern nicht ausdrücklich erforderlich und freigegeben.
