@@ -116,6 +116,11 @@ def test_v41001_compass_picker_contract():
         if (is_v411 and tuple(map(int, product.split("."))) >= (4, 12, 10)
                 and module_name == "compass-picker-chevron-right-silver.js"):
             expected_references.add(FRONTEND / "modules" / "weather" / "legend-hub-view.js")
+        # Explicit Premium Master Finish order: reuse this exact existing asset
+        # for Moon's accordion, without opening the other three picker assets.
+        if (is_v411 and tuple(map(int, product.split("."))) >= (4, 12, 17)
+                and module_name == "compass-picker-chevron-right-silver.js"):
+            expected_references.add(FRONTEND / "modules" / "weather" / "moon-legend.js")
         assert set(references) == expected_references, (
             f"{module_name} must retain exactly its explicitly approved consumers"
         )

@@ -50,6 +50,10 @@ Weitere reale Ansichten: [manuelle 125-%-Anforderung mit Kartenbegrenzung](evide
 
 ## Grenzen und ausstehender Lieferabschluss
 
+Zusätzlicher Nachlauf der [vier bestehenden Moon-Browserfälle](evidence/gr-moon-master-finish/moon-regression-results.json): Desktop, Tablet, Smartphone und Querformat bestanden einschließlich Refresh, Zoomschranke, echten Karten-/Touchgesten, veralteten Antworten, Fehlerdaten, Timeout und Schließbereinigung. Lokaler gemessener Kartendrift beim Fensterdrag: jeweils 0 CSS-Pixel. Die Prüfung verlangt unveränderten Zoom und höchstens 0,001 projizierte CSS-Pixel statt eines exakten Float-Vergleichs der rückprojizierten LatLng-Werte. Die virtuelle Testuhr führt verschachtelte Resize-/rAF-Termine mit `runFor` in zeitlicher Reihenfolge aus. Das verändert keinen Produktcode. Der Asset-Schutztest erlaubt ausschließlich den ausdrücklich beauftragten zusätzlichen Moon-Verbraucher des unveränderten rechten Silber-Chevrons; die übrigen drei Picker-Assets bleiben unverändert exklusiv geschützt.
+
+Der eigenständige Zoomhinweis verwendet dieselben Materialebenen und dieselbe proportionale Größensteuerung: [Desktop](evidence/gr-moon-master-finish/desktop-zoom.png), [Smartphone](evidence/gr-moon-master-finish/smartphone-zoom.png). Ein nicht mehr zutreffender Screenshot eines früheren Smartphone-Fallback-Kandidaten wurde aus den finalen Belegen entfernt; der finale 390×844-Standardfall benötigt keinen Scroll-Fallback.
+
 Die Referenz ist weiterhin das gestalterische Ziel. CSS-/Glas-/Schriftwiedergabe und responsive Umbrüche sind browserabhängig; es wird keine Pixelidentität zum rasterisierten Entwurf behauptet. Die endgültige grafische Freigabe bleibt ausdrücklich beim Betreiber. Nicht durchgeführt: physischer Android-Test, OS-Browser-F11-Abnahme und Installation auf HA DEV VM109. DOM-Vollbild und GR-Vollbild wurden tatsächlich geprüft. WeatherRouter und PROD VM101 bleiben unverändert.
 
 Quellcommit, öffentliche Pflichtgates und kanonische DEV-Pakete werden nach erfolgreicher Ausführung im Lieferabschluss ergänzt.

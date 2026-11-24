@@ -75,6 +75,10 @@
       "sha256": "cf3093a3d464a9add78ce2f8067f25f01c972ba9b81a4a59f24f9dc9599c769a"
     },
     {
+      "file": "desktop-zoom.png",
+      "sha256": "902e1c1bef09c6ec5292ccddf2905ea6da8a6a83249f231d4f1206fb96264076"
+    },
+    {
       "file": "embedded-620-collapsed.png",
       "sha256": "daf127d7499e10bbdfae864f849e73b0c8d14840d35bbc57956ced2495711217"
     },
@@ -107,10 +111,6 @@
       "sha256": "75f87a4b77cb44344f6d4731747665ed1927edd3e01d622ea8d33e2b86d66f25"
     },
     {
-      "file": "phone-390-fallback-bottom.png",
-      "sha256": "cc24920761a9db71dc303223ce28459bf1f69c5058eac3dcdcd7270360119b1f"
-    },
-    {
       "file": "phone-landscape-v41216-before.png",
       "sha256": "e1436d71e8d9746325d775515af51897d50330ad39213161bcfe9b5936f0bbbf"
     },
@@ -129,6 +129,10 @@
     {
       "file": "smartphone-v41216-before.png",
       "sha256": "1272f1f1c459e5f24628096a63e91c97dd0b2490b06766428e0a4b6a0dc98558"
+    },
+    {
+      "file": "smartphone-zoom.png",
+      "sha256": "7e074165a109570e1892b2bd27057c07c356a069100e5e897d23e929e065180d"
     },
     {
       "file": "tablet-1024-collapsed.png",
@@ -150,5 +154,6 @@
       "file": "tablet-v41216-before.png",
       "sha256": "85515b1c5b5c36d7a9c60db27fb03acb87e225da3bb60e6583003263085529f5"
     }
-  ]
+  ],
+  "moonRegressionBrowserCases": 4
 }

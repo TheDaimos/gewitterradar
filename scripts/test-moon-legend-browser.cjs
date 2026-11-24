@@ -7,6 +7,12 @@ const out=process.env.GR_MOON_EVIDENCE||path.resolve('.task412-moon/evidence');
 const fixtures=JSON.parse(fs.readFileSync(process.env.GR_MOON_FIXTURES||'tests/fixtures/moon-ephemerides.json','utf8'));
 fs.mkdirSync(out,{recursive:true});
 const captureOnly=process.argv.includes('--capture-only');
+async function assertMapFixed(page,before,label){
+ // LatLng round-trips can change the last digits; reject even 0.001 CSS px
+ // of projected motion, and require the zoom to remain exactly unchanged.
+ const measured=await page.evaluate(before=>{const map=card._map;return {zoom:map.getZoom(),pixels:map.project(map.getCenter(),before.zoom).distanceTo(map.project(before.center,before.zoom))};},before);
+ assert.equal(measured.zoom,before.zoom,label+' zoom unchanged');assert(measured.pixels<=.001,label+' projected drift '+measured.pixels+' CSS px');return measured.pixels;
+}
 (async()=>{
  const f=temperatureFixture({decorate:html=>html.replace('window.cleanSource=weatherSourceText;',`window.cleanSource=weatherSourceText;
  window.moonFixtures=${JSON.stringify(fixtures)};window.moonRequests=[];window.moonPending=[];window.moonTransport={mode:'ready'};
@@ -63,7 +69,8 @@ const captureOnly=process.argv.includes('--capture-only');
    await page.locator('.gr-moon-surface').evaluate(n=>n.scrollTop=0);
    // Invoke the actual scheduled refresh via the browser virtual clock.
    const timedCount=await page.evaluate(()=>moonRequests.length);
-   await page.clock.fastForward(60000);await page.clock.fastForward(300);
+   // runFor preserves nested rAF/resize ordering; fastForward coalesces them.
+   await page.clock.fastForward(60000);await page.clock.runFor(1000);
    await page.waitForFunction(n=>moonRequests.length>n,timedCount);
    await page.waitForFunction(()=>card.__grMoon.status.hidden);
    // Mouse pan on a free part of the map while the nonmodal window stays open.
@@ -82,21 +89,21 @@ const captureOnly=process.argv.includes('--capture-only');
    }
    const modes=await page.evaluate(()=>({wind:card._weatherWindState().config.visible,temp:card._weatherTemperatureState().config.visible,radar:card._weatherRadarState().enabled}));
    // Real pointer-captured header drag, then pointer cancellation and viewport resize.
-   const head=await page.locator('.gr-moon-header').boundingBox(),before=await page.evaluate(()=>card._map.getCenter());
+   const head=await page.locator('.gr-moon-header').boundingBox(),before=await page.evaluate(()=>({center:card._map.getCenter(),zoom:card._map.getZoom()}));
    await page.mouse.move(head.x+head.width*.45,head.y+head.height*.5);await page.mouse.down();await page.mouse.move(width-2,height-2,{steps:12});await page.mouse.up();
-   assert(await inside(),'drag clamped '+name);assert.deepEqual(await page.evaluate(()=>card._map.getCenter()),before,'window drag does not pan map');
+   assert(await inside(),'drag clamped '+name);let mapDrift=await assertMapFixed(page,before,'window drag does not pan map');
    const saved=await page.evaluate(()=>preferences.legendHubState(card).config.extraPositions.moon);
    assert(saved.x>=0&&saved.x<=1&&saved.y>=0&&saved.y<=1);
-   await page.setViewportSize({width:height,height:width});await page.waitForTimeout(500);assert(await inside(),'orientation/resize remains bounded');
-   await page.setViewportSize({width,height});await page.waitForTimeout(500);assert(await inside(),'restored viewport remains bounded');
+   await page.setViewportSize({width:height,height:width});await page.waitForTimeout(100);await page.clock.runFor(1000);assert(await inside(),'orientation/resize remains bounded');
+   await page.setViewportSize({width,height});await page.waitForTimeout(100);await page.clock.runFor(1000);assert(await inside(),'restored viewport remains bounded');
    assert.deepEqual(await page.evaluate(()=>card.__legendHub.config.extraPositions.moon),saved,'temporary resize preserves stored position');
    if(touch){
     const touchHead=await page.locator('.gr-moon-header').boundingBox(),session=await context.newCDPSession(page);
-    const x=touchHead.x+touchHead.width*.45,y=touchHead.y+touchHead.height*.5,old=await page.evaluate(()=>card._map.getCenter());
+    const x=touchHead.x+touchHead.width*.45,y=touchHead.y+touchHead.height*.5,old=await page.evaluate(()=>({center:card._map.getCenter(),zoom:card._map.getZoom()}));
     await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
     await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:Math.max(15,x-65),y:Math.max(15,y-45)}]});
     await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await session.detach();
-    assert(await inside(),'real touch drag stays bounded');assert.deepEqual(await page.evaluate(()=>card._map.getCenter()),old,'touch window drag does not move map');
+    assert(await inside(),'real touch drag stays bounded');mapDrift=Math.max(mapDrift,await assertMapFixed(page,old,'touch window drag does not move map'));
    }
    // Cancellation exercises the same capture cleanup path.
    await page.locator('.gr-moon-header').dispatchEvent('pointerdown',{pointerId:31,pointerType:'touch',isPrimary:true,button:0,clientX:head.x+20,clientY:head.y+20});
@@ -140,7 +147,7 @@ const captureOnly=process.argv.includes('--capture-only');
    assert.equal(await page.evaluate(()=>card.__legendHub.config.legends.moon.mode),'off');
    assert.deepEqual(await page.evaluate(()=>({wind:card._weatherWindState().config.visible,temp:card._weatherTemperatureState().config.visible,radar:card._weatherRadarState().enabled})),modes);
    assert.deepEqual(errors,[]);
-   results.push({name,phases:8,allHiResPhases:name==='desktop',nonmodal:true,dragBounds:true,viewportReflow:true,mapStableDuringDrag:true,realTouchDrag:touch,touchCancel:true,timerRefresh:true,realMapPan:true,locationTimezone:true,staleRepliesRejected:true,zoomGate:true,failureAndInvalidData:true,requestTimeout:true,reload:true,closeCleanup:true,weatherIsolation:true});
+   results.push({name,phases:8,allHiResPhases:name==='desktop',nonmodal:true,dragBounds:true,viewportReflow:true,mapStableDuringDrag:true,mapDriftCssPx:mapDrift,realTouchDrag:touch,touchCancel:true,timerRefresh:true,realMapPan:true,locationTimezone:true,staleRepliesRejected:true,zoomGate:true,failureAndInvalidData:true,requestTimeout:true,reload:true,closeCleanup:true,weatherIsolation:true});
    await context.close();
   }
  }finally{await browser.close();f.server.closeAllConnections();await new Promise(r=>f.server.close(r));}
