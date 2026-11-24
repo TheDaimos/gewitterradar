@@ -1,6 +1,6 @@
 import {COMPASS_DIALOG_FRAME} from '../fullscreen/compass-preview-style.js?v=4132r1';
-import {LEGEND_FRAME_GRADIENTS} from './legend-instrument.js?v=4133r1';
-import {legendHubState,saveLegendHub,patchLegend} from './legend-preferences.js?v=4133r1';
+import {LEGEND_FRAME_GRADIENTS} from './legend-instrument.js?v=4134r1';
+import {legendHubState,saveLegendHub,patchLegend} from './legend-preferences.js?v=4134r1';
 import SILVER_CHEVRON from '../fullscreen/compass-picker-chevron-right-silver.js?v=41108r1';
 
 // Isolated read-only Moon Engine v1 consumer; no radar/provider mutations.

@@ -2,7 +2,7 @@
 import {WIND_COLORS,DEFAULT_WIND} from './wind-data.js?v=411211r1';
 import {DEFAULT_TEMPERATURE} from './temperature-data.js?v=411159r1';
 import {SNAKE_LIMITS} from './snake-config.js?v=411211r1';
-import {premiumEscape as esc} from './premium-ui.js?v=4133r1';
+import {premiumEscape as esc} from './premium-ui.js?v=4134r1';
 export const QUICK_LAYERS=Object.freeze(['precipitation','clouds','wind','temperature']);
 export const QUICK_TRANSLATIONS={
  Deutsch:{title:'Darstellung',layer:'Wetterebene',precipitation:'Niederschlag',clouds:'Wolken',wind:'Wind',temperature:'Temperatur',visible:'Ebene anzeigen',mode:'Darstellungsart',color:'Symbolfarbe',transparency:'Deckkraft',density:'Strömungsdichte',schema:'Farbschema',reset:'Standard',auto:'Auto',precise:'Präzise',balanced:'Ausgewogen',soft:'Weich',original:'Original',barbs:'Klassische Windfahnen',arrows:'Statische Windrichtungspfeile',animated:'Animierte Windströmung',snake:'Schlangenförmige Animation',low:'Gering',normal:'Normal',high:'Hoch',premium:'Premium',contrast:'Kontrast',rainHelp:'Präzise bleibt rastertreu. Ausgewogen glättet Kanten zoomabhängig, Weich verwendet das bestehende stärkere Profil.',cloudHelp:'Original oder historisch abgestimmte zoomabhängige Glättung.',opacityHelp:'0 % = unsichtbar · 100 % = vollständig sichtbar',symbolsHelp:'Deckkraft der Windsymbole.',fieldHelp:'Deckkraft der Windgeschwindigkeits-Farbfläche.',temperatureHelp:'Deckkraft der Temperatur-Farbfläche.',black:'Schwarz',white:'Weiß',gold:'Gold',turquoise:'Türkis',violet:'Violett',magenta:'Magenta',blue:'Blau',green:'Grün'},

@@ -1,7 +1,7 @@
-import {installWeatherLegendOverlay} from './legend-overlay.js?v=4133r1';
-import {createLegendInstrument} from './legend-instrument.js?v=4133r1';
-import {legendOptions} from './legend-preferences.js?v=4133r1';
-import {legendDescriptor} from './legend-registry.js?v=4133r1';
+import {installWeatherLegendOverlay} from './legend-overlay.js?v=4134r1';
+import {createLegendInstrument} from './legend-instrument.js?v=4134r1';
+import {legendOptions} from './legend-preferences.js?v=4134r1';
+import {legendDescriptor} from './legend-registry.js?v=4134r1';
 import {renderLegendInformation,safeLegendParagraphs} from './legend-information.js?v=41210r1';
 import {renderLegendScale} from './legend-scale.js?v=4133r1';
 class ScientificLegend{}installWeatherLegendOverlay(ScientificLegend,{});

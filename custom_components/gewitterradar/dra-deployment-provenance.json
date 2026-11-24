@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.13.3",
-  "build": "V4.13.3-DEV-2026-11-24",
-  "runtimeRevision": "4133r1",
-  "moduleSetId": "E413-3A1",
-  "baselineFeatureHead": "656df5036b7110714cc15726044b0bc0ff227f03",
+  "productVersion": "4.13.4",
+  "build": "V4.13.4-DEV-2026-11-24",
+  "runtimeRevision": "4134r1",
+  "moduleSetId": "E413-4A1",
+  "baselineFeatureHead": "2d1e16f6502b94ff9ff0665af7a5add7d3f0e4ad",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Legend Hub: compact premium Moon size control and selectable archived HiDPI icons; no provider changes.",
+    "purpose": "Legend Hub: DRA DEV delivery of centered Moon badge and layered Eye-gold frame from 15c19d88; no further UI or functional changes.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
