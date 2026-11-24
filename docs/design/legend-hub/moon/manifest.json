@@ -2,7 +2,7 @@
   "schema_version": 1,
   "title": "Legend Hub – Moon Legend Premium Assets",
   "recorded_date": "2026-11-24",
-  "scope": "design_resources_only_no_runtime_integration",
+  "scope": "design_master_archive_with_runtime_mappings",
   "path_base": "directory_containing_this_manifest",
   "checksum_algorithm": "SHA-256",
   "repository_baseline": {
@@ -728,5 +728,101 @@
     "Alpha extrema and pixel counts are measured, not assumed. Several originals have alpha_max below 255.",
     "Astronomical numbers and dates in reference images and phase fractions in source metadata are illustrative, not runtime astronomy data.",
     "Source documents describe asset provenance; they do not authorize implementation or override the user request."
-  ]
+  ],
+  "premium_close": {
+    "master_path": "assets/master/gr-moon-close-platinum-premium-master.png",
+    "original_filename": "Glänzender X-Button mit Mondsicheleffekt.png",
+    "width": 1254,
+    "height": 1254,
+    "format": "PNG",
+    "alpha": true,
+    "sha256": "78195d128c21fd2542a72185178293588b7f435c4a60e0bacae763006f319be7",
+    "provenance": "User supplied attachment on 2026-11-24; exact supplied first approved variant, no regeneration.",
+    "usage": "Moon window close only; existing legend configuration close assets unchanged.",
+    "optimized": [
+      {
+        "path": "assets/optimized/gr-moon-close-platinum-premium-128.png",
+        "runtime_path": "frontend/assets/moon/gr-moon-close-platinum-premium-128.png",
+        "width": 128,
+        "height": 128,
+        "format": "PNG",
+        "alpha": true,
+        "sha256": "252fa8a6180a66bd58ceae7ec2571aef8d9b0e9be4729ce05708f9e093177459"
+      },
+      {
+        "path": "assets/optimized/gr-moon-close-platinum-premium-256.png",
+        "runtime_path": "frontend/assets/moon/gr-moon-close-platinum-premium-256.png",
+        "width": 256,
+        "height": 256,
+        "format": "PNG",
+        "alpha": true,
+        "sha256": "91eb5851a58862f8d3d41e08004c79d37944606d3fa5f7bc126ce17a8e6fb87b"
+      },
+      {
+        "path": "assets/optimized/gr-moon-close-platinum-premium-512.png",
+        "runtime_path": "frontend/assets/moon/gr-moon-close-platinum-premium-512.png",
+        "width": 512,
+        "height": 512,
+        "format": "PNG",
+        "alpha": true,
+        "sha256": "1a6f8b79b13d715b46a27394524bb62d278a1670933a183931e10e374ffb2f95"
+      }
+    ]
+  },
+  "premium_materials": {
+    "recorded_date": "2026-11-24",
+    "runtime_module": "frontend/modules/weather/moon-legend.js",
+    "shared_preview_function": "applyMoonMaterial; createMoonPreview",
+    "default": {
+      "frameMaterial": "platinum",
+      "glass": "night",
+      "reflections": true,
+      "aura": 50
+    },
+    "resources": [
+      {
+        "repository_path": "docs/design/legend-hub/moon/assets/master/moon-material-definitions.css",
+        "sha256": "82f4734f057b6a6320eb82e3a0ac38f25eb9cf0f222c77c368080d0b4405deea",
+        "bytes": 17376,
+        "purpose": "Exact complete reusable Moon CSS including frame, glass, asymmetric rows, Hero, badge, phases, zoom hint and preview; original master images unchanged."
+      },
+      {
+        "repository_path": "docs/design/legend-hub/moon/assets/master/moon-frame-gradients.json",
+        "sha256": "12ed15b628be50b8c0362db513ac7c1986bccb4eb14b56ed92191f3a893bcc66",
+        "bytes": 253,
+        "purpose": "Existing premium platinum/gold gradient definitions, reused verbatim from legend-instrument.js."
+      },
+      {
+        "repository_path": "docs/design/legend-hub/moon/assets/optimized/mineral-glass.svg",
+        "sha256": "e6e798a49adc97efcc0be3544a5018c98bacbedb8f71373d794b68e59d07a642",
+        "bytes": 1694,
+        "runtime_path": "frontend/assets/moon/mineral-glass.svg",
+        "purpose": "Transparent authored SVG with unique branching crystal paths, displacement and depth fade. No Close-image crop and no repeated texture tile."
+      },
+      {
+        "repository_path": "frontend/modules/fullscreen/compass-picker-chevron-right-silver.js",
+        "sha256": "7e58c3b8ab828f6115aa2cbac8740526f1979def3244255dda9703425b3cb082",
+        "bytes": 12106,
+        "purpose": "Existing unchanged original silver-platinum Chevron for phase accordion and native settings controls; no duplicate asset."
+      },
+      {
+        "repository_path": "frontend/assets/moon/02_erstes_viertel_512.png",
+        "sha256": "d7012ba6acb0cbbe426335f9d6580874417563dbb31d5f33db9ab33dccd88b7b",
+        "bytes": 267428,
+        "purpose": "Existing premium phase-header Moon emblem; identical existing archive assets/optimized/02_erstes_viertel_512.png."
+      },
+      {
+        "repository_path": "frontend/assets/moon/04_vollmond_512.png",
+        "sha256": "975ababa9322f11aea3c40f5054c0abd0926983ab9f7cd44a7b661824c67b67d",
+        "bytes": 396147,
+        "purpose": "Existing Moon slot/header badge; identical existing archived optimized full moon."
+      },
+      {
+        "repository_path": "frontend/assets/moon/moon_full_silver_platinum_master.png",
+        "sha256": "d74592ad1f104cad2c102c06fedf87e66b4c6c61dd7d26bb880d87caf506c9b9",
+        "bytes": 2479968,
+        "purpose": "Existing original hero and zoom hint motif; identical reference master, no duplicate image."
+      }
+    ]
+  }
 }

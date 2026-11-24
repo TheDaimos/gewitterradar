@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.17",
-  "build": "V4.12.17-DEV-2026-11-24",
-  "runtimeRevision": "41217r1",
-  "moduleSetId": "E412-17A1",
-  "baselineFeatureHead": "617d40466a65097458047cc3fc0771d7d46465ca",
+  "productVersion": "4.13.1",
+  "build": "V4.13.1-DEV-2026-11-24",
+  "runtimeRevision": "4131r1",
+  "moduleSetId": "E413-1A1",
+  "baselineFeatureHead": "43ec5071d557f97b1300dbc072062646ed52d670",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Legend Hub Premium Moon master finish: proportional auto-fit, persisted scale and silver phase accordion; no astronomy or provider changes.",
+    "purpose": "Legend Hub Moon premium materials, archived close, native configuration and bilingual V4.13 history; WeatherRouter unchanged",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

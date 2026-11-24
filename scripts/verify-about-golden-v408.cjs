@@ -56,7 +56,7 @@ const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-const currentRevision=frontendText.match(/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=4(11|12)(\d+)r1";/);
+const currentRevision=frontendText.match(/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=4(11|12|13)(\d+)r1";/);
 if (currentRevision && (Number(currentRevision[1])>=12||Number(currentRevision[2])>=148)
     && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
   // Current V4.11/V4.12 identity: read the actual release metadata.

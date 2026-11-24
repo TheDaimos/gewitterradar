@@ -1,4 +1,5 @@
-import {legendHubState,saveLegendHub,patchLegend} from './legend-preferences.js?v=41217r1';
+import {LEGEND_FRAME_GRADIENTS} from './legend-instrument.js?v=4131r1';
+import {legendHubState,saveLegendHub,patchLegend} from './legend-preferences.js?v=4131r1';
 import SILVER_CHEVRON from '../fullscreen/compass-picker-chevron-right-silver.js?v=41108r1';
 
 // Isolated read-only Moon Engine v1 consumer; no radar/provider mutations.
@@ -32,6 +33,10 @@ const isDE=o=>/^(de|boarisch|platt|sächs|schwäb)/i.test(String(o._languageValu
 const phaseName=(id,de)=>PHASES.find(p=>p[0]===id)?.[de?1:2]||'—';
 export const normalizeLongitude=lng=>((lng+180)%360+360)%360-180;
 const clamp=(n,max)=>Math.max(0,Math.min(max,n));
+const MOON_CLOSE_SMALL=new URL('../../assets/moon/gr-moon-close-platinum-premium-128.png',import.meta.url).href;
+const MOON_CLOSE=new URL('../../assets/moon/gr-moon-close-platinum-premium-256.png',import.meta.url).href;
+const MOON_CLOSE_HI=new URL('../../assets/moon/gr-moon-close-platinum-premium-512.png',import.meta.url).href;
+const MINERAL=new URL('../../assets/moon/mineral-glass.svg',import.meta.url).href;
 const MOON_HERO=new URL('../../assets/moon/moon_full_silver_platinum_master.png',import.meta.url).href;
 const HERO_IMAGES=Object.freeze({
  'new_moon':new URL('../../assets/moon/00_neumond.png',import.meta.url).href,
@@ -75,6 +80,7 @@ function place(o,s,p=legendHubState(o).config.extraPositions.moon){
   const pref=legendHubState(o).config.moonUi,plan=moonScalePlan({width:b.w,height:availableHeight,naturalWidth,naturalHeight,preference:zoom?{...pref,scaleMode:'auto'}:pref,mobile});
   if(plan.scroll){s.surface.style.maxHeight=Math.max(0,plan.visibleHeight-frame)+'px';s.surface.style.overflowY='auto';}s.surface.scrollTop=scrollTop;
   s.scale=plan.scale;s.fit=plan.fit;s.naturalHeight=naturalHeight;s.dialog.dataset.scrollFallback=String(plan.scroll);
+  s.dialog.style.setProperty('--moon-render-scale',String(plan.scale*b.sx));
   s.dialog.style.transform='scale('+plan.scale+')';
   const w=s.dialog.offsetWidth*plan.scale,h=s.dialog.offsetHeight*plan.scale;
   s.host.style.width=w+'px';s.host.style.height=h+'px';
@@ -110,11 +116,11 @@ function drag(o,s,head){
  };
  for(const type of ['pointerup','pointercancel','lostpointercapture'])head.addEventListener(type,end,options);
 }
-function style(shadow){if(shadow.getElementById('gr-moon-style'))return;const el=document.createElement('style');el.id='gr-moon-style';el.textContent=`
+export function ensureMoonStyle(shadow){if(shadow.getElementById('gr-moon-style'))return;const el=document.createElement('style');el.id='gr-moon-style';el.textContent=`
 .gr-moon-window{--moon-safe-top:env(safe-area-inset-top,0px);--moon-safe-right:env(safe-area-inset-right,0px);--moon-safe-bottom:env(safe-area-inset-bottom,0px);--moon-safe-left:env(safe-area-inset-left,0px);position:absolute;inset:auto;z-index:2147483647;margin:0;isolation:isolate}
-.gr-moon-dialog{position:relative;box-sizing:border-box;width:1004px;margin:0;padding:4px;border:1px solid #b4bdcd;border-radius:48px;color:#f1f1fa;background:linear-gradient(130deg,#1c2940aa,#080f22a8 55%,#15233aaa);box-shadow:0 0 0 1px #10192b,0 0 0 2px #b8c4dc80,0 1px 0 3px #3a465f99,0 15px 42px #0009,0 0 18px #ccdcfa16;font:17px/1.35 system-ui,sans-serif;transform-origin:0 0;isolation:isolate;container-type:inline-size;overflow:hidden}
-.gr-moon-dialog::before{content:'';position:absolute;inset:1px;padding:2px;border-radius:inherit;z-index:4;pointer-events:none;background:linear-gradient(132deg,#e9f5ffad,#9299b520 15%,#f0f0ff9c 26%,#a1b2c536 44%,#f5faffcd 64%,#858fa336 80%,#eff1ff9c);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
-.gr-moon-dialog::after{content:'';position:absolute;inset:0;padding:5px;border-radius:inherit;z-index:5;pointer-events:none;background:radial-gradient(ellipse 78px 5px at 13% 0,#fff 0%,#eff5ff96 26%,transparent 100%),radial-gradient(ellipse 126px 4px at 76% 0,#fff 0%,#cce2ff88 35%,transparent 100%),radial-gradient(ellipse 4px 46px at 0 12%,#fff 0%,#d9eaff66 38%,transparent 100%),radial-gradient(ellipse 65px 4px at 78% 100%,#fff,transparent),radial-gradient(ellipse 50px 4px at 14% 100%,#f5f8ff,transparent),radial-gradient(circle 24px at 98% 95%,#dcecff60,transparent);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.gr-moon-material{position:relative;box-sizing:border-box;width:1004px;margin:0;padding:4px;border:1px solid #b4bdcd;border-radius:48px;color:#f1f1fa;background:linear-gradient(130deg,#1c2940aa,#080f22a8 55%,#15233aaa);box-shadow:0 0 0 1px #10192b,0 0 0 2px #b8c4dc80,0 1px 0 3px #3a465f99,0 15px 42px #0009,0 0 18px #ccdcfa16;font:17px/1.35 system-ui,sans-serif;transform-origin:0 0;isolation:isolate;container-type:inline-size;overflow:hidden}
+.gr-moon-material::before{content:'';position:absolute;inset:1px;padding:2px;border-radius:inherit;z-index:4;pointer-events:none;background:linear-gradient(132deg,#e9f5ffad,#9299b520 15%,#f0f0ff9c 26%,#a1b2c536 44%,#f5faffcd 64%,#858fa336 80%,#eff1ff9c);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.gr-moon-material::after{content:'';position:absolute;inset:0;padding:5px;border-radius:inherit;z-index:5;pointer-events:none;background:radial-gradient(ellipse 78px 5px at 13% 0,#fff 0%,#eff5ff96 26%,transparent 100%),radial-gradient(ellipse 126px 4px at 76% 0,#fff 0%,#cce2ff88 35%,transparent 100%),radial-gradient(ellipse 4px 46px at 0 12%,#fff 0%,#d9eaff66 38%,transparent 100%),radial-gradient(ellipse 65px 4px at 78% 100%,#fff,transparent),radial-gradient(ellipse 50px 4px at 14% 100%,#f5f8ff,transparent),radial-gradient(circle 24px at 98% 95%,#dcecff60,transparent);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
 .gr-moon-surface{position:relative;box-sizing:border-box;border:1px solid #d9e3f0a6;border-radius:42px;overflow:hidden;scrollbar-width:thin;scrollbar-color:#aebdd5 #11192b;overscroll-behavior:contain;background:linear-gradient(132deg,transparent 7%,#c3d7f711 18%,transparent 30%,#bdccec08 65%,transparent 78%),radial-gradient(ellipse at 18% 38%,#7b93ba20,transparent 48%),radial-gradient(ellipse at 92% 4%,#bbcce326,transparent 42%),radial-gradient(ellipse at 73% 91%,#6b7eac26,transparent 54%),linear-gradient(126deg,#232b3de8,#0b1122ed 53%,#1f2941e8);box-shadow:inset 0 0 0 1px #404d68,inset 0 0 0 3px #8e9db419,inset 0 0 28px #b7c8eb1c,inset 0 -8px 24px #01081538;backdrop-filter:blur(22px) saturate(.88)}
 .gr-moon-header{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:20px;padding:17px 25px 14px 35px;border-bottom:1px solid transparent;background:linear-gradient(110deg,#939fb733,#27334b9c 57%,#8190ab1f) padding-box,linear-gradient(90deg,#7e8ba52b,#f4f3ffb3 22%,#c5d0e866 58%,#8a9cb526) border-box;box-shadow:inset 0 1px #fff5,0 1px 0 #081020b3,0 3px 12px #0003;backdrop-filter:blur(22px);cursor:grab;touch-action:none;user-select:none}
 .gr-moon-header:active{cursor:grabbing}.gr-moon-badge{display:grid;place-items:center;flex:none;width:76px;height:72px;border:1px solid #c5d0e3bd;border-radius:18px;background:radial-gradient(ellipse at 20% 0%,#fff6,transparent 55%),linear-gradient(140deg,#b6c0d440,#303a5266 54%,#8796b540);box-shadow:inset 0 1px 2px #f6f7ffcf,inset 0 0 0 2px #525f7a6b,inset 0 -6px 13px #b8cce51a,0 3px 9px #0005}.gr-moon-badge img{width:64px;height:64px;object-fit:contain}.gr-moon-header h2{font:40px/1.1 Georgia,serif;letter-spacing:.015em;margin:0 0 7px;text-shadow:0 2px 3px #0008}.gr-moon-header small{display:block;font-size:12px;letter-spacing:.43em;text-transform:uppercase;color:#d8daeb;white-space:nowrap}
@@ -130,6 +136,24 @@ function style(shadow){if(shadow.getElementById('gr-moon-style'))return;const el
 
 @container(max-width:540px){.gr-moon-tile img{width:min(100%,72px);margin-inline:auto;margin-bottom:4px}}
 @media(prefers-reduced-motion:reduce){.gr-moon-dialog,.gr-moon-dialog *{animation:none!important;transition:none!important}}
+.gr-moon-material{--moon-metal-base:#aebdcd;--moon-metal-dark:#354359;--moon-glint:#ecf4ff;--moon-light-rgb:216,233,255;border-color:var(--moon-metal-base);background:var(--moon-metal-gradient);box-shadow:0 0 0 1px #081020,0 0 0 2px #c5d8ef59,0 14px 42px #0009,inset 0 1px 2px #fff9,inset 0 -2px 4px #03091499}
+.gr-moon-material[data-frame=gold]{--moon-metal-base:#cfab65;--moon-metal-dark:#594221;--moon-glint:#fff0c4;--moon-light-rgb:255,224,165}
+.gr-moon-material::before{inset:1px;padding:3px;background:linear-gradient(180deg,#ffffffa3,transparent 18%,#0005 46%,transparent 67%,#ffffff88),var(--moon-metal-gradient);box-shadow:inset 0 0 2px #fff}
+.gr-moon-material::after{background:radial-gradient(ellipse 90px 5px at 13% 0,var(--moon-glint),transparent),radial-gradient(ellipse 126px 5px at 76% 0,var(--moon-glint),transparent),radial-gradient(ellipse 5px 56px at 0 12%,var(--moon-glint),transparent),radial-gradient(ellipse 70px 5px at 78% 100%,var(--moon-glint),transparent),radial-gradient(ellipse 55px 4px at 14% 100%,var(--moon-glint),transparent),radial-gradient(circle 24px at 98% 95%,rgba(var(--moon-light-rgb),.5),transparent)}
+.gr-moon-material[data-reflections=false]::after{opacity:0}
+.gr-moon-material .gr-moon-surface{border-color:var(--moon-metal-base);box-shadow:inset 0 0 0 1px var(--moon-metal-dark),inset 0 0 0 3px #aabed41c,inset 0 0 26px #b7c8eb1c,inset 0 -8px 24px #01081538}
+.gr-moon-material .gr-moon-surface::before{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;background-image:var(--moon-mineral);background-size:100% 100%;background-repeat:no-repeat;opacity:0;z-index:0}
+.gr-moon-material[data-glass=mineral] .gr-moon-surface::before{opacity:.46}
+.gr-moon-material .gr-moon-surface>*{position:relative;z-index:1}.gr-moon-material .gr-moon-surface>.gr-moon-header{position:sticky;z-index:3}
+.gr-moon-material[data-glass=mineral] .gr-moon-row::after{background-image:linear-gradient(90deg,#0c152b66,#0c152b99),var(--moon-mineral);background-size:cover;opacity:.45}
+.gr-moon-material .gr-moon-hero-wrap::before{background:radial-gradient(ellipse,rgba(186,210,249,var(--moon-halo-alpha)),transparent 67%);filter:blur(14px);inset:0}
+.gr-moon-material .gr-moon-hero{filter:drop-shadow(0 0 var(--moon-halo-blur) rgba(184,211,252,var(--moon-halo-alpha)))}
+.gr-moon-header .gr-moon-close{box-sizing:border-box;width:max(46px,calc(44.1px / var(--moon-render-scale,1)));height:max(46px,calc(44.1px / var(--moon-render-scale,1)));border:0;padding:0;border-radius:50%;background:transparent;box-shadow:none;outline:0;transition:transform .18s ease}
+.gr-moon-close img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;filter:none}.gr-moon-close:hover{transform:translateY(-1px)}.gr-moon-close:active{transform:scale(.96)}.gr-moon-header .gr-moon-close:focus-visible{outline:2px solid #eff5ff;outline-offset:2px}
+.gr-moon-preview{width:100%;height:132px;min-height:0;padding:4px;border-radius:23px;container-type:normal;font:14px/1.4 system-ui;transform:none;box-sizing:border-box;position:relative;overflow:hidden;isolation:isolate}
+.gr-moon-preview .gr-moon-surface{border-radius:18px;height:100%;display:flex;align-items:center;justify-content:center;gap:18px;overflow:hidden}.gr-moon-preview .gr-moon-hero-wrap{height:110px;width:110px;flex:none}.gr-moon-preview .gr-moon-hero{width:145%}.gr-moon-preview strong{font:24px Georgia,serif;color:#edf3ff}.gr-moon-preview small{display:block;color:#c9d4e7;font-size:11px}
+.lh-dialog.lh-moon-settings .lh-form{grid-template-columns:1fr}.lh-moon-settings .lh-preview{padding:6px}.lh-moon-settings .lh-moon-reset{justify-self:end;min-height:44px}.lh-moon-settings label:has([data-lh-key=aura]),.lh-moon-settings label:has([data-lh-key=scalePercent]){grid-template-columns:minmax(0,1fr) minmax(130px,50%)}
+
 `;shadow.append(el);}
 function row(target,type,label,value){const div=document.createElement('div'),a=document.createElement('span'),b=document.createElement('strong');div.className='gr-moon-row';div.dataset.row=type;a.textContent=label;if(typeof value==='string')b.textContent=value;else b.append(value);div.append(icon(type),a,b);target.append(div);return b;}
 function eventTime(event,zone,de,missing){if(!event?.utc)return missing;return new Intl.DateTimeFormat(de?'de-DE':'en-GB',{timeZone:zone,hour:'2-digit',minute:'2-digit'}).format(new Date(event.utc))+(de?' Uhr':'');}
@@ -142,6 +166,15 @@ function validate(data,position){
  new Intl.DateTimeFormat('en',{timeZone:data.timezone||'UTC'}).format();
  return data;
 }
+// One material application for the real instrument and its configuration preview.
+export function applyMoonMaterial(element,pref){
+ element.dataset.frame=pref.frameMaterial;element.dataset.glass=pref.glass;element.dataset.reflections=String(pref.reflections);
+ element.style.setProperty('--moon-metal-gradient',LEGEND_FRAME_GRADIENTS[pref.frameMaterial]);
+ element.style.setProperty('--moon-mineral','url("'+MINERAL+'")');
+ element.style.setProperty('--moon-halo-alpha',String(pref.aura/100*.22));element.style.setProperty('--moon-halo-blur',pref.aura/100*18+'px');
+}
+export function refreshMoonAppearance(owner){owner.__grMoon?.refreshAppearance?.();}
+export function createMoonPreview(owner){ensureMoonStyle(owner.shadow);const frame=document.createElement('div');frame.className='gr-moon-material gr-moon-preview';const surface=document.createElement('div'),wrap=document.createElement('div'),image=document.createElement('img'),title=document.createElement('strong');surface.className='gr-moon-surface';wrap.className='gr-moon-hero-wrap';image.className='gr-moon-hero';image.src=MOON_HERO;image.alt='';wrap.append(image);title.textContent=owner._t('legendHub.moonTitle');surface.append(wrap,title);frame.append(surface);applyMoonMaterial(frame,legendHubState(owner).config.moonUi);return frame;}
 export const moonOpen=o=>!!o.__grMoon?.open;
 export function closeMoon(o,persist=true){
  const s=o.__grMoon;if(!s?.open)return;s.open=false;s.seq++;clearTimeout(s.timer);clearTimeout(s.requestTimer);s.cancelRequest?.();clearInterval(s.interval);s.abort.abort();s.observer?.disconnect();s.contentObserver?.disconnect();cancelAnimationFrame(s.fitFrame);
@@ -149,12 +182,12 @@ export function closeMoon(o,persist=true){
  s.host.remove();delete o.__grMoon;if(persist)patchLegend(o,'moon',{mode:'off'});o._legendHubStatus?.();
 }
 export function openMoon(o){
- if(!o.shadow||moonOpen(o))return;const card=o.shadow.getElementById('map-card');if(!card)return;style(o.shadow);
- const de=isDE(o),title=de?'Mond':'Moon',d=document.createElement('section');d.className='gr-moon-dialog';d.setAttribute('role','region');d.setAttribute('aria-label',title);const host=document.createElement('div');host.className='gr-moon-window';host.append(d);
+ if(!o.shadow||moonOpen(o))return;const card=o.shadow.getElementById('map-card');if(!card)return;ensureMoonStyle(o.shadow);
+ const de=isDE(o),title=de?'Mond':'Moon',d=document.createElement('section');d.className='gr-moon-dialog gr-moon-material';d.setAttribute('role','region');d.setAttribute('aria-label',title);const host=document.createElement('div');host.className='gr-moon-window';host.append(d);
  const surface=document.createElement('div');surface.className='gr-moon-surface';d.append(surface);
  const head=document.createElement('header');head.className='gr-moon-header';const badge=document.createElement('div');badge.className='gr-moon-badge';const badgeImage=document.createElement('img');badgeImage.src=moonIcon;badgeImage.alt='';badge.append(badgeImage);
  const names=document.createElement('div'),h=document.createElement('h2'),sub=document.createElement('small');h.textContent=title;sub.textContent=de?'Legende · Astronomie':'Legend · Astronomy';names.append(h,sub);
- const x=document.createElement('button');x.type='button';x.className='gr-moon-close';const closeIcon=icon('close');x.append(closeIcon);x.setAttribute('aria-label',de?'Schließen':'Close');x.addEventListener('click',()=>closeMoon(o));const controls=document.createElement('div');controls.className='gr-moon-size-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label',de?'Fenstergröße':'Window size');
+ const x=document.createElement('button');x.type='button';x.className='gr-moon-close';const closeIcon=document.createElement('img');closeIcon.src=MOON_CLOSE;closeIcon.srcset=MOON_CLOSE_SMALL+' 128w, '+MOON_CLOSE+' 256w, '+MOON_CLOSE_HI+' 512w';closeIcon.sizes='64px';closeIcon.alt='';x.append(closeIcon);x.setAttribute('aria-label',de?'Schließen':'Close');x.addEventListener('click',()=>closeMoon(o));const controls=document.createElement('div');controls.className='gr-moon-size-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label',de?'Fenstergröße':'Window size');
  const minus=document.createElement('button'),plus=document.createElement('button'),auto=document.createElement('button'),scaleOutput=document.createElement('output');
  for(const [button,value,label,text] of [[minus,'minus',de?'Verkleinern':'Smaller','−'],[plus,'plus',de?'Vergrößern':'Larger','+'],[auto,'auto',de?'Automatische Größe':'Automatic size','Auto']]){button.type='button';button.dataset.moonScale=value;button.setAttribute('aria-label',label);button.textContent=text;}
  scaleOutput.setAttribute('aria-live','polite');controls.append(minus,scaleOutput,plus,auto);head.append(badge,names,controls,x);
@@ -166,7 +199,7 @@ export function openMoon(o){
  const note=document.createElement('p');note.className='gr-moon-note';surface.append(head,status,body,phases,note);card.append(host);
  const s={dialog:d,host,surface,status,body,hero,details,phases,grid,note,cycleLabel,phaseBody,toggle,minusButton:minus,plusButton:plus,autoButton:auto,scaleOutput,seq:0,map:mapOf(o),timer:null,interval:null,open:true,abort:new AbortController(),hasData:false};o.__grMoon=s;
  const setExpanded=(expanded,persist=false)=>{phases.dataset.expanded=String(expanded);toggle.setAttribute('aria-expanded',String(expanded));phaseBody.inert=!expanded;if(persist)saveLegendHub(o,{moonUi:{...legendHubState(o).config.moonUi,phasesExpanded:expanded}});schedulePlace(o,s);};
- setExpanded(legendHubState(o).config.moonUi.phasesExpanded);
+ s.setExpanded=setExpanded;s.refreshAppearance=()=>{const pref=legendHubState(o).config.moonUi;applyMoonMaterial(d,pref);setExpanded(pref.phasesExpanded);schedulePlace(o,s);};s.refreshAppearance();
  toggle.addEventListener('click',()=>setExpanded(toggle.getAttribute('aria-expanded')!=='true',true));
  const setScale=patch=>{saveLegendHub(o,{moonUi:{...legendHubState(o).config.moonUi,...patch}});place(o,s);};
  minus.addEventListener('click',()=>{const pref=legendHubState(o).config.moonUi,base=Math.min(pref.scaleMode==='manual'?pref.scalePercent:125,Math.ceil(s.scale*20-1e-8)*5);setScale({scaleMode:'manual',scalePercent:Math.max(50,base-5)});});

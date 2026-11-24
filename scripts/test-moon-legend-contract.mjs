@@ -34,7 +34,8 @@ assert.doesNotMatch(moon,/showModal\(/);
 assert.match(moon,/setInterval/);
 assert.match(moon,/clearInterval/);
 assert.match(moon,/normalizeLongitude/);
-assert.match(moon,/closeIcon=icon\('close'\)/);
+assert.match(moon,/closeIcon=document.createElement\('img'\)/);
+assert.match(moon,/gr-moon-close-platinum-premium-256\.png/);
 assert.match(moon,/extraPositions/);
 
 const assetManifest=JSON.parse(fs.readFileSync('docs/design/legend-hub/moon/manifest.json','utf8'));

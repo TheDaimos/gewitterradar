@@ -94,8 +94,11 @@ async function assertMapFixed(page,before,label){
    assert(await inside(),'drag clamped '+name);let mapDrift=await assertMapFixed(page,before,'window drag does not pan map');
    const saved=await page.evaluate(()=>preferences.legendHubState(card).config.extraPositions.moon);
    assert(saved.x>=0&&saved.x<=1&&saved.y>=0&&saved.y<=1);
-   await page.setViewportSize({width:height,height:width});await page.waitForTimeout(100);await page.clock.runFor(1000);assert(await inside(),'orientation/resize remains bounded');
-   await page.setViewportSize({width,height});await page.waitForTimeout(100);await page.clock.runFor(1000);assert(await inside(),'restored viewport remains bounded');
+   // ResizeObserver delivery occurs outside the virtual clock. Let its rAF
+   // measurement settle under real browser scheduling before the next gesture.
+   const settleResize=async label=>{for(let i=0;i<20;i++){await page.waitForTimeout(50);await page.clock.runFor(100);if(await inside())return;}assert.fail(label+' '+JSON.stringify(await page.evaluate(()=>({dialog:card.__grMoon.dialog.getBoundingClientRect().toJSON(),map:card.shadow.getElementById('map').getBoundingClientRect().toJSON(),scale:card.__grMoon.scale,naturalHeight:card.__grMoon.naturalHeight}))));};
+   await page.setViewportSize({width:height,height:width});await page.waitForTimeout(100);await page.clock.runFor(1000);await settleResize('orientation/resize remains bounded');
+   await page.setViewportSize({width,height});await page.waitForTimeout(100);await page.clock.runFor(1000);await settleResize('restored viewport remains bounded');
    assert.deepEqual(await page.evaluate(()=>card.__legendHub.config.extraPositions.moon),saved,'temporary resize preserves stored position');
    if(touch){
     const touchHead=await page.locator('.gr-moon-header').boundingBox(),session=await context.newCDPSession(page);

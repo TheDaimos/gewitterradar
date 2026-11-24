@@ -47,4 +47,10 @@ Für die spätere Abnahme sind Kontrast auf hellen und dunklen Kartenhintergrün
 
 ## Geschützte Produktreferenzen
 
+### Ergänzende Materialvorgaben für 4.13
+
+Die erste vom Betreiber gelieferte transparente [Premium-Close-Grafik](assets/master/gr-moon-close-platinum-premium-master.png) ergänzt den ursprünglichen Fenstermaster als verbindliche Referenz für runde Close-Geometrie und feine mineralische Einschlüsse im dunkelblauen Glas. Keine zusätzliche sichtbare CSS-Fassung um dieses Asset. Die Vorlage des vollständigen Fensters und alle bisherigen Mondmaster bleiben unverändert.
+
+Silber-Platin und klassisches Nachtglas bleiben die Standardkombination. Der bereits vorhandene Goldmaterialverlauf ist eine unabhängige Rahmenwahl. Mineralglas ergänzt Nachtglas, ersetzt es nicht; seine feinen unregelmäßigen Strukturen liegen optisch unter den dunklen Glasebenen. Keine Steinplattenoptik oder regelmäßige Kachelung. Aktive Phasen behalten ihre Silber-Platin-Hervorhebung auch bei Goldrahmen. Materialdefinitionen, Textur, Symbol-/Chevronherkunft und Prüfsummen sind im [Manifest](manifest.json) archiviert. Die grafische Betreiberabnahme bleibt offen.
+
 Der Designmaster ergänzt die Ressourcenbasis. Er erteilt keine Freigabe zum Umbau bestehender Legenden oder zur Veränderung von Eye/Aura, Drag, Slot-/Pointer-Identität, unmittelbarer Hindernisauflösung, Randpositionierung, Vault-Persistenz, Wetterprovidern oder Profilen. Das [WR-/GR-Referenzpaar](../../../WR_GR_PROTECTED_REFERENCE_PAIR_010320_411195_2026-11-13.md), die [Aura-Referenz](../../../GR_412_AURA_REFERENCE_2026-11-22.md) und der [Modul-/Provider-Schutz](../../../MODULE_PROVIDER_ISOLATION_GUARD_2026-11-13.md) bleiben eigenständig gültig.

@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {normaliseGeneratedModule as norm} from '../tests/with-settings-vault.mjs';
+const base='43ec5071d557f97b1300dbc072062646ed52d670';
+const git=(...a)=>execFileSync('git',a,{encoding:'utf8',maxBuffer:40*1024*1024});
+const read=p=>readFileSync(p,'utf8').replaceAll('\r\n','\n'),old=p=>git('show',base+':'+p).replaceAll('\r\n','\n');
+const changed=new Set(['moon-legend.js','legend-hub-view.js','legend-hub.js','legend-hub-model.js','legend-hub-locales.js','legend-registry.js','skeleton.js']);let count=0;
+for(const p of git('ls-tree','-r','--name-only',base,'frontend/modules').trim().split('\n'))if(!changed.has(p.split('/').at(-1))){assert.equal(norm(read(p)),norm(old(p)),p);count++;}
+const model=p=>p.replace(/^export const normalizeMoonUi=.*\n/m,'');assert.equal(norm(model(read('frontend/modules/weather/legend-hub-model.js'))),norm(model(old('frontend/modules/weather/legend-hub-model.js'))),'only optional Moon preference normalization');
+const hub='frontend/modules/weather/legend-hub.js';let adapted=old(hub).replace('openMoon,closeMoon,moonOpen','openMoon,closeMoon,moonOpen,refreshMoonAppearance').replace("if(id==='moon')openMoon(owner);else openLegendConfig(owner,id);",'openLegendConfig(owner,id);').replaceAll("if(id==='moon')openMoon(owner);else openLegendConfig(owner,id);",'openLegendConfig(owner,id);').replace(' owner._weatherLegendSyncUi?.();',' owner._weatherLegendSyncUi?.();refreshMoonAppearance(owner);');assert.equal(norm(read(hub)),norm(adapted),'hub exact configuration dispatch and appearance hook only');
+const schema='custom_components/gewitterradar/vault_schema.py',without=p=>p.replace(/^        "moonUi":.*\n/m,'');assert.equal(without(read(schema)),without(old(schema)),'other Vault schemas exact');
+const history=p=>p.replace(/<details class="release-history-entry release-history-collapsible" data-release-history="v4.13">[\s\S]*?<\/details>\s*/g,'').replaceAll('V4.12 DEV','V4.12');assert.equal(norm(history(read('frontend/modules/ui/skeleton.js'))),norm(history(old('frontend/modules/ui/skeleton.js'))),'old history and all skeleton functions/styles exact');
+const moon='frontend/modules/weather/moon-legend.js';for(const [start,end]of [['function validate(','// One material'],['  if(zoom<MOON_MIN_ZOOM)','   const zone='],[' s.invalidate=()=>',' const resize=']]){const section=p=>p.slice(p.indexOf(start),p.indexOf(end,p.indexOf(start)));const oldEnd=end==='// One material'?'export const moonOpen':end;const before=old(moon).slice(old(moon).indexOf(start),old(moon).indexOf(oldEnd,old(moon).indexOf(start)));assert.equal(norm(section(read(moon))),norm(before),'Moon astronomy/transport protected '+start);}
+for(const p of git('ls-tree','-r','--name-only',base,'frontend/assets').trim().split('\n'))if(!p.endsWith('gewitterradar-runtime-manifest.json'))assert(readFileSync(p).equals(execFileSync('git',['show',base+':'+p],{maxBuffer:40*1024*1024})),p);
+console.log('PASS V4.13 isolation: '+count+' untouched module bodies, exact adapters, historical prose/styles, other Vault schemas, astronomy/transport and all prior graphics');

@@ -1,6 +1,6 @@
 # Moon Legend Premium Assets
 
-Designressourcen für die spätere Mondlegende des Legend Hub in GewitterRadar 4.12+. Stand: 24.11.2026. **Dieser Bereich enthält ausschließlich Ressourcen und Referenzdokumentation; die Implementierung folgt separat.**
+Designarchiv der Mondlegende des Legend Hub. Stand: 24.11.2026. Die ursprüngliche Ressourcenablage und ihre unveränderten Originalgrafiken bleiben erhalten; die gesondert beauftragte Runtime-Weiterentwicklung läuft inzwischen in **4.13.x DEV**. Dieser Bereich ist das verbindliche Masterarchiv, kein eigenständiger Runtime-Lieferbaum.
 
 ## Verbindliche Referenzen
 
@@ -53,10 +53,21 @@ Alle acht Phasen und alle acht 512er-Varianten liegen vor. Die Standardorientier
 
 Der Original-Vollmond und `assets/master/04_vollmond.png` haben **identische dekodierte RGBA-Pixel**, aber unterschiedliche PNG-Dateibytes und SHA-256-Werte. Beide Dateien werden separat und unverändert bewahrt. Die historische Bezeichnung `leuchtender_vollmond_mit_kratern_und_halo.png` wird im ZIP-README erwähnt, wurde unter diesem Namen jedoch nicht geliefert. Es wurde keine Datei dieses Namens erfunden; die belegte Zuordnung steht im Manifest.
 
-## Schutz und Auftragsgrenze
+## Historische Auftragsgrenze der ursprünglichen Ressourcenablage
 
 Betroffen sind ausschließlich neue Dateien unter `docs/design/legend-hub/moon/`. Legend Hub, bestehende Legenden, Eye Hub/Control, Wetterdarstellung, DWD, OPERA, NASA, WeatherRouter-Anbindung, Einstellungen, Profile, Frontend-Runtime und Build-/Release-/Update-Prozesse werden nicht geändert. Es gibt keine Einbindung der Assets in die Anwendung.
 
 Die ausdrückliche Auftragsvorgabe „keine neue Version“ gilt für diese reine Ressourcenablage: keine Versionsanhebung, kein Release, kein Tag, keine DRA-Bereitstellung, keine HA-Installation und keine PROD-Änderung. Die neue visuelle Designreferenz ersetzt keine geschützte technische oder vom Betreiber abgenommene Produktreferenz.
 
 Weiterhin maßgeblich: [Projekt-Bootstrap](../../../PROJECT_BOOTSTRAP.md), [Modul-/Provider-Schutz](../../../MODULE_PROVIDER_ISOLATION_GUARD_2026-11-13.md), [geschütztes WR-/GR-Referenzpaar](../../../WR_GR_PROTECTED_REFERENCE_PAIR_010320_411195_2026-11-13.md), [Eye-Randreferenz](../../../GR_EYE_EDGES_411215_2026-11-15.md) und [technische Aura-Referenz](../../../GR_412_AURA_REFERENCE_2026-11-22.md).
+
+## Ergänzung für 4.13.x DEV
+
+- [Unveränderte erste gelieferte Premium-Close-Grafik](assets/master/gr-moon-close-platinum-premium-master.png), 1254 × 1254 RGBA, SHA-256 `78195d128c21fd2542a72185178293588b7f435c4a60e0bacae763006f319be7`. Herkunft: Benutzeranhang „Glänzender X-Button mit Mondsicheleffekt.png“. Keine Neugenerierung oder Retusche.
+- Optimierte transparente PNG-Varianten: [128](assets/optimized/gr-moon-close-platinum-premium-128.png), [256](assets/optimized/gr-moon-close-platinum-premium-256.png), [512 Pixel](assets/optimized/gr-moon-close-platinum-premium-512.png). Ausschließlich LANCZOS-Skalierung mit verlustfreier PNG-Kompression; Original bleibt unverändert. Runtime-Verwendung ausschließlich im Mondfenster; vorhandene Close-Grafiken der Legenden-Konfiguration bleiben erhalten.
+- [Vollständige gemeinsame Moon-Materialdefinitionen](assets/master/moon-material-definitions.css) für Rahmen, Nachtglas, Datenfelder, Hero, Phasen, Zoomhinweis und Vorschau; [unverändert wiederverwendete Platin-/Goldverläufe](assets/master/moon-frame-gradients.json) aus `frontend/modules/weather/legend-instrument.js`.
+- [Transparentes mineralisches Glas-Overlay](assets/optimized/mineral-glass.svg): unregelmäßige feine Kristallpfade mit Displacement und Tiefenmaske, keine Rasterneugenerierung, kein Close-Ausschnitt und keine Texturkachelung. Nachtglas bleibt die Standardvariante.
+- Die bestehenden optimierten Vollmond-/Viertelmondgrafiken dienen zusätzlich als Header-/Slot-/Phasensymbole. Der Zoomhinweis verwendet den bereits archivierten Originalvollmond. Der unveränderte Silber-Chevron stammt aus `frontend/modules/fullscreen/compass-picker-chevron-right-silver.js`. Diese Dateien werden nicht unnötig dupliziert; Zuordnungen und SHA-256 stehen unter `premium_materials` im [Manifest](manifest.json).
+- [Implementierungs- und Prüfbericht 4.13](../../../GR_413_MOON_PREMIUM_2026-11-24.md). Runtime und Live-Vorschau verwenden dieselbe Funktion `applyMoonMaterial`. Benutzeroptionen liegen rückwärtskompatibel im vorhandenen Settings Vault.
+
+Die Erweiterung ist ausschließlich DEV. Keine Änderung des stabilen Branches oder historischer Tags und keine neue Betreiberfreigabe.

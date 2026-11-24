@@ -64,6 +64,14 @@ jobs:
             echo "focused=true" >> "$GITHUB_OUTPUT"
             echo "moon=true" >> "$GITHUB_OUTPUT"
             echo "moon_finish=true" >> "$GITHUB_OUTPUT"
+          elif node -e "process.exit(require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.13.1\"')?0:1)"; then
+            node scripts/test-moon-413-isolation.mjs
+            node scripts/test-moon-finish-model.mjs
+            python scripts/test-moon-413-assets.py
+            echo "focused=true" >> "$GITHUB_OUTPUT"
+            echo "moon=true" >> "$GITHUB_OUTPUT"
+            echo "moon_finish=true" >> "$GITHUB_OUTPUT"
+            echo "moon_413=true" >> "$GITHUB_OUTPUT"
           else
             echo "focused=false" >> "$GITHUB_OUTPUT"
           fi
@@ -153,7 +161,9 @@ jobs:
         env:
           NODE_PATH: ${{ runner.temp }}/aura/node_modules
           GR_MOON_FINISH_EVIDENCE: ${{ runner.temp }}/moon-finish-evidence
-        run: node scripts/test-moon-finish-browser.cjs
+        run: |
+          node scripts/test-moon-finish-browser.cjs
+          if [ "${{ steps.ui_scope.outputs.moon_413 }}" = "true" ]; then node scripts/test-moon-413-browser.cjs; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -171,4 +181,5 @@ jobs:
             ${{ runner.temp }}/history-evidence
             ${{ runner.temp }}/moon-evidence
             ${{ runner.temp }}/moon-finish-evidence
+            .task413/evidence
           if-no-files-found: ignore

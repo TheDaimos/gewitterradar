@@ -94,9 +94,9 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "8b7cd9489c4f2d69be7ffa1eb9520518b48ab6ae6f43ddebd91d563db9873ed0",
+    "sha256": "ba67539612a8f00c640ce1afc5d1a963d7f93a236d6dd6889dde7eb825da0d0a",
     "protected": false,
-    "sizeBytes": 2959
+    "sizeBytes": 2954
   },
   {
     "file": "assets/gewitterradar-trend-arrow-01.webp",
@@ -576,5 +576,25 @@
     "file": "assets/weather-router-emblem-v004-256.png",
     "sha256": "c7b7d01ae9cfa4dad908d3ce1c2afdb332fc67ec9de71ed83bc4d1537738f96d",
     "protected": false
+  },
+  {
+    "file": "assets/moon/gr-moon-close-platinum-premium-128.png",
+    "sizeBytes": 21735,
+    "sha256": "252fa8a6180a66bd58ceae7ec2571aef8d9b0e9be4729ce05708f9e093177459"
+  },
+  {
+    "file": "assets/moon/gr-moon-close-platinum-premium-256.png",
+    "sizeBytes": 67705,
+    "sha256": "91eb5851a58862f8d3d41e08004c79d37944606d3fa5f7bc126ce17a8e6fb87b"
+  },
+  {
+    "file": "assets/moon/gr-moon-close-platinum-premium-512.png",
+    "sizeBytes": 227858,
+    "sha256": "1a6f8b79b13d715b46a27394524bb62d278a1670933a183931e10e374ffb2f95"
+  },
+  {
+    "file": "assets/moon/mineral-glass.svg",
+    "sizeBytes": 1694,
+    "sha256": "e6e798a49adc97efcc0be3544a5018c98bacbedb8f71373d794b68e59d07a642"
   }
 ]
