@@ -839,5 +839,70 @@
       "shadow": "0 24px 90px #000c,inset 0 0 0 3px #cda9500c",
       "sha256": "9c285cfc8986fe34de172a959d00c222f5a2fa3e3e26e18b06b064c28511a989"
     }
-  }
+  },
+  "premium_scale_icons": [
+    {
+      "id": "expand",
+      "original_filename": "glänzendes_expandieren_symbol_auf_navy_glas.png",
+      "master_path": "assets/master/gr_moon_scale_icon_expand_master.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "has_alpha_channel": true,
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "has_transparency": true,
+      "bytes": 1485765,
+      "sha256": "8088a307e79b9edf10dc814f465dcaec59c979dd9e0b5268d7fadc9f36ce807f",
+      "optimized_path": null,
+      "runtime_path": null,
+      "runtime_role": "Moon Legend premium size control: expand",
+      "runtime_status": "Pending main integration task; no optimized or runtime variant present in this archive-only commit."
+    },
+    {
+      "id": "moon",
+      "original_filename": "glänzendes_mond_skalierungs_appsymbol.png",
+      "master_path": "assets/master/gr_moon_scale_icon_moon_master.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "has_alpha_channel": true,
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "has_transparency": true,
+      "bytes": 1800831,
+      "sha256": "97e3b790e50575a99735db4a5eac2875fbfa9d95cc1e0610f5979ad7d97fb5c6",
+      "optimized_path": null,
+      "runtime_path": null,
+      "runtime_role": "Moon Legend premium size control: moon",
+      "runtime_status": "Pending main integration task; no optimized or runtime variant present in this archive-only commit."
+    },
+    {
+      "id": "ruler",
+      "original_filename": "glänzendes_lineal_und_skalierungssymbol.png",
+      "master_path": "assets/master/gr_moon_scale_icon_ruler_master.png",
+      "width": 1254,
+      "height": 1254,
+      "format": "PNG",
+      "mode": "RGBA",
+      "has_alpha_channel": true,
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "has_transparency": true,
+      "bytes": 1429003,
+      "sha256": "51f61f151690367424700e9c72f6f9d6caacc077970c925a8cf9298ecc608be0",
+      "optimized_path": null,
+      "runtime_path": null,
+      "runtime_role": "Moon Legend premium size control: ruler",
+      "runtime_status": "Pending main integration task; no optimized or runtime variant present in this archive-only commit."
+    }
+  ]
 }
