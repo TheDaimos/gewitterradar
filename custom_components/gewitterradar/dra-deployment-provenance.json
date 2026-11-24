@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Compact premium Moon size control and selectable archived HiDPI icons; no provider changes.",
+    "purpose": "Legend Hub: compact premium Moon size control and selectable archived HiDPI icons; no provider changes.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

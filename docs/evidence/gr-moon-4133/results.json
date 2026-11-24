@@ -37,6 +37,21 @@
       "width": 176,
       "height": 374
     },
-    "errors": []
+    "errors": [],
+    "finalMobileAdjustment": {
+      "viewport": [
+        390,
+        844
+      ],
+      "menu": {
+        "x": 159,
+        "y": 75.640625,
+        "width": 136,
+        "height": 374
+      },
+      "closeUnchanged": true,
+      "horizontalOverflow": false,
+      "touchPreset70AndAuto": true
+    }
   }
 ]
