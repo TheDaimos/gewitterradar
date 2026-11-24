@@ -114,3 +114,7 @@ Dies ist ein **Ausführungsauftrag**, keine unverbindliche Empfehlung: Ein Entwi
 - **Lokaler `ClientError` / DNS-Fehler:** GitHub-Connector für Dateibearbeitung und GitHub Actions für tatsächliche Tests/Archive einsetzen. Keine bloße Abbruchmeldung wegen lokaler Umgebung.
 
 Die Diagnose zu V4.13 ist in [GR_413_FINAL_BLOCKERS_AND_AGENT_RUNBOOK_2026-11-24.md](GR_413_FINAL_BLOCKERS_AND_AGENT_RUNBOOK_2026-11-24.md) dokumentiert. **Diese Anweisung autorisiert keine Umgehung unverzichtbarer Sicherungs- oder Freigabegates.**
+
+## Verbindliches Arbeitsprotokoll für neue Entwicklungschats
+
+Das konkrete **ausführbare Agentenprotokoll** steht in [AGENT_FINAL_EXECUTION_PLAYBOOK.md](AGENT_FINAL_EXECUTION_PLAYBOOK.md) und hat bei der technischen Abarbeitung Vorrang vor pauschalen Statusmeldungen. Der Agent muss bekannte reparierbare Fehler selbst auf dem autorisierten Release-Kandidaten korrigieren, neue Commits und neue GitHub-CI-Nachweise erzeugen. Für V4.13 sind exakte Logs, SHA-Fehler, Mond-Slot-Test, Versions-Sonderregeln, Release-Vertragskonflikt und vorhandene Sicherungs-Run-ID beschrieben. Die unabhängige Backup-Pflicht und sämtliche FINAL-Gates bleiben unverändert.
