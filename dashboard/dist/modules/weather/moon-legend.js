@@ -184,9 +184,9 @@ export function ensureMoonStyle(shadow){if(shadow.getElementById('gr-moon-style'
 .gr-moon-material[data-glass=mineral] .gr-moon-surface::before{opacity:.76;background-size:cover}
 /* 8: unchanged elegant title, just a very fine top light. */
 .gr-moon-header h2{text-shadow:0 -1px 0 #eff7ff26,0 2px 3px #0008}
-/* 9: exact classical menu border/shadow tokens, no new gold material. */
-.gr-moon-material[data-frame=goldClassic]{padding:1px;border:var(--moon-classic-border);box-shadow:var(--moon-classic-shadow);background:#091219;--moon-metal-base:#c9a050;--moon-metal-dark:#302612}
-.gr-moon-material[data-frame=goldClassic]::before,.gr-moon-material[data-frame=goldClassic]::after{display:none}.gr-moon-material[data-frame=goldClassic] .gr-moon-surface{border-color:#c9a05044}
+/* Eye-menu gold border/shadow with the existing layered metallic finish. */
+.gr-moon-material[data-frame=goldClassic]{padding:1px;border:var(--moon-classic-border);box-shadow:var(--moon-classic-shadow);background:var(--moon-metal-gradient);--moon-metal-base:#c9a050;--moon-metal-dark:#302612;--moon-glint:#f7dfa1;--moon-light-rgb:247,223,161}
+.gr-moon-material[data-frame=goldClassic]::before{inset:0;padding:4px}.gr-moon-material[data-frame=goldClassic] .gr-moon-surface{border-color:#c9a05044}
 
 
 @container(max-width:540px){.gr-moon-header{row-gap:3px;padding-block:8px}.gr-moon-phases{margin-bottom:3px}.gr-moon-note{padding-bottom:6px}.gr-moon-grid{row-gap:2px}.gr-moon-details{gap:1px}.gr-moon-row{padding-block:4px}.gr-moon-body{padding-bottom:8px}.gr-moon-tile img{width:min(100%,64px);margin-bottom:3px}.gr-moon-phases-head{padding-block:4px}}
@@ -199,6 +199,7 @@ export function ensureMoonStyle(shadow){if(shadow.getElementById('gr-moon-style'
 .gr-moon-size-menu[hidden]{display:none}.gr-moon-size-menu button{display:block;width:100%;min-height:36px;padding:7px 12px;text-align:left;border:1px solid transparent;border-radius:8px;background:transparent;color:inherit;font:14px/1.3 system-ui;cursor:pointer}.gr-moon-size-menu button[aria-checked=true]{border-color:#d9e9ff80;background:linear-gradient(135deg,#bcd3ee38,#8babc319);box-shadow:inset 0 1px #f4f8ff55}.gr-moon-size-menu button:hover{background-color:#bfd7ef20}.gr-moon-size-menu button:focus-visible{outline:2px solid #e9f4ff;outline-offset:-2px}
 .lh-moon-icons{display:flex;gap:8px;justify-content:space-evenly}.lh-moon-icons label{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;text-align:center;font-size:11px;cursor:pointer}.lh-moon-icons img{width:64px;height:64px;object-fit:contain;border:1px solid transparent;border-radius:12px}.lh-moon-icons input{position:absolute;opacity:0;width:1px!important;height:1px!important}.lh-moon-icons label:has(:checked) img{border-color:#d7e8ff;box-shadow:0 0 10px #bed8ff44}.lh-moon-icons label:has(:focus-visible) img{outline:2px solid #edf5ff;outline-offset:2px}
 @container(max-width:540px){.gr-moon-header{gap:8px;padding:8px 14px}.gr-moon-header h2{font-size:30px}.gr-moon-header small{font-size:8px;letter-spacing:.16em}.gr-moon-badge{width:42px;height:42px}.gr-moon-size-controls button{gap:2px;font-size:12px}.gr-moon-size-controls button img{width:38px;height:38px}}
+.gr-moon-badge{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}.gr-moon-badge img{display:block;max-width:100%;max-height:100%;min-width:0;min-height:0;object-position:center}
 
 `;shadow.append(el);}
 function row(target,type,label,value){const div=document.createElement('div'),a=document.createElement('span'),b=document.createElement('strong');div.className='gr-moon-row';div.dataset.row=type;a.textContent=label;if(typeof value==='string')b.textContent=value;else b.append(value);div.append(icon(type),a,b);target.append(div);return b;}
