@@ -162,6 +162,14 @@ Automatisiert verfügbar über:
 
 Golden Master und HACS-/Installationspaket bleiben ausdrücklich unterschiedliche Artefakte.
 
+## Öffentliche FINAL-Releases, DEV über Branch und CI (seit V4.12)
+
+GewitterRadar bleibt in **einem öffentlichen GitHub-Repository**, damit GitHub Actions weiterhin genutzt werden können. Der Entwicklungszweig ist `deploy/dev`; `main` und die offiziellen Release-Tags dienen stabilen FINAL-Auslieferungen.
+
+Für gewöhnliche DEV-Builds **keine öffentlichen GitHub-Prereleases** (`v*-dev`) mehr anlegen. DEV-Tests und DRA-Installationen verwenden den Entwicklungszweig und, soweit sinnvoll, CI-Artefakte; deren zeitlich begrenzte Aufbewahrung ist von unveränderlichen Release-/Backup-Archiven zu unterscheiden. Die öffentlichen GitHub-Releases enthalten nur geprüfte stabile Versionen.
+
+Wichtig: Das öffentliche Repository selbst, DEV-Branches und erhaltene historische Tags sind weiterhin öffentlich einsehbar; das Entfernen eines Releases ist **keine Privatisierung von Quellcode**. Historische DEV-Tags bleiben zum Schutz der Referenzen bestehen und dürfen durch Aufräumarbeiten nicht gelöscht werden. Die Bereinigung vom 24.11.2026 entfernte ausschließlich veröffentlichte DEV-Prerelease-Einträge, nicht FINAL-Releases, Tags oder Recovery-Bestände.
+
 ## Release-Gates
 
 Ein Release wird nur eingefroren, wenn die für den Stand vorgesehenen Prüfungen grün sind. Dazu gehören je nach betroffenem Bereich insbesondere:
