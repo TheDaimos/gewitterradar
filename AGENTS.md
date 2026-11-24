@@ -14,3 +14,7 @@ Bei Änderungen an Eye-Geometrie und Drag die [Randpositionierungsregression fü
 ## V4.12-Aura (eigenständiger technischer Zwischenstand)
 
 Vor Änderungen am Legend Hub die [technische Aura-Referenz GR 4.12.3](docs/GR_412_AURA_REFERENCE_2026-11-22.md) und ihre Regressionen erhalten: dynamische Ringprojektion, stabile Slot-/Pointer-Identität, reduzierte Bewegung, unmittelbare Hindernisauflösung, Randpositionierung und Vault-Persistenz. Keine neue Betreiberfreigabe ableiten; V4.11.03 FINAL und das bestehende WR-/GR-Referenzpaar bleiben geschützt.
+
+## Verbindlicher GitHub-Zugriffs-Fallback (24.11.2026)
+
+Bei lokalem Git-Zugriffsfehler zuerst die verfügbaren GitHub-Connector-Werkzeuge für Lesezugriffe, Dateiänderungen, Git-Objekte, Commits und Branch-Updates verwenden. Bei einem einzelnen Werkzeugfehler geeignete alternative Connector-Pfade prüfen, bevor der Auftrag als blockiert gilt. Aktuellen Remote-HEAD und Dateiversionen verifizieren; ausschließlich autorisierte DEV-Branches, keine erzwungenen Überschreibungen, keine Umgehung von Schutz-, CI-, Test-, Datenschutz- oder Release-Regeln. Tatsächlich ausgeführte Prüfungen und verbleibende Einschränkungen getrennt dokumentieren. Diese Ergänzung ersetzt keine bestehende Projektregel.
