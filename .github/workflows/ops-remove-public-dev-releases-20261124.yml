@@ -1,0 +1,82 @@
+name: Remove public DEV prereleases (retain Git tags and protected refs)
+
+on:
+  push:
+    branches:
+      - ops/remove-public-dev-prereleases-20261124
+    paths:
+      - '.github/workflows/ops-remove-public-dev-releases-20261124.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  cleanup:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify stable V4.12 FINAL is protected
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          release="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/v4.12")"
+          test "$(jq -r '.draft' <<<"$release")" = false
+          test "$(jq -r '.prerelease' <<<"$release")" = false
+          test "$(jq -r '.target_commitish' <<<"$release")" = c712a2526faeb55b9cc1926a656268611f56e776
+          test "$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/v4.12" --jq '.object.sha')" = c712a2526faeb55b9cc1926a656268611f56e776
+          mkdir -p dist/audit
+          git ls-remote --tags origin | LC_ALL=C sort > dist/audit/tags-before.txt
+          gh api --paginate -X GET "repos/${GITHUB_REPOSITORY}/releases?per_page=100"             --jq '.[] | select(.draft == false and .prerelease == true and (.tag_name | endswith("-dev"))) | [.id,.tag_name] | @tsv'             > dist/audit/public-dev-releases-before.tsv
+          test -s dist/audit/public-dev-releases-before.tsv
+          printf 'Published DEV prereleases to remove: '
+          wc -l < dist/audit/public-dev-releases-before.tsv
+          cat dist/audit/public-dev-releases-before.tsv
+      - name: Remove published DEV release records only; DO NOT delete tags or sources
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS=$'\t' read -r id tag; do
+            test "$id" != "" && [[ "$id" =~ ^[0-9]+$ ]]
+            [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-dev$ ]]
+            verify="$(gh api "repos/${GITHUB_REPOSITORY}/releases/${id}")"
+            test "$(jq -r '.tag_name' <<<"$verify")" = "$tag"
+            test "$(jq -r '.draft' <<<"$verify")" = false
+            test "$(jq -r '.prerelease' <<<"$verify")" = true
+            gh api -X DELETE "repos/${GITHUB_REPOSITORY}/releases/${id}"
+            printf '%s\t%s\n' "$id" "$tag" >> dist/audit/deleted-releases.tsv
+          done < dist/audit/public-dev-releases-before.tsv
+      - name: Verify public DEV releases are gone, stable release and tags unchanged
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --paginate -X GET "repos/${GITHUB_REPOSITORY}/releases?per_page=100"             --jq '.[] | select(.draft == false and .prerelease == true and (.tag_name | endswith("-dev"))) | .tag_name'             > dist/audit/public-dev-releases-after.txt
+          test ! -s dist/audit/public-dev-releases-after.txt
+          git ls-remote --tags origin | LC_ALL=C sort > dist/audit/tags-after.txt
+          diff -u dist/audit/tags-before.txt dist/audit/tags-after.txt
+          test "$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/v4.12" --jq '.object.sha')" = c712a2526faeb55b9cc1926a656268611f56e776
+          stable="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/v4.12")"
+          test "$(jq -r '.draft' <<<"$stable")" = false
+          test "$(jq -r '.prerelease' <<<"$stable")" = false
+          test "$(jq -r '.target_commitish' <<<"$stable")" = c712a2526faeb55b9cc1926a656268611f56e776
+          printf 'Removed DEV release records: '
+          wc -l < dist/audit/deleted-releases.tsv
+          printf 'All Git tags retained, V4.12 FINAL untouched.\n'
+      - name: Store cleanup audit trail
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-dev-prerelease-removal-20261124
+          path: dist/audit/*
+          if-no-files-found: warn
+          retention-days: 90
