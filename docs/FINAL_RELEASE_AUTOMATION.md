@@ -86,3 +86,7 @@ Ein Merge dieser Datei auf `main` löst die FINAL-Action über das `push`-Ereign
 `deploy/dev` -> DEV-Abnahme -> separater Release-Candidate -> PRE-MERGE altes `main` -> regulärer Merge -> Post-Merge-CI -> Golden Master -> Tag/Release -> HACS-Installationsnachweis.
 
 Kein Auto-Merge bei bloßem Dateiupload; kein Tag bei roter CI; keine private WR-CI; keine Rechte- oder Datenschutzumgehung. Die Original-Export2Git-Sicherung erfolgt im privaten `TheDaimos/Project-Log-And-Export@main`; diese Infrastruktur ersetzt sie nicht.
+
+## Fehlerfall V4.13 und Versions-Gates (verbindliche Ergänzung 24.11.2026)
+
+**Konkrete, geprüfte Ursachen und die versionsübergreifende Agenten-Handlungsregel stehen in [GR_413_FINAL_BLOCKERS_AND_AGENT_RUNBOOK_2026-11-24.md](GR_413_FINAL_BLOCKERS_AND_AGENT_RUNBOOK_2026-11-24.md).** Vor jeder V4.13-FINAL-Fortsetzung die Akte vollständig lesen. Der PRE-MERGE-Run `45496499861` ist erfolgreich; die unabhängig aufbewahrte Sicherung ist **noch nicht nachgewiesen**. `scripts/build-frontend.mjs` besitzt ältere FINAL-Sonderregeln, und der generische FINAL-Workflow verwechselt öffentliche `4.13` mit interner `4.13.7`-Versionsidentität. Neue Chats müssen historische Versions-Gates ohne Sicherheitsabschwächung selbstständig weiterentwickeln und die Anpassungen durch echte Remote-CI auf dem richtigen Commit belegen. Bei lokalem DNS-/Container-Fehler zuerst Remote-Runner und GitHub-Connector verwenden, keine Freigabe simulieren.
