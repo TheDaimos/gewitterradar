@@ -21,8 +21,34 @@ export async function expectedPayload(){
   const release=APPLICATION_RELEASE,releasePatch=release.version.split('.')[2],series=release.version.split('.').slice(0,2).join(''),patch=['412','413'].includes(series)?999:releasePatch;
   const revision=release.runtimeRevision?.match(new RegExp(`^${series}${releasePatch}r([1-9][0-9]*)$`))?.[1];
   const identityIsDev=release.displayVersion===`V${release.version} DEV`;
+  const finalSeries=release.version.match(/^4\.(1[3-9]|[2-9]\d)\.\d+$/)?.[1];
   const identityIsFinal=release.version==='4.11.249'&&release.displayVersion==='V4.11 FINAL'&&/^V4\.11-FINAL-\d{4}-\d\d-\d\d$/.test(release.build);
-  if(!(identityIsDev||identityIsFinal)||!revision||release.moduleSetId!==`E${series}-${releasePatch}A${revision}`)throw Error('Canonical release identity mismatch');
+  const identityIs412Final=release.version==='4.12.15'&&release.displayVersion==='V4.12 FINAL'&&/^V4\.12-FINAL-\d{4}-\d\d-\d\d$/.test(release.build);
+  const identityIsCurrentFinal=Boolean(finalSeries)&&release.displayVersion===`V4.${finalSeries} FINAL`&&new RegExp(`^V4\\.${finalSeries}-FINAL-\\d{4}-\\d\\d-\\d\\dimport {readFile,mkdir,readdir} from 'node:fs/promises';
+import {writeFile} from './write-release-file.mjs';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+import {readAboutLocaleModel} from './verify-about-locales.mjs';
+import {APPLICATION_RELEASE} from '../frontend/version.js';
+export const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
+export const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
+async function walk(dir,prefix=''){const out=[];for(const entry of await readdir(dir,{withFileTypes:true})){const name=prefix+entry.name;if(entry.isDirectory())out.push(...await walk(resolve(dir,entry.name),name+'/'));else out.push(name);}return out.sort();}
+async function modularPayload(contract){const wanted=Object.keys(contract.moduleFiles||{}).sort();const actual=(await walk(resolve(root,'frontend'))).filter(name=>name==='module-manifest.js'||name.startsWith('modules/')).sort();if(JSON.stringify(actual)!==JSON.stringify(wanted))throw Error('Modular source inventory mismatch');const payload=new Map();for(const name of wanted){const bytes=await readFile(resolve(root,'frontend',name)),expected=contract.moduleFiles[name];if(bytes.length!==expected.sizeBytes||hash(bytes)!==expected.sha256)throw Error('Module contract mismatch '+name);payload.set(name,bytes);}return payload;}
+export async function expectedPayload(){
+ const release=JSON.parse(await readFile(resolve(root,'tests/contracts/frontend-release-v4.09.json'),'utf8'));
+ const source=await readFile(resolve(root,'frontend/gewitterradar.js')),text=source.toString('utf8');
+ const panel=await readFile(resolve(root,'frontend/panel.js'));
+ const versionSource=await readFile(resolve(root,'frontend/version.js')).catch(()=>null),versionText=versionSource?.toString('utf8')||'';
+ let modular=new Map(),localeSha=release.localeSha256,localeSize=release.localeSizeBytes;
+ if(text.includes("APPLICATION_RELEASE")&&(/^4\.(?:12|13)\./.test(APPLICATION_RELEASE.version)||/^4\.11\./.test(APPLICATION_RELEASE.version)&&Number(APPLICATION_RELEASE.version.split('.')[2])>=165)){
+  const manifestText=await readFile(resolve(root,'frontend/module-manifest.js'),'utf8');
+  const runtime=JSON.parse(await readFile(resolve(root,'frontend/assets/gewitterradar-runtime-manifest.json'),'utf8'));
+  const release=APPLICATION_RELEASE,releasePatch=release.version.split('.')[2],series=release.version.split('.').slice(0,2).join(''),patch=['412','413'].includes(series)?999:releasePatch;
+  const revision=release.runtimeRevision?.match(new RegExp(`^${series}${releasePatch}r([1-9][0-9]*)$`))?.[1];
+  const identityIsDev=release.displayVersion===`V${release.version} DEV`;
+).test(release.build);
+  if(!(identityIsDev||identityIsFinal||identityIs412Final||identityIsCurrentFinal)||!revision||release.moduleSetId!==`E${series}-${releasePatch}A${revision}`)throw Error('Canonical release identity mismatch');
   for(const [key,value] of Object.entries({productVersion:release.version,build:release.build,runtimeRevision:release.runtimeRevision,moduleSetId:release.moduleSetId,displayVersion:release.displayVersion}))if(runtime[key]!==value)throw Error('Runtime manifest mismatch: '+key);
   const match=manifestText.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/);
   if(!match)throw Error('Cannot read current module contract');
