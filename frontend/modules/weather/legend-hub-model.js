@@ -1,7 +1,7 @@
 // Presentation preferences only. Weather data, native legend positions and
 // legacy visibility remain owned by their existing modules.
 export const LEGEND_HUB_KEY='gewitterradar:legend-hub:v1';
-export const LEGEND_IDS=Object.freeze(['precipitation','wind','temperature','advection','synoptic','other']);
+export const LEGEND_IDS=Object.freeze(['precipitation','wind','temperature','advection','synoptic','other','moon']);
 export const LEGEND_OPTIONS=Object.freeze({presentation:['premium','compact'],orientation:['horizontal','vertical'],size:['S','M','L','XL'],density:['coarse','medium','detailed'],style:['clean','precision','thermometer'],material:['brass','platinum','gold','silver','black'],labels:['before','inside','after'],ticks:['before','inside','after'],foreground:['auto','white','black','ice','mint','champagne','gold'],mode:['inherit','on','off'],frameMaterial:['platinum','gold'],frameWeight:['fine','medium','strong'],glassEffect:['clear','milky','frosted']});
 const select=(v,a,f)=>a.includes(v)?v:f,clamp=(v,a,b,f)=>Number.isFinite(v)?Math.max(a,Math.min(b,v)):f;
 export const position=(v,f={x:.08,y:.3})=>({x:clamp(v?.x,0,1,f.x),y:clamp(v?.y,0,1,f.y)});
