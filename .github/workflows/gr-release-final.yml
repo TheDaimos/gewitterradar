@@ -1,0 +1,221 @@
+name: GR FINAL publish (exact main)
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Final version, e.g. 4.13"
+        required: true
+        type: string
+      integration_version:
+        description: "Native HA integration version"
+        required: true
+        type: string
+      old_main_sha:
+        description: "Old main SHA from the PRE-MERGE backup"
+        required: true
+        type: string
+      premerge_run_id:
+        description: "Successful PRE-MERGE workflow run ID"
+        required: true
+        type: string
+      backup_verified:
+        description: "Independent off-GitHub backup of PRE-MERGE verified"
+        required: true
+        type: boolean
+  push:
+    branches: [main]
+    paths:
+      - docs/release-control/publish-request.json
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: gr-final-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Read and validate immutable release request
+        id: request
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_INTEGRATION: ${{ inputs.integration_version }}
+          INPUT_OLD_MAIN: ${{ inputs.old_main_sha }}
+          INPUT_PRE_RUN: ${{ inputs.premerge_run_id }}
+          INPUT_BACKUP: ${{ inputs.backup_verified }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os,re,subprocess
+          from pathlib import Path
+          if os.environ['EVENT_NAME']=='push':
+              request=json.loads(Path('docs/release-control/publish-request.json').read_text())
+          else:
+              request={
+                  'version':os.environ['INPUT_VERSION'],
+                  'integration_version':os.environ['INPUT_INTEGRATION'],
+                  'old_main_sha':os.environ['INPUT_OLD_MAIN'],
+                  'premerge_run_id':os.environ['INPUT_PRE_RUN'],
+                  'independent_backup_verified':os.environ['INPUT_BACKUP'].lower()=='true'
+              }
+          version=request['version']; ha=request['integration_version']; old=request['old_main_sha']
+          run_id=str(request['premerge_run_id'])
+          assert re.fullmatch(r'4\.[0-9]{2}',version), 'Expected finalized series (e.g. 4.13)'
+          assert re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+',ha)
+          assert re.fullmatch(r'[0-9a-f]{40}',old)
+          assert re.fullmatch(r'[1-9][0-9]*',run_id)
+          assert request['independent_backup_verified'] is True, 'Independent PRE-MERGE backup must be verified'
+          now=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert now==os.environ['GITHUB_SHA']
+          branch=subprocess.check_output(['git','branch','--show-current'],text=True).strip()
+          assert branch=='main' or os.environ['GITHUB_REF']=='refs/heads/main'
+          assert now!=old
+          subprocess.check_call(['git','merge-base','--is-ancestor',old,now])
+          version_text=Path('frontend/version.js').read_text()
+          assert f'version:"{version}"' in version_text
+          assert f'displayVersion:"V{version} FINAL"' in version_text
+          assert f'integrationVersion:"{ha}"' in version_text
+          assert f'BUILD_VERSION = "{version}"' in Path('custom_components/gewitterradar/build_info.py').read_text()
+          assert json.loads(Path('custom_components/gewitterradar/manifest.json').read_text())['version']==ha
+          notes=f'docs/RELEASE_NOTES_V{version.replace(".","_")}.md'
+          assert Path(notes).is_file(), f'Missing FINAL notes: {notes}'
+          for path in ('frontend','dashboard/dist','custom_components/gewitterradar/frontend'):
+              assert (Path(path)/'version.js').read_text()==version_text
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              for k,v in [('version',version),('integration',ha),('old_sha',old),('run_id',run_id),('tag',f'v{version}'),('notes',notes)]:
+                  print(f'{k}={v}',file=out)
+          PY
+      - name: Validate immutable PRE-MERGE source backup
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          pre="${{ steps.request.outputs.run_id }}"
+          name="GR_PRE_MERGE_V${{ steps.request.outputs.version }}_${{ steps.request.outputs.old_sha }}"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$pre" --jq '.conclusion')" = success
+          mkdir -p dist/premerge
+          gh run download "$pre" -R "$GITHUB_REPOSITORY" --name "$name" --dir dist/premerge
+          (cd dist/premerge && sha256sum -c *_SHA256SUMS.txt)
+          grep -Fqx "old_main_sha=${{ steps.request.outputs.old_sha }}" dist/premerge/PRE_MERGE_IDENTITY.txt
+          grep -Fqx "version=${{ steps.request.outputs.version }}" dist/premerge/PRE_MERGE_IDENTITY.txt
+          for zip in dist/premerge/*.zip; do
+            unzip -tq "$zip"
+            manifest="$(unzip -p "$zip" '*/_snapshot/MANIFEST.txt')"
+            grep -Fqx "ARCHIVE_TYPE=PRE_MERGE" <<< "$manifest"
+            grep -Fqx "COMMIT_SHA=${{ steps.request.outputs.old_sha }}" <<< "$manifest"
+          done
+          for bundle in dist/premerge/*.bundle; do git bundle verify "$bundle"; done
+      - name: Exact-main validations before publication
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main'
+          test "$(git rev-parse refs/remotes/origin/main)" = "$GITHUB_SHA"
+          node scripts/verify-frontend.mjs
+          node scripts/verify-hires-asset-retention.mjs
+          node scripts/verify-diagnostic-contract.mjs
+          node scripts/verify-source-archive-contract.mjs
+          python scripts/verify-hacs-integration-package.py
+          sha256sum -c SHA256SUMS_FRONTEND.txt
+      - name: Wait for CI of exact public main SHA
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=('Validate Gewitterradar integration' 'Validate shared Gewitterradar frontend' 'Hi-Res asset retention')
+          for attempt in $(seq 1 120); do
+            data="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$GITHUB_SHA&per_page=100")"
+            waiting=0
+            for name in "${required[@]}"; do
+              row="$(printf '%s' "$data" | jq -r --arg name "$name" '[.workflow_runs[] | select(.name==$name)] | sort_by(.created_at) | last | if . == null then "missing" else (.status + ":" + (.conclusion // "")) end')"
+              echo "$name -> $row"
+              case "$row" in completed:success) ;; completed:*) exit 1 ;; *) waiting=1 ;; esac
+            done
+            if [ "$waiting" -eq 0 ]; then exit 0; fi
+            sleep 15
+          done
+          exit 1
+      - name: Generate and validate exact-main Golden Master
+        id: golden
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/create-source-archive.sh GOLDEN_MASTER "$GITHUB_SHA" "V${{ steps.request.outputs.version }}" dist/golden
+          (cd dist/golden && sha256sum -c *_SHA256SUMS.txt)
+          for zip in dist/golden/*.zip; do unzip -tq "$zip"; done
+          for bundle in dist/golden/*.bundle; do git bundle verify "$bundle"; done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GR_FINAL_GOLDEN_${{ steps.request.outputs.tag }}_${{ github.sha }}
+          path: dist/golden/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+      - name: Build verified install packages from committed sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/install
+          python - <<'PY'
+          import hashlib,json,subprocess,zipfile
+          from pathlib import Path
+          out=Path('dist/install')
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          version='${{ steps.request.outputs.version }}'
+          ha='${{ steps.request.outputs.integration }}'
+          for tree,prefix,name in [
+              ('custom_components/gewitterradar','custom_components/gewitterradar/',f'gewitterradar-{ha}.zip'),
+              ('dashboard/dist','www/gewitterradar/',f'gewitterradar-dashboard-{version}.zip')]:
+              names=subprocess.check_output(['git','ls-tree','-r','--name-only','HEAD','--',tree],text=True).splitlines()
+              assert names and all(x.startswith(tree+'/') for x in names)
+              with zipfile.ZipFile(out/name,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
+                  for path in names:
+                      data=subprocess.check_output(['git','show',f'HEAD:{path}'])
+                      info=zipfile.ZipInfo(prefix+path[len(tree)+1:],(1980,1,1,0,0,0))
+                      info.compress_type=zipfile.ZIP_DEFLATED
+                      info.create_system=3
+                      info.external_attr=0o100644<<16
+                      z.writestr(info,data)
+              with zipfile.ZipFile(out/name) as z:
+                  assert z.testzip() is None and len(z.namelist())==len(names)
+          (out/'RELEASE_COMMIT.txt').write_text(sha+'\n')
+          with (out/'SHA256SUMS.txt').open('w') as f:
+              for p in sorted(out.glob('*')):
+                  if p.name!='SHA256SUMS.txt':
+                      f.write(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n')
+          PY
+          (cd dist/install && sha256sum -c SHA256SUMS.txt)
+      - name: Publish exact verified commit (draft first)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${{ steps.request.outputs.tag }}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release exists. Refusing overwrite: $tag" >&2
+            exit 1
+          fi
+          if git ls-remote --tags origin "refs/tags/$tag" | grep -q .; then
+            echo "Tag exists. Refusing retarget: $tag" >&2
+            exit 1
+          fi
+          gh release create "$tag" --draft --target "$GITHUB_SHA" --title "GewitterRadar V${{ steps.request.outputs.version }} FINAL" --notes-file "${{ steps.request.outputs.notes }}" dist/install/* dist/golden/*
+          git fetch origin "refs/tags/$tag:refs/tags/$tag"
+          test "$(git rev-list -n1 "$tag")" = "$GITHUB_SHA"
+          gh release view "$tag" --json assets --jq '.assets | length' | grep -Eq '^[6-9][0-9]*$|^[6-9]$'
+          gh release edit "$tag" --draft=false --prerelease=false --latest

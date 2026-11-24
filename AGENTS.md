@@ -32,3 +32,7 @@ Bei Änderungen an Eye-Geometrie und Drag die [Randpositionierungsregression fü
 ## V4.12-Aura (eigenständiger technischer Zwischenstand)
 
 Vor Änderungen am Legend Hub die [technische Aura-Referenz GR 4.12.3](docs/GR_412_AURA_REFERENCE_2026-11-22.md) und ihre Regressionen erhalten: dynamische Ringprojektion, stabile Slot-/Pointer-Identität, reduzierte Bewegung, unmittelbare Hindernisauflösung, Randpositionierung und Vault-Persistenz. Keine neue Betreiberfreigabe ableiten; V4.11.03 FINAL und das bestehende WR-/GR-Referenzpaar bleiben geschützt.
+
+## Dauerhaftes FINAL-Release ohne lokales DNS / gh
+
+**Pflicht vor jeder FINAL-Promotion:** [FINAL_RELEASE_AUTOMATION.md](docs/FINAL_RELEASE_AUTOMATION.md), [GOLDEN_MASTER_POLICY.md](docs/GOLDEN_MASTER_POLICY.md) und [PROJECT_BOOTSTRAP.md](docs/PROJECT_BOOTSTRAP.md) lesen. Die öffentlichen GitHub-Actions-Workflows `gr-release-premerge.yml` und `gr-release-final.yml` übernehmen PRE-MERGE-Sicherung, remote CI, Golden Master und offizielle Veröffentlichung. Bei lokalem DNS-/Git-/CLI-Ausfall zuerst den GitHub-Connector für Branch, Dateien und PR nutzen und per GitHub-Actions-Runner ausführen, nicht wiederholt lokal scheitern. Connector ohne Workflow-Dispatch: gesonderte PRE-MERGE-/FINAL-Request-Branches und kontrollierter PR-Merge gemäß Anleitung. Die Workflows benötigen erfolgreiche echte CI, externe PRE-MERGE-Sicherung und Betreiberfreigabe. **Ein DEV-HEAD, PR oder Backup allein ist niemals eine FINAL-Freigabe.** Bereits bestehende Referenzen, WeatherRouter und PROD unverändert.
