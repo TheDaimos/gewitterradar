@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.16",
-  "build": "V4.12.16-DEV-2026-11-24",
-  "runtimeRevision": "41216r1",
-  "moduleSetId": "E412-16A1",
-  "baselineFeatureHead": "c70faed47e1a888f3bcbebc62fd7bbcef202e453",
+  "productVersion": "4.12.17",
+  "build": "V4.12.17-DEV-2026-11-24",
+  "runtimeRevision": "41217r1",
+  "moduleSetId": "E412-17A1",
+  "baselineFeatureHead": "617d40466a65097458047cc3fc0771d7d46465ca",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Legend Hub Premium Moon Legend: validated geographic ephemeris consumer, nonmodal bounded window, original silver-platinum design and lifecycle checks.",
+    "purpose": "Legend Hub Premium Moon master finish: proportional auto-fit, persisted scale and silver phase accordion; no astronomy or provider changes.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

@@ -69,3 +69,20 @@ for invalid in [{'extraPositions': {'moon': {'x': 1.1, 'y': 0}}},
     else:
         raise AssertionError(f'Invalid Moon preference accepted: {invalid}')
 print('PASS: actual Vault schema round-trips Moon slot, visibility and normalized window position; rejects invalid values')
+
+for expanded in (True, False):
+    for mode in ('auto', 'manual'):
+        for size in (50, 75, 100, 125):
+            value = {**moon_value, 'moonUi': {'phasesExpanded': expanded, 'scaleMode': mode, 'scalePercent': size}}
+            assert schema.validate_settings({hub: value}) == {hub: value}
+            assert schema.decode_value(hub, schema.encode_value(hub, value)) == value
+for patch in [{'phasesExpanded': 'false'}, {'scaleMode': 'unknown'}, {'scalePercent': 49},
+              {'scalePercent': 126}, {'scalePercent': 52}, {'scalePercent': '100'}, {'scalePercent': True}]:
+    try:
+        schema.validate_settings({hub: {'moonUi': patch}})
+    except schema.VaultError:
+        pass
+    else:
+        raise AssertionError(f'Invalid Moon presentation setting accepted: {patch}')
+assert schema.validate_settings({hub: moon_value}) == {hub: moon_value}, 'old profile must not be migrated or rewritten'
+print('PASS: optional Moon accordion/Auto/manual scale round-trip in 16 combinations; invalid types/ranges/steps rejected; old profiles unchanged')

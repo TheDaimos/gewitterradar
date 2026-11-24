@@ -1,4 +1,4 @@
-import {moonIcon} from './moon-legend.js?v=41216r1';
+import {moonIcon} from './moon-legend.js?v=41217r1';
 import {temperatureUnitSymbol} from './temperature-units.js?v=411156r1';
 import {BEAUFORT_LIMITS,windSpeedText} from './wind-data.js?v=411159r1';
 import {WIND_FIELD_COLORS} from './wind-field.js?v=411211r1';

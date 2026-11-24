@@ -1,0 +1,55 @@
+# Moon Legend – Premium Master Finish
+
+Ausgangsstand: GR `617d40466a65097458047cc3fc0771d7d46465ca` / 4.12.16 DEV. WR-Remote unverändert `cfdc8c722ff4aef9d919e7cc3e0a783314473334` / 0.10.329 DEV. Geschützte Betreiber-, Eye- und Aura-Referenzen gelten weiter. Keine Änderung an astronomischen Berechnungen, WebSocket-Vertrag, Providerquellen oder Originalgrafiken.
+
+Vorab abgegrenzter Eingriff: Moon-Frontend, drei optionale Moon-Vault-Werte und deren Normalisierung/Validierung, gezielte Tests und reguläre DEV-Liefermetadaten. Besonders zu prüfen sind Transform-/Drag-Koordinaten, sichtbare Karten-/Viewportgrenzen einschließlich Safe Areas, Accordion-Geometrie, Altprofile und Profileinstellungen. Andere Legend-/Eye-/Wetter-Funktionskörper bleiben geschützt.
+
+Der vorhandene Silber-/Platin-Chevron stammt aus `frontend/modules/fullscreen/compass-picker-chevron-right-silver.js`, derselben Referenz wie die Positionssteuerung im Legend-Hub-Einstellungsbereich. Keine neue Chevrongrafik.
+
+## Umsetzung und neue DEV-Identität
+
+**GR 4.12.17 DEV / HA 0.25.178**, Runtime `41217r1`, Modulset `E412-17A1`, weiterhin 37 registrierte Module und 227 Kern-Frontenddateien. Keine neue Modularchitektur. Die originale Moon Engine, astronomische Zahlen und der WebSocket-Vertrag bleiben unverändert.
+
+- **Rahmen und Glas:** Fein gestaffelte Konturen, getrennte maskierte Reflexebenen, selektive obere und untere Glanzpunkte sowie feinere innere/äußere Schatten. Die Lichtebenen folgen der tatsächlichen Fenstergeometrie und werden gemeinsam skaliert. Mehrere dunkelblaue/anthrazitblaue, diffuse und diagonale Glasebenen ersetzen die bisher deutlich gleichmäßigere Fläche. Kein bloß verbreiterter heller Rand.
+- **Informationsblock:** Sechs kompaktere Zeilen mit betonter linker Kontur und nach rechts auslaufenden Lichtkanten und Glasflächen. Die Phase ist nun ein zusammenhängender Wert wie `Vollmond · 99,8 %`; „beleuchtet“ entfällt. Prozent- und Dezimalformatierung verwenden die aktuelle `_locale()`-Einstellung. DE, EN und FR sind tatsächlich im Browser geprüft.
+- **Hero und Kopf:** Größerer Hero-Mond in einer eigenen atmosphärischen Reflexzone; Originalpixel, Kraterstruktur und Aura unverändert. Feinere Badge-/Close-Materialschichten, metallische Header-Trennlinie und luftigere Unterzeile. Vorhandene Moon-Grafik als hochwertiges kleines Phasensymbol.
+- **Phasenbereich:** Alle acht Bilder und Beschriftungen bleiben erhalten. Der vorhandene Silber-Chevron dreht mit der bestehenden 0,42-s-Kurve `cubic-bezier(.22,1,.36,1)` um 180 Grad. Die Phasenfläche faltet sich mit einer Grid-Transition; die Kopfzeile bleibt erreichbar. Ein echter Button mit `aria-controls`, `aria-expanded`, Enter und Leertaste steuert den Zustand; geschlossene Inhalte sind inert. Reduzierte Bewegung schaltet beide Transitionen ab.
+- **Fenstergröße:** Eine zentrale Messung aus Kartenrechteck, Karten-CSS-Maßstab, sichtbarem Viewport und Safe Areas bestimmt den gemeinsamen Transformfaktor. Rahmen, Reflexe, Typografie, Bilder und Bedienelemente werden als Einheit skaliert. Die gemessene tatsächliche Inhaltshöhe wird bei Accordion-Animation, Daten-/Layoutänderung, Resize, GR-/DOM-Vollbild und äußerem Scrollen neu berücksichtigt. Gespeicherte normierte Positionen werden beim temporären Reflow nicht überschrieben.
+- **Größenbedienung:** Glas-/Metall-Control für Minus, Plus, tatsächlichen Prozentwert und Auto. Gespeicherte Werte 50–125 % in 5-%-Schritten; die tatsächliche Größe bleibt an die Karte begrenzt. Minus verkleinert auch dann unmittelbar, wenn ein größerer gespeicherter Wert zuvor durch einen kleinen Viewport begrenzt wurde. Auf schmalen oder sehr niedrigen Karten bleibt ein bedienbarer Kartenstreifen frei; der Drag-Clamp respektiert denselben nutzbaren Bereich.
+- **Vault:** Ausschließlich drei optionale Werte unter `gewitterradar:legend-hub:v1` → `moonUi`: `phasesExpanded` (Standard true), `scaleMode` (Standard auto), `scalePercent` (Standard 100). Kein neuer Profilschlüssel, keine Migration, kein Umschreiben von Altprofilen. Servervalidierung ist im vollständigen HA-0.25.178-Paket enthalten.
+- **Wiederanlauf:** Die Browserprüfung zeigte, dass ein gespeichertes Fenster vor Leaflet bereit sein konnte. Die isolierte Moon-Legende wartet nun begrenzt auf eine gültige Karte und bindet deren Events nachträglich. Dabei erfolgen keine astronomischen Anfragen ohne Karte. Schließen entfernt auch den skalierten Host, Observer, Timer und wartende Antworten.
+
+## Tatsächliche Browser- und Designprüfung
+
+Echte registrierte GewitterRadar-Karte, tatsächliche Leaflet-Karte und Moon-Komponente; kontrollierter HA-/WR-Testtransport mit berechneten Beispiel-Ephemeriden. Keine generierten Mockups. Der [verbindliche Designmaster](design/legend-hub/moon/references/moon_legend_premium_master.png) und die [Original-Vollmondgrafik](design/legend-hub/moon/references/moon_full_silver_platinum_master.png) wurden direkt visuell mit den Renderings verglichen. Nachbearbeitet wurden insbesondere Materialschichtung, asymmetrische Felder, Hero-Anteil, Laufweite und vollständige Phasen-/Rahmensichtbarkeit. Referenzdateien wurden nicht geändert.
+
+| Tatsächlicher Browser-Viewport | Ausgeklappt | Eingeklappt | Auto-Fit bei voller Phase |
+|---|---|---|---|
+| 1920 × 1080 | [Bild](evidence/gr-moon-master-finish/desktop-1920-expanded.png) | [Bild](evidence/gr-moon-master-finish/desktop-1920-collapsed.png) | 100 %, kein Scroll-Fallback |
+| 1366 × 768 | [Bild](evidence/gr-moon-master-finish/desktop-1366-expanded.png) | [Bild](evidence/gr-moon-master-finish/desktop-1366-collapsed.png) | ca. 85 %, kein Scroll-Fallback |
+| 1280 × 720 | [Bild](evidence/gr-moon-master-finish/desktop-1280-expanded.png) | [Bild](evidence/gr-moon-master-finish/desktop-1280-collapsed.png) | ca. 79 %, kein Scroll-Fallback |
+| 1024 × 768 | [Bild](evidence/gr-moon-master-finish/tablet-1024-expanded.png) | [Bild](evidence/gr-moon-master-finish/tablet-1024-collapsed.png) | ca. 79 %, kein Scroll-Fallback |
+| 768 × 1024 | [Bild](evidence/gr-moon-master-finish/tablet-portrait-expanded.png) | [Bild](evidence/gr-moon-master-finish/tablet-portrait-collapsed.png) | ca. 74 %, kein Scroll-Fallback |
+| 390 × 844 | [Bild](evidence/gr-moon-master-finish/phone-390-expanded.png) | [Bild](evidence/gr-moon-master-finish/phone-390-collapsed.png) | ca. 78 %, kein Scroll-Fallback |
+
+Zusätzlich in großen Browseroberflächen tatsächlich getestet: [760 × 500 Kartencontainer](evidence/gr-moon-master-finish/embedded-760-expanded.png), [620 × 350 Kartencontainer](evidence/gr-moon-master-finish/embedded-620-expanded.png), [unten aus dem Viewport ragende 900 × 900 Karte](evidence/gr-moon-master-finish/clipped-900-expanded.png), [760 × 500 Karte innerhalb eines mit 0,85 skalierten Vorfahren](evidence/gr-moon-master-finish/scaled-760-expanded.png). Die Paneelgrenzen richten sich nach dem sichtbaren Schnittbereich, nicht nach der nominellen Browsergröße.
+
+Auf den drei besonders kleinen/niedrigen Containerfällen bleibt zum Schutz der Lesbarkeit ein kontrollierter interner Scroll-Fallback. Rahmen und Kopf bleiben vollständig erreichbar; [unterer Inhalt bei 760 × 500](evidence/gr-moon-master-finish/embedded-760-fallback-bottom.png), [unterer Inhalt bei 620 × 350](evidence/gr-moon-master-finish/embedded-620-fallback-bottom.png). Es wird kein gleichzeitiges vollständiges Sichtbarkeitsversprechen für beliebig kleine Flächen behauptet. Auf allen sechs geforderten Standardformaten sind sämtliche Phasen und der Rahmen gleichzeitig sichtbar.
+
+Weitere reale Ansichten: [manuelle 125-%-Anforderung mit Kartenbegrenzung](evidence/gr-moon-master-finish/desktop-1920-manual-125.png), [50 %](evidence/gr-moon-master-finish/desktop-1920-manual-50.png), [GR-Standardkartenmodus](evidence/gr-moon-master-finish/desktop-1920-standard-map.png). Die 50-%-Wahl ist eine explizite Nutzerverkleinerung; Auto verwendet eine Lesbarkeitsschwelle. Screenshots sind unverändert kopiert und im [lokalen Prüfbeleg](evidence/gr-moon-master-finish/local-verification.json) mit SHA-256 erfasst.
+
+## Tatsächlich ausgeführte lokale Prüfungen
+
+- [Zehn Browserfälle](evidence/gr-moon-master-finish/results.json): vollständige Standardansichten, Accordion und messbar reduzierte Fensterhöhe, echte Chevron-Rotation, Tastatur, reduzierte Bewegung, manuelle Schritte und Bereichsgrenzen, proportionaler Hero-/Rahmenmaßstab, Größenbegrenzung, sofortiges Minus bei vorheriger Kappung, Karten-/Fensterdrags, Resize ohne Überschreiben des gespeicherten Ankers, Reload, Standard-/GR-/DOM-Vollbild, Safe-Area-Wert und EN-/FR-Zahlenformatierung. Alle Fälle ohne JavaScript-Seitenfehler.
+- [Authentifizierte Profilmatrix](evidence/gr-moon-master-finish/authenticated-profile-results.json): aktuelle Hub-Slots und Rückkehr, Desktop/Tablet/Touch, Moon-Slot/Position/Modus sowie neue Größen-/Accordionwerte nach Reload und Profilwechsel. Kein echter HA-Server; tatsächlicher Client mit kontrolliertem serverseitigem Testtransport.
+- Skalierungsmodell: 1680 Kombinationen aus verfügbarer Fläche, natürlichem Layout, Accordion, Auto/manuell und Größenwerten; Altprofile bleiben erhalten.
+- Tatsächliches Python-Vault-Schema: 16 Kombinationen der neuen Werte, Round-trip, unbekannte Typen/Modi und ungültige Grenzen/Schrittweiten abgelehnt; alte Profile ohne neuen Schlüssel unverändert akzeptiert.
+- Quellschutz: 111 andere Modul-Funktionskörper exakt geschützt; am gemeinsamen Modell ausschließlich die explizite optionale Moon-Normalisierung, am Python-Schema ausschließlich die drei optionalen Felder. Moon-Datenvertrag, Datenvalidierung und astronomischer Anfrageteil unverändert. Alle vorhandenen Runtime-Grafiken bytegleich, acht 1254er-Master und ihre Hashes in drei Lieferbäumen geprüft.
+- Bestehende Modelle und Schutzprüfungen: Legend Hub 2184 Layouts, Aura 1458 Geometrien, vollständige Aura-/FINAL-Wetterisolation, 30 Wetter-/Menü-Node-Tests und 17 weitere Node-Befehle aus dem Shared-Workflow.
+- Regulärer Frontend-Build tatsächlich ausgeführt; deterministischer Neuaufbau mit negativen Manipulationsproben, Runtime-/Modul-/Asset-Inventare, Cache-Importrevisionen, drei Lieferbäume und Checksum-Parität bestanden. Hi-Res-Retention sowie Python-/JSON-/YAML-Syntax und statische Metadatenprüfungen bestanden.
+
+## Grenzen und ausstehender Lieferabschluss
+
+Die Referenz ist weiterhin das gestalterische Ziel. CSS-/Glas-/Schriftwiedergabe und responsive Umbrüche sind browserabhängig; es wird keine Pixelidentität zum rasterisierten Entwurf behauptet. Die endgültige grafische Freigabe bleibt ausdrücklich beim Betreiber. Nicht durchgeführt: physischer Android-Test, OS-Browser-F11-Abnahme und Installation auf HA DEV VM109. DOM-Vollbild und GR-Vollbild wurden tatsächlich geprüft. WeatherRouter und PROD VM101 bleiben unverändert.
+
+Quellcommit, öffentliche Pflichtgates und kanonische DEV-Pakete werden nach erfolgreicher Ausführung im Lieferabschluss ergänzt.

@@ -1,7 +1,7 @@
-import {settingsStorage} from '../core/settings-vault.js?v=41216r1';
-import {ensureLegendScaleStyle} from './legend-scale.js?v=41213r1';
-import {PREMIUM_INFO} from './premium-ui.js?v=41216r1';
-import {legendOptions} from './legend-preferences.js?v=41216r1';
+import {settingsStorage} from '../core/settings-vault.js?v=41217r1';
+import {ensureLegendScaleStyle} from './legend-scale.js?v=41217r1';
+import {PREMIUM_INFO} from './premium-ui.js?v=41217r1';
+import {legendOptions} from './legend-preferences.js?v=41217r1';
 import {legendInk} from './legend-contrast.js?v=4124r1';
 
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));

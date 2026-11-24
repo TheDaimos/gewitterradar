@@ -59,8 +59,8 @@ const captureOnly=process.argv.includes('--capture-only');
    assert(await page.locator('.gr-moon-dialog').evaluate(n=>n.scrollWidth<=n.clientWidth+1),'no horizontal overflow '+name);
    await page.locator('.gr-moon-tile').last().scrollIntoViewIfNeeded();
    await page.screenshot({path:path.join(out,name+'-phases.png')});
-   assert(await page.locator('.gr-moon-header button').evaluate(n=>{const a=n.getBoundingClientRect(),b=n.closest('.gr-moon-dialog').getBoundingClientRect();return a.top>=b.top&&a.bottom<=b.bottom;}),'close remains inside scrolled window');
-   await page.locator('.gr-moon-dialog').evaluate(n=>n.scrollTop=0);
+   assert(await page.locator('.gr-moon-close').evaluate(n=>{const a=n.getBoundingClientRect(),b=n.closest('.gr-moon-dialog').getBoundingClientRect();return a.top>=b.top&&a.bottom<=b.bottom;}),'close remains inside scrolled window');
+   await page.locator('.gr-moon-surface').evaluate(n=>n.scrollTop=0);
    // Invoke the actual scheduled refresh via the browser virtual clock.
    const timedCount=await page.evaluate(()=>moonRequests.length);
    await page.clock.fastForward(60000);await page.clock.fastForward(300);
@@ -70,15 +70,15 @@ const captureOnly=process.argv.includes('--capture-only');
    if(name==='desktop'){
     const old=await page.evaluate(()=>card._map.getCenter());
     await page.mouse.move(width-120,160);await page.mouse.down();await page.mouse.move(width-210,220,{steps:8});await page.mouse.up();
-    assert.notDeepEqual(await page.evaluate(()=>card._map.getCenter()),old,'real map pointer pan outside window');
+    await page.waitForFunction(old=>{const c=card._map.getCenter();return c.lat!==old.lat||c.lng!==old.lng;},old);
     await page.waitForTimeout(450);
    }else if(touch){
-    const box=await page.locator('#map').boundingBox(),session=await context.newCDPSession(page),x=width*.55,y=box.y+box.height-22;
+    const point=await page.evaluate(()=>{const map=card.shadow.getElementById('map'),r=map.getBoundingClientRect(),d=card.__grMoon.dialog.getBoundingClientRect();for(const y of [r.bottom-20,r.top+70,r.top+r.height*.5])for(const x of [r.left+90,r.right-30,r.left+r.width*.5]){if(x-60<=r.left)continue;let valid=true;for(let i=0;i<=6;i++){const px=x-i*10,n=card.shadow.elementFromPoint(px,y);if(px>=d.left&&px<=d.right&&y>=d.top&&y<=d.bottom||!map.contains(n)||n?.closest('button,a,input,.leaflet-control,.weather-display-panel'))valid=false;}if(valid)return {x,y};}return null;});assert(point,'real free map trajectory');const session=await context.newCDPSession(page),{x,y}=point;
     const old=await page.evaluate(()=>card._map.getCenter());
     await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
     for(let i=1;i<=6;i++)await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x-i*10,y}]});
     await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await session.detach();
-    assert.notDeepEqual(await page.evaluate(()=>card._map.getCenter()),old,'real touch pan in map strip outside window');await page.waitForTimeout(450);
+    await page.waitForFunction(old=>{const c=card._map.getCenter();return c.lat!==old.lat||c.lng!==old.lng;},old);await page.waitForFunction(()=>!card._map._panAnim?._inProgress);await page.waitForTimeout(100);
    }
    const modes=await page.evaluate(()=>({wind:card._weatherWindState().config.visible,temp:card._weatherTemperatureState().config.visible,radar:card._weatherRadarState().enabled}));
    // Real pointer-captured header drag, then pointer cancellation and viewport resize.
@@ -87,8 +87,8 @@ const captureOnly=process.argv.includes('--capture-only');
    assert(await inside(),'drag clamped '+name);assert.deepEqual(await page.evaluate(()=>card._map.getCenter()),before,'window drag does not pan map');
    const saved=await page.evaluate(()=>preferences.legendHubState(card).config.extraPositions.moon);
    assert(saved.x>=0&&saved.x<=1&&saved.y>=0&&saved.y<=1);
-   await page.setViewportSize({width:height,height:width});await page.waitForTimeout(150);assert(await inside(),'orientation/resize remains bounded');
-   await page.setViewportSize({width,height});await page.waitForTimeout(150);assert(await inside(),'restored viewport remains bounded');
+   await page.setViewportSize({width:height,height:width});await page.waitForTimeout(500);assert(await inside(),'orientation/resize remains bounded');
+   await page.setViewportSize({width,height});await page.waitForTimeout(500);assert(await inside(),'restored viewport remains bounded');
    assert.deepEqual(await page.evaluate(()=>card.__legendHub.config.extraPositions.moon),saved,'temporary resize preserves stored position');
    if(touch){
     const touchHead=await page.locator('.gr-moon-header').boundingBox(),session=await context.newCDPSession(page);
@@ -131,11 +131,12 @@ const captureOnly=process.argv.includes('--capture-only');
    await page.reload();await page.waitForFunction(()=>window.ready&&card._mapReady&&card.__grMoon?.open);
    assert.deepEqual(await page.evaluate(()=>card.__legendHub.config.extraPositions.moon),savedAfterTouch,'reload position');
    await page.evaluate(()=>{moonTransport.mode='defer';card.__grMoon.update();});await page.waitForFunction(()=>moonPending.length===1);
-   await page.locator('.gr-moon-header button').click();await page.evaluate(()=>moonPending.pop()());
+   await page.locator('.gr-moon-close').click();await page.evaluate(()=>moonPending.pop()());
    const closedCount=await page.evaluate(()=>moonRequests.length);
    await page.evaluate(()=>{card._map.panBy([80,30],{animate:false});card._map.setZoom(9,{animate:false});});await page.waitForTimeout(450);await page.clock.fastForward(61000);
    assert.equal(await page.evaluate(()=>moonRequests.length),closedCount,'closed window makes no requests');
    assert.equal(await page.locator('.gr-moon-dialog').count(),0);
+   assert.equal(await page.locator('.gr-moon-window').count(),0,'scaled host is removed with the window');
    assert.equal(await page.evaluate(()=>card.__legendHub.config.legends.moon.mode),'off');
    assert.deepEqual(await page.evaluate(()=>({wind:card._weatherWindState().config.visible,temp:card._weatherTemperatureState().config.visible,radar:card._weatherRadarState().enabled})),modes);
    assert.deepEqual(errors,[]);

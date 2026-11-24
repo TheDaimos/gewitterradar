@@ -1,0 +1,454 @@
+[
+  {
+    "baseline": "4.12.13",
+    "source": "2557a7394060be686456597484d9779179ec6e59",
+    "before": {
+      "order": [
+        "precipitation",
+        "wind",
+        "temperature",
+        "advection",
+        "synoptic",
+        "other"
+      ],
+      "stored": [
+        "precipitation",
+        "wind",
+        "temperature",
+        "advection",
+        "synoptic",
+        "other"
+      ],
+      "popout": {
+        "left": 190.59375,
+        "top": 202.75,
+        "width": 336,
+        "height": 66
+      },
+      "slots": [
+        {
+          "id": "precipitation",
+          "connected": true,
+          "same": true,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "true",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "wind",
+          "connected": true,
+          "same": true,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "temperature",
+          "connected": true,
+          "same": true,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "advection",
+          "connected": true,
+          "same": true,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "synoptic",
+          "connected": true,
+          "same": true,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "other",
+          "connected": true,
+          "same": true,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        }
+      ],
+      "gesture": false,
+      "eye": "{\"schema\":1,\"grouped\":false,\"aura\":true,\"auraLayout\":\"fixed\",\"bubbleAura\":{\"wind\":true,\"temperature\":true,\"precipitation\":true,\"synoptic\":true,\"clouds\":true,\"weather-display\":true,\"storm\":false},\"stormVisible\":true,\"stormPositions\":{},\"glow\":\"static\",\"size\":42,\"iconSize\":100,\"intensity\":45,\"brightness\":65,\"backdrop\":25,\"neonBrilliance\":0,\"neonBloom\":0,\"neonOrganics\":0,\"backdropExtent\":0,\"eyeAuraGap\":0,\"auraRingGap\":0,\"energyAccents\":\"off\",\"slots\":[{\"id\":\"slot-1\",\"functionId\":\"wind\"},{\"id\":\"slot-2\",\"functionId\":\"temperature\"},{\"id\":\"slot-3\",\"functionId\":\"precipitation\"},{\"id\":\"slot-4\",\"functionId\":\"weather-display\"}],\"colors\":{\"wind\":\"#00FFF0\",\"temperature\":\"#FF5F00\",\"precipitation\":\"#0066FF\",\"synoptic\":\"#FFC442\",\"clouds\":\"#D8E6F3\",\"weather-display\":\"#FF00CC\",\"storm\":\"#FFC442\"}}",
+      "map": {
+        "center": {
+          "lat": 50.004208515595614,
+          "lng": 8.009033203125002
+        },
+        "zoom": 7
+      }
+    },
+    "broken": {
+      "order": [
+        "precipitation",
+        "wind",
+        "temperature",
+        "advection",
+        "synoptic",
+        "other"
+      ],
+      "stored": [
+        "precipitation",
+        "wind",
+        "temperature",
+        "advection",
+        "synoptic",
+        "other"
+      ],
+      "popout": {
+        "left": 190.59375,
+        "top": 202.75,
+        "width": 336,
+        "height": 66
+      },
+      "slots": [
+        {
+          "id": "precipitation",
+          "connected": true,
+          "same": true,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "true",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "wind",
+          "connected": true,
+          "same": true,
+          "left": "483.594px",
+          "top": "421.75px",
+          "bottom": "auto",
+          "visibleRatio": 0,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "temperature",
+          "connected": true,
+          "same": true,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "advection",
+          "connected": true,
+          "same": true,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "synoptic",
+          "connected": true,
+          "same": true,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "other",
+          "connected": true,
+          "same": true,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        }
+      ],
+      "gesture": false,
+      "eye": "{\"schema\":1,\"grouped\":false,\"aura\":true,\"auraLayout\":\"fixed\",\"bubbleAura\":{\"wind\":true,\"temperature\":true,\"precipitation\":true,\"synoptic\":true,\"clouds\":true,\"weather-display\":true,\"storm\":false},\"stormVisible\":true,\"stormPositions\":{},\"glow\":\"static\",\"size\":42,\"iconSize\":100,\"intensity\":45,\"brightness\":65,\"backdrop\":25,\"neonBrilliance\":0,\"neonBloom\":0,\"neonOrganics\":0,\"backdropExtent\":0,\"eyeAuraGap\":0,\"auraRingGap\":0,\"energyAccents\":\"off\",\"slots\":[{\"id\":\"slot-1\",\"functionId\":\"wind\"},{\"id\":\"slot-2\",\"functionId\":\"temperature\"},{\"id\":\"slot-3\",\"functionId\":\"precipitation\"},{\"id\":\"slot-4\",\"functionId\":\"weather-display\"}],\"colors\":{\"wind\":\"#00FFF0\",\"temperature\":\"#FF5F00\",\"precipitation\":\"#0066FF\",\"synoptic\":\"#FFC442\",\"clouds\":\"#D8E6F3\",\"weather-display\":\"#FF00CC\",\"storm\":\"#FFC442\"}}",
+      "map": {
+        "center": {
+          "lat": 50.004208515595614,
+          "lng": 8.009033203125002
+        },
+        "zoom": 7
+      }
+    },
+    "recovered": {
+      "order": [
+        "wind",
+        "precipitation",
+        "temperature",
+        "advection",
+        "synoptic",
+        "other"
+      ],
+      "stored": [
+        "wind",
+        "precipitation",
+        "temperature",
+        "advection",
+        "synoptic",
+        "other"
+      ],
+      "popout": {
+        "left": 190.59375,
+        "top": 202.75,
+        "width": 336,
+        "height": 66
+      },
+      "slots": [
+        {
+          "id": "wind",
+          "connected": true,
+          "same": false,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "precipitation",
+          "connected": true,
+          "same": false,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "true",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "temperature",
+          "connected": true,
+          "same": false,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "advection",
+          "connected": true,
+          "same": false,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "synoptic",
+          "connected": true,
+          "same": false,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        },
+        {
+          "id": "other",
+          "connected": true,
+          "same": false,
+          "left": "",
+          "top": "",
+          "bottom": "",
+          "visibleRatio": 1,
+          "image": true,
+          "pressed": "false",
+          "dragging": false,
+          "active": false
+        }
+      ],
+      "gesture": false,
+      "eye": "{\"schema\":1,\"grouped\":false,\"aura\":true,\"auraLayout\":\"fixed\",\"bubbleAura\":{\"wind\":true,\"temperature\":true,\"precipitation\":true,\"synoptic\":true,\"clouds\":true,\"weather-display\":true,\"storm\":false},\"stormVisible\":true,\"stormPositions\":{},\"glow\":\"static\",\"size\":42,\"iconSize\":100,\"intensity\":45,\"brightness\":65,\"backdrop\":25,\"neonBrilliance\":0,\"neonBloom\":0,\"neonOrganics\":0,\"backdropExtent\":0,\"eyeAuraGap\":0,\"auraRingGap\":0,\"energyAccents\":\"off\",\"slots\":[{\"id\":\"slot-1\",\"functionId\":\"wind\"},{\"id\":\"slot-2\",\"functionId\":\"temperature\"},{\"id\":\"slot-3\",\"functionId\":\"precipitation\"},{\"id\":\"slot-4\",\"functionId\":\"weather-display\"}],\"colors\":{\"wind\":\"#00FFF0\",\"temperature\":\"#FF5F00\",\"precipitation\":\"#0066FF\",\"synoptic\":\"#FFC442\",\"clouds\":\"#D8E6F3\",\"weather-display\":\"#FF00CC\",\"storm\":\"#FFC442\"}}",
+      "map": {
+        "center": {
+          "lat": 50.004208515595614,
+          "lng": 8.009033203125002
+        },
+        "zoom": 7
+      }
+    }
+  },
+  {
+    "name": "desktop",
+    "width": 1280,
+    "height": 900,
+    "touchEmulation": false,
+    "order": [
+      "precipitation",
+      "wind",
+      "temperature",
+      "advection",
+      "synoptic",
+      "other"
+    ],
+    "cases": [
+      "up",
+      "cancel",
+      "capture"
+    ],
+    "allSix": true,
+    "rapidPulls": 8,
+    "layouts": [
+      "vertical",
+      "dynamic",
+      "horizontal"
+    ],
+    "fallbackTouch": false,
+    "domIdentity": true,
+    "orderUnchangedOnInvalidDrop": true,
+    "eyeAndMapUnchanged": true,
+    "closeReopen": true,
+    "tapAndLongPress": true,
+    "editorReorder": "native HTML drag/drop",
+    "reload": true,
+    "profiles": true,
+    "authenticatedMoonProfiles": true,
+    "errors": []
+  },
+  {
+    "name": "tablet",
+    "width": 1024,
+    "height": 768,
+    "touchEmulation": true,
+    "order": [
+      "precipitation",
+      "wind",
+      "temperature",
+      "advection",
+      "synoptic",
+      "other"
+    ],
+    "cases": [
+      "up",
+      "cancel"
+    ],
+    "allSix": true,
+    "rapidPulls": 8,
+    "layouts": [
+      "vertical",
+      "dynamic",
+      "horizontal"
+    ],
+    "fallbackTouch": true,
+    "domIdentity": true,
+    "orderUnchangedOnInvalidDrop": true,
+    "eyeAndMapUnchanged": true,
+    "closeReopen": true,
+    "tapAndLongPress": true,
+    "editorReorder": "touch arrow",
+    "reload": true,
+    "profiles": false,
+    "authenticatedMoonProfiles": false,
+    "errors": []
+  },
+  {
+    "name": "android",
+    "width": 393,
+    "height": 851,
+    "touchEmulation": true,
+    "order": [
+      "precipitation",
+      "wind",
+      "temperature",
+      "advection",
+      "synoptic",
+      "other"
+    ],
+    "cases": [
+      "up",
+      "cancel"
+    ],
+    "allSix": true,
+    "rapidPulls": 8,
+    "layouts": [
+      "vertical",
+      "dynamic",
+      "horizontal"
+    ],
+    "fallbackTouch": true,
+    "domIdentity": true,
+    "orderUnchangedOnInvalidDrop": true,
+    "eyeAndMapUnchanged": true,
+    "closeReopen": true,
+    "tapAndLongPress": true,
+    "editorReorder": "touch arrow",
+    "reload": true,
+    "profiles": true,
+    "authenticatedMoonProfiles": false,
+    "errors": []
+  }
+]
