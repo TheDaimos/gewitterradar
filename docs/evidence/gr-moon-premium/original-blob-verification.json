@@ -1,0 +1,30 @@
+{
+  "commit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+  "linuxWorkflowRun": 45367445561,
+  "packages": [
+    {
+      "file": "gewitterradar-0.25.177-dev.zip",
+      "sha256": "a03a8cbe0bff355db215557adb36c7d287beb7ddcf3208222ce5c80b02d96bd2",
+      "byteIdenticalToLinuxCI": true
+    },
+    {
+      "file": "gewitterradar-dashboard-4.12.16-dev.zip",
+      "sha256": "b3f12cc29420409a8e5e1d630ae1afa03243862ea2d71ae6bb003baf2638e2ec",
+      "byteIdenticalToLinuxCI": true
+    },
+    {
+      "file": "deployment.json",
+      "sha256": "cfbe32a88060e989cc4980145d5a4eafb231a969b889c8005bc5ebdd1c74005b",
+      "byteIdenticalToLinuxCI": true
+    },
+    {
+      "file": "SHA256SUMS.txt",
+      "sha256": "3a1d7215983c6fff313d235dc2164577e72324ac1bc714e01e625fce172b6b38",
+      "byteIdenticalToLinuxCI": true
+    }
+  ],
+  "originalGitBlobsVerified": 517,
+  "zipCrcVerified": true,
+  "windowsArchiveConversionDisabled": true,
+  "discardedCandidate": ".task412-moon/release (not published; Windows CRLF conversion in Python files)"
+}

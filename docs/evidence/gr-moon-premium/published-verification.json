@@ -1,0 +1,46 @@
+{
+  "assets": [
+    {
+      "digest": "sha256:cfbe32a88060e989cc4980145d5a4eafb231a969b889c8005bc5ebdd1c74005b",
+      "name": "deployment.json",
+      "size": 827,
+      "url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.16-dev/deployment.json"
+    },
+    {
+      "digest": "sha256:a03a8cbe0bff355db215557adb36c7d287beb7ddcf3208222ce5c80b02d96bd2",
+      "name": "gewitterradar-0.25.177-dev.zip",
+      "size": 58684890,
+      "url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.16-dev/gewitterradar-0.25.177-dev.zip"
+    },
+    {
+      "digest": "sha256:b3f12cc29420409a8e5e1d630ae1afa03243862ea2d71ae6bb003baf2638e2ec",
+      "name": "gewitterradar-dashboard-4.12.16-dev.zip",
+      "size": 58088017,
+      "url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.16-dev/gewitterradar-dashboard-4.12.16-dev.zip"
+    },
+    {
+      "digest": "sha256:2e4236ad088703c11cdc7196bfdb564c15a2c4c9ba19ce350f7c03af34216db2",
+      "name": "GR_MOON_PREMIUM_FINALIZATION_2026-11-24.md",
+      "size": 13033,
+      "url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.16-dev/GR_MOON_PREMIUM_FINALIZATION_2026-11-24.md"
+    },
+    {
+      "digest": "sha256:3a1d7215983c6fff313d235dc2164577e72324ac1bc714e01e625fce172b6b38",
+      "name": "SHA256SUMS.txt",
+      "size": 285,
+      "url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.16-dev/SHA256SUMS.txt"
+    }
+  ],
+  "draft": false,
+  "id": 456564096,
+  "prerelease": true,
+  "tag": "v4.12.16-dev",
+  "url": "https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.16-dev",
+  "allFiveAssetSizesAndDigestsVerified": true,
+  "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+  "stableLatestPreserved": {
+    "id": 456077680,
+    "tag": "v4.12"
+  },
+  "physicalHAInstallation": "not_performed"
+}

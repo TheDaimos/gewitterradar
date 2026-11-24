@@ -61,4 +61,19 @@ Die Umsetzung ist eine responsive CSS-Interpretation des verbindlichen Bildmaste
 
 Nicht durchgeführt: physische Android-Abnahme, Installation auf HA DEV VM109 und Ende-zu-Ende-Verbindung mit dessen tatsächlich authentifiziertem WebSocket. Die ausgeführten WR-Handler-/Schema- und Browser-Transporttests ersetzen diese Betreiberabnahme nicht. Keine PROD-Änderung und keine neue Referenzfreigabe.
 
-Öffentliche CI, exakte Paketidentitäten und DEV-Veröffentlichung werden nach Quellcommit und tatsächlich erfolgter Bereitstellung ergänzt.
+## Verifizierter Lieferabschluss
+
+**Veröffentlicht:** [DEV-Prerelease v4.12.16-dev](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.16-dev), Prerelease=true, Draft=false. Tag und beide Installationspakete binden den tatsächlich geprüften Quellcommit [`d49915fd96bc39a5c54300e48e5492de5f89c093`](https://github.com/TheDaimos/gewitterradar/commit/d49915fd96bc39a5c54300e48e5492de5f89c093).
+
+**Alle zwölf öffentlichen Gates dieses Quellcommits erfolgreich:** [Frontend einschließlich Linux-Moon-/Hub-/Aura-/Kartenprüfung](https://github.com/TheDaimos/gewitterradar/actions/runs/45367445714), [HA-Integration](https://github.com/TheDaimos/gewitterradar/actions/runs/45367445548), [Vault/Neon/Gesten/HACS/Pakete](https://github.com/TheDaimos/gewitterradar/actions/runs/45367445561), [Synoptik](https://github.com/TheDaimos/gewitterradar/actions/runs/45367446051). [Vollständiges CI-Inventar](evidence/gr-moon-premium/ci-results.json), [Linux-Moon-Ergebnisse](evidence/gr-moon-premium/linux-moon-results.json), [Linux-Hub-/Moon-Profile](evidence/gr-moon-premium/linux-hub-profile-results.json), [Linux-Aura](evidence/gr-moon-premium/linux-aura-results.json). Keine Übertragung fremder grüner Läufe auf eine ungeprüfte Quelle.
+
+| Veröffentlichtes Paket | SHA-256 |
+|---|---|
+| `gewitterradar-0.25.177-dev.zip` | `a03a8cbe0bff355db215557adb36c7d287beb7ddcf3208222ce5c80b02d96bd2` |
+| `gewitterradar-dashboard-4.12.16-dev.zip` | `b3f12cc29420409a8e5e1d630ae1afa03243862ea2d71ae6bb003baf2638e2ec` |
+
+267 Integrations- und 250 Dashboarddateien, 248 gemeinsame Frontenddateien bytegleich. **Alle 517 ZIP-Nutzdateien direkt gegen ursprüngliche Git-Blobs mit `git cat-file --batch` geprüft**, beide CRCs korrekt. Kanonischer lokaler Neuaufbau mit deaktivierter Git-CRLF-Konvertierung ist bytegleich zum heruntergeladenen Linux-CI-Artefakt; auch die veröffentlichten GitHub-Asset-Digests stimmen. [Deploymentmanifest](evidence/gr-moon-premium/deployment.json), [Prüfsummen](evidence/gr-moon-premium/SHA256SUMS.txt), [Original-Blob-/Linux-Abgleich](evidence/gr-moon-premium/original-blob-verification.json). Der erste Windows-Archivkandidat unter `.task412-moon/release/` enthielt konvertierte Python-Zeilenenden und wurde ausdrücklich nicht veröffentlicht. Verbindlich sind `.task412-moon/release-canonical/` und die damit identischen Linux-/Release-Dateien.
+
+Während der CI ergänzte der bestehende öffentliche Synchronisierungsworkflow den Commit `9309899e`: ausschließlich Sortierung/Bereinigung des Quell-Assetinventars. Die installierbaren Integrations-/Dashboardbäume sowie Tests und Workflows sind exakt gleich zum geprüften Quellcommit; der Vergleich steht im CI-Beleg. Nachfolgende Abschlussdokumentation ändert die Produktbäume ebenfalls nicht. Neue geschützte Referenzen werden daraus nicht abgeleitet.
+
+**DRA-DEV bereitgestellt:** vorhandener Entwicklungsquellweg `TheDaimos/gewitterradar` / `deploy/dev`, neue Version 4.12.16 / HA 0.25.177, vollständige verifizierte Pakete als DEV-Prerelease. Die DRA-Konfiguration wurde nicht verändert und keine Installation auf VM109 oder VM101 ausgelöst. Stabiles Latest `v4.12`, FINAL `v4.11.3` und technische Aura-Referenz `v4.12.3-dev` behalten ihre zuvor geprüften IDs/Tag-SHAs. Die physische Betreiberabnahme bleibt offen.
