@@ -30,8 +30,7 @@ export const MOON_MIN_ZOOM=7;
 export const REFRESH_MS=60000;
 export const REQUEST_TIMEOUT_MS=15000;
 const mapOf=o=>{const m=o._map||o.map;return m?.getCenter&&m?.getZoom?m:null;};
-const isDE=o=>/^(de|boarisch|platt|sächs|schwäb)/i.test(String(o._languageValue?.()||''));
-const phaseName=(id,de)=>PHASES.find(p=>p[0]===id)?.[de?1:2]||'—';
+const phaseName=(id,o)=>PHASES.some(p=>p[0]===id)?o._t('legendHub.moonPhase_'+id):'—';
 export function formatMoonDistance(km,unit='auto',globalUnit='KM',locale='en-GB'){
  if(typeof km!=='number'||!Number.isFinite(km)||km<300000||km>450000)return null;
  const selected=unit==='auto'?(globalUnit==='MI'?'mi':'km'):unit,factors={km:1,m:1000,mi:1/1.609344,ft:1000/.3048};
@@ -203,7 +202,7 @@ export function ensureMoonStyle(shadow){if(shadow.getElementById('gr-moon-style'
 
 `;shadow.append(el);}
 function row(target,type,label,value){const div=document.createElement('div'),a=document.createElement('span'),b=document.createElement('strong');div.className='gr-moon-row';div.dataset.row=type;a.textContent=label;if(typeof value==='string')b.textContent=value;else b.append(value);div.append(icon(type),a,b);target.append(div);return b;}
-function eventTime(event,zone,de,missing){if(!event?.utc)return missing;return new Intl.DateTimeFormat(de?'de-DE':'en-GB',{timeZone:zone,hour:'2-digit',minute:'2-digit'}).format(new Date(event.utc))+(de?' Uhr':'');}
+function eventTime(event,zone,locale,missing){if(!event?.utc)return missing;return new Intl.DateTimeFormat(locale,{timeZone:zone,hour:'2-digit',minute:'2-digit'}).format(new Date(event.utc))+(locale.startsWith('de')?' Uhr':'');}
 function validate(data,position){
  if(data?.schema!=='weather_router.moon.v1'||data?.status!=='ready'||!PHASES.some(p=>p[0]===data.phase))throw Error('Moon schema mismatch');
  for(const key of ['latitude','longitude','moon_age_days','cycle_days','cycle_fraction','illumination_percent'])if(!Number.isFinite(data[key]))throw Error('Invalid Moon number');
@@ -225,17 +224,17 @@ export function refreshMoonAppearance(owner){owner.__grMoon?.refreshAppearance?.
 export function createMoonPreview(owner){ensureMoonStyle(owner.shadow);const frame=document.createElement('div');frame.className='gr-moon-material gr-moon-preview';const surface=document.createElement('div'),wrap=document.createElement('div'),image=document.createElement('img'),title=document.createElement('strong');surface.className='gr-moon-surface';wrap.className='gr-moon-hero-wrap';image.className='gr-moon-hero';image.src=MOON_HERO;image.alt='';wrap.append(image);title.textContent=owner._t('legendHub.moonTitle');surface.append(wrap,title);frame.append(surface);applyMoonMaterial(frame,legendHubState(owner).config.moonUi);return frame;}
 export const moonOpen=o=>!!o.__grMoon?.open;
 export function closeMoon(o,persist=true){
- const s=o.__grMoon;if(!s?.open)return;s.open=false;s.seq++;clearTimeout(s.timer);clearTimeout(s.requestTimer);s.cancelRequest?.();clearInterval(s.interval);s.abort.abort();s.observer?.disconnect();s.contentObserver?.disconnect();cancelAnimationFrame(s.fitFrame);
+ const s=o.__grMoon;if(!s?.open)return;s.open=false;s.seq++;clearTimeout(s.timer);clearTimeout(s.requestTimer);s.cancelRequest?.();clearInterval(s.interval);clearInterval(s.languageTimer);s.abort.abort();s.observer?.disconnect();s.contentObserver?.disconnect();cancelAnimationFrame(s.fitFrame);
  if(s.map){s.map.off('movestart zoomstart',s.invalidate);s.map.off('moveend zoomend',s.schedule);s.map=null;}
  s.sizeMenu.remove();s.host.remove();delete o.__grMoon;if(persist)patchLegend(o,'moon',{mode:'off'});o._legendHubStatus?.();
 }
 export function openMoon(o){
  if(!o.shadow||moonOpen(o))return;const card=o.shadow.getElementById('map-card');if(!card)return;ensureMoonStyle(o.shadow);
- const de=isDE(o),title=de?'Mond':'Moon',d=document.createElement('section');d.className='gr-moon-dialog gr-moon-material';d.setAttribute('role','region');d.setAttribute('aria-label',title);const host=document.createElement('div');host.className='gr-moon-window';host.append(d);
+ const title=o._t('legendHub.moonTitle'),d=document.createElement('section');d.className='gr-moon-dialog gr-moon-material';d.setAttribute('role','region');d.setAttribute('aria-label',title);const host=document.createElement('div');host.className='gr-moon-window';host.append(d);
  const surface=document.createElement('div');surface.className='gr-moon-surface';d.append(surface);
  const head=document.createElement('header');head.className='gr-moon-header';const badge=document.createElement('div');badge.className='gr-moon-badge';const badgeImage=document.createElement('img');badgeImage.src=MOON_HERO;badgeImage.alt='';badge.append(badgeImage);
- const names=document.createElement('div'),h=document.createElement('h2'),sub=document.createElement('small');h.textContent=title;sub.textContent=de?'Legende · Astronomie':'Legend · Astronomy';names.append(h,sub);
- const x=document.createElement('button');x.type='button';x.className='gr-moon-close';const closeIcon=document.createElement('img');closeIcon.src=MOON_CLOSE;closeIcon.srcset=MOON_CLOSE_SMALL+' 128w, '+MOON_CLOSE+' 256w, '+MOON_CLOSE_HI+' 512w';closeIcon.sizes='64px';closeIcon.alt='';x.append(closeIcon);x.setAttribute('aria-label',de?'Schließen':'Close');x.addEventListener('click',()=>closeMoon(o));const controls=document.createElement('div');controls.className='gr-moon-size-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label',de?'Fenstergröße':'Window size');
+ const names=document.createElement('div'),h=document.createElement('h2'),sub=document.createElement('small');h.textContent=title;sub.textContent=o._t('legendHub.moonUiSubtitle');names.append(h,sub);
+ const x=document.createElement('button');x.type='button';x.className='gr-moon-close';const closeIcon=document.createElement('img');closeIcon.src=MOON_CLOSE;closeIcon.srcset=MOON_CLOSE_SMALL+' 128w, '+MOON_CLOSE+' 256w, '+MOON_CLOSE_HI+' 512w';closeIcon.sizes='64px';closeIcon.alt='';x.append(closeIcon);x.setAttribute('aria-label',o._t('legendHub.moonUiClose'));x.addEventListener('click',()=>closeMoon(o));const controls=document.createElement('div');controls.className='gr-moon-size-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label',o._t('legendHub.moonUiWindowSize'));
  const sizeButton=document.createElement('button'),scaleImage=document.createElement('img'),scaleOutput=document.createElement('span'),sizeMenu=document.createElement('div');
  sizeButton.type='button';sizeButton.dataset.moonSize='';sizeButton.setAttribute('aria-haspopup','menu');sizeButton.setAttribute('aria-expanded','false');scaleImage.alt='';scaleOutput.setAttribute('aria-live','polite');sizeButton.append(scaleImage,scaleOutput);controls.append(sizeButton);head.append(badge,names,controls,x);
  sizeMenu.className='gr-moon-size-menu';sizeMenu.hidden=true;sizeMenu.setAttribute('role','menu');sizeMenu.setAttribute('aria-label',o._t('legendHub.size'));sizeMenu.id='gr-moon-size-menu';sizeButton.setAttribute('aria-controls',sizeMenu.id);card.append(sizeMenu);
@@ -243,11 +242,13 @@ export function openMoon(o){
 
  const status=document.createElement('div');status.className='gr-moon-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
  const body=document.createElement('section');body.className='gr-moon-body';const hero=document.createElement('img');hero.className='gr-moon-hero';hero.src=MOON_HERO;hero.alt=title;const details=document.createElement('div');details.className='gr-moon-details';const heroWrap=document.createElement('div');heroWrap.className='gr-moon-hero-wrap';heroWrap.append(hero);body.append(heroWrap,details);
- const phases=document.createElement('section');phases.className='gr-moon-phases';const phHead=document.createElement('div');phHead.className='gr-moon-phases-head';const ph=document.createElement('h3');const emblem=document.createElement('img');emblem.className='gr-moon-phase-emblem';emblem.src=moonImage(PHASES[2][3]);emblem.alt='';ph.append(emblem,document.createTextNode(de?'Mondphasen':'Moon phases'));const cycleLabel=document.createElement('span');cycleLabel.className='gr-moon-cycle-label';const grid=document.createElement('div');grid.className='gr-moon-grid';
- for(const p of PHASES){const tile=document.createElement('div'),image=document.createElement('img'),label=document.createElement('span');tile.className='gr-moon-tile';tile.dataset.phase=p[0];image.src=moonImage(p[3]);image.alt='';label.textContent=p[de?1:2];tile.append(image,label);grid.append(tile);}const toggle=document.createElement('button');toggle.type='button';toggle.className='gr-moon-toggle';toggle.setAttribute('aria-label',de?'Mondphasen ein- oder ausklappen':'Expand or collapse Moon phases');const chevron=document.createElement('img');chevron.src=SILVER_CHEVRON;chevron.alt='';toggle.append(chevron);
+ const phases=document.createElement('section');phases.className='gr-moon-phases';const phHead=document.createElement('div');phHead.className='gr-moon-phases-head';const ph=document.createElement('h3');const emblem=document.createElement('img');emblem.className='gr-moon-phase-emblem';emblem.src=moonImage(PHASES[2][3]);emblem.alt='';ph.append(emblem,document.createTextNode(o._t('legendHub.moonUiPhases')));const cycleLabel=document.createElement('span');cycleLabel.className='gr-moon-cycle-label';const grid=document.createElement('div');grid.className='gr-moon-grid';
+ for(const p of PHASES){const tile=document.createElement('div'),image=document.createElement('img'),label=document.createElement('span');tile.className='gr-moon-tile';tile.dataset.phase=p[0];image.src=moonImage(p[3]);image.alt='';label.textContent=phaseName(p[0],o);tile.append(image,label);grid.append(tile);}const toggle=document.createElement('button');toggle.type='button';toggle.className='gr-moon-toggle';toggle.setAttribute('aria-label',o._t('legendHub.moonUiToggle'));const chevron=document.createElement('img');chevron.src=SILVER_CHEVRON;chevron.alt='';toggle.append(chevron);
  const phaseBody=document.createElement('div'),phaseInner=document.createElement('div');phaseBody.className='gr-moon-phase-body';phaseBody.id='gr-moon-phase-body';phaseInner.className='gr-moon-phase-inner';phaseInner.append(grid);phaseBody.append(phaseInner);toggle.setAttribute('aria-controls',phaseBody.id);phHead.append(ph,cycleLabel,toggle);phases.append(phHead,phaseBody);
  const note=document.createElement('p');note.className='gr-moon-note';surface.append(head,status,body,phases,note);card.append(host);
  const s={dialog:d,host,surface,status,body,hero,details,phases,grid,note,cycleLabel,phaseBody,toggle,sizeButton,scaleImage,scaleOutput,sizeMenu,seq:0,map:mapOf(o),timer:null,interval:null,open:true,abort:new AbortController(),hasData:false};o.__grMoon=s;
+ s.localizeStatic=()=>{const t=key=>o._t('legendHub.'+key);h.textContent=t('moonTitle');d.setAttribute('aria-label',h.textContent);sub.textContent=t('moonUiSubtitle');x.setAttribute('aria-label',t('moonUiClose'));controls.setAttribute('aria-label',t('moonUiWindowSize'));ph.lastChild.textContent=t('moonUiPhases');toggle.setAttribute('aria-label',t('moonUiToggle'));sizeMenu.setAttribute('aria-label',o._t('legendHub.size'));for(const item of sizeMenu.children)if(item.dataset.value==='auto')item.textContent=o._t('legendHub.auto');for(const tile of grid.children)tile.querySelector('span').textContent=phaseName(tile.dataset.phase,o);};
+ s.localizeStatic();
  const setExpanded=(expanded,persist=false)=>{phases.dataset.expanded=String(expanded);toggle.setAttribute('aria-expanded',String(expanded));phaseBody.inert=!expanded;if(persist)saveLegendHub(o,{moonUi:{...legendHubState(o).config.moonUi,phasesExpanded:expanded}});schedulePlace(o,s);};
  s.setExpanded=setExpanded;s.refreshAppearance=()=>{const pref=legendHubState(o).config.moonUi;applyMoonMaterial(d,pref);s.renderDistance?.();setExpanded(pref.phasesExpanded);schedulePlace(o,s);};s.refreshAppearance();
  toggle.addEventListener('click',()=>setExpanded(toggle.getAttribute('aria-expanded')!=='true',true));
@@ -267,37 +268,37 @@ export function openMoon(o){
  d.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();closeMoon(o);}},options);
  function unavailable(message,zoom=false){
   s.hasData=false;s.status.hidden=false;s.body.hidden=true;s.phases.hidden=true;s.note.hidden=true;s.status.dataset.zoom=String(zoom);d.dataset.view=zoom?'zoom':'status';status.replaceChildren();
-  if(zoom){const motif=document.createElement('span');motif.className='gr-moon-zoom-image';const image=document.createElement('img');image.src=MOON_HERO;image.alt='';motif.append(image);const strong=document.createElement('strong'),hint=document.createElement('small');strong.textContent=de?'Für aktuelle Zoomstufe nicht verfügbar':'Unavailable at the current zoom level';hint.textContent=de?'Bitte weiter hineinzoomen, um mondbezogene Standortdaten zu sehen.':'Please zoom in to see Moon data for this location.';status.append(motif,strong,hint);}else status.textContent=message;
+  if(zoom){const motif=document.createElement('span');motif.className='gr-moon-zoom-image';const image=document.createElement('img');image.src=MOON_HERO;image.alt='';motif.append(image);const strong=document.createElement('strong'),hint=document.createElement('small');strong.textContent=o._t('legendHub.moonUiZoomUnavailable');hint.textContent=o._t('legendHub.moonUiZoomHint');status.append(motif,strong,hint);}else status.textContent=message;
   place(o,s);
  }
  s.update=async()=>{
   if(!s.open)return;s.cancelRequest?.();clearTimeout(s.requestTimer);const serial=++s.seq,m=mapOf(o);let position=null,zoom;
   try{const center=m?.getCenter?.();position=center?{lat:center.lat,lng:center.lng}:null;zoom=m?.getZoom?.();}catch{} // Persisted window may precede Leaflet readiness.
   if(m&&m!==s.map){s.map?.off('movestart zoomstart',s.invalidate);s.map?.off('moveend zoomend',s.schedule);s.map=m;m.on('movestart zoomstart',s.invalidate);m.on('moveend zoomend',s.schedule);}
-  if(!position||!Number.isFinite(position.lat)||!Number.isFinite(position.lng)||!Number.isFinite(zoom)){unavailable(de?'Karte nicht verfügbar':'Map unavailable');if((s.mapWaitAttempts=(s.mapWaitAttempts||0)+1)<=40){clearTimeout(s.timer);s.timer=setTimeout(s.update,250);}return;}
+  if(!position||!Number.isFinite(position.lat)||!Number.isFinite(position.lng)||!Number.isFinite(zoom)){unavailable(o._t('legendHub.moonUiMapUnavailable'));if((s.mapWaitAttempts=(s.mapWaitAttempts||0)+1)<=40){clearTimeout(s.timer);s.timer=setTimeout(s.update,250);}return;}
   s.mapWaitAttempts=0;
   if(zoom<MOON_MIN_ZOOM){unavailable('',true);return;}
-  if(!s.hasData)unavailable(de?'Monddaten werden geladen …':'Loading Moon data …');
+  if(!s.hasData)unavailable(o._t('legendHub.moonUiLoading'));
   try{
    if(typeof o.hass?.callWS!=='function')throw Error('WeatherRouter unavailable');
    const timeout=new Promise((_,reject)=>{s.cancelRequest=()=>reject(Error('Moon request superseded'));s.requestTimer=setTimeout(()=>reject(Error('Moon request timeout')),REQUEST_TIMEOUT_MS);});
    const data=await Promise.race([o.hass.callWS({type:'weather_router/consumer/moon',contract_version:1,latitude:position.lat,longitude:normalizeLongitude(position.lng)}),timeout]);
    if(serial!==s.seq||!s.open)return;validate(data,position);
-   const zone=data.timezone||'UTC',locale=o._locale?.()||(de?'de-DE':'en-GB'),number=(v,digits=2)=>v.toLocaleString(locale,{maximumFractionDigits:digits,minimumFractionDigits:digits});
-   s.details.replaceChildren();row(s.details,'coordinates',de?'Koordinaten':'Coordinates',number(data.latitude,4)+'° · '+number(data.longitude,4)+'°');
-   const cycle=document.createElement('div');cycle.textContent=(de?'Tag ':'Day ')+number(data.moon_age_days,1)+(de?' von ':' of ')+number(data.cycle_days,2);
-   const line=document.createElement('div');line.className='gr-moon-track-line';const track=document.createElement('div'),fill=document.createElement('div'),percent=document.createElement('span');track.className='gr-moon-track';fill.style.width=(data.cycle_fraction*100)+'%';track.setAttribute('role','meter');track.setAttribute('aria-label',de?'Mondzyklus':'Moon cycle');track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');track.setAttribute('aria-valuenow',String(Math.round(data.cycle_fraction*100)));track.append(fill);percent.textContent=number(data.cycle_fraction*100,0)+' %';line.append(track,percent);cycle.append(line);row(s.details,'cycle',de?'Mondzyklus':'Moon cycle',cycle);
-   const phase=phaseName(data.phase,de)+' · '+new Intl.NumberFormat(locale,{style:'percent',minimumFractionDigits:1,maximumFractionDigits:1}).format(data.illumination_percent/100);row(s.details,'phase',de?'Aktuelle Mondphase':'Current Moon phase',phase);
-   const absent=de?'Kein Ereignis heute':'No event today';row(s.details,'rise',de?'Mondaufgang':'Moonrise',eventTime(data.moonrise,zone,de,absent));row(s.details,'set',de?'Monduntergang':'Moonset',eventTime(data.moonset,zone,de,absent));
-   const next=document.createElement('div');next.textContent=phaseName(data.next_major_phase.phase,de);const nextDate=document.createElement('small');nextDate.className='gr-moon-secondary';nextDate.textContent=new Intl.DateTimeFormat(locale,{timeZone:zone,day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(data.next_major_phase.utc));next.append(nextDate);row(s.details,'calendar',de?'Nächste Hauptphase':'Next major phase',next);
+   const zone=data.timezone||'UTC',locale=o._locale?.()||'en-GB',number=(v,digits=2)=>v.toLocaleString(locale,{maximumFractionDigits:digits,minimumFractionDigits:digits});
+   s.details.replaceChildren();row(s.details,'coordinates',o._t('legendHub.moonUiCoordinates'),number(data.latitude,4)+'° · '+number(data.longitude,4)+'°');
+   const cycle=document.createElement('div');cycle.textContent=o._t('legendHub.moonUiDay')+' '+number(data.moon_age_days,1)+' '+o._t('legendHub.moonUiOf')+' '+number(data.cycle_days,2);
+   const line=document.createElement('div');line.className='gr-moon-track-line';const track=document.createElement('div'),fill=document.createElement('div'),percent=document.createElement('span');track.className='gr-moon-track';fill.style.width=(data.cycle_fraction*100)+'%';track.setAttribute('role','meter');track.setAttribute('aria-label',o._t('legendHub.moonUiCycle'));track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');track.setAttribute('aria-valuenow',String(Math.round(data.cycle_fraction*100)));track.append(fill);percent.textContent=number(data.cycle_fraction*100,0)+' %';line.append(track,percent);cycle.append(line);row(s.details,'cycle',o._t('legendHub.moonUiCycle'),cycle);
+   const phase=phaseName(data.phase,o)+' · '+new Intl.NumberFormat(locale,{style:'percent',minimumFractionDigits:1,maximumFractionDigits:1}).format(data.illumination_percent/100);row(s.details,'phase',o._t('legendHub.moonUiCurrentPhase'),phase);
+   const absent=o._t('legendHub.moonUiNoEvent');row(s.details,'rise',o._t('legendHub.moonUiRise'),eventTime(data.moonrise,zone,locale,absent));row(s.details,'set',o._t('legendHub.moonUiSet'),eventTime(data.moonset,zone,locale,absent));
+   const next=document.createElement('div');next.textContent=phaseName(data.next_major_phase.phase,o);const nextDate=document.createElement('small');nextDate.className='gr-moon-secondary';nextDate.textContent=new Intl.DateTimeFormat(locale,{timeZone:zone,day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(data.next_major_phase.utc));next.append(nextDate);row(s.details,'calendar',o._t('legendHub.moonUiNextPhase'),next);
    s.data=data;s.distanceValue=row(s.details,'distance',o._t('legendHub.moonDistance'),'—');
-   s.renderDistance=()=>{const text=formatMoonDistance(s.data?.distance_km,legendHubState(o).config.moonUi.distanceUnit,o._distanceUnitValue?.(),o._locale?.()||(de?'de-DE':'en-GB'))||o._t('weather.layer.unavailable');if(s.distanceValue.textContent!==text){s.distanceValue.textContent=text;schedulePlace(o,s);}};s.renderDistance();
+   s.renderDistance=()=>{const text=formatMoonDistance(s.data?.distance_km,legendHubState(o).config.moonUi.distanceUnit,o._distanceUnitValue?.(),o._locale?.()||'en-GB')||o._t('weather.layer.unavailable');if(s.distanceValue.textContent!==text){s.distanceValue.textContent=text;schedulePlace(o,s);}};s.renderDistance();
    s.hero.src=HERO_IMAGES[data.phase];s.hero.alt=phaseName(data.phase,de);
    for(const tile of s.grid.children)tile.setAttribute('aria-current',String(tile.dataset.phase===data.phase));
-   s.cycleLabel.textContent=(de?'Kompletter Zyklus':'Complete cycle')+' ('+number(data.cycle_days)+' '+(de?'Tage':'days')+')';
-   s.note.textContent=(de?'Ortszeit zur Kartenmitte: ':'Map center local time: ')+zone+(zone==='UTC'?(de?' · UTC / Fallback':' · UTC / fallback'):'')+' · '+(data.local_date||'');
+   s.cycleLabel.textContent=o._t('legendHub.moonUiFullCycle')+' ('+number(data.cycle_days)+' '+o._t('legendHub.moonUiDays')+')';
+   s.note.textContent=o._t('legendHub.moonUiMapTime')+' '+zone+(zone==='UTC'?' · '+o._t('legendHub.moonUiUtcFallback'):'')+' · '+(data.local_date||'');
    s.status.hidden=true;s.status.dataset.zoom='false';s.body.hidden=false;s.phases.hidden=false;s.note.hidden=false;s.hasData=true;d.dataset.view='ready';place(o,s);
-  }catch(error){if(serial!==s.seq||!s.open)return;unavailable(de?'Monddaten nicht verfügbar – WeatherRouter prüfen.':'Moon data unavailable – check WeatherRouter.');}
+  }catch(error){if(serial!==s.seq||!s.open)return;unavailable(o._t('legendHub.moonUiUnavailable'));}
   finally{if(serial===s.seq){clearTimeout(s.requestTimer);s.cancelRequest=null;}}
  };
  s.invalidate=()=>{s.seq++;clearTimeout(s.timer);clearTimeout(s.requestTimer);s.cancelRequest?.();s.cancelRequest=null;};
@@ -305,6 +306,7 @@ export function openMoon(o){
  if(s.map?.on){s.map.on('movestart zoomstart',s.invalidate);s.map.on('moveend zoomend',s.schedule);}
  const resize=()=>schedulePlace(o,s);s.contentObserver=new ResizeObserver(resize);s.contentObserver.observe(phaseBody);window.addEventListener('scroll',event=>{if(!event.composedPath().includes(s.host))resize();},{...options,capture:true,passive:true});const windowResize=()=>{s.controlAnchor=null;resize();};s.observer=new ResizeObserver(windowResize);s.observer.observe(o.shadow.getElementById('map'));window.addEventListener('resize',windowResize,options);window.visualViewport?.addEventListener('resize',resize,options);window.visualViewport?.addEventListener('scroll',resize,options);
  s.interval=setInterval(()=>{if(s.open&&!d.ownerDocument.hidden&&!s.cancelRequest)s.schedule();},REFRESH_MS);
+ s.lastLanguage=o._languageValue?.();s.languageTimer=setInterval(()=>{if(!s.open)return;const current=o._languageValue?.();if(current!==s.lastLanguage){s.lastLanguage=current;s.localizeStatic();s.schedule();}},1000);
  d.ownerDocument.addEventListener('visibilitychange',()=>{if(!d.ownerDocument.hidden)s.schedule();},options);
  place(o,s);s.update();patchLegend(o,'moon',{mode:'on'});o._legendHubStatus?.();
 }
