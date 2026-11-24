@@ -781,10 +781,10 @@
     },
     "resources": [
       {
-        "repository_path": "docs/design/legend-hub/moon/assets/optimized/moon-material-definitions-4132.css",
-        "sha256": "efc1f31d44c494da1706b1ea2cdbcdac892d72ec8bc69a300f34b6d1b67879be",
-        "bytes": 19935,
-        "purpose": "Active 4.13.2 Moon CSS; previous master definition unchanged in archive."
+        "repository_path": "docs/design/legend-hub/moon/assets/optimized/moon-material-definitions-4133.css",
+        "sha256": "2b25582dc2213a300f76491f44bb711e5600fe9fff5dbe41e01feafe559137f2",
+        "bytes": 22675,
+        "purpose": "Active 4.13.3 Moon CSS including compact header control and card-bounded premium glass menu; previous definitions retained."
       },
       {
         "repository_path": "docs/design/legend-hub/moon/assets/master/moon-frame-gradients.json",
@@ -830,6 +830,12 @@
         "sha256": "82f4734f057b6a6320eb82e3a0ac38f25eb9cf0f222c77c368080d0b4405deea",
         "bytes": 17376,
         "purpose": "Exact complete reusable Moon CSS including frame, glass, asymmetric rows, Hero, badge, phases, zoom hint and preview; original master images unchanged."
+      },
+      {
+        "repository_path": "docs/design/legend-hub/moon/assets/optimized/moon-material-definitions-4132.css",
+        "sha256": "efc1f31d44c494da1706b1ea2cdbcdac892d72ec8bc69a300f34b6d1b67879be",
+        "bytes": 19935,
+        "purpose": "Active 4.13.2 Moon CSS; previous master definition unchanged in archive."
       }
     ],
     "classic_frame_origin": {
@@ -857,10 +863,13 @@
       "has_transparency": true,
       "bytes": 1485765,
       "sha256": "8088a307e79b9edf10dc814f465dcaec59c979dd9e0b5268d7fadc9f36ce807f",
-      "optimized_path": null,
-      "runtime_path": null,
+      "optimized_path": "assets/optimized/gr_moon_scale_icon_expand_256.png",
+      "runtime_path": "frontend/assets/moon/gr_moon_scale_icon_expand_256.png",
       "runtime_role": "Moon Legend premium size control: expand",
-      "runtime_status": "Pending main integration task; no optimized or runtime variant present in this archive-only commit."
+      "runtime_status": "Integrated; 256 px RGBA PNG for HiDPI compact control and settings tiles.",
+      "optimized_sha256": "c68f38066a37bd00842337902b431c8784f044ade194fdb95707a7da613f4f9a",
+      "optimized_width": 256,
+      "optimized_height": 256
     },
     {
       "id": "moon",
@@ -878,10 +887,13 @@
       "has_transparency": true,
       "bytes": 1800831,
       "sha256": "97e3b790e50575a99735db4a5eac2875fbfa9d95cc1e0610f5979ad7d97fb5c6",
-      "optimized_path": null,
-      "runtime_path": null,
+      "optimized_path": "assets/optimized/gr_moon_scale_icon_moon_256.png",
+      "runtime_path": "frontend/assets/moon/gr_moon_scale_icon_moon_256.png",
       "runtime_role": "Moon Legend premium size control: moon",
-      "runtime_status": "Pending main integration task; no optimized or runtime variant present in this archive-only commit."
+      "runtime_status": "Integrated; 256 px RGBA PNG for HiDPI compact control and settings tiles.",
+      "optimized_sha256": "1d74aa8a12ea1b7551a7f1d96f264b360c7be6076e2d06539b3f329f24b4d958",
+      "optimized_width": 256,
+      "optimized_height": 256
     },
     {
       "id": "ruler",
@@ -899,10 +911,13 @@
       "has_transparency": true,
       "bytes": 1429003,
       "sha256": "51f61f151690367424700e9c72f6f9d6caacc077970c925a8cf9298ecc608be0",
-      "optimized_path": null,
-      "runtime_path": null,
+      "optimized_path": "assets/optimized/gr_moon_scale_icon_ruler_256.png",
+      "runtime_path": "frontend/assets/moon/gr_moon_scale_icon_ruler_256.png",
       "runtime_role": "Moon Legend premium size control: ruler",
-      "runtime_status": "Pending main integration task; no optimized or runtime variant present in this archive-only commit."
+      "runtime_status": "Integrated; 256 px RGBA PNG for HiDPI compact control and settings tiles.",
+      "optimized_sha256": "a74f5bdf47b679e67b333f635b61c67e425d0d5ab529cf5bcc2499aaa570dbae",
+      "optimized_width": 256,
+      "optimized_height": 256
     }
   ]
 }

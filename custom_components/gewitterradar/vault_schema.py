@@ -246,7 +246,7 @@ JSON_SETTINGS = {
         "schema": choice(1), "icon": choice(1, 2),
         "direction": choice("dynamic", "left", "right", "up", "down", "horizontal", "vertical"),
         "autoClose": BOOL, "glassTransparency": number(0, 100), "position": POSITION, "extraPositions": mapping(POSITION, 3), "extraUi": mapping(LEGEND, 2),
-        "moonUi": fields({"phasesExpanded": BOOL, "scaleMode": choice("auto", "manual"), "scalePercent": choice(*range(50, 126, 5)), "frameMaterial": choice("platinum", "gold", "goldClassic"), "glass": choice("night", "mineral"), "reflections": BOOL, "aura": PERCENT, "distanceUnit": choice("auto", "km", "m", "mi", "ft")}),
+        "moonUi": fields({"phasesExpanded": BOOL, "scaleMode": choice("auto", "manual"), "scalePercent": choice(*range(50, 131, 5)), "scaleIcon": choice("expand", "moon", "ruler"), "frameMaterial": choice("platinum", "gold", "goldClassic"), "glass": choice("night", "mineral"), "reflections": BOOL, "aura": PERCENT, "distanceUnit": choice("auto", "km", "m", "mi", "ft")}),
         "slots": sequence(nullable(choice("precipitation", "wind", "temperature", "advection", "synoptic", "other", "moon")), 12),
         "legends": mapping(fields({
             "presentation": choice("premium", "compact"), "orientation": choice("horizontal", "vertical"),

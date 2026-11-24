@@ -1,6 +1,6 @@
 import {COMPASS_DIALOG_FRAME} from '../fullscreen/compass-preview-style.js?v=4132r1';
-import {LEGEND_FRAME_GRADIENTS} from './legend-instrument.js?v=4132r1';
-import {legendHubState,saveLegendHub,patchLegend} from './legend-preferences.js?v=4132r1';
+import {LEGEND_FRAME_GRADIENTS} from './legend-instrument.js?v=4133r1';
+import {legendHubState,saveLegendHub,patchLegend} from './legend-preferences.js?v=4133r1';
 import SILVER_CHEVRON from '../fullscreen/compass-picker-chevron-right-silver.js?v=41108r1';
 
 // Isolated read-only Moon Engine v1 consumer; no radar/provider mutations.
@@ -41,6 +41,11 @@ export function formatMoonDistance(km,unit='auto',globalUnit='KM',locale='en-GB'
 }
 export const normalizeLongitude=lng=>((lng+180)%360+360)%360-180;
 const clamp=(n,max)=>Math.max(0,Math.min(max,n));
+export const MOON_SCALE_ICONS=Object.freeze({
+ expand:new URL('../../assets/moon/gr_moon_scale_icon_expand_256.png',import.meta.url).href,
+ moon:new URL('../../assets/moon/gr_moon_scale_icon_moon_256.png',import.meta.url).href,
+ ruler:new URL('../../assets/moon/gr_moon_scale_icon_ruler_256.png',import.meta.url).href
+});
 const MOON_CLOSE_SMALL=new URL('../../assets/moon/gr-moon-close-platinum-premium-128.png',import.meta.url).href;
 const MOON_CLOSE=new URL('../../assets/moon/gr-moon-close-platinum-premium-256.png',import.meta.url).href;
 const MOON_CLOSE_HI=new URL('../../assets/moon/gr-moon-close-platinum-premium-512.png',import.meta.url).href;
@@ -96,12 +101,11 @@ function place(o,s,p=legendHubState(o).config.extraPositions.moon){
   s.host.style.left=(b.x+Math.max(0,b.w-w)*p.x)+'px';s.host.style.top=(b.y+Math.max(0,availableHeight-h)*p.y)+'px';
   if(s.controlAnchor&&!s.controlAnchor.element.getClientRects().length)s.controlAnchor=null;
   if(s.controlAnchor){const a=s.controlAnchor,r=a.element.getBoundingClientRect();s.host.style.left=b.x+clamp(parseFloat(s.host.style.left)-b.x+(a.x-r.left-r.width/2)/b.sx,Math.max(0,b.w-w))+'px';s.host.style.top=b.y+clamp(parseFloat(s.host.style.top)-b.y+(a.y-r.top-r.height/2)/b.sy,Math.max(0,availableHeight-h))+'px';const next=storedPosition(s,b),old=legendHubState(o).config.extraPositions.moon;if(Math.abs(next.x-old.x)>1e-6||Math.abs(next.y-old.y)>1e-6)saveLegendHub(o,{extraPositions:{...legendHubState(o).config.extraPositions,moon:next}});}
-  if(s.sizeSelect){s.sizeSelect.value=pref.scaleMode==='auto'?'auto':String(pref.scalePercent);s.sizeSelect.options[0].textContent='Auto · '+Math.round(plan.scale*100)+' %';}
   s.scaleOutput.textContent=Math.round(plan.scale*100)+' %';
-  s.scaleOutput.title=(isDE(o)?'Gespeicherte Größe: ':'Saved size: ')+(pref.scaleMode==='auto'?'Auto':pref.scalePercent+' %');
-  s.autoButton.setAttribute('aria-pressed',String(pref.scaleMode==='auto'));
-  s.minusButton.disabled=pref.scaleMode==='manual'&&pref.scalePercent<=50;
-  s.plusButton.disabled=plan.scale>=Math.min(1.25,plan.fit)-.005;
+  s.scaleImage.src=MOON_SCALE_ICONS[pref.scaleIcon];
+  s.sizeButton.setAttribute('aria-label',o._t('legendHub.size')+': '+s.scaleOutput.textContent);
+  for(const item of s.sizeMenu.children)item.setAttribute('aria-checked',String(item.dataset.value===(pref.scaleMode==='auto'?'auto':String(pref.scalePercent))));
+  s.positionMenu?.();
  }finally{s.placing=false;}
 }
 function schedulePlace(o,s){if(!s.open||s.fitFrame)return;s.fitFrame=requestAnimationFrame(()=>{s.fitFrame=null;place(o,s);});}
@@ -187,6 +191,15 @@ export function ensureMoonStyle(shadow){if(shadow.getElementById('gr-moon-style'
 
 @container(max-width:540px){.gr-moon-header{row-gap:3px;padding-block:8px}.gr-moon-phases{margin-bottom:3px}.gr-moon-note{padding-bottom:6px}.gr-moon-grid{row-gap:2px}.gr-moon-details{gap:1px}.gr-moon-row{padding-block:4px}.gr-moon-body{padding-bottom:8px}.gr-moon-tile img{width:min(100%,64px);margin-bottom:3px}.gr-moon-phases-head{padding-block:4px}}
 
+
+/* Compact shared icon/percentage trigger and unscaled, card-bounded glass menu. */
+.gr-moon-header{flex-wrap:nowrap;gap:12px}.gr-moon-header>div:nth-child(2){min-width:0}.gr-moon-size-controls{flex:none;order:0;width:auto;margin-left:auto;padding:0;border:0;background:none;box-shadow:none}.gr-moon-header .gr-moon-close{margin-left:0}
+.gr-moon-size-controls button{display:flex;align-items:center;gap:5px;min-width:0;height:max(44px,calc(44px / var(--moon-render-scale,1)));padding:0 2px;border:0;background:transparent;box-shadow:none;font:13px/1 system-ui;white-space:nowrap}.gr-moon-size-controls button img{width:44px;height:44px;object-fit:contain;pointer-events:none}.gr-moon-size-controls button span{min-width:39px;font-variant-numeric:tabular-nums}.gr-moon-size-controls button:hover{background:#d4e3ff0c}
+.gr-moon-size-menu{position:absolute;z-index:2147483647;box-sizing:border-box;padding:6px;overflow:auto;overscroll-behavior:contain;border:1px solid #d4e4f7a3;border-radius:14px;background:radial-gradient(ellipse at 20% 0,#c5d7ed30,transparent 70%),linear-gradient(135deg,#283c55ed,#0b1b32ed);backdrop-filter:blur(20px) saturate(1.15);-webkit-backdrop-filter:blur(20px) saturate(1.15);box-shadow:0 12px 30px #0009,inset 0 1px #f3f8ff66;color:#eef4ff;touch-action:pan-y}
+.gr-moon-size-menu[hidden]{display:none}.gr-moon-size-menu button{display:block;width:100%;min-height:36px;padding:7px 12px;text-align:left;border:1px solid transparent;border-radius:8px;background:transparent;color:inherit;font:14px/1.3 system-ui;cursor:pointer}.gr-moon-size-menu button[aria-checked=true]{border-color:#d9e9ff80;background:linear-gradient(135deg,#bcd3ee38,#8babc319);box-shadow:inset 0 1px #f4f8ff55}.gr-moon-size-menu button:hover{background-color:#bfd7ef20}.gr-moon-size-menu button:focus-visible{outline:2px solid #e9f4ff;outline-offset:-2px}
+.lh-moon-icons{display:flex;gap:8px;justify-content:space-evenly}.lh-moon-icons label{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;text-align:center;font-size:11px;cursor:pointer}.lh-moon-icons img{width:64px;height:64px;object-fit:contain;border:1px solid transparent;border-radius:12px}.lh-moon-icons input{position:absolute;opacity:0;width:1px!important;height:1px!important}.lh-moon-icons label:has(:checked) img{border-color:#d7e8ff;box-shadow:0 0 10px #bed8ff44}.lh-moon-icons label:has(:focus-visible) img{outline:2px solid #edf5ff;outline-offset:2px}
+@container(max-width:540px){.gr-moon-header{gap:8px;padding:8px 14px}.gr-moon-header h2{font-size:30px}.gr-moon-header small{font-size:8px;letter-spacing:.16em}.gr-moon-badge{width:42px;height:42px}.gr-moon-size-controls button{gap:2px;font-size:12px}.gr-moon-size-controls button img{width:38px;height:38px}}
+
 `;shadow.append(el);}
 function row(target,type,label,value){const div=document.createElement('div'),a=document.createElement('span'),b=document.createElement('strong');div.className='gr-moon-row';div.dataset.row=type;a.textContent=label;if(typeof value==='string')b.textContent=value;else b.append(value);div.append(icon(type),a,b);target.append(div);return b;}
 function eventTime(event,zone,de,missing){if(!event?.utc)return missing;return new Intl.DateTimeFormat(de?'de-DE':'en-GB',{timeZone:zone,hour:'2-digit',minute:'2-digit'}).format(new Date(event.utc))+(de?' Uhr':'');}
@@ -213,7 +226,7 @@ export const moonOpen=o=>!!o.__grMoon?.open;
 export function closeMoon(o,persist=true){
  const s=o.__grMoon;if(!s?.open)return;s.open=false;s.seq++;clearTimeout(s.timer);clearTimeout(s.requestTimer);s.cancelRequest?.();clearInterval(s.interval);s.abort.abort();s.observer?.disconnect();s.contentObserver?.disconnect();cancelAnimationFrame(s.fitFrame);
  if(s.map){s.map.off('movestart zoomstart',s.invalidate);s.map.off('moveend zoomend',s.schedule);s.map=null;}
- s.host.remove();delete o.__grMoon;if(persist)patchLegend(o,'moon',{mode:'off'});o._legendHubStatus?.();
+ s.sizeMenu.remove();s.host.remove();delete o.__grMoon;if(persist)patchLegend(o,'moon',{mode:'off'});o._legendHubStatus?.();
 }
 export function openMoon(o){
  if(!o.shadow||moonOpen(o))return;const card=o.shadow.getElementById('map-card');if(!card)return;ensureMoonStyle(o.shadow);
@@ -222,24 +235,31 @@ export function openMoon(o){
  const head=document.createElement('header');head.className='gr-moon-header';const badge=document.createElement('div');badge.className='gr-moon-badge';const badgeImage=document.createElement('img');badgeImage.src=MOON_HERO;badgeImage.alt='';badge.append(badgeImage);
  const names=document.createElement('div'),h=document.createElement('h2'),sub=document.createElement('small');h.textContent=title;sub.textContent=de?'Legende · Astronomie':'Legend · Astronomy';names.append(h,sub);
  const x=document.createElement('button');x.type='button';x.className='gr-moon-close';const closeIcon=document.createElement('img');closeIcon.src=MOON_CLOSE;closeIcon.srcset=MOON_CLOSE_SMALL+' 128w, '+MOON_CLOSE+' 256w, '+MOON_CLOSE_HI+' 512w';closeIcon.sizes='64px';closeIcon.alt='';x.append(closeIcon);x.setAttribute('aria-label',de?'Schließen':'Close');x.addEventListener('click',()=>closeMoon(o));const controls=document.createElement('div');controls.className='gr-moon-size-controls';controls.setAttribute('role','group');controls.setAttribute('aria-label',de?'Fenstergröße':'Window size');
- const minus=document.createElement('button'),plus=document.createElement('button'),auto=document.createElement('button'),scaleOutput=document.createElement('output');
- for(const [button,value,label,text] of [[minus,'minus',de?'Verkleinern':'Smaller','−'],[plus,'plus',de?'Vergrößern':'Larger','+'],[auto,'auto',de?'Automatische Größe':'Automatic size','Auto']]){button.type='button';button.dataset.moonScale=value;button.setAttribute('aria-label',label);button.textContent=text;}
- scaleOutput.setAttribute('aria-live','polite');const sizeSelect=document.createElement('select'),percentChoice=document.createElement('label');percentChoice.className='gr-moon-percent-choice';sizeSelect.dataset.moonSize='';sizeSelect.setAttribute('aria-label',o._t('legendHub.size'));for(const value of ['auto',...Array.from({length:16},(_,i)=>50+i*5)]){const option=document.createElement('option');option.value=String(value);option.textContent=value==='auto'?'Auto':value+' %';sizeSelect.append(option);}percentChoice.append(scaleOutput,sizeSelect);controls.append(minus,percentChoice,plus,auto);head.append(badge,names,controls,x);
+ const sizeButton=document.createElement('button'),scaleImage=document.createElement('img'),scaleOutput=document.createElement('span'),sizeMenu=document.createElement('div');
+ sizeButton.type='button';sizeButton.dataset.moonSize='';sizeButton.setAttribute('aria-haspopup','menu');sizeButton.setAttribute('aria-expanded','false');scaleImage.alt='';scaleOutput.setAttribute('aria-live','polite');sizeButton.append(scaleImage,scaleOutput);controls.append(sizeButton);head.append(badge,names,controls,x);
+ sizeMenu.className='gr-moon-size-menu';sizeMenu.hidden=true;sizeMenu.setAttribute('role','menu');sizeMenu.setAttribute('aria-label',o._t('legendHub.size'));sizeMenu.id='gr-moon-size-menu';sizeButton.setAttribute('aria-controls',sizeMenu.id);card.append(sizeMenu);
+ for(const value of ['auto',130,120,110,100,90,80,70,60,50]){const item=document.createElement('button');item.type='button';item.dataset.value=String(value);item.setAttribute('role','menuitemradio');item.tabIndex=-1;item.textContent=value==='auto'?o._t('legendHub.auto'):value+' %';sizeMenu.append(item);}
+
  const status=document.createElement('div');status.className='gr-moon-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
  const body=document.createElement('section');body.className='gr-moon-body';const hero=document.createElement('img');hero.className='gr-moon-hero';hero.src=MOON_HERO;hero.alt=title;const details=document.createElement('div');details.className='gr-moon-details';const heroWrap=document.createElement('div');heroWrap.className='gr-moon-hero-wrap';heroWrap.append(hero);body.append(heroWrap,details);
  const phases=document.createElement('section');phases.className='gr-moon-phases';const phHead=document.createElement('div');phHead.className='gr-moon-phases-head';const ph=document.createElement('h3');const emblem=document.createElement('img');emblem.className='gr-moon-phase-emblem';emblem.src=moonImage(PHASES[2][3]);emblem.alt='';ph.append(emblem,document.createTextNode(de?'Mondphasen':'Moon phases'));const cycleLabel=document.createElement('span');cycleLabel.className='gr-moon-cycle-label';const grid=document.createElement('div');grid.className='gr-moon-grid';
  for(const p of PHASES){const tile=document.createElement('div'),image=document.createElement('img'),label=document.createElement('span');tile.className='gr-moon-tile';tile.dataset.phase=p[0];image.src=moonImage(p[3]);image.alt='';label.textContent=p[de?1:2];tile.append(image,label);grid.append(tile);}const toggle=document.createElement('button');toggle.type='button';toggle.className='gr-moon-toggle';toggle.setAttribute('aria-label',de?'Mondphasen ein- oder ausklappen':'Expand or collapse Moon phases');const chevron=document.createElement('img');chevron.src=SILVER_CHEVRON;chevron.alt='';toggle.append(chevron);
  const phaseBody=document.createElement('div'),phaseInner=document.createElement('div');phaseBody.className='gr-moon-phase-body';phaseBody.id='gr-moon-phase-body';phaseInner.className='gr-moon-phase-inner';phaseInner.append(grid);phaseBody.append(phaseInner);toggle.setAttribute('aria-controls',phaseBody.id);phHead.append(ph,cycleLabel,toggle);phases.append(phHead,phaseBody);
  const note=document.createElement('p');note.className='gr-moon-note';surface.append(head,status,body,phases,note);card.append(host);
- const s={dialog:d,host,surface,status,body,hero,details,phases,grid,note,cycleLabel,phaseBody,toggle,minusButton:minus,plusButton:plus,autoButton:auto,scaleOutput,sizeSelect,seq:0,map:mapOf(o),timer:null,interval:null,open:true,abort:new AbortController(),hasData:false};o.__grMoon=s;
+ const s={dialog:d,host,surface,status,body,hero,details,phases,grid,note,cycleLabel,phaseBody,toggle,sizeButton,scaleImage,scaleOutput,sizeMenu,seq:0,map:mapOf(o),timer:null,interval:null,open:true,abort:new AbortController(),hasData:false};o.__grMoon=s;
  const setExpanded=(expanded,persist=false)=>{phases.dataset.expanded=String(expanded);toggle.setAttribute('aria-expanded',String(expanded));phaseBody.inert=!expanded;if(persist)saveLegendHub(o,{moonUi:{...legendHubState(o).config.moonUi,phasesExpanded:expanded}});schedulePlace(o,s);};
  s.setExpanded=setExpanded;s.refreshAppearance=()=>{const pref=legendHubState(o).config.moonUi;applyMoonMaterial(d,pref);s.renderDistance?.();setExpanded(pref.phasesExpanded);schedulePlace(o,s);};s.refreshAppearance();
  toggle.addEventListener('click',()=>setExpanded(toggle.getAttribute('aria-expanded')!=='true',true));
- const setScale=(patch,anchor)=>{const r=anchor?.getBoundingClientRect();s.controlAnchor=r?{element:anchor,x:r.left+r.width/2,y:r.top+r.height/2}:null;saveLegendHub(o,{moonUi:{...legendHubState(o).config.moonUi,...patch}});place(o,s);};
- minus.addEventListener('click',()=>{const pref=legendHubState(o).config.moonUi,base=Math.min(pref.scaleMode==='manual'?pref.scalePercent:125,Math.ceil(s.scale*20-1e-8)*5);setScale({scaleMode:'manual',scalePercent:Math.max(50,base-5)},minus);});
- plus.addEventListener('click',()=>{const pref=legendHubState(o).config.moonUi;setScale({scaleMode:'manual',scalePercent:Math.min(125,(pref.scaleMode==='manual'?pref.scalePercent:Math.round(s.scale*20)*5)+5)},plus);});
- auto.addEventListener('click',()=>setScale({scaleMode:'auto'}));
- sizeSelect.addEventListener('change',()=>setScale(sizeSelect.value==='auto'?{scaleMode:'auto'}:{scaleMode:'manual',scalePercent:Number(sizeSelect.value)}));controls.addEventListener('pointerleave',()=>{s.controlAnchor=null;});
+ const closeMenu=(focus=false)=>{sizeMenu.hidden=true;sizeButton.setAttribute('aria-expanded','false');if(focus)sizeButton.focus({preventScroll:true});};
+ s.positionMenu=()=>{if(sizeMenu.hidden)return;const b=bounds(o,s);if(!b)return;const a=card.getBoundingClientRect(),trigger=sizeButton.getBoundingClientRect(),width=Math.min(176,b.w),left=clamp((trigger.right-a.left)/b.sx-b.x-width,b.w-width)+b.x;sizeMenu.style.width=width+'px';sizeMenu.style.left=left+'px';sizeMenu.style.maxHeight=Math.max(0,b.h)+'px';const h=sizeMenu.offsetHeight,below=(trigger.bottom-a.top)/b.sy+6;sizeMenu.style.top=clamp((below+h<=b.y+b.h?below:(trigger.top-a.top)/b.sy-h-6)-b.y,b.h-h)+b.y+'px';};
+ const showMenu=()=>{card.append(sizeMenu);sizeMenu.hidden=false;sizeButton.setAttribute('aria-expanded','true');place(o,s);s.positionMenu();(sizeMenu.querySelector('[aria-checked=true]')||sizeMenu.firstElementChild).focus({preventScroll:true});};
+ sizeButton.addEventListener('click',()=>sizeMenu.hidden?showMenu():closeMenu());
+ sizeButton.addEventListener('keydown',e=>{if(['ArrowDown','ArrowUp'].includes(e.key)){e.preventDefault();showMenu();}});
+ sizeMenu.addEventListener('click',e=>{const item=e.target.closest('button[data-value]');if(!item)return;const value=item.dataset.value;saveLegendHub(o,{moonUi:{...legendHubState(o).config.moonUi,...(value==='auto'?{scaleMode:'auto'}:{scaleMode:'manual',scalePercent:Number(value)})}});closeMenu(true);place(o,s);});
+ sizeMenu.addEventListener('keydown',e=>{const items=[...sizeMenu.children],index=items.indexOf(document.activeElement===card?o.shadow.activeElement:document.activeElement),current=items.indexOf(o.shadow.activeElement);let next=current<0?index:current;if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeMenu(true);return;}if(e.key==='Tab'){closeMenu();return;}if(e.key==='Home')next=0;else if(e.key==='End')next=items.length-1;else if(e.key==='ArrowDown')next=(next+1)%items.length;else if(e.key==='ArrowUp')next=(next-1+items.length)%items.length;else return;e.preventDefault();items[next].focus();});
+ for(const type of ['pointerdown','click','dblclick','wheel','touchstart','touchmove'])sizeMenu.addEventListener(type,e=>e.stopPropagation(),{signal:s.abort.signal,passive:true});
+ document.addEventListener('pointerdown',e=>{const path=e.composedPath();if(!path.includes(sizeMenu)&&!path.includes(sizeButton))closeMenu();},{signal:s.abort.signal,capture:true});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sizeMenu.hidden){e.preventDefault();e.stopPropagation();closeMenu(true);}},{signal:s.abort.signal,capture:true});
  drag(o,s,head);const options={signal:s.abort.signal};
  // Sibling overlay: stop only its own events; leave map handlers enabled.
  for(const type of ['pointerdown','click','dblclick','wheel','touchstart','touchmove'])d.addEventListener(type,e=>e.stopPropagation(),{...options,passive:type==='wheel'||type.startsWith('touch')});

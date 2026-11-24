@@ -1,4 +1,4 @@
-import { PREMIUM_INFO, premiumEscape } from '../weather/premium-ui.js?v=4132r1';
+import { PREMIUM_INFO, premiumEscape } from '../weather/premium-ui.js?v=4133r1';
 
 export const PRO_WELCOME_DISMISSED = 'gewitterradar-pro-welcome-dismissed';
 const WEATHER_ROUTER_GITHUB = 'https://github.com/TheDaimos/weather-router-pub';

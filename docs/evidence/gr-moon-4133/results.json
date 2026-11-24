@@ -1,0 +1,42 @@
+[
+  {
+    "name": "desktop",
+    "viewport": [
+      1366,
+      768
+    ],
+    "iconChoices": 3,
+    "storedIcon": "moon",
+    "storedPercent": 80,
+    "keyboard": true,
+    "autoAndManual": true,
+    "positionAndPhasesPreserved": true,
+    "menuBounds": {
+      "x": 562.6875,
+      "y": 93.140625,
+      "width": 176,
+      "height": 374
+    },
+    "errors": []
+  },
+  {
+    "name": "phone",
+    "viewport": [
+      390,
+      844
+    ],
+    "iconChoices": 3,
+    "storedIcon": "moon",
+    "storedPercent": 80,
+    "keyboard": true,
+    "autoAndManual": true,
+    "positionAndPhasesPreserved": true,
+    "menuBounds": {
+      "x": 107.5,
+      "y": 78.046875,
+      "width": 176,
+      "height": 374
+    },
+    "errors": []
+  }
+]

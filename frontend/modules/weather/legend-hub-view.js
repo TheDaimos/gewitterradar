@@ -1,12 +1,12 @@
-import {createMoonPreview,applyMoonMaterial,refreshMoonAppearance} from './moon-legend.js?v=4132r1';
-import {ensureInstrumentStyle,applyInstrumentSurface} from './legend-instrument.js?v=4132r1';
-import {settingsStorage} from '../core/settings-vault.js?v=4132r1';
-import {LEGEND_OPTIONS,assignLegendSlot} from './legend-hub-model.js?v=4132r1';
-import {legendHubState,saveLegendHub,legendOptions,patchLegend} from './legend-preferences.js?v=4132r1';
-import {legendEntries,legendTitle,legendDescriptor} from './legend-registry.js?v=4132r1';
-import {ensureLegendScaleStyle,renderLegendScale} from './legend-scale.js?v=4132r1';
-import {renderPrecipitationScales} from './legend-precipitation.js?v=4132r1';
-import {PREMIUM_CLOSE} from './premium-ui.js?v=4132r1';
+import {MOON_SCALE_ICONS,createMoonPreview,applyMoonMaterial,refreshMoonAppearance} from './moon-legend.js?v=4133r1';
+import {ensureInstrumentStyle,applyInstrumentSurface} from './legend-instrument.js?v=4133r1';
+import {settingsStorage} from '../core/settings-vault.js?v=4133r1';
+import {LEGEND_OPTIONS,assignLegendSlot} from './legend-hub-model.js?v=4133r1';
+import {legendHubState,saveLegendHub,legendOptions,patchLegend} from './legend-preferences.js?v=4133r1';
+import {legendEntries,legendTitle,legendDescriptor} from './legend-registry.js?v=4133r1';
+import {ensureLegendScaleStyle,renderLegendScale} from './legend-scale.js?v=4133r1';
+import {renderPrecipitationScales} from './legend-precipitation.js?v=4133r1';
+import {PREMIUM_CLOSE} from './premium-ui.js?v=4133r1';
 import SILVER_CHEVRON from '../fullscreen/compass-picker-chevron-right-silver.js?v=41108r1';
 import {legendInk} from './legend-contrast.js?v=4124r1';
 export const legendText=(owner,key)=>owner._t('legendHub.'+key);
@@ -56,8 +56,9 @@ export function openMoonConfig(owner){const t=k=>legendText(owner,k);return open
   select(t('frameMaterial'),'frameMaterial',['platinum','gold','goldClassic'],c.frameMaterial,v=>v==='goldClassic'?t('moonClassicGold'):t('frame_'+v))+
   select(t('moonGlass'),'glass',['night','mineral'],c.glass,v=>t(v==='night'?'moonNight':'moonMineral'))+
   select(t('moonDistanceUnit'),'distanceUnit',['auto','km','m','mi','ft'],c.distanceUnit,v=>v==='auto'?t('auto'):t(({km:'moonKilometers',m:'moonMeter',mi:'moonMiles',ft:'moonFeet'})[v])+' ('+v+')')+
+  '<fieldset style="border:0;padding:0;margin:0"><legend>'+esc(t('moonScaleIcon'))+'</legend><div class="lh-moon-icons">'+['expand','moon','ruler'].map(id=>'<label><input type="radio" name="moon-scale-icon" data-lh-key="scaleIcon" value="'+id+'" '+(c.scaleIcon===id?'checked':'')+'><img src="'+MOON_SCALE_ICONS[id]+'" alt=""><span>'+esc(t('moonScaleIcon_'+id))+'</span></label>').join('')+'</div></fieldset>'+
   select(t('moonScale'),'scaleMode',['auto','manual'],c.scaleMode,v=>t(v==='auto'?'auto':'moonManual'))+
-  '<label><span>'+esc(t('size'))+'</span><span class="lh-glass-control"><input type="range" data-lh-key="scalePercent" min="50" max="125" step="5" value="'+c.scalePercent+'" '+(c.scaleMode==='auto'?'disabled':'')+'><output>'+c.scalePercent+' %</output></span></label>'+
+  '<label><span>'+esc(t('size'))+'</span><span class="lh-glass-control"><input type="range" data-lh-key="scalePercent" min="50" max="130" step="5" value="'+c.scalePercent+'" '+(c.scaleMode==='auto'?'disabled':'')+'><output>'+c.scalePercent+' %</output></span></label>'+
   check(t('moonPhases'),'phasesExpanded',c.phasesExpanded)+check(t('moonReflections'),'reflections',c.reflections)+
   '<label><span>'+esc(t('moonAura'))+'</span><span class="lh-glass-control"><input type="range" data-lh-key="aura" min="0" max="100" step="1" value="'+c.aura+'"><output>'+c.aura+' %</output></span></label>'+
   '<button type="button" class="lh-moon-reset">'+esc(t('moonReset'))+'</button><section class="lh-preview"><h4>'+esc(t('preview'))+'</h4></section>';

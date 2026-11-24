@@ -1,7 +1,7 @@
 import { defineModule } from "../core/runtime.js?v=41121r1";
-import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=4132r1';
-import { FIRST_STEPS_DISMISSED, openFirstSteps } from './first-steps.js?v=4132r1';
-import { settingsStorage } from '../core/settings-vault.js?v=4132r1';
+import { PRO_WELCOME_DISMISSED, openProWelcome } from './pro-welcome.js?v=4133r1';
+import { FIRST_STEPS_DISMISSED, openFirstSteps } from './first-steps.js?v=4133r1';
+import { settingsStorage } from '../core/settings-vault.js?v=4133r1';
 const PRO_WORDMARK = new URL('../../assets/gewitterradar-pro-wordmark-v1.png', import.meta.url).href;
 const SETTINGS_ABOUT_INFO = new URL('../../assets/gewitterradar-help-info-premium-v1.webp', import.meta.url).href;
 const PRO_DISCOVERY_TIMEOUT = 8000;
@@ -19,7 +19,7 @@ function confirmsLocalWeatherRouter(reply) {
 
 export const MODULE_META=Object.freeze({
   "id": "ui.skeleton",
-  "version": "1.1.76",
+  "version": "1.1.77",
   "group": "Oberfläche",
   "function": "Grundgerüst",
   "subfunctions": [
