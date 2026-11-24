@@ -23,8 +23,6 @@ Der vollständige Masterauftrag wurde vom Betreiber nachgereicht und ausdrückli
 
 [Vollständiges Archiv und Zuordnungen](design/legend-hub/moon/README.md), [technisches Manifest mit SHA-256](design/legend-hub/moon/manifest.json), [Close-Original](design/legend-hub/moon/assets/master/gr-moon-close-platinum-premium-master.png), [gemeinsame vollständige Materialdefinitionen](design/legend-hub/moon/assets/master/moon-material-definitions.css), [vorhandene Rahmenverläufe](design/legend-hub/moon/assets/master/moon-frame-gradients.json), [Mineralglas-SVG](design/legend-hub/moon/assets/optimized/mineral-glass.svg). Der ursprüngliche Fenstermaster, Originalvollmond, acht originale/acht optimierte Phasen sowie Symbol-/Zoom-/Chevronressourcen sind erfasst; bereits archivierte Inhalte werden referenziert und nicht unnötig dupliziert. Das Archiv bleibt ausschließlich auf DEV, bis ein regulär freigegebener Finalisierungsprozess erfolgt.
 
-## Abnahmegrenzen
-
 ## Tatsächlich ausgeführte lokale Prüfungen
 
 - Sechs Premium-Browserfälle mit 1920×1080, 1366×768, 1280×720, 1024×768, 768×1024, 390×844: vier unabhängige Materialkombinationen, gemeinsame Preview-/Runtime-CSS-Variablen, echtes 44px-Close ohne Zusatzfassung/Filter, F2 und Long-Press ohne Sichtbarkeitsschaltung, Aura/Reflexe/Phasen/Größe, ausschließlich Position zurücksetzen und Reload aller sieben Werte. Desktop zusätzlich alle 19 Übersetzungseinträge über den tatsächlichen Dialog und alle sechs vorhandenen Legenden-Closes einschließlich Tastaturfokus geprüft. DE/EN-Verlauf mit neun Themen, Auf-/Zuklappen und korrekter technischer DEV-Anzeige in allen sechs Fällen. Keine JavaScript-Seitenfehler.
@@ -37,5 +35,20 @@ Der vollständige Masterauftrag wurde vom Betreiber nachgereicht und ausdrückli
 - Regulärer Frontend-Build, deterministischer Neuaufbau samt negativen Manipulationsproben, 37 Module/231 Kern-Dateien, drei Lieferbäume und Checksummen bestanden. PNG-CRC, tatsächlich dekodierte Alpha-Werte einschließlich 0/255/Zwischenstufen, unveränderter Close-Master-SHA, alle neuen Runtime-Varianten und archivierte CSS-/SVG-Definitionen geprüft. Python-/JSON-/YAML-Syntax und statische Paketverträge bestanden.
 
 ## Grenzen der Abnahme
+
+[Premium-Browsermatrix](evidence/gr-moon-413/premium-results.json), [Auto-Fit-Matrix](evidence/gr-moon-413/fit-results.json), [vorhandene Moon-Regression](evidence/gr-moon-413/regression-results.json), [authentifizierte Profile](evidence/gr-moon-413/profile-results.json), [lokaler Prüfbeleg und Screenshot-SHA-256](evidence/gr-moon-413/local-verification.json).
+
+| Viewport | Reale Standardansicht |
+|---|---|
+| 1920×1080 | [Desktop](evidence/gr-moon-413/desktop-platinum-night.png) |
+| 1366×768 | [Laptop](evidence/gr-moon-413/laptop-platinum-night.png) |
+| 1280×720 | [Niedriges Fenster](evidence/gr-moon-413/short-platinum-night.png) |
+| 1024×768 | [Tablet](evidence/gr-moon-413/tablet-platinum-night.png) |
+| 768×1024 | [Hochformat](evidence/gr-moon-413/portrait-platinum-night.png) |
+| 390×844 | [Smartphone](evidence/gr-moon-413/phone-platinum-night.png) |
+
+Gold/Mineral: [Desktop](evidence/gr-moon-413/desktop-gold-mineral.png), [Tablet](evidence/gr-moon-413/portrait-gold-mineral.png), [Smartphone](evidence/gr-moon-413/phone-gold-mineral.png). Einstellungen mit tatsächlicher Vorschau: [Desktop](evidence/gr-moon-413/desktop-configuration.png), [Smartphone](evidence/gr-moon-413/phone-configuration.png). Eingeklappt: [Desktop](evidence/gr-moon-413/desktop-1920-collapsed.png), [Smartphone](evidence/gr-moon-413/phone-390-collapsed.png). Zoomhinweis: [Desktop](evidence/gr-moon-413/desktop-zoom.png), [Smartphone](evidence/gr-moon-413/smartphone-zoom.png). Versionsverlauf: [DE Desktop](evidence/gr-moon-413/desktop-history-de.png), [EN Desktop](evidence/gr-moon-413/desktop-history-en.png), [DE Smartphone](evidence/gr-moon-413/phone-history-de.png), [EN Smartphone](evidence/gr-moon-413/phone-history-en.png).
+
+Der Featurecommit ist `f5b0cbe277a554944ffb071836f788ee2894b6ea`; der direkt folgende Lieferabgleich ergänzt die vom regulären Build bereits korrekt erzeugte, zunächst nicht gestagte zentrale `SHA256SUMS_FRONTEND.txt` und diese Belege. Produkt-, Test- und Workflowbäume bleiben dabei unverändert. Maßgeblich für CI und Pakete wird der vollständige Liefercommit sein.
 
 Die echten Browserprüfungen verwenden die registrierte GR-Karte, Leaflet und einen kontrollierten HA-/WR-Transport. Sie ersetzen keine physische Android-/HA-DEV-VM109-Abnahme. OS-F11 nicht separat geprüft; DOM- und GR-Vollbild sind Bestandteil der vorhandenen Auto-Fit-Matrix. Sehr kleine/niedrige eingebettete Karten behalten den dokumentierten kontrollierten Scroll-Fallback. Die CSS-/SVG-Materialumsetzung ist keine pixelidentische Reproduktion des rasterisierten Masters; responsive Umbrüche und systemabhängige Typografie bleiben sichtbar. Grafische Freigabe ausschließlich durch den Betreiber. Keine Änderung an WeatherRouter oder PROD VM101.
