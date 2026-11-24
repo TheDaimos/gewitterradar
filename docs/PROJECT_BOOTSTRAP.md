@@ -25,3 +25,7 @@ Vor jeder Version-FINALisierung **[FINAL_RELEASE_AUTOMATION.md](FINAL_RELEASE_AU
 ## V4.13 FINAL – gesicherte Analyse statt erneuter Ursachen-Ratesuche
 
 Bei jeder V4.13-FINAL-Aufgabe zuerst [diese verbindliche Fehler- und Übergabeakte](GR_413_FINAL_BLOCKERS_AND_AGENT_RUNBOOK_2026-11-24.md) lesen. Vorhandenen PRE-MERGE-CI-Run und Betreiberabnahme wiederverwenden, unverifizierte externe Sicherung nicht bestätigen, veraltete versionsspezifische Release-/Build-Gates nach Repo-Befund **selbstständig additiv aktualisieren**. Ein lokaler ClientError ist kein Beleg für einen Quellcodefehler und keine automatische Abbruchbegründung. Produktcode, Protected-Pairs und PROD unverändert lassen, sofern nicht ausdrücklich erforderlich und freigegeben.
+
+## Eigenständige technische Korrekturen (Pflicht für neue Chats)
+
+Bei einem beauftragten Entwicklungs- oder FINAL-Auftrag **nicht** nach dem ersten roten Test abbrechen. Die verbindliche [Korrekturschleife in FINAL_RELEASE_AUTOMATION.md](FINAL_RELEASE_AUTOMATION.md#eigenständige-fehlerbehebung-statt-abbruch-verbindliche-agentenregel) lesen und anwenden: echte CI-Logs → Ursache → kleinste sichere Korrektur selbst implementieren → committen → GitHub-Runner-Build und erneute Tests auf neuem SHA → ggf. wiederholen. Veraltete Release-Identitäten, Test-Erwartungen und generierte Inventare selbstständig, unter Erhaltung der historischen Regressionen, aktualisieren. **Unverifizierte Offsite-Backups, fehlende Sicherheitsfreigaben oder funktionale Änderungen niemals stillschweigend übergehen.**
