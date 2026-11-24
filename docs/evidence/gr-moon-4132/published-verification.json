@@ -1,0 +1,48 @@
+{
+  "commit": "40382cb60324022840d87520a9d4471d9bf8b6df",
+  "releaseId": 456948012,
+  "url": "https://github.com/TheDaimos/gewitterradar/releases/tag/v4.13.2-dev",
+  "prerelease": true,
+  "assets": [
+    {
+      "file": "deployment.json",
+      "bytes": 823,
+      "sha256": "d41d8a44367d9606a7f1d2c967f8c52b71fb325518fecb939125855a0238b743",
+      "githubDigestMatches": true
+    },
+    {
+      "file": "gewitterradar-0.25.180-dev.zip",
+      "bytes": 59014132,
+      "sha256": "86449fefb485f277ef080f3550b821f4c8fc963f722d5c78070369b8703a34d3",
+      "githubDigestMatches": true
+    },
+    {
+      "file": "gewitterradar-dashboard-4.13.2-dev.zip",
+      "bytes": 58416999,
+      "sha256": "8320836f39dc338b1bf369b4f769bf73ec2133626d7e48d80a1936f9cfd43f57",
+      "githubDigestMatches": true
+    },
+    {
+      "file": "GR_MOON_4132_2026-11-24.md",
+      "bytes": 7179,
+      "sha256": "bec0a7c0e32dfb1c634018a118d28998feebd06dc9cf787c80a84fcb5bc88bcd",
+      "githubDigestMatches": true
+    },
+    {
+      "file": "SHA256SUMS.txt",
+      "bytes": 284,
+      "sha256": "43cde801add4942409671a96196ed25fb7126f5d7e1376e5aeb316b0e8275f8c",
+      "githubDigestMatches": true
+    }
+  ],
+  "stableLatestUnchanged": "v4.12",
+  "refs": {
+    "refs/heads/deploy/dev": "40382cb60324022840d87520a9d4471d9bf8b6df",
+    "refs/tags/v4.12": "c712a2526faeb55b9cc1926a656268611f56e776",
+    "refs/tags/v4.13.1-dev": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+    "refs/tags/v4.13.2-dev": "40382cb60324022840d87520a9d4471d9bf8b6df"
+  },
+  "wrDependencyCommit": "850c3542a8b3b181edc5837205bbeb374ed72eab",
+  "wrPrivateActionsEnabled": false,
+  "realHAInstallation": false
+}

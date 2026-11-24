@@ -1,0 +1,30 @@
+{
+  "commit": "40382cb60324022840d87520a9d4471d9bf8b6df",
+  "linuxWorkflowRun": 45423809644,
+  "packages": [
+    {
+      "file": "gewitterradar-0.25.180-dev.zip",
+      "sha256": "86449fefb485f277ef080f3550b821f4c8fc963f722d5c78070369b8703a34d3",
+      "byteIdenticalToLinuxCI": true
+    },
+    {
+      "file": "gewitterradar-dashboard-4.13.2-dev.zip",
+      "sha256": "8320836f39dc338b1bf369b4f769bf73ec2133626d7e48d80a1936f9cfd43f57",
+      "byteIdenticalToLinuxCI": true
+    },
+    {
+      "file": "deployment.json",
+      "sha256": "d41d8a44367d9606a7f1d2c967f8c52b71fb325518fecb939125855a0238b743",
+      "byteIdenticalToLinuxCI": true
+    },
+    {
+      "file": "SHA256SUMS.txt",
+      "sha256": "43cde801add4942409671a96196ed25fb7126f5d7e1376e5aeb316b0e8275f8c",
+      "byteIdenticalToLinuxCI": true
+    }
+  ],
+  "originalGitBlobsVerified": 525,
+  "zipCrcVerified": true,
+  "windowsArchiveConversionDisabled": true,
+  "devOnly": true
+}
