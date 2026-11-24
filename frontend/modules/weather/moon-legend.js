@@ -293,7 +293,7 @@ export function openMoon(o){
    const next=document.createElement('div');next.textContent=phaseName(data.next_major_phase.phase,o);const nextDate=document.createElement('small');nextDate.className='gr-moon-secondary';nextDate.textContent=new Intl.DateTimeFormat(locale,{timeZone:zone,day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(data.next_major_phase.utc));next.append(nextDate);row(s.details,'calendar',o._t('legendHub.moonUiNextPhase'),next);
    s.data=data;s.distanceValue=row(s.details,'distance',o._t('legendHub.moonDistance'),'—');
    s.renderDistance=()=>{const text=formatMoonDistance(s.data?.distance_km,legendHubState(o).config.moonUi.distanceUnit,o._distanceUnitValue?.(),o._locale?.()||'en-GB')||o._t('weather.layer.unavailable');if(s.distanceValue.textContent!==text){s.distanceValue.textContent=text;schedulePlace(o,s);}};s.renderDistance();
-   s.hero.src=HERO_IMAGES[data.phase];s.hero.alt=phaseName(data.phase,de);
+   s.hero.src=HERO_IMAGES[data.phase];s.hero.alt=phaseName(data.phase,o);
    for(const tile of s.grid.children)tile.setAttribute('aria-current',String(tile.dataset.phase===data.phase));
    s.cycleLabel.textContent=o._t('legendHub.moonUiFullCycle')+' ('+number(data.cycle_days)+' '+o._t('legendHub.moonUiDays')+')';
    s.note.textContent=o._t('legendHub.moonUiMapTime')+' '+zone+(zone==='UTC'?' · '+o._t('legendHub.moonUiUtcFallback'):'')+' · '+(data.local_date||'');
