@@ -13,6 +13,14 @@ Verbindliche Reihenfolge: **abgenommener Kandidat → exakter alter main-SHA →
 
 Bei roten Gates stoppen, Logs analysieren, minimal korrigieren und **für den neuen Commit** erneut prüfen. Nie frühere grüne Runs für einen anderen SHA als Abschlussbeweis verwenden. Historische V4.12-Workflows mit fest codierten SHAs/Run-IDs **nicht** für spätere Versionen unverändert wiederverwenden. VM101, produktive Installationen und geschützte Referenzen bleiben unangetastet. Im Runbook stehen die präzisen V4.12-Aktionen, Fehler und Wiederanlaufregeln.
 
+## DEV-Auslieferung nach V4.12 FINAL (24.11.2026)
+
+**Ein öffentliches Repository behalten.** GewitterRadar wird auf `TheDaimos/gewitterradar` mit `deploy/dev` für Entwicklung und `main` für stabile FINAL-Releases weiterentwickelt. Kein zusätzliches privates DEV-Repository anlegen; öffentliche GitHub Actions bleiben erhalten.
+
+**Keine öffentlichen DEV-GitHub-Releases mehr erstellen.** Insbesondere keine neuen veröffentlichten `v*-dev`-Prereleases und keine DEV-Version als `latest`. Für DEV-Installation DRA/Branch `deploy/dev` und geeignete CI-Artefakte einsetzen; GitHub-Action-Artefakte sind zeitlich begrenzt und in einem öffentlichen Repository nicht vertraulich. DEV-Code und Git-Tags bleiben in einem öffentlichen Repository grundsätzlich öffentlich. Die öffentlichen GitHub-Releases sind ausschließlich für offizielle FINAL-/Stable-Stände vorgesehen.
+
+**Historische DEV-Tags und geschützte Referenzen nicht löschen oder umschreiben.** Die V4.12-Bereinigung entfernt nur veröffentlichte DEV-Release-Einträge samt zugehöriger Release-Assets, niemals Tags, Branches, Commits, CI-Verträge, Golden Master oder FINAL-Releases. Siehe [FINALIZATION_RUNBOOK](docs/FINALIZATION_RUNBOOK.md).
+
 ## Aktuell geschütztes WR-/GR-Referenzpaar – Betreiberfreigabe 13.11.2026
 
 **WR 0.10.320 DEV / Loader 323 + GR 4.11.195 DEV / HA 0.25.102**, Runtime `411195r1`, Modulset `E411-195A1`. Die verbindliche Akte ist [`docs/WR_GR_PROTECTED_REFERENCE_PAIR_010320_411195_2026-11-13.md`](docs/WR_GR_PROTECTED_REFERENCE_PAIR_010320_411195_2026-11-13.md). Bei neuen Modulen oder Providern zuerst diese Referenz und die Schutzregeln lesen; niemals die Referenz stillschweigend durch einen neueren ungeprüften HEAD ersetzen.
