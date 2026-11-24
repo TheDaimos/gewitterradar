@@ -17,3 +17,7 @@
 **Wichtig:** Keine Weiterentwicklung von Hoch/Tief, Fronten, Isobaren oder beliebigen neuen Modulen darf die bereits funktionierenden Niederschlags-, Wind-, Temperatur- und UI-Module einschränken. Gleiches gilt umgekehrt. Diese Regel wird erst mit echten ausführbaren Regression-Gates technisch erzwungen – dieser Einstieg allein ist kein Gate.
 
 **Original-Export2Git:** privates `TheDaimos/Project-Log-And-Export@main`.
+
+## Release-/DNS-Fallback für neue Entwicklungschats (Pflicht)
+
+Vor jeder Version-FINALisierung **[FINAL_RELEASE_AUTOMATION.md](FINAL_RELEASE_AUTOMATION.md)** lesen. `main` führt die remote GitHub-Actions-Workflows `gr-release-premerge.yml` und `gr-release-final.yml`; sie benötigen kein lokales DNS im Chat. GitHub-Connector für SHA-Checks, Branches, Commits und PR/Merge nutzen; bei fehlendem Workflow-Dispatch die dokumentierten PRE-MERGE- und Publish-Request-PRs verwenden. Exakte CI, PRE-MERGE-Offsite-Sicherung, geschützte Referenzen und Golden Master bleiben zwingend. Nichts als FINAL melden, bevor ein tatsächliches offizielles Release belegt ist.
