@@ -44,3 +44,11 @@ Nach den Runner-basiert erzeugten FINAL-Metadaten wurden **neue** historisch har
 4. **PR-/CI-Disziplin:** PR [#43](https://github.com/TheDaimos/gewitterradar/pull/43) wird immer für den **neuesten** Head-SHA geprüft. Grüne ältere Jobs sind kein Freigabenachweis. Kein Merge, bevor die aktuellen Frontend-/Aura-/HA- und Schutzgates grün sind.
 
 **Allgemeine Regel:** Neue Frontend-Versionen verändern häufig **Bedienform und kanonische Runtime**, ohne den fachlichen Funktionsumfang zu ändern. Alte UI-/Versionsannahmen müssen gegen die aktuell implementierte, weiterhin getestete Invariante ausgetauscht werden; alte Pixel-/Sicherheits-/Regressionstests dürfen dadurch nicht ausfallen oder übersprungen werden.
+
+## Weiterer unabhängiger Regression-Nachweis: dekorative Hindernisse
+
+Im vollständigen Aura-/Sources-Browsertest auf PR #43 wurden **Desktop-Legenden, Smartphone-Hoch-/Querformat, Minimallegenden und die Desktop-Quellenpräsentation erfolgreich geprüft**, bevor eine weitere historische Geometrie-Assertion scheiterte: In `scripts/test-v412-sources-browser.cjs` wurde für Portrait bei einer schmalen Karte ein `compass-instrument` als Overlap gemeldet. Der eigentliche Placer in `frontend/modules/weather/legend-instrument.js` unterscheidet ausdrücklich **interaktive Hindernisse** und eine **dekorative, nicht interaktive Kompassumrandung** mit `pointer-events:none`: Sie darf bei engem Kartenraum ausnahmsweise überlappt werden, **interaktive Kontrollen niemals**.
+
+Der Regressionstest wurde in [`fe27359f`](https://github.com/TheDaimos/gewitterradar/commit/fe27359f69ea952b9e9c05768867f990eefcb3f0) strikt an diese bestehende Funktionsregel angepasst: Nur die ausdrücklich deklarierte `compass-instrument`-Dekoration bei tatsächlichem `pointer-events:none` wird aus der Kollisionsliste ausgeschlossen. Jeglicher interaktive Overlap bleibt weiterhin ein Fehler; Kartengrenzen, Skalenanzahl und Größenkombinationen werden unverändert geprüft. **Kein Produkt-/Rendering-Code wurde verändert.**
+
+**Agentenregel:** Bei Kollisions-/Pixel-Regressionen nicht blind die Assertion löschen. Erst Quellcode und beabsichtigte Interaktionssemantik prüfen, dann den Schutzvertrag für tatsächlich bedienbare Hindernisse beibehalten. Nach Commit automatisch eine neue CI für den neuen HEAD starten und bis zum Ergebnis fortfahren.
