@@ -86,7 +86,7 @@ T0/T1 ausschließlich: Python-Import/Syntax, Default-OFF, keine Ressourcen bei O
 
 ## MA-003 – Isoliertes Backend-Grundgerüst | Abschluss 25.11.2026
 
-**Status: IMPLEMENTED / T0 und T1 lokal erfolgreich; GitHub-verifiziert. Keine DEV-Installation oder Betreiber-Laufzeitabnahme. MA-001 und MA-002 bleiben fachlich abgenommen; Vorbehalte A/B/C unverändert.**
+**Status: ACCEPTED_USER für den vereinbarten T0/T1-Umfang; fachliche Abnahme durch unabhängige Prüfung bestätigt. Keine DEV-Installation oder Betreiber-Laufzeitabnahme. MA-001 und MA-002 bleiben fachlich abgenommen; Vorbehalte A/B/C unverändert.**
 
 ### Freigabe und isolierte V4.14-Basis
 
@@ -135,6 +135,95 @@ task_id=MA-003; implementation_commit=d6a04d09a93805f8ae311d6d46ecfb1988932630; 
 
 ## Nächster Auftrag: MA-004 – Unsichtbares Frontend-Skelett
 
-Vorbereitet, **nicht gestartet**. Nur nach separatem Auftrag auf der geprüften V4.14-Feature-Basis fortsetzen; MA-003 bleibt bis unabhängiger Abnahme als IMPLEMENTED mit lokalem T0/T1-Nachweis, nicht VERIFIED_DEV. MA-005 bleibt das spätere P00-Realtest-Gate. Die bestehende Statusdatei auf deploy/dev wird als kanonischer Übergabepunkt dokumentarisch synchronisiert; Code verbleibt ausschließlich im Feature-Branch.
+Historischer Vorbereitungsstand, durch nachfolgenden MA-004-Abschluss abgelöst. MA-003 fachlich abgenommen für T0/T1, nicht VERIFIED_DEV. MA-005 bleibt das spätere P00-Realtest-Gate. Die bestehende Statusdatei auf deploy/dev wird als kanonischer Übergabepunkt dokumentarisch synchronisiert; Code verbleibt ausschließlich im Feature-Branch.
 
-Feature-Branch-Dokumentationscommit: [2e1cea524c540b9e9c2a3625b1d23713b564eeb9](https://github.com/TheDaimos/gewitterradar/commit/2e1cea524c540b9e9c2a3625b1d23713b564eeb9). Dieser deploy/dev-Commit enthält ausschließlich die Statusdatei, keine MA-Codeänderung.
+
+## MA-004 – Unsichtbares Frontend-Skelett | Abschluss 25.11.2026
+
+**Status: IMPLEMENTED / T0 und T1 sowie betroffene Build-/Inventar-/Integritätsprüfungen erfolgreich im öffentlichen GitHub-Actions-Runner. Unabhängige MA-004-Abnahme ausstehend; keine HA-/Browser-DEV-Laufzeitabnahme.**
+
+MA-001 bis MA-003 fachlich abgenommen. Die drei MA-002-Vorbehalte bleiben unverändert. Keine erneute Grundsatzanalyse. Ausschließlich der autorisierte Branch feature/v4.14-monitored-areas enthält MA-Code. Vorheriger Feature-HEAD: 2e1cea524c540b9e9c2a3625b1d23713b564eeb9. V4.13 FINAL geschützt: main 37f1aca54cd505fd91a2b1b0014cd7c6c280b26f, v4.13 509daeb7245f42b23e46f72b4d002c42f0d7f56e; WR deploy/dev 850c3542a8b3b181edc5837205bbeb374ed72eab; alle drei Refs vor/nach Implementierung unverändert.
+
+### Implementierung und Identität
+
+- [Implementierung](https://github.com/TheDaimos/gewitterradar/commit/16f638d0926fb434fb89eb822a8802b3babfe01f): isolierter Einstieg monitored-areas/index.js, per Card WeakMap Runtime, nur explizites bool True, inert; idempotenter Start/Teardown; dynamischer Import über vorhandenen gewitterradarImport mit separater Fehlergrenze; laufender Import wird bei Disconnect/OFF logisch invalidiert. Minimalhooks in setConfig/connectedCallback/disconnectedCallback. Kein MA-DOM/CSS, keine API, Timer, Listener, Storage oder Standortfunktionen. Expliziter Card-Konfigurationswert dient nur dem Skelett-Test, keine Backend-Autorisierung; produktive Capability-Erkennung später. Kein zweiter Loader oder Registry.
+- [Distribution](https://github.com/TheDaimos/gewitterradar/commit/7e565565ec386a7efef9ef0bdb5f945ed32afb4f): V4.14.1 DEV / HA 0.25.187 / Runtime 4141r1 / E414-1A1; canonical source, native und dashboard/dist synchron; SHA256 aus tatsächlichen UTF-8-Dateibytes abgeleitet. Installationsfreigabe bleibt ausstehend.
+- [Testskript](https://github.com/TheDaimos/gewitterradar/commit/777ba55a836ac83b9356a4a125358264b5de6e1d): scripts/test-ma-004.mjs, fünf gezielte Tests.
+- [Korrigierter und tatsächlich getesteter Commit 3d3b88aaf47c12b2b72eeef4f2cd2c629f3822c6](https://github.com/TheDaimos/gewitterradar/commit/3d3b88aaf47c12b2b72eeef4f2cd2c629f3822c6): historischer Source-Test erwartete exakt 37 Gesamteinträge (erster automatischer [CI-Lauf](https://github.com/TheDaimos/gewitterradar/actions/runs/45586733353), Fehler scripts/test-v41169-data-sources.mjs:16). Ursache behoben: weiterhin exakt 37 Pflichtmodule, für 4.14 genau der versionierte optionale MA-Eintrag, andere Releases unverändert 37. Keine Entfernung von Schutzprüfungen. Neuer schmaler öffentlicher CI-Workflow ma-004-targeted.yml nur für Feature-Branch und relevante Pfade.
+- Manifest und Runtime-Inventar enthalten 38 deklarierte Module, davon 37 Pflichtmodule und genau monitored-areas.lifecycle 0.1.0 optional. OFF wird nicht importiert, fehlende Pflichtmodule bleiben Fehler, geladene optionale Versionsabweichung bleibt Fehler. Kein globales Abschalten der Registry-Prüfung. Build validiert exakte Moduldateimenge inklusive bestehender Support-Module (114/114); bestehende Asset-/Spiegel-/Hash-/DRA-Prüfungen bleiben erhalten.
+- Karten-, Wetter-, Eye-, Mond-, Legend-Hub-Fachcode unverändert. Geteilte Dateien nur Lifecycle-Hook, Registry-/Manifest-Integration, Versions-/Cache-/Distributionsverträge. Kein MA-005-Code.
+
+### Ausgeführte Prüfungen – tatsächlicher Remote-Nachweis
+
+Lokaler Git-Checkout weiterhin nicht möglich (Could not resolve host: github.com). Erfolgreicher alternativer Weg: [öffentlicher gezielter Actions-Run 45592223571](https://github.com/TheDaimos/gewitterradar/actions/runs/45592223571), [Job 139129075800](https://github.com/TheDaimos/gewitterradar/actions/runs/45592223571/job/139129075800), status completed, conclusion success, head_sha exakt 3d3b88aaf47c12b2b72eeef4f2cd2c629f3822c6. Runner checkout dieses Commits, Node v22.23.5. Logs vom 25.11.2026 10:09:37–10:09:41 UTC.
+
+| Prüfung / tatsächlicher Befehl | Ergebnis |
+|---|---|
+| node --check auf neun betroffenen Frontend-JS-Dateien und fünf MJS-Skripten gemäß Workflow | PASS |
+| node scripts/test-ma-004.mjs | 5 Tests, 5 PASS, 0 FAIL, 27.125969 ms |
+| node scripts/test-module-registry.mjs | PASS: module registry self-registration and Soll/Ist diagnostics |
+| node scripts/test-v41169-data-sources.mjs | PASS: sources, locations, read-only backend, admin control, dual frontend and radius isolation |
+| node scripts/verify-frontend.mjs | PASS: V4.14.1 DEV, E414-1A1, 38 Module, canonical DRA metadata, 235 Frontend-Dateien, exact delivery/checksum parity |
+| node scripts/test-frontend-build.mjs | PASS: Built modular Gewitterradar frontend; deterministic rebuild and fail-closed source/asset/delivery/inventory probes |
+| node scripts/verify-current-frontend.mjs (nach Rebuild) | PASS: 38 Module, 235 Frontend-Dateien, native und dashboard delivery/checksum parity |
+| sha256sum -c SHA256SUMS_FRONTEND.txt --quiet | PASS |
+| git diff --exit-code (nach Rebuild) | PASS: keine Abweichung zum ausgecheckten Commit |
+
+Fünf MA-004-Tests einzeln grün: Default OFF/ungültige Flags; inert ON, Lazy Import, Restart und Teardown; verspäteter Import nach Disconnect/OFF; Fehlerisolation Import/Initialisierung/Teardown; optionales Inventar, Versionen, Spiegel und SHA256. Tatsächliche GitHub-Job-Logs gelesen, keine reine Annahme aufgrund eines gestarteten Workflows.
+
+Zusätzlicher GitHub-Tree-Abgleich des Implementierungsstands: 114/114 erwartete modulare Dateien, keine fehlenden/zusätzlichen Dateien, beide Modulspiegel Git-Blob-identisch. Laufzeit-Registrierung von 38 deklarierbaren Modulen bedeutet nicht 38 aktive Module bei OFF. MA-004-Test prüft die isolierten Hooks mit injiziertem Importer und realem Modulimport, nicht vollständigen Browser/HA-Boot. Kein DEV-/PROD-Deployment, keine Veröffentlichung, kein vollständiger Release-Regressionsauftrag. Bestehende automatisch ausgelöste allgemeine CI bleibt unverändert; ihre vollständige Ausführung ist kein behaupteter MA-T0/T1-Nachweis. Hi-Res-Asset-Retention auf Test-SHA separat grün (45592223425); weitere automatische CI zum Zeitpunkt der Prüfung noch laufend.
+
+### Geänderte Dateien (exakter GitHub-Compare, 42 Pfade)
+
+- `.github/workflows/ma-004-targeted.yml` (added)
+- `SHA256SUMS_FRONTEND.txt` (modified)
+- `custom_components/gewitterradar/build_info.py` (modified)
+- `custom_components/gewitterradar/const.py` (modified)
+- `custom_components/gewitterradar/dra-deployment-provenance.json` (modified)
+- `custom_components/gewitterradar/frontend/assets/gewitterradar-runtime-manifest.json` (modified)
+- `custom_components/gewitterradar/frontend/gewitterradar.js` (modified)
+- `custom_components/gewitterradar/frontend/module-manifest.js` (modified)
+- `custom_components/gewitterradar/frontend/modules/core/card-lifecycle.js` (modified)
+- `custom_components/gewitterradar/frontend/modules/core/registry.js` (modified)
+- `custom_components/gewitterradar/frontend/modules/core/runtime.js` (modified)
+- `custom_components/gewitterradar/frontend/modules/monitored-areas/index.js` (added)
+- `custom_components/gewitterradar/frontend/modules/ui/settings-vault-view.js` (modified)
+- `custom_components/gewitterradar/frontend/panel.js` (modified)
+- `custom_components/gewitterradar/frontend/version.js` (modified)
+- `custom_components/gewitterradar/manifest.json` (modified)
+- `dashboard/dist/assets/gewitterradar-runtime-manifest.json` (modified)
+- `dashboard/dist/gewitterradar.js` (modified)
+- `dashboard/dist/module-manifest.js` (modified)
+- `dashboard/dist/modules/core/card-lifecycle.js` (modified)
+- `dashboard/dist/modules/core/registry.js` (modified)
+- `dashboard/dist/modules/core/runtime.js` (modified)
+- `dashboard/dist/modules/monitored-areas/index.js` (added)
+- `dashboard/dist/modules/ui/settings-vault-view.js` (modified)
+- `dashboard/dist/panel.js` (modified)
+- `dashboard/dist/version.js` (modified)
+- `frontend/assets.json` (modified)
+- `frontend/assets/gewitterradar-runtime-manifest.json` (modified)
+- `frontend/gewitterradar.js` (modified)
+- `frontend/module-manifest.js` (modified)
+- `frontend/modules/core/card-lifecycle.js` (modified)
+- `frontend/modules/core/registry.js` (modified)
+- `frontend/modules/core/runtime.js` (modified)
+- `frontend/modules/monitored-areas/index.js` (added)
+- `frontend/modules/ui/settings-vault-view.js` (modified)
+- `frontend/panel.js` (modified)
+- `frontend/version.js` (modified)
+- `scripts/build-frontend.mjs` (modified)
+- `scripts/test-ma-004.mjs` (added)
+- `scripts/test-v41169-data-sources.mjs` (modified)
+- `scripts/verify-current-frontend.mjs` (modified)
+- `scripts/verify-frontend.mjs` (modified)
+
+### Statusvertrag
+
+task_id=MA-004; implementation_commit=16f638d0926fb434fb89eb822a8802b3babfe01f; distribution_commit=7e565565ec386a7efef9ef0bdb5f945ed32afb4f; test_commit=777ba55a836ac83b9356a4a125358264b5de6e1d; tested_commit=3d3b88aaf47c12b2b72eeef4f2cd2c629f3822c6; changed_paths=obige Compare-Liste plus Statusdokumentation; affected_contracts=optionaler Frontend-Lifecycle, Modulregister/Manifest, Build/Inventar, Spiegel/Hash/DRA; test_level=T0/T1 plus betroffene Build-/Integritätsverträge; commands=obige Tabelle; results=5/5 PASS, Syntax PASS, Build/Determinismus/Manipulationsproben/Spiegel/SHA PASS; latest_T2_baseline_sha=keine MA-Baseline; latest_T3_baseline_sha=keine MA-Baseline; invalidated_baselines=keine MA-Baseline; known_blockers=keine für den vereinbarten MA-004-Umfang, reale HA-/Dashboard-Abnahme erst mit separater Freigabe; next_task=MA-005.
+
+## Nächster Auftrag: MA-005 – Feature-OFF-Smoke / P00-Gate
+
+Vorbereitet, **nicht gestartet und nicht freigegeben**. Vor MA-005 unabhängige MA-004-Abnahme; keine automatische Installation/Promotion. Kanonischer Übergabepunkt bleibt die Statusdatei auf deploy/dev; dorthin ausschließlich Dokumentation, kein MA-Anwendungscode.
+
+Feature-Branch-Abschlussdokumentation: [2b4ab2cb2da407accc5069392870e728239c89e5](https://github.com/TheDaimos/gewitterradar/commit/2b4ab2cb2da407accc5069392870e728239c89e5). Dieser kanonische Statuscommit enthält ausschließlich diese Markdown-Datei; keine Code-Promotion.
