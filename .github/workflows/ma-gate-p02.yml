@@ -4,6 +4,7 @@ on:
     branches: [feature/v4.14-monitored-areas]
     paths:
       - 'scripts/test-ma-gate-p02.py'
+      - 'scripts/test-ma-015.py'
       - 'custom_components/gewitterradar/monitored_areas/**'
       - 'custom_components/gewitterradar/settings_vault.py'
       - 'tests/test_ma015_native_ws.py'
