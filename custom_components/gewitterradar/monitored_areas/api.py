@@ -221,12 +221,12 @@ class Api:
                     "WHERE l.location_id=? AND p.ha_user_id=? AND p.vault_profile_id=?",
                     (cursor_id,actor_user_id,profile)).fetchone() is None:
                     raise ApiError("invalid_cursor")
-                escaped=query.replace("\\","\\\\").replace("%","\\%").replace("_","\\_")
+                escaped=query.replace("!","!!").replace("%","!%").replace("_","!_")
                 rows=c.execute(
                     "SELECT l.location_id,l.name,l.lat,l.lon,l.revision "
                     "FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
                     "WHERE p.ha_user_id=? AND p.vault_profile_id=? "
-                    "AND (?='' OR l.name LIKE ? ESCAPE '\\\\' COLLATE NOCASE) "
+                    "AND (?='' OR l.name LIKE ? ESCAPE '!' COLLATE NOCASE) "
                     "AND (? IS NULL OR l.location_id>?) "
                     "ORDER BY l.location_id LIMIT ?",
                     (actor_user_id,profile,query,"%"+escaped+"%",cursor_id,cursor_id,limit+1)).fetchall()
