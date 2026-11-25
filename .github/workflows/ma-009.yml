@@ -1,0 +1,30 @@
+name: MA-009 targeted event history schema
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths:
+      - 'custom_components/gewitterradar/monitored_areas/storage/**'
+      - 'scripts/test-ma-009.py'
+      - 'scripts/test-ma-008.py'
+      - 'scripts/test-ma-007.py'
+      - '.github/workflows/ma-009.yml'
+permissions:
+  contents: read
+jobs:
+  schema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: |
+          git rev-parse HEAD
+          python -m compileall -q custom_components/gewitterradar/monitored_areas
+          python scripts/test-ma-009.py
+          python scripts/test-ma-008.py
+          python scripts/test-ma-007.py
+          python scripts/test-ma-006.py
