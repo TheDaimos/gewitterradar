@@ -2,6 +2,21 @@
 // It must not replace the Local-To-do inventory before the verified MA-020 cutover.
 // No browser-supplied identity, direct DB access, or implicit reference-tracker updates.
 export const PLACE_MODES=Object.freeze(["legacy","migration_pending","db_active"]);
+const coordinate = (number,min,max) => {
+  if (typeof number!=="number" || !Number.isFinite(number) || number<min || number>max)
+    throw new TypeError("MA_INVALID_COORDINATES");
+  return number;
+};
+export function formatCoordinates({latitude,longitude}) {
+  const lat=coordinate(latitude,-90,90),lon=coordinate(longitude,-180,180);
+  return `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+}
+export function parseCoordinates(raw) {
+  if(typeof raw!=="string" || raw.length>100)throw new TypeError("MA_INVALID_COORDINATES");
+  const match=raw.trim().match(/^([+-]?(?:\\d+(?:\\.\\d+)?|\\.\\d+))\\s*[,;]\\s*([+-]?(?:\\d+(?:\\.\\d+)?|\\.\\d+))$/);
+  if(!match)throw new TypeError("MA_INVALID_COORDINATES");
+  return {latitude:coordinate(Number(match[1]),-90,90),longitude:coordinate(Number(match[2]),-180,180)};
+}
 const unavailable=()=>{throw new Error("MA_PLACE_MODE_NOT_READY");};
 const defaultLegacy=Object.freeze({listPlaces:unavailable,saveCandidate:unavailable});
 export function createLocationPort({hass, profileId, legacy=defaultLegacy, focusMap, selectReference, openDetails}={}) {
@@ -9,10 +24,10 @@ export function createLocationPort({hass, profileId, legacy=defaultLegacy, focus
     throw new TypeError("MA_LOCATION_LEGACY_PORT_REQUIRED");
   }
   let mode="legacy";
-  const request = async (command, payload={}) => {
+  const request = async (command, payload={}, extra={}) => {
     if(typeof hass?.callWS!=="function" || !profileId) throw new Error("MA_LOCATION_VAULT_NOT_READY");
     return hass.callWS({type:"gewitterradar/monitored_areas/"+command,
-      schema:1,request:{profile_id:profileId,payload}});
+      schema:1,request:{profile_id:profileId,payload,...extra}});
   };
   return Object.freeze({
     get mode(){return mode;},
@@ -37,10 +52,27 @@ export function createLocationPort({hass, profileId, legacy=defaultLegacy, focus
       if(mode!=="migration_pending"&&mode!=="db_active")throw new Error("MA_PLACE_MODE_NOT_READY");
       return request("places_list",{query,cursor,limit:50});
     },
-    async saveCandidate(candidate){
-      if(mode==="db_active")throw new Error("MA_PLACE_WRITE_PENDING_MA017");
-      return legacy.saveCandidate(candidate);
+    async saveCandidate(candidate,requestId){
+      if(mode!=="db_active")return legacy.saveCandidate(candidate);
+      if(typeof requestId!=="string")throw new TypeError("MA_REQUEST_ID_REQUIRED");
+      const name=String(candidate?.name||candidate?.displayLabel||"").trim();
+      if(!name || name.length>120)throw new TypeError("MA_INVALID_NAME");
+      const lat=coordinate(candidate?.latitude,-90,90);
+      const lon=coordinate(candidate?.longitude,-180,180);
+      return request("location_create",{name,lat,lon},{request_id:requestId});
     },
+    async renamePlace(locationId,name,expectedRevision,requestId){
+      if(mode!=="db_active")throw new Error("MA_PLACE_DB_NOT_ACTIVE");
+      if(typeof locationId!=="string"||typeof requestId!=="string"||
+         !Number.isInteger(expectedRevision)||expectedRevision<1)throw new TypeError("MA_INVALID_REQUEST");
+      const clean=String(name||"").trim();
+      if(!clean||clean.length>120)throw new TypeError("MA_INVALID_NAME");
+      return request("location_update",{location_id:locationId,name:clean},{
+        request_id:requestId,expected_revision:expectedRevision
+      });
+    },
+    copyCoordinates:formatCoordinates,
+    parseCoordinates,
     selectReference(candidate){
       if(typeof selectReference!=="function")throw new Error("MA_REFERENCE_HANDLER_UNAVAILABLE");
       return selectReference(candidate);
