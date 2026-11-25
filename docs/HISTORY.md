@@ -1,3 +1,7 @@
+## V4.13 FINAL · 2026/11 · HA 0.25.186
+
+Finalisierung des abgenommenen V4.13.7-DEV-Umfangs mit Mondlegende und erweitertem Legend Hub. Die öffentliche Kennung ist V4.13 FINAL, der interne Quellstand 4.13.7 / Runtime 4137r2. Bestehende Wetterlayer, Aura-/Eye-Referenzen und Quellenlogik bleiben geschützt. PRE-MERGE-Kopie des vorherigen `main` ist unabhängig verifiziert. Siehe [Release Notes](RELEASE_NOTES_V4_13.md) und [Sicherungsnachweis](release-control/GR_V413_INDEPENDENT_PREMERGE_BACKUP.md).
+
 ## V4.12.6 DEV · 2026/11 · HA 0.25.167
 
 Einheitliche Temperaturfelder erhalten eine einzige tatsächliche Skalenbeschriftung ohne erfundenen oberen Grenzwert. Abgebrochene Slot-Drags werden verworfen. Abschließender DEV-Kandidat nach vollständig grünem 4.12.5-Zwischenstand; [Prüfbericht](GR_412_LEGEND_REPORT_2026-11-22.md).
