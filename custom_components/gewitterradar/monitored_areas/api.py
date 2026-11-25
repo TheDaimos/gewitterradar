@@ -230,6 +230,8 @@ class Api:
                 if not isinstance(d,dict) or not set(d) <= {"uid","action","location_id","expected_revision"}:
                     raise ApiError("invalid_request")
                 uid=d.get("uid")
+                if not isinstance(uid,str) or len(uid)>160:
+                    raise ApiError("invalid_request")
                 action=d.get("action")
                 if uid not in candidates or uid in choices or action not in ("create","use_existing","replace","skip"):
                     raise ApiError("invalid_request")
