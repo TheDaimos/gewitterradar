@@ -1,0 +1,24 @@
+name: MA-014 deletion and history contracts
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths:
+      - 'custom_components/gewitterradar/monitored_areas/permissions.py'
+      - 'scripts/test-ma-014.py'
+      - '.github/workflows/ma-014.yml'
+permissions:
+  contents: read
+jobs:
+  protection:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: |
+          git rev-parse HEAD
+          python -m compileall -q custom_components/gewitterradar/monitored_areas
+          python scripts/test-ma-014.py
+          python scripts/test-ma-013.py
+          python scripts/test-ma-012.py
