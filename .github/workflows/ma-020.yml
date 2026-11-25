@@ -1,0 +1,25 @@
+name: MA-020 journal schema contracts
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths:
+      - 'custom_components/gewitterradar/monitored_areas/storage/schema.py'
+      - 'scripts/test-ma-020.py'
+      - '.github/workflows/ma-020.yml'
+permissions:
+  contents: read
+jobs:
+  journal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Targeted MA-020 T0 T1 and schema regression
+        run: |
+          git rev-parse HEAD
+          python -m compileall -q custom_components/gewitterradar/monitored_areas
+          python scripts/test-ma-020.py
+          python scripts/test-ma-019.py
