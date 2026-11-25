@@ -39,7 +39,7 @@ Historischer Dateiname V412 bleibt bewusst erhalten. Verbindliche Zielversion: *
 
 ## MA-002 – Verbindliche Modularchitektur
 
-- Status: **Dokumentationsauftrag abgeschlossen und GitHub-verifiziert; Betreiberabnahme noch offen.**
+- Status: **Abgeschlossen, GitHub-verifiziert und fachlich abgenommen (25.11.2026); drei dokumentierte Vorbehalte für spätere Arbeitspakete.**
 - Analysierter Repository-HEAD: [2a04b65b780720ad3a7d2e526254616e56940d2f](https://github.com/TheDaimos/gewitterradar/commit/2a04b65b780720ad3a7d2e526254616e56940d2f), Frontend 4.13.7 DEV / HA 0.25.185. MA-001-Codebasis und Abnahme bleiben erhalten.
 - Architektur: [MONITORED_AREAS_V414_MA002_ARCHITEKTUR.md](MONITORED_AREAS_V414_MA002_ARCHITEKTUR.md), 16 Abschnitte; [Dokumentationscommit 1e7fbd95224a6195b9a7ed13e5813cf5f4e5ffe4](https://github.com/TheDaimos/gewitterradar/commit/1e7fbd95224a6195b9a7ed13e5813cf5f4e5ffe4).
 - Entscheidungen: isoliertes Python-Paket und optionales Frontend-Modul, Feature-Flag default OFF ohne Ressourcen; native entry-bezogene Lifecycle-Fassade; eine SQLite-DB im HA-Konfigurationsbereich, serialisierter Worker, WAL/Transaktionen/Schema-Versionierung; versionierte authentifizierte WebSocket-API, UUID/Revision/Receipts und serverseitige ACL; unabhängige Standorttracker, Quellenadapter, gemeinsame Rohhistorie und persönliche Alarmfenster; WR alleinige Providerautorität; zusätzliche HA-Entitäten nur explizit und default OFF.
@@ -48,6 +48,37 @@ Historischer Dateiname V412 bleibt bewusst erhalten. Verbindliche Zielversion: *
 - Nachweis: aktueller HEAD und Version geprüft, Fachkonzept/Plan/MA-001/Schutzverträge zugrunde gelegt; Architektur nach Commit erneut gelesen, 16 Abschnitte vorhanden, Commit-Dateiliste ausschließlich Architektur. Statusupdate separat mit aktuellem Blob-SHA. Keine Anwendungscode-/Build-/Workflow-/Release-/WR-/HA-Änderung, keine manuell gestarteten Actions.
 - Testvertrag: task_id=MA-002; implementation_commit=nicht anwendbar; documentation_commit=1e7fbd95224a6195b9a7ed13e5813cf5f4e5ffe4; changed_paths=docs/MONITORED_AREAS_V414_MA002_ARCHITEKTUR.md, docs/MONITORED_AREAS_V412_STATUS.md; affected_contracts=MA-Sollarchitektur, keine Laufzeitänderung; test_level=Dokumentationsprüfung; commands=GitHub HEAD/File/Commit-Readback; results=Architektur verifiziert, Status-Readback nach Schreiben; latest_T2_baseline_sha=keine MA-Baseline; latest_T3_baseline_sha=keine MA-Baseline; invalidated_baselines=keine durch Dokumentation; known_blockers=keine für Architektur/Skelett, V4.14-Codebasis vor Implementierung prüfen; next_task=MA-003.
 
-## Nächster Auftrag: MA-003 – Backend-Skelett
+### Fachliche Abnahme MA-002 – 25.11.2026
 
-**Vorbereitet, nicht gestartet.** Ausschließlich die in Architekturabschnitt 15 spezifizierte Fassade, config.py, runtime.py, contracts.py und minimale Lifecycle-Anbindung auf autorisierter V4.14-Entwicklungsbasis. Keine DB/Tabellen/Entities/Tracker/Listener/Frontend-Änderung; Flag OFF ohne Seiteneffekte, ON inert; T0/T1 gezielt. V4.13-Finalisierung nicht beeinträchtigen. Kein automatischer Folgetask.
+Unabhängige Prüfung des vollständigen Architekturvertrags gegen MA-001 und das verbindliche Fachkonzept: **ACCEPTED_USER (Dokumentations-/Architekturabnahme, keine Implementierungs- oder DEV-Laufzeitabnahme)**. MA-001 und MA-002 werden nicht grundlos erneut bearbeitet. Der abgenommene Architekturcommit bleibt unverändert.
+
+Verbindliche Vorbehalte (keiner blockiert MA-003):
+
+- **A – Datenbanksicherungen (MA-050/051):** Das Fachkonzept sieht Sicherungsmöglichkeiten für HA-Benutzer vor. Die vorläufige Beschränkung vollständiger Systemsicherungen auf HA-Administratoren ist eine technische Sicherheitsentscheidung, keine abschließend freigegebene fachliche Einschränkung. Vor Implementierung Rechte und gewünschte Benutzer-Sicherungsmöglichkeiten ausdrücklich klären; systemweiter Restore weiterhin gesondert absichern.
+- **B – HA-Event-Bus (MA-048):** Der zusätzliche Event-Bus-Opt-in ist eine vorgeschlagene technische Sicherheitsentscheidung, keine abschließend freigegebene neue Benutzerentscheidung. Vor Umsetzung fachlich prüfen. Optionale HA-Entitäten bleiben unabhängig davon standardmäßig AUS.
+- **C – Ereignissitzungen (vor MA-033):** Gemeinsame Ereignissitzungen und persönliche Benachrichtigungsfenster sind im Architekturmodell getrennt; genaue Abgrenzung fachlich prüfen. Persönliche Abschlussintervalle bleiben 15–60 Minuten in 5-Minuten-Schritten, Default 15 Minuten. Keine Reduktion des Fachkonzepts.
+
+## Nächster Auftrag: MA-003 – Backend-Grundgerüst
+
+**Status: VORBEREITET / nicht gestartet (Codebasis-Freigabe ausstehend).**
+
+### Veröffentlichungs- und Basisprüfung am 25.11.2026
+
+| Prüfung | Tatsächlicher GitHub-Befund |
+|---|---|
+| deploy/dev | [ea44ea6550d76e8b778cccd06af5d583955494d6](https://github.com/TheDaimos/gewitterradar/commit/ea44ea6550d76e8b778cccd06af5d583955494d6); frontend/version.js: 4.13.7 DEV, HA 0.25.185, Runtime 4137r1. |
+| main | [a37d4b2ad22a0c2541d25edd97dc53b4cfa3264d](https://github.com/TheDaimos/gewitterradar/commit/a37d4b2ad22a0c2541d25edd97dc53b4cfa3264d); frontend/version.js: V4.13 FINAL, Produktversion 4.13.7, HA 0.25.186, Runtime 4137r2. |
+| Öffentlicher Release | GitHub releases/latest meldet v4.12, veröffentlicht 23.11.2026; Release-Abfragen v4.13 und v4.13.0 liefern HTTP 404. Eine veröffentlichte V4.13 FINAL ist damit noch nicht verifiziert. |
+| V4.13-Finalisierung | Release-/Publish-Request-Branches vorhanden, darunter release/publish-request/v4.13-20261125 bei 94cc165e9d1c5856a787f57006b7fd54707435c6. Auf main sind Shared Frontend, Integration, Hi-Res Asset Retention, Diagnostic Contract und Pages für a37d4b2 erfolgreich gemeldet. Dies ist kein Ersatz für den Veröffentlichungsnachweis. |
+| V4.14 | In den abgefragten Branch-Refs keine eindeutig freigegebene V4.14-Entwicklungsbasis gefunden; deploy/dev trägt noch V4.13-Identität. |
+| WR Partner-HEAD | [850c3542a8b3b181edc5837205bbeb374ed72eab](https://github.com/TheDaimos/weather-router-dev/commit/850c3542a8b3b181edc5837205bbeb374ed72eab) auf deploy/dev; ausschließlich gelesen. |
+
+Entscheidung: entsprechend Betreiberauftrag kein Start von MA-003, solange die V4.14-Codebasis nicht sicher freigegeben ist. Ein separater Feature-Branch ist grundsätzlich zulässig, wird aber nicht als impliziter Ersatz für die fehlende Basisfreigabe angelegt. Keine Änderungen am aktiven Releasekandidaten, keine Branch-Erstellung, keine Releases oder Installationen. Kein erneuter Architekturauftrag erforderlich. Bei Wiederaufnahme aktuellen Veröffentlichungsstand und autorisierte V4.14-Basis erneut prüfen.
+
+### Ausführungsumfang nach Basisfreigabe
+
+Ausschließlich custom_components/gewitterradar/monitored_areas/__init__.py, config.py, runtime.py, contracts.py und minimale additive Lifecycle-Anbindung gemäß Architekturabschnitt 15. Globales Feature-Flag standardmäßig AUS, keine Upgrade-Aktivierung; OFF ohne DB/Dateien, Tasks, Listener, Entitäten oder API-Registrierung; ON nur inert testbares Runtime-Skelett; wiederholbarer Start und idempotenter Stop; Fehlerisolation gegenüber GR. Keine Implementierung späterer Tasks.
+
+T0/T1 ausschließlich: Python-Import/Syntax, Default-OFF, keine Ressourcen bei OFF, ON inert, wiederholter Start/Stop, Fehlerisolation. Keine vollständige Regression, kein Frontend-Build, keine DEV-Installation ohne gesonderte Freigabe. Keine Tests als ausgeführt ausgeben: MA-003 noch nicht begonnen. Keine neue MA-T2/T3-Baseline.
+
+Übergabenachweis: nur diese Statusdatei wird für Abnahme/Vorbehalte/Basisprüfung aktualisiert; GitHub-Readback und Commit-Dateiliste nach Schreiben. Nächster Task bleibt MA-003, kein automatischer Start weiterer Tasks.
