@@ -57,7 +57,8 @@ def _canonical(items, *, allow_empty=False):
     if not records and not allow_empty:
         raise FinalizationError("migration_empty_source")
     names = [r["summary"] for r in records.values()]
-    if any(uid in names and records[uid]["summary"] != uid for uid in records):
+    if any(other["uid"] != uid and other["summary"] == uid
+           for uid in records for other in records.values()):
         raise FinalizationError("migration_ambiguous_selector")
     return records
 
