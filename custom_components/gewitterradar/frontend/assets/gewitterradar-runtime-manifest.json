@@ -1,13 +1,13 @@
 {
   "schema": "gewitterradar.runtime.v1",
-  "productVersion": "4.13.7",
-  "build": "V4.13-FINAL-2026-11-25",
-  "runtimeRevision": "4137r2",
-  "moduleSetId": "E413-7A2",
+  "productVersion": "4.14.1",
+  "build": "V4.14.1-DEV-2026-11-25",
+  "runtimeRevision": "4141r1",
+  "moduleSetId": "E414-1A1",
   "modules": [
     {
       "id": "core.manifest",
-      "version": "1.2.278"
+      "version": "1.2.279"
     },
     {
       "id": "core.base-context",
@@ -15,7 +15,7 @@
     },
     {
       "id": "core.registry",
-      "version": "1.0.2"
+      "version": "1.0.3"
     },
     {
       "id": "core.runtime",
@@ -23,7 +23,7 @@
     },
     {
       "id": "core.card-lifecycle",
-      "version": "1.0.76"
+      "version": "1.0.77"
     },
     {
       "id": "fullscreen.map-display",
@@ -152,7 +152,12 @@
     {
       "id": "weather.synoptic-display",
       "version": "0.1.72"
+    },
+    {
+      "id": "monitored-areas.lifecycle",
+      "version": "0.1.0",
+      "optional": true
     }
   ],
-  "displayVersion": "V4.13 FINAL"
+  "displayVersion": "V4.14.1 DEV"
 }

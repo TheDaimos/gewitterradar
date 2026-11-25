@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.13.7",
-  "build": "V4.13-FINAL-2026-11-25",
-  "runtimeRevision": "4137r2",
-  "moduleSetId": "E413-7A2",
-  "baselineFeatureHead": "2d1e16f6502b94ff9ff0665af7a5add7d3f0e4ad",
+  "productVersion": "4.14.1",
+  "build": "V4.14.1-DEV-2026-11-25",
+  "runtimeRevision": "4141r1",
+  "moduleSetId": "E414-1A1",
+  "baselineFeatureHead": "2e1cea524c540b9e9c2a3625b1d23713b564eeb9",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "Legend Hub: DRA DEV delivery of centered Moon badge and layered Eye-gold frame from 15c19d88; no further UI or functional changes.",
+    "purpose": "Monitored Areas MA-004: isolated inert frontend lifecycle; feature branch only, not authorized for installation",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,

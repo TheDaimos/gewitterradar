@@ -87,6 +87,8 @@ export function moduleDiagnostics(expected = []) {
 
   for (const wanted of expectedMap.values()) {
     const actual = loadedMap.get(String(wanted.id));
+    // Optional modules are expected only once actually loaded; all loaded identities remain checked.
+    if (wanted.optional === true && !actual) continue;
     rows.push({
       id: String(wanted.id),
       group: String(wanted.group || actual?.group || "other"),
@@ -139,7 +141,7 @@ export function moduleDiagnostics(expected = []) {
     ok,
     startedAt: target.startedAt,
     loadedCount: loaded.length,
-    expectedCount: expectedMap.size,
+    expectedCount: [...expectedMap.values()].filter(item => item.optional !== true || loadedMap.has(String(item.id))).length,
     duplicateIds: Object.freeze(duplicateIds),
     duplicateDetails:Object.freeze(duplicateDetails),
     rows: Object.freeze(rows.map((row) => Object.freeze(row))),
@@ -150,4 +152,4 @@ export function moduleRegistrySnapshot(expected = []) {
   return JSON.parse(JSON.stringify(moduleDiagnostics(expected)));
 }
 
-registerModule({id:"core.registry",version:"1.0.2",group:"Kern",function:"Modulregister",subfunctions:["Selbstregistrierung","Soll/Ist-Prüfung","Diagnoseexport"],file:"modules/core/registry.js"});
+registerModule({id:"core.registry",version:"1.0.3",group:"Kern",function:"Modulregister",subfunctions:["Selbstregistrierung","Soll/Ist-Prüfung","Diagnoseexport"],file:"modules/core/registry.js"});

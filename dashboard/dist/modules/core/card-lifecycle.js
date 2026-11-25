@@ -3,7 +3,7 @@ import {resumeLegendHub,teardownLegendHub} from '../weather/legend-hub.js?v=4135
 import { defineModule } from "./runtime.js?v=41110r1";
 export const MODULE_META=Object.freeze({
   "id": "core.card-lifecycle",
-  "version": "1.0.76",
+  "version": "1.0.77",
   "group": "Kern",
   "function": "Karten-Lebenszyklus",
   "subfunctions": [
@@ -433,6 +433,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
       this._diagnosticRenderTopInitialized = true;
       this._diagnosticRenderTopOnly = false;
       this._diagnosticAllowFullRender = true;
+      this._syncMonitoredAreas?.();
     },
 
     getCardSize() {
@@ -440,6 +441,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
     },
 
     connectedCallback() {
+      this._syncMonitoredAreas?.();
       this._syncProBranding?.();
       this._resumeSettingsNavigation?.();
       this._maybeOpenAbout();
@@ -459,6 +461,7 @@ export const installCardLifecycle=defineModule(MODULE_META,(deps)=>{const { CARD
     },
 
     disconnectedCallback() {
+      this._teardownMonitoredAreas?.();
       this._firstStepsDialog?.close();
       this._proWelcomeDialog?.close();
       this._stopProBranding?.();
