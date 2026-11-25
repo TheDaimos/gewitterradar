@@ -1,4 +1,5 @@
 import {settingsStorage} from '../core/settings-vault.js?v=4134r1';
+import {createLocationPort} from '../monitored-areas/location-port.js?v=4141r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
@@ -900,6 +901,10 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             remove.textContent = '×';
             remove.title = text.removeSaved;
             remove.setAttribute('aria-label',text.removeSaved + ': ' + labelText);
+            if(this._maSavedMode==='db_active'){
+              remove.disabled=true;
+              remove.title='Die neue Datenbankverwaltung unterstützt diese Funktion nach MA-022.';
+            }
             row.append(button,remove);
           }
           frag.appendChild(row);
@@ -1138,7 +1143,46 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           };
         } catch (_) { return null; }
       };
+      const v407MonitoredAreasPort = async () => {
+        if (this._config?.monitored_areas_enabled !== true) return null;
+        const profileId = this._settingsVault?.profile?.id;
+        if (!profileId || !this._hass?.callWS) throw new Error('MA_LOCATION_VAULT_NOT_READY');
+        const unavailable = () => {throw new Error('MA_LEGACY_ONLY');};
+        const port = createLocationPort({hass:this._hass,profileId,
+          legacy:{listPlaces:unavailable,saveCandidate:unavailable}});
+        await port.reconcileMode(); // Server authority; never read a browser flag as db_active.
+        return port;
+      };
       const v407LoadSavedPlaces = async ({force=false} = {}) => {
+        const maPort=await v407MonitoredAreasPort();
+        if (maPort?.mode==='db_active') {
+          this._maSavedMode='db_active';
+          if(!force && this._v407SavedPlacesEntity==='monitored_areas_sqlite'
+              && Array.isArray(this._v407SavedPlaces)) return this._v407SavedPlaces;
+          const places=[],seen=new Set();
+          let cursor=null;
+          for (let page=0;page<200;page++) {
+            const result=await maPort.listPlaces('',cursor);
+            for(const place of result.places) {
+              if(seen.has(place.location_id))throw new Error('MA_DUPLICATE_LOCATION');
+              seen.add(place.location_id);
+              places.push({uid:place.location_id,summary:place.name,status:'needs_action',
+                provider:'monitored_areas_sqlite',name:place.name,displayLabel:place.displayLabel||place.name,
+                latitude:place.latitude,longitude:place.longitude,revision:place.revision});
+            }
+            if(!result.next_cursor) {cursor=null;break;}
+            if(result.next_cursor===cursor)throw new Error('MA_INVALID_CURSOR');
+            cursor=result.next_cursor;
+          }
+          if(cursor!==null)throw new Error('MA_LOCATION_LIST_TOO_LARGE');
+          places.sort((a,b)=>a.summary.localeCompare(b.summary,undefined,{sensitivity:'base'}));
+          this._v407SavedPlaces=places;
+          this._v407RemovedPlaces=[];
+          this._v407SavedPlacesEntity='monitored_areas_sqlite';
+          this._v407SavedPlacesMissing=false;
+          return places;
+        }
+        this._maSavedMode='legacy';
         const entityId = v407SavedTodoEntity();
         this._v407SavedPlacesMissing = !entityId;
         if (!entityId) {
@@ -1175,6 +1219,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         return this._v407SavedPlacesLoading;
       };
       const v407UpdateSavedPlaceStatus = async (place,status) => {
+        if((await v407MonitoredAreasPort())?.mode==='db_active') throw new Error('MA_DB_SOFT_DELETE_NOT_YET_AVAILABLE');
         const entityId = v407SavedTodoEntity();
         if (!entityId) throw new Error('V407_TODO_MISSING');
         const item = String(place?.uid || place?.summary || '').trim();
@@ -1186,6 +1231,17 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       const v407RemoveSavedPlace = async (place) => v407UpdateSavedPlaceStatus(place,'completed');
       const v407RestoreSavedPlace = async (place) => v407UpdateSavedPlaceStatus(place,'needs_action');
       const v407SaveCandidate = async (candidate) => {
+        const maPort=await v407MonitoredAreasPort();
+        if(maPort?.mode==='db_active') {
+          await v407LoadSavedPlaces({force:true});
+          const sameCoordinates=place=>Math.abs(Number(place.latitude)-Number(candidate.latitude))<0.00001
+                                    && Math.abs(Number(place.longitude)-Number(candidate.longitude))<0.00001;
+          const duplicate=this._v407SavedPlaces.find(sameCoordinates);
+          if(duplicate)return {saved:false,duplicate:true,restored:false,place:duplicate};
+          await maPort.saveCandidate(candidate,crypto.randomUUID());
+          const refreshed=await v407LoadSavedPlaces({force:true});
+          return {saved:true,duplicate:false,restored:false,place:refreshed.find(sameCoordinates)||null};
+        }
         const entityId = v407SavedTodoEntity();
         if (!entityId) throw new Error('V407_TODO_MISSING');
         await v407LoadSavedPlaces({force:true});
