@@ -224,6 +224,40 @@ task_id=MA-004; implementation_commit=16f638d0926fb434fb89eb822a8802b3babfe01f; 
 
 ## Nächster Auftrag: MA-005 – Feature-OFF-Smoke / P00-Gate
 
-Vorbereitet, **nicht gestartet und nicht freigegeben**. Vor MA-005 unabhängige MA-004-Abnahme; keine automatische Installation/Promotion. Kanonischer Übergabepunkt bleibt die Statusdatei auf deploy/dev; dorthin ausschließlich Dokumentation, kein MA-Anwendungscode.
+**MA-005 ist beauftragt und implementiert; T2-Feature-OFF-Vertragstests bestanden.** Abschließender Shared-Frontend-CI-Nachweis und reale HA-DEV-Laufzeitabnahme stehen aus; P00 ist noch nicht freigegeben. Keine automatische Installation/Promotion. Kanonischer Übergabepunkt bleibt die Statusdatei auf deploy/dev; dorthin ausschließlich Dokumentation, kein MA-Anwendungscode.
 
 Feature-Branch-Abschlussdokumentation: [2b4ab2cb2da407accc5069392870e728239c89e5](https://github.com/TheDaimos/gewitterradar/commit/2b4ab2cb2da407accc5069392870e728239c89e5). Dieser kanonische Statuscommit enthält ausschließlich diese Markdown-Datei; keine Code-Promotion.
+
+## MA-005 – P00 Feature-OFF | Fortschritt und T2-Vertragsnachweise (25.11.2026)
+
+**Status: IMPLEMENTED / T2-Vertragsprüfungen für Feature-OFF erfolgreich; Shared-Frontend-Revalidierung auf Korrekturcommit noch nicht abgeschlossen; reale HA-DEV-Laufzeitabnahme ausstehend. Nicht ACCEPTED_USER / P00 nicht freigegeben.**
+
+- Arbeitsbranch: `feature/v4.14-monitored-areas`; keine Promotion von MA-Code nach `deploy/dev` oder `main`.
+- Testimplementierung: [6d8597a3](https://github.com/TheDaimos/gewitterradar/commit/6d8597a3d55008a7ab389cc026be3838d747a272) – native HA-Testumgebung, Chromium mit tatsächlichem GewitterRadar-Frontend und eigener öffentlicher P00-CI.
+- Korrektur der ersten CI-Befunde: [2ce7039d](https://github.com/TheDaimos/gewitterradar/commit/2ce7039dafa066d75af225a52e10a6c91f8df6f5) – paketierter Entity-Referenzimport, fehlender Standort-Helper im Chromium-Test explizit geprüft und V4.14-Versionsassertions ergänzt. Keine Abschwächung des Entity-Vertrags.
+- Letzte Shared-Frontend-Testkorrektur: [9ec7f8ba](https://github.com/TheDaimos/gewitterradar/commit/9ec7f8ba216971694ed0b4181c453408d43a0f8d) – bestehende Diagnoseprüfung auf exakt 37 Pflichtmodulidentitäten bei deaktiviertem optionalem MA-Modul ausgerichtet; ausschließlich `scripts/test-v40756-settings-help.cjs` geändert.
+
+### Nachweise (GitHub-Actions-Status am 25.11.2026)
+
+| Prüfung | Lauf | Verifizierter Befund |
+|---|---|---|
+| MA-005 T2 Feature-OFF | [CI](https://github.com/TheDaimos/gewitterradar/actions/runs/45618483155) | SUCCESS – native HA 6/6, Chromium PASS |
+| HA-Integration | [CI](https://github.com/TheDaimos/gewitterradar/actions/runs/45618483147) | SUCCESS |
+| MA-004-Verträge | [CI](https://github.com/TheDaimos/gewitterradar/actions/runs/45618482979) | SUCCESS |
+| Hi-Res-Asset-Schutz | [CI](https://github.com/TheDaimos/gewitterradar/actions/runs/45619118608) | SUCCESS auf 9ec7f8ba |
+| Erneute HA-Integration | [CI](https://github.com/TheDaimos/gewitterradar/actions/runs/45619118645) | SUCCESS auf 9ec7f8ba |
+| Erneute MA-004-Schutzverträge | [CI](https://github.com/TheDaimos/gewitterradar/actions/runs/45619118830) | SUCCESS auf 9ec7f8ba |
+| Shared Frontend – erneuter Lauf | [CI](https://github.com/TheDaimos/gewitterradar/actions/runs/45619118557) | IN_PROGRESS – Ergebnis noch ausstehend |
+
+Der erfolgreiche MA-005-P00-Lauf bezieht sich auf den tatsächlich getesteten SHA `2ce7039dafa066d75af225a52e10a6c91f8df6f5`. Native HA-Vertragstests **6/6 PASS**, Chromium-Feature-OFF **PASS**; bestehender Standort-Button bei fehlendem Helper korrekt deaktiviert, Karten-/Eye-/Legend-Hub-Boot und WR-Erkennung nachgewiesen, kein MA-Import/DOM/WS/Storage bei OFF. Die spätere Korrektur `9ec7f8ba` ändert nur einen bestehenden Shared-Frontend-Diagnosetest; dennoch ist dessen eigener CI-Abschluss abzuwarten, statt grüne Ergebnisse zu unterstellen.
+
+### Offene Abschlussbedingungen
+
+1. [Shared-Frontend-Revalidierung 45619118557](https://github.com/TheDaimos/gewitterradar/actions/runs/45619118557) abschließend auf SUCCESS prüfen oder reale Fehler gezielt beheben und betroffene Prüfungen wiederholen.
+2. Finalen getesteten Code-/Test-SHA, CI-Logs, Umfang sowie die erste gültige P00-T2-Baseline dokumentieren und unabhängig gegen GitHub verifizieren.
+3. Realen HA-DEV-Feature-OFF-Smoke auf VM109 erst nach gesonderter Installationsfreigabe durchführen. GitHub-Runner-HA- und Chromium-Tests sind **kein** VM109-Realtest. PROD VM101 unangetastet.
+4. P00 erst nach vollständig erforderlicher Abnahme freigeben; MA-006/P01 bleibt gesperrt.
+
+MA-001 bis MA-004 bleiben für ihre jeweils geprüften Umfänge abgenommen; V4.13 FINAL und WeatherRouter werden nicht geändert.
+
+**Statusvertrag:** task_id=MA-005; implementation_commit=6d8597a3d55008a7ab389cc026be3838d747a272; test_fix_commit=2ce7039dafa066d75af225a52e10a6c91f8df6f5; shared_test_fix_commit=9ec7f8ba216971694ed0b4181c453408d43a0f8d; latest_successful_p00_t2_sha=2ce7039dafa066d75af225a52e10a6c91f8df6f5; latest_T2_baseline_sha=vorläufig 2ce7039d (P00-Teilnachweis, Phasenfreigabe offen); latest_T3_baseline_sha=keine; affected_contracts=HA-native Feature-OFF, Browser Feature-OFF, bestehende Modulidentitäten; known_blockers=Shared-Frontend-Abschluss und VM109-Laufzeitnachweis ausstehend; next_task=MA-005 Abschluss/P00-Gate, nicht MA-006.
