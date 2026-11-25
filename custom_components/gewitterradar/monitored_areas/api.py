@@ -112,6 +112,21 @@ class Api:
             return result
         return await self._repo._write(transaction)
 
+    async def _existing_receipt(self, actor, op, request):
+        """Resolve a committed retry before access to a possibly deleted object."""
+        request_id = _uuid(request.get("request_id"))
+        digest = _hash(op, request)
+        row = await self._repo._db.async_execute(
+            lambda c: c.execute(
+                "SELECT operation,payload_hash,result_json FROM request_receipts "
+                "WHERE actor_user_id=? AND request_id=?", (actor,request_id)
+            ).fetchone(),kind="read")
+        if row is None:
+            return None
+        if row[0]!=op or row[1]!=digest:
+            raise ApiError("request_conflict")
+        return json.loads(row[2])
+
     async def dispatch(self, *, actor_user_id, is_admin, op, request):
         if not actor_user_id:
             raise ApiError("unauthorized")
@@ -131,8 +146,12 @@ class Api:
             "push_enabled","critical_enabled","closure_enabled","quiet_minutes",
             "status_push","display_settings_json","confirmation_nonce",
             "explicit_final","limit"})
-        if op in MUTATIONS and not request.get("request_id"):
-            raise ApiError("invalid_request")
+        if op in MUTATIONS:
+            if not request.get("request_id"):
+                raise ApiError("invalid_request")
+            replay = await self._existing_receipt(actor_user_id,op,request)
+            if replay is not None:
+                return replay
         if op=="locations_list":
             limit=payload.get("limit",50)
             if type(limit) is not int or not 1<=limit<=100:
@@ -183,7 +202,7 @@ class Api:
                 return {"location":sql._read(c,"locations",location_id),"link_id":link_id}
             return await self._write(actor_user_id,op,request,mutate)
 
-        location_id=_uuid(payload.get("location_id"))
+        location_id=_uuid(payload.get("location_id")) if op!="preferences_update" else None
         # Always scope access to the real user + independently verified profile.
         if op in {"location_update","monitoring_update","links_share","links_transfer","links_remove"}:
             await self._repo._db.async_execute(
