@@ -1,0 +1,120 @@
+name: V4.13 FINAL – recover verified draft publication
+on:
+  push:
+    branches:
+      - release/v413-publish-recovery
+    paths:
+      - .github/workflows/gr-v413-publish-recovery.yml
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: gr-v413-draft-recovery
+  cancel-in-progress: false
+jobs:
+  publish-verified-draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.ref == 'refs/heads/release/v413-publish-recovery'
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_SHA: 509daeb7245f42b23e46f72b4d002c42f0d7f56e
+      RELEASE_TAG: v4.13
+      RELEASE_ID: '457838854'
+      VERIFIED_FINAL_RUN: '45576565922'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify immutable main and prior final proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse refs/remotes/origin/main)" = "$RELEASE_SHA"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/commits/$RELEASE_SHA" --jq .sha)" = "$RELEASE_SHA"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$VERIFIED_FINAL_RUN" --jq .head_sha)" = "$RELEASE_SHA"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$VERIFIED_FINAL_RUN/jobs?per_page=100" > /tmp/verified-jobs.json
+          python - <<'PY'
+          import json
+          jobs=json.load(open('/tmp/verified-jobs.json'))['jobs']
+          required={'Read and validate immutable release request','Validate immutable PRE-MERGE source backup','Exact-main validations before publication','Wait for CI of exact public main SHA','Generate and validate exact-main Golden Master','Run actions/upload-artifact@v4','Build verified install packages from committed sources'}
+          success={s['name'] for j in jobs for s in j.get('steps',[]) if s.get('conclusion')=='success'}
+          assert required<=success,(required-success)
+          print('Original FINAL run checks, golden and packages: PASS')
+          PY
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$RELEASE_SHA&per_page=100" > /tmp/runs.json
+          python - <<'PY'
+          import json
+          runs=json.load(open('/tmp/runs.json'))['workflow_runs']
+          for name in ('Validate Gewitterradar integration','Validate shared Gewitterradar frontend','Hi-Res asset retention'):
+              assert any(r['name']==name and r['head_sha']=='509daeb7245f42b23e46f72b4d002c42f0d7f56e' and r['status']=='completed' and r['conclusion']=='success' for r in runs),name
+          print('Exact-main required CI: PASS')
+          PY
+      - name: Verify original draft identity and uploaded asset hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID" > /tmp/release.json
+          python - <<'PY'
+          import json
+          release=json.load(open('/tmp/release.json'))
+          sha='509daeb7245f42b23e46f72b4d002c42f0d7f56e'
+          assert release['tag_name']=='v4.13'
+          assert release['target_commitish']==sha
+          assert release['draft'] is True or (release['draft'] is False and release['prerelease'] is False)
+          expected={
+          'gewitterradar-0.25.186.zip':'942f1919082b4d16f90288f9246613ee60787bec2ad7dc444c749175148dc818',
+          'gewitterradar-dashboard-4.13.zip':'88724ff5edcf25f2c88a81835e192d7672f906fe98dbf5818fe65b6dc05a135b',
+          'Gewitterradar_V4.13_GOLDEN_MASTER_2026-11-25_509daeb7245f.bundle':'13694cf271d4e816799174ef6aecac07fc07806c7a699a96b434bb852033523c',
+          'Gewitterradar_V4.13_GOLDEN_MASTER_2026-11-25_509daeb7245f.zip':'de5d28d3b841e27139b9a5ed3f9099ecd37d0fcd18930b9433058ae6b7afefda',
+          'Gewitterradar_V4.13_GOLDEN_MASTER_2026-11-25_509daeb7245f_SHA256SUMS.txt':'6d070013bcf4d793f0dc13e69bbe3657223e7045190991c028602e1463f7d8f6',
+          'RELEASE_COMMIT.txt':'af198594dd0e9ecfc6bfad3fc46c359cb51a77647034c38664f0b49ff5444030',
+          'SHA256SUMS.txt':'bdcbf094d7eba5dcd5e10ea1f23a7d5ee62ff1d8d35c3aea60f7ffbba1ef4a66'}
+          assets={a['name']:a for a in release['assets']}
+          assert assets.keys()==expected.keys(),(assets.keys(),expected.keys())
+          for name,digest in expected.items():
+              assert assets[name]['digest']=='sha256:'+digest,(name,assets[name].get('digest'))
+              assert assets[name]['size']>0,name
+          print('Original immutable draft assets (7), SHA256 digests, target and tag: PASS')
+          PY
+      - name: Create or verify exact tag, then publish existing draft
+        shell: bash
+        run: |
+          set -euo pipefail
+          remote="$(git ls-remote --tags origin "refs/tags/$RELEASE_TAG" | awk '{print $1}')"
+          if [ -z "$remote" ]; then
+            git tag "$RELEASE_TAG" "$RELEASE_SHA"
+            git push origin "refs/tags/$RELEASE_TAG"
+          else
+            test "$remote" = "$RELEASE_SHA"
+          fi
+          test "$(git ls-remote --tags origin "refs/tags/$RELEASE_TAG" | awk '{print $1}')" = "$RELEASE_SHA"
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID" -F draft=false -F prerelease=false -f make_latest=true > /tmp/published.json
+          python - <<'PY'
+          import json
+          p=json.load(open('/tmp/published.json'))
+          assert p['tag_name']=='v4.13' and p['draft'] is False and p['prerelease'] is False
+          assert len(p['assets'])==7
+          print('PUBLISHED',p['html_url'])
+          PY
+      - name: Reconfirm remote tag, published release and unchanged main
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote --tags origin "refs/tags/$RELEASE_TAG" | awk '{print $1}')" = "$RELEASE_SHA"
+          git fetch origin main
+          test "$(git rev-parse refs/remotes/origin/main)" = "$RELEASE_SHA"
+          gh api "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID" > /tmp/final.json
+          python - <<'PY'
+          import json
+          p=json.load(open('/tmp/final.json'))
+          assert p['tag_name']=='v4.13'
+          assert p['target_commitish']=='509daeb7245f42b23e46f72b4d002c42f0d7f56e'
+          assert not p['draft'] and not p['prerelease']
+          assert len(p['assets'])==7
+          print('FINAL RELEASE VERIFIED:',p['html_url'])
+          PY
+          echo "### V4.13 FINAL recovered and published" >> "$GITHUB_STEP_SUMMARY"
+          echo "Tag: $RELEASE_TAG; exact main: $RELEASE_SHA; seven preverified artifacts." >> "$GITHUB_STEP_SUMMARY"
+          echo "Release: https://github.com/$GITHUB_REPOSITORY/releases/tag/$RELEASE_TAG" >> "$GITHUB_STEP_SUMMARY"
