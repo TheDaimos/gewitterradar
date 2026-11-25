@@ -4,6 +4,10 @@ on:
     branches: [feature/v4.14-monitored-areas]
     paths:
       - 'custom_components/gewitterradar/monitored_areas/storage/schema.py'
+      - 'custom_components/gewitterradar/monitored_areas/finalization.py'
+      - 'custom_components/gewitterradar/monitored_areas/api.py'
+      - 'custom_components/gewitterradar/monitored_areas/runtime.py'
+      - 'scripts/test-ma-020-finalization.py'
       - 'scripts/test-ma-020.py'
       - '.github/workflows/ma-020.yml'
 permissions:
@@ -22,4 +26,5 @@ jobs:
           git rev-parse HEAD
           python -m compileall -q custom_components/gewitterradar/monitored_areas
           python scripts/test-ma-020.py
+          python scripts/test-ma-020-finalization.py
           python scripts/test-ma-019.py
