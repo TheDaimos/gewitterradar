@@ -263,3 +263,20 @@ async def test_p1_fifth_synoptic_slot_survives_vault_restart_and_stale_four_slot
     final = (await again.dispatch("user-1", "get", {"profileId": saved["id"]}))["profile"]
     assert len(final["settings"][EYE]["slots"]) == len(original["slots"]) + 1
     assert final["settings"][EYE]["slots"][-1]["functionId"] == "synoptic"
+
+
+async def test_ma013_read_only_owner_verification_is_account_scoped_and_fail_closed():
+    """MA-013: authoritative Vault check cannot borrow another user's profile."""
+    disk = FakeDisk()
+    vault = SettingsVault(disk)
+    owned = await create(vault, user="owner")
+    profile_id = owned["id"]
+    assert await vault.async_profile_belongs_to("owner", profile_id) is True
+    assert await vault.async_profile_belongs_to("other", profile_id) is False
+    assert await vault.async_profile_belongs_to("owner", "forged") is False
+    # Recovery-only state is not a verified active profile for MA authorization.
+    for key in list(disk.files):
+        if not key.endswith(".previous"):
+            disk.files.pop(key)
+    restarted = SettingsVault(disk)
+    assert await restarted.async_profile_belongs_to("owner", profile_id) is False
