@@ -49,9 +49,9 @@ class Protection:
             self._pending[nonce]=(actor_user_id,location_id,revision,links,reports,expires)
         return DeletionPreview(nonce,location_id,revision,links,reports,expires)
 
-    async def remove_link(self, *, link_id, location_id, actor_user_id, is_admin=False,
+    async def remove_link(self, *, link_id, location_id, actor_user_id, actor_profile_id, is_admin=False,
                           confirmation_nonce=None, explicit_final=False, expected_revision):
-        if not actor_user_id:
+        if not actor_user_id or not actor_profile_id:
             raise PermissionError("unauthorized")
         proof=None
         if explicit_final:
@@ -67,7 +67,8 @@ class Protection:
                 raise MissingRecord("not_found")
             if loc[0]!=expected_revision:
                 raise RevisionConflict("revision_conflict")
-            link=c.execute("SELECT 1 FROM profile_links WHERE link_id=? AND location_id=?",(link_id,location_id)).fetchone()
+            link=c.execute("SELECT 1 FROM profile_links WHERE link_id=? AND location_id=? AND ha_user_id=? AND vault_profile_id=?",
+                           (link_id,location_id,actor_user_id,actor_profile_id)).fetchone()
             if link is None:
                 raise MissingRecord("not_found")
             total=c.execute("SELECT count(*) FROM profile_links WHERE location_id=?",(location_id,)).fetchone()[0]
