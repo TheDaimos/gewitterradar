@@ -1,7 +1,7 @@
-"""MA-007: version-one schema, initialized only by the SQLite owner thread."""
+"""MA-008: versioned location, profile and tracker schema, initialized only by the SQLite owner thread."""
 import sqlite3
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 class UnsupportedSchema(sqlite3.DatabaseError):
@@ -17,7 +17,7 @@ def _uuid(column):
             f"AND replace({column},'-','') NOT GLOB '*[^0-9a-f]*'")
 
 
-DDL = {
+DDL_V1 = {
     "locations": f"""CREATE TABLE locations (
         location_id TEXT NOT NULL PRIMARY KEY CHECK ({_uuid('location_id')}),
         name TEXT NOT NULL CHECK (length(trim(name))>0),
@@ -65,12 +65,27 @@ DDL = {
 }
 
 
+# These are persisted registry lifecycle states, not proof of source coupling.
+DDL_V2_ADDITIONS = {
+    "tracker_refs": """CREATE TABLE tracker_refs (
+        location_id TEXT NOT NULL PRIMARY KEY REFERENCES locations(location_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+        stable_slug TEXT NOT NULL CHECK (length(stable_slug)>0 AND stable_slug NOT GLOB '*[^a-z0-9_]*'),
+        unique_id TEXT NOT NULL UNIQUE CHECK (unique_id='ma_'||location_id||'_tracker'),
+        actual_entity_id TEXT UNIQUE CHECK (actual_entity_id IS NULL OR (substr(actual_entity_id,1,15)='device_tracker.' AND length(actual_entity_id)>15 AND substr(actual_entity_id,16) NOT GLOB '*[^a-z0-9_]*')),
+        display_name TEXT NOT NULL CHECK (length(trim(display_name))>0),
+        lifecycle_state TEXT NOT NULL DEFAULT 'pending' CHECK (lifecycle_state IN ('pending','confirmed','error') AND (lifecycle_state<>'confirmed' OR actual_entity_id IS NOT NULL)),
+        revision INTEGER NOT NULL DEFAULT 1 CHECK (revision>=1)
+    ) STRICT""",
+}
+DDL = {**DDL_V1, **DDL_V2_ADDITIONS}
+
+
 def _objects(conn):
     return dict(conn.execute("SELECT name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%'"))
 
 
 def initialize_schema(conn: sqlite3.Connection) -> None:
-    """Create only an empty v0 database; validate v1 without changing it."""
+    """Atomically advance v0/v1; preserve and validate all existing rows."""
     conn.execute("BEGIN IMMEDIATE")
     try:
         version = conn.execute("PRAGMA user_version").fetchone()[0]
@@ -78,9 +93,19 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
         if version == 0:
             if objects:
                 raise UnsupportedSchema("nonempty unversioned database")
-            for statement in DDL.values():
+            for statement in DDL_V1.values():
                 conn.execute(statement)
             conn.execute("PRAGMA user_version=1")
+            version = 1
+        if version == 1:
+            if _objects(conn) != DDL_V1:
+                raise UnsupportedSchema("v1 schema identity mismatch")
+            if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
+                raise sqlite3.DatabaseError("v1 foreign key check failed")
+            # Migration is additive; the transaction preserves all v1 data on failure.
+            for statement in DDL_V2_ADDITIONS.values():
+                conn.execute(statement)
+            conn.execute("PRAGMA user_version=2")
         elif version != SCHEMA_VERSION:
             raise UnsupportedSchema(f"unsupported schema version {version}")
         if _objects(conn) != DDL:

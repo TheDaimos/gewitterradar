@@ -28,7 +28,7 @@ class SchemaTests(unittest.TestCase):
         self.conn.execute("INSERT INTO profile_links(link_id,location_id,ha_user_id,vault_profile_id) VALUES(?,?,?,?)",
                           (self.link,self.loc,"user","profile"))
     def test_version_defaults_reopen(self):
-        self.assertEqual(self.conn.execute("PRAGMA user_version").fetchone(),(1,))
+        self.assertEqual(self.conn.execute("PRAGMA user_version").fetchone(),(2,))
         self.assertEqual(self.conn.execute("SELECT record_radius_m,entities_enabled,monitor_enabled FROM locations").fetchone(),(10000,0,0))
         schema.initialize_schema(self.conn)
         self.assertEqual(self.conn.execute("SELECT count(*) FROM locations").fetchone(),(1,))
@@ -77,7 +77,7 @@ class SchemaTests(unittest.TestCase):
         self.assertEqual(c.execute("PRAGMA user_version").fetchone(),(0,))
         c.execute("DROP TABLE legacy")
         from unittest.mock import patch
-        with patch.dict(schema.DDL,{"bad":"invalid sql"}):
+        with patch.dict(schema.DDL_V2_ADDITIONS,{"bad":"invalid sql"}):
             with self.assertRaises(sqlite3.DatabaseError):
                 schema.initialize_schema(c)
         self.assertEqual(c.execute("PRAGMA user_version").fetchone(),(0,))
@@ -95,7 +95,7 @@ class WorkerTests(unittest.IsolatedAsyncioTestCase):
             store=database.Database(path,config_root=root)
             try:
                 await store.async_start()
-                self.assertEqual(await store.async_execute(lambda c:c.execute("PRAGMA user_version").fetchone()),(1,))
+                self.assertEqual(await store.async_execute(lambda c:c.execute("PRAGMA user_version").fetchone()),(2,))
                 await store.async_stop()
                 await store.async_start()
                 self.assertEqual(await store.async_execute(lambda c:c.execute("SELECT count(*) FROM locations").fetchone()),(0,))
