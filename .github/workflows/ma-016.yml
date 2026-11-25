@@ -1,0 +1,26 @@
+name: MA-016 authorized SQLite read adapter
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths:
+      - 'custom_components/gewitterradar/monitored_areas/api.py'
+      - 'scripts/test-ma-016.py'
+      - '.github/workflows/ma-016.yml'
+permissions:
+  contents: read
+jobs:
+  places-reader:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: MA-016 T0-T1 with retained P02 security coverage
+        run: |
+          git rev-parse HEAD
+          python -m compileall -q custom_components/gewitterradar/monitored_areas
+          python scripts/test-ma-016.py
+          python scripts/test-ma-gate-p02.py
+          python scripts/test-ma-015.py
