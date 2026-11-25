@@ -33,7 +33,7 @@ class Tests(unittest.IsolatedAsyncioTestCase):
                 actor_profile_id=self.profile,expected_revision=1)
         with self.assertRaises(acl.ConfirmationRequired):
             await self.protect.remove_link(**kw)
-        with self.assertRaises(PermissionError):
+        with self.assertRaises(acl.ProtectionDenied):
             await self.protect.preview_final_delete(actor_user_id="owner",is_admin=False,location_id=self.loc)
         proof=await self.protect.preview_final_delete(actor_user_id="owner",is_admin=True,location_id=self.loc)
         with self.assertRaises(acl.ConfirmationRequired):
