@@ -3,7 +3,7 @@ import sqlite3
 
 from .errors import StorageIntegrityError
 
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 
 
 class UnsupportedSchema(sqlite3.DatabaseError):
@@ -198,7 +198,19 @@ DDL_V5_ADDITIONS = {
     ) STRICT""",
     "idx_migration_finalizations_actor": """CREATE INDEX idx_migration_finalizations_actor ON migration_finalizations(actor_user_id,vault_profile_id,created_at)""",
 }
-DDL = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS, **DDL_V4_ADDITIONS, **DDL_V5_ADDITIONS}
+# MA-020: permanently preserve original Local To-do payloads before any
+# irreversible service-side delete. Backup survives a process/HA restart.
+DDL_V6_ADDITIONS = {
+    "migration_source_backups": """CREATE TABLE migration_source_backups (
+        finalization_id TEXT NOT NULL REFERENCES migration_finalizations(finalization_id) ON DELETE RESTRICT,
+        item_uid TEXT NOT NULL,
+        source_sha TEXT NOT NULL CHECK (length(source_sha)=64 AND source_sha NOT GLOB '*[^0-9a-f]*'),
+        source_json TEXT NOT NULL CHECK (json_valid(source_json) AND json_type(source_json)='object'),
+        PRIMARY KEY(finalization_id,item_uid),
+        FOREIGN KEY(finalization_id,item_uid) REFERENCES migration_finalization_items(finalization_id,item_uid) ON DELETE RESTRICT
+    ) STRICT""",
+}
+DDL = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS, **DDL_V4_ADDITIONS, **DDL_V5_ADDITIONS, **DDL_V6_ADDITIONS}
 
 
 def _objects(conn):
@@ -258,6 +270,16 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
                 conn.execute(statement)
             conn.execute("PRAGMA user_version=5")
             version = 5
+        if version == 5:
+            expected_v5 = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS, **DDL_V4_ADDITIONS, **DDL_V5_ADDITIONS}
+            if _objects(conn) != expected_v5:
+                raise UnsupportedSchema("v5 schema identity mismatch")
+            if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
+                raise StorageIntegrityError("v5 foreign key check failed")
+            for statement in DDL_V6_ADDITIONS.values():
+                conn.execute(statement)
+            conn.execute("PRAGMA user_version=6")
+            version = 6
         if version != SCHEMA_VERSION:
             raise UnsupportedSchema(f"unsupported schema version {version}")
         if _objects(conn) != DDL:
