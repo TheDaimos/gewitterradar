@@ -61,6 +61,12 @@ from .const import (
     SIDEBAR_PANEL_WEB_COMPONENT,
 )
 
+from .monitored_areas import (
+    MonitoredAreasRuntime,
+    async_setup_monitored_areas,
+    async_unload_monitored_areas,
+)
+
 _LOGGER = logging.getLogger(__name__)
 _NO_LEGACY_VALUE = object()
 _RADIUS_KEYS = (
@@ -290,6 +296,7 @@ class GewitterradarRuntimeData:
     hass: HomeAssistant
     entry: ConfigEntry[GewitterradarRuntimeData]
     tracker_entity_id: str | None = None
+    monitored_areas: MonitoredAreasRuntime | None = None
 
     def get(self, key: str) -> Any:
         """Return a setting from the canonical Config Entry options."""
@@ -527,6 +534,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GewitterradarConfigEntry
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     if options[CONF_SHOW_SIDEBAR_PANEL]:
         await _async_register_sidebar_panel(hass)
+    entry.runtime_data.monitored_areas = await async_setup_monitored_areas(hass, entry)
     return True
 
 
@@ -534,5 +542,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: GewitterradarConfigEntr
     """Unload a Gewitterradar config entry."""
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unloaded:
+        await async_unload_monitored_areas(entry.runtime_data.monitored_areas)
+        entry.runtime_data.monitored_areas = None
         _async_remove_sidebar_panel(hass)
     return unloaded
