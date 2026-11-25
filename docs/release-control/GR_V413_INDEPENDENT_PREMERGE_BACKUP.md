@@ -17,3 +17,7 @@
 ## Verwendungsgrenzen
 
 Dieser Nachweis bezieht sich **ausschließlich** auf die unveränderliche PRE-MERGE-Sicherung des oben genannten alten `main`-Commits. Bei anderem altem `main`-SHA ist eine neue Sicherung verpflichtend. Er bestätigt weder erfolgreiche FINAL-CI noch einen Golden Master. Das Release darf erst nach gesonderter Kandidaten-, Merge-, CI-, Golden-Master- und Tag-Prüfung veröffentlicht werden. Das Offsite-Archiv darf nicht überschrieben werden.
+
+## FINAL-Kandidaten-Spiegelprüfung
+
+Der getrennte öffentliche GitHub-Runner [45562538664](https://github.com/TheDaimos/gewitterradar/actions/runs/45562538664) hat nach dem späten Legend-Hub-Platzierungsfix die beiden Frontend-Spiegel und das SHA256-Inventar aus dem kanonischen FINAL-Kandidaten deterministisch neu erzeugt, alle zugehörigen Build-/Paket-/Diagnoseprüfungen bestanden und den Kandidaten als Commit `ee5ce2a1e4debd6e729545c64bd06d9557d06370` gespeichert. Der endgültige PR-/POST-MERGE-CI-Nachweis für einen späteren SHA ist gesondert zu prüfen.
