@@ -71,3 +71,12 @@ Bei ungültigen, übersprungenen oder fremden Einträgen darf weder pauschal gel
 **Schaltfläche:** Verstanden
 
 Diese Nachricht nur nach vollständigem nachgewiesenem Import, erfolgreich bestätigter Eintragsleerung, erneutem Quell-/DB-Readback und persistierter Finalisierung anzeigen. Keinen Erfolgstext bei Teilmigration, offenem Recovery, verbliebenen Einträgen oder Fehlern anzeigen. Weder automatische Listenentfernung noch MA-GATE-P03 oder Release durch diese Textfestlegung autorisiert.
+
+
+### MA-020 – Wiederholter Hinweis auf die verbliebene Local-To-do-Liste (Betreiberentscheidung 25.11.2026)
+
+Nach **nachweislich vollständig erfolgreich abgeschlossener Migration**, Eintragsleerung, SQL-Readback und persistierter `db_active`-Finalisierung wird das oben definierte Erfolgs-/Aufräum-Pop-up bei **jedem Start von GewitterRadar** erneut angezeigt, **solange die bisherige Local-To-do-Liste „GewitterRadar Orte“ über die unterstützte HA-Schnittstelle tatsächlich vorhanden ist**. Das Fenster erhält die Checkbox **„Nicht mehr anzeigen“** (Standard: nicht abgehakt) sowie die Schaltfläche **„Verstanden“**. Wird die Checkbox aktiviert und das Fenster bestätigt, ist die wiederholte automatische Anzeige dauerhaft unterdrückt (persistiert in dem jeweils autorisierten Settings-Vault-/Benutzerprofil, nicht nur im flüchtigen JS-Zustand). Beim manuellen späteren Öffnen des Hinweises muss der gespeicherte Checkbox-Zustand sichtbar und änderbar sein; Entfernen des Hakens aktiviert die Anzeige beim nächsten Start wieder. Schließen ohne aktivierte Checkbox unterdrückt ausschließlich die aktuelle Anzeige, nicht spätere Starts.
+
+Wurde die alte Liste tatsächlich entfernt, ist kein automatisches Aufräum-Pop-up mehr erforderlich. Ist die HA-Quellabfrage nicht zuverlässig möglich (unavailable, Berechtigungsfehler, mehrdeutige Quellidentität), darf ein Fehlschlag **nicht als entfernte Liste interpretiert** werden; kein irreführender Erfolg und keine erneute destructive Aktion. Das Popup ist **rein informativ**: es löscht keine Liste, löscht keine weiteren Einträge und schaltet die Datenquelle nicht um. Die wiederholte Anzeige ist strikt an den bereits verifizierten Finalisierungszustand gebunden, nicht an eine bloße sichtbare To-do-Entität vor Migration. Kein ungeprüftes Wiederholen des Imports.
+
+`next_task=MA-020`; diese Ergänzung ist ausschließlich Dokumentation, keine Code-/CI-Abnahme, keine Installation und kein MA-GATE-P03.
