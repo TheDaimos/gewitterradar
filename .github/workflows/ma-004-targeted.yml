@@ -1,0 +1,44 @@
+name: MA-004 targeted frontend contract
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths:
+      - 'frontend/**'
+      - 'dashboard/dist/**'
+      - 'custom_components/gewitterradar/**'
+      - 'SHA256SUMS_FRONTEND.txt'
+      - 'scripts/**'
+      - '.github/workflows/ma-004-targeted.yml'
+permissions:
+  contents: read
+jobs:
+  t0-t1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Exact checkout and syntax
+        run: |
+          git rev-parse HEAD
+          node --version
+          for f in frontend/gewitterradar.js frontend/module-manifest.js frontend/version.js frontend/panel.js frontend/modules/core/{registry,runtime,card-lifecycle}.js frontend/modules/ui/settings-vault-view.js frontend/modules/monitored-areas/index.js scripts/{test-ma-004,build-frontend,verify-current-frontend,verify-frontend,test-v41169-data-sources}.mjs; do node --check "$f"; done
+      - name: MA-004 lifecycle and inventory
+        run: node scripts/test-ma-004.mjs
+      - name: Existing affected registry and source contract
+        run: |
+          node scripts/test-module-registry.mjs
+          node scripts/test-v41169-data-sources.mjs
+      - name: Existing canonical frontend verifier
+        run: node scripts/verify-frontend.mjs
+      - name: Existing deterministic build and fail-closed integrity probes
+        run: node scripts/test-frontend-build.mjs
+      - name: Exact delivery after rebuild
+        run: |
+          node scripts/verify-current-frontend.mjs
+          sha256sum -c SHA256SUMS_FRONTEND.txt --quiet
+          git diff --exit-code

@@ -13,7 +13,10 @@ const [native,entry,skeleton,modules,dataSources,blitzortung,runtime]=await Prom
 ]);
 const manifest=JSON.parse(runtime);
 assert.equal(manifest.productVersion,(await import("../frontend/version.js")).APPLICATION_RELEASE.version);
-assert.equal(manifest.modules.length,37);
+assert.equal(manifest.modules.filter(m=>m.optional!==true).length,37);
+const optional=manifest.modules.filter(m=>m.optional===true);
+assert.deepEqual(optional,manifest.productVersion.startsWith("4.14.")?[{id:"monitored-areas.lifecycle",version:"0.1.0",optional:true}]:[]);
+assert.equal(manifest.modules.length,37+optional.length);
 assert.equal(manifest.modules.filter(m=>m.id==='weather.synoptic-display').length,1);
 for(const id of ["diagnostics.data-sources","sources.blitzortung"]){
   assert.equal(manifest.modules.filter(m=>m.id===id).length,1,id);
