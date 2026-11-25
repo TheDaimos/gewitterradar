@@ -1,4 +1,4 @@
-import {APPLICATION_RELEASE} from "./version.js?v=4137r1";
+import {APPLICATION_RELEASE} from "./version.js?v=4137r2";
 const PANEL_TAG="gewitterradar-panel";
 const CARD_TAG="gewitterradar-card";
 
