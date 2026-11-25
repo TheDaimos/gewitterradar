@@ -14,7 +14,7 @@ test("copy/paste coordinates validates WGS84 and locale-style separators",()=>{
   assert.equal(formatCoordinates({latitude:53.125,longitude:9.5}),"53.125000, 9.500000");
   assert.deepEqual(parseCoordinates("53.125000, 9.500000"),{latitude:53.125,longitude:9.5});
   assert.deepEqual(parseCoordinates("-12.2; +100.4"),{latitude:-12.2,longitude:100.4});
-  for(const x of ["", "NaN, 2", "91, 5", "0, 181", "52,5", "a, b"]) {
+  for(const x of ["", "NaN, 2", "91, 5", "0, 181", "52,5, 8", "a, b"]) {
     assert.throws(()=>parseCoordinates(x),/MA_INVALID_COORDINATES/);
   }
 });
