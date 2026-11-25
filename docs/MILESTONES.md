@@ -1,3 +1,7 @@
+## V4.13 FINAL · 2026/11 · HA 0.25.186
+
+Mondlegende als zusätzliche Legend-Hub-Funktion, aufbauend auf der geschützten V4.12-Aura-/Legend-Hub-Referenz. Bedienung, Erscheinungsbild und Regressionen auf dem abgenommenen 4.13.7-Stand geprüft; Finale Auslieferung nur mit grüner Post-Merge-CI, Golden Master und exaktem GitHub-Tag. Externer PRE-MERGE-Rückfallnachweis verifiziert.
+
 ## V4.12.6 DEV · 2026/11 · HA 0.25.167
 
 Legend-Hub-Abschluss mit zusätzlichem Uniformfeld-Schutz. Unveränderte Palette und genau ein realer Wert bei identischen Extrema; kein künstlicher Skalenbereich. Geschützte Aura-/FINAL-Referenzen bleiben erhalten.
