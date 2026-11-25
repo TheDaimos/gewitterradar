@@ -21,10 +21,10 @@ PREFIX = "gewitterradar/monitored_areas/"
 OPS = (
     "status", "locations_list", "location_get", "location_create", "location_update",
     "monitoring_update", "links_list", "links_share", "links_transfer", "links_remove",
-    "links_remove_preview", "preferences_update",
+    "links_remove_preview", "history_reset_preview", "history_reset_commit", "preferences_update",
 )
 MUTATIONS = {"location_create", "location_update", "monitoring_update",
-             "links_share", "links_transfer", "links_remove", "preferences_update"}
+             "links_share", "links_transfer", "links_remove", "history_reset_commit", "preferences_update"}
 MA_API_REGISTERED = "gewitterradar_ma_api_registered"
 
 
@@ -136,7 +136,7 @@ class Api:
         if op=="status":
             return {"schema":1,"enabled":True,"capabilities":{
                 "locations":True,"links":True,"preferences":True,"tracker_create":False,
-                "monitoring_active":False,"notifications":False,"exports":False}}
+                "monitoring_active":False,"notifications":False,"exports":False,"history_reset":True}}
         profile=request.get("profile_id")
         await self._links.require_profile(actor_user_id,profile)
         payload=_payload(request, {
@@ -188,6 +188,57 @@ class Api:
             proof=await self._protect.preview_final_delete(actor_user_id=actor_user_id,is_admin=True,location_id=location_id)
             return {"nonce":proof.nonce,"revision":proof.revision,"links":proof.links,
                     "reports":proof.reports,"expires_at_monotonic":proof.expires_at}
+
+        if op=="history_reset_preview":
+            if set(payload)!={"location_id"} or is_admin is not True:
+                raise ApiError("forbidden")
+            location_id=_uuid(payload["location_id"])
+            await self._repo._db.async_execute(
+                lambda c:_actor_link(c,location_id,actor_user_id,profile),kind="read")
+            return await self._protect.preview_history_reset(
+                actor_user_id=actor_user_id,is_admin=True,location_id=location_id)
+
+        if op=="history_reset_commit":
+            if set(payload)!={"location_id","confirmation_nonce","explicit_final"}:
+                raise ApiError("invalid_request")
+            if is_admin is not True or payload["explicit_final"] is not True:
+                raise ApiError("forbidden")
+            location_id=_uuid(payload["location_id"])
+            expected=_revision(request)
+            nonce=payload["confirmation_nonce"]
+            if not isinstance(nonce,str):
+                raise ApiError("confirmation_expired")
+            async with self._protect._lock:
+                proof=self._protect._pending_resets.get(nonce)
+            def mutate(c):
+                _actor_link(c,location_id,actor_user_id,profile)
+                current=_location(c,location_id)
+                counts=(
+                    c.execute("SELECT count(*) FROM lightning_reports WHERE location_id=?",(location_id,)).fetchone()[0],
+                    c.execute("SELECT count(*) FROM sessions WHERE location_id=?",(location_id,)).fetchone()[0],
+                    c.execute("SELECT count(*) FROM source_gaps WHERE location_id=?",(location_id,)).fetchone()[0],
+                )
+                if current["revision"]!=expected:
+                    raise sql.RevisionConflict("revision_conflict")
+                if (proof is None or proof[0]!=actor_user_id or proof[1]!=location_id or
+                    proof[2]!=expected or proof[3:6]!=counts or proof[6]<=time.monotonic()):
+                    raise ApiError("confirmation_stale")
+                # A destructive action is all-or-nothing. Leave locations, links,
+                # tracker refs and personal preferences intact.
+                c.execute("DELETE FROM possible_duplicates WHERE location_id=?",(location_id,))
+                c.execute("DELETE FROM session_reports WHERE location_id=?",(location_id,))
+                c.execute("DELETE FROM lightning_reports WHERE location_id=?",(location_id,))
+                c.execute("DELETE FROM sessions WHERE location_id=?",(location_id,))
+                c.execute("DELETE FROM source_gaps WHERE location_id=?",(location_id,))
+                c.execute("UPDATE locations SET revision=revision+1,updated_at=? WHERE location_id=?",
+                          (max(time.time_ns()//1000,current["updated_at"]),location_id))
+                return {"reset":True,"deleted_reports":counts[0],
+                        "deleted_sessions":counts[1],"deleted_gaps":counts[2],
+                        "location_revision":expected+1}
+            result=await self._write(actor_user_id,op,request,mutate)
+            async with self._protect._lock:
+                self._protect._pending_resets.pop(nonce,None)
+            return result
 
         if op=="location_create":
             if set(payload) != {"name","lat","lon"}:
