@@ -1,4 +1,5 @@
 name: Sync V4.13 FINAL candidate frontend mirrors
+# Resynchronize guarded default-position handling; never alter manually placed legends.
 on:
   push:
     branches:
