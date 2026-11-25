@@ -460,6 +460,23 @@ class SettingsVault:
             invalid("Invalid selection of settings")
         return keys
 
+    async def async_profile_belongs_to(self, user, profile_id):
+        """Read-only server-side ownership check for other native HA modules.
+
+        Resolves a profile only in the store belonging to the authenticated HA
+        user. A recovery-only document is not proof of an active profile.
+        Any storage/validation failure is deliberately fail-closed.
+        """
+        if not isinstance(user, str) or not user or not isinstance(profile_id, str):
+            return False
+        try:
+            uid(profile_id)
+            async with self._locks[user]:
+                document, recovery = await self._load(user)
+                return not recovery and profile_id in document["profiles"]
+        except (VaultError, ValueError, TypeError, KeyError):
+            return False
+
     async def dispatch(self, user, op, request):
         async with self._locks[user]:
             data, recovery = await self._load(user)
