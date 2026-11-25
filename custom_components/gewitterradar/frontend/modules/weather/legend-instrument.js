@@ -33,7 +33,14 @@ export function applyInstrumentSurface(element,c){
 }
 function hasStoredPosition(owner,id,position){
  if(!position)return false;if(id==='temperature'||id==='advection')return !!owner._weatherTemperatureState().config.legendPositions[id];
- if(id==='synoptic'||id==='other'){try{return !!JSON.parse(settingsStorage(owner).getItem('gewitterradar:legend-hub:v1'))?.extraPositions?.[id];}catch{return false;}}
+ if(id==='synoptic'||id==='other'){try{
+  const stored=JSON.parse(settingsStorage(owner).getItem('gewitterradar:legend-hub:v1'))?.extraPositions?.[id];
+  if(!stored)return false;
+  // The hub stores normalized default coordinates even before any user drag.
+  // Only non-default saved positions count as explicit overrides.
+  const defaultX=id==='synoptic'?1:0;
+  return Math.abs(stored.x-defaultX)>.000001||Math.abs(stored.y-.12)>.000001;
+ }catch{return false;}}
  return true;
 }
 export function ensureInstrumentStyle(shadow){
