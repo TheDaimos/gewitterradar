@@ -536,12 +536,13 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "monitored-areas.lifecycle",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "group": "Monitored Areas",
     "function": "Optional lifecycle",
     "subfunctions": [
       "Initialize",
-      "Teardown"
+      "Teardown",
+      "Migration cleanup reminder"
     ],
     "file": "modules/monitored-areas/index.js",
     "optional": true
