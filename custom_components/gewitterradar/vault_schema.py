@@ -316,6 +316,7 @@ SCALAR_SETTINGS = {
     "gewitterradar-about-onboarding-version": numeric_string(0, 1000000),
     "gewitterradar-pro-welcome-dismissed": BIT,
     "gewitterradar-first-steps-dismissed": BIT,
+    "gewitterradar-ma020-cleanup-dismissed": BIT,
     "gr.help.group.standard.v1": BIT,
     "gr.help.group.pro.v1": BIT,
     MAP + "map-display-mode": MAP_MODE,
