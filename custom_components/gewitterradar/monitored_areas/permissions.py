@@ -3,11 +3,38 @@
 Only an authenticated API may pass actor IDs and a trusted HA-admin result.
 """
 import asyncio
+import hashlib
+import json
 from dataclasses import dataclass
 import secrets
 import time
 
 from .storage.repositories import Repositories, ConstraintViolation, RevisionConflict, MissingRecord
+
+
+def _snapshot_digest(c, location_id, *, include_links=False):
+    """Fingerprint the actual row contents, not counts, on the SAME SQLite worker.
+
+    Used for confirmation snapshots and transaction-time revalidation. Any
+    same-count replacement, edit, session, duplicate, or source-gap change
+    invalidates an earlier confirmation.
+    """
+    sections = ["lightning_reports", "possible_duplicates", "sessions",
+                "session_reports", "source_gaps"]
+    if include_links:
+        sections += ["profile_links", "profile_preferences", "notification_targets",
+                     "tracker_refs"]
+    rows = []
+    for table in sections:
+        if table in ("profile_preferences", "notification_targets"):
+            sql = ("SELECT t.* FROM " + table +
+                   " t JOIN profile_links l ON l.link_id=t.link_id "
+                   "WHERE l.location_id=? ORDER BY t.rowid")
+        else:
+            sql = "SELECT * FROM " + table + " WHERE location_id=? ORDER BY rowid"
+        rows.append((table, c.execute(sql, (location_id,)).fetchall()))
+    canonical = json.dumps(rows, ensure_ascii=True, separators=(",", ":"), allow_nan=False)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
 class ProtectionDenied(RuntimeError):
@@ -26,6 +53,7 @@ class DeletionPreview:
     links: int
     reports: int
     expires_at: float
+    snapshot_digest: str
 
 
 class Protection:
@@ -45,14 +73,14 @@ class Protection:
                 raise MissingRecord("not_found")
             links=c.execute("SELECT count(*) FROM profile_links WHERE location_id=?",(location_id,)).fetchone()[0]
             reports=c.execute("SELECT count(*) FROM lightning_reports WHERE location_id=?",(location_id,)).fetchone()[0]
-            return (loc[0],links,reports)
-        revision,links,reports=await self._repo._db.async_execute(snapshot,kind="read")
+            return (loc[0],links,reports,_snapshot_digest(c,location_id,include_links=True))
+        revision,links,reports,digest=await self._repo._db.async_execute(snapshot,kind="read")
         nonce=secrets.token_urlsafe(32)
         expires=time.monotonic()+self._ttl
         async with self._lock:
             self._pending={k:v for k,v in self._pending.items() if v[5]>time.monotonic()}
-            self._pending[nonce]=(actor_user_id,location_id,revision,links,reports,expires)
-        return DeletionPreview(nonce,location_id,revision,links,reports,expires)
+            self._pending[nonce]=(actor_user_id,location_id,revision,links,reports,expires,digest)
+        return DeletionPreview(nonce,location_id,revision,links,reports,expires,digest)
 
     async def preview_history_reset(self, *, actor_user_id, is_admin, location_id):
         """Issue a bounded, user/area/revision/count-scoped destructive token."""
@@ -65,15 +93,15 @@ class Protection:
             reports=c.execute("SELECT count(*) FROM lightning_reports WHERE location_id=?",(location_id,)).fetchone()[0]
             sessions=c.execute("SELECT count(*) FROM sessions WHERE location_id=?",(location_id,)).fetchone()[0]
             gaps=c.execute("SELECT count(*) FROM source_gaps WHERE location_id=?",(location_id,)).fetchone()[0]
-            return (location[0],reports,sessions,gaps)
-        revision,reports,sessions,gaps=await self._repo._db.async_execute(snapshot,kind="read")
+            return (location[0],reports,sessions,gaps,_snapshot_digest(c,location_id))
+        revision,reports,sessions,gaps,digest=await self._repo._db.async_execute(snapshot,kind="read")
         nonce=secrets.token_urlsafe(32)
         expires=time.monotonic()+self._ttl
         async with self._lock:
             self._pending_resets={
                 k:v for k,v in self._pending_resets.items() if v[6]>time.monotonic()
             }
-            self._pending_resets[nonce]=(actor_user_id,location_id,revision,reports,sessions,gaps,expires)
+            self._pending_resets[nonce]=(actor_user_id,location_id,revision,reports,sessions,gaps,expires,digest)
         return {"nonce":nonce,"location_id":location_id,"revision":revision,
                 "reports":reports,"sessions":sessions,"gaps":gaps,
                 "expires_at_monotonic":expires}
@@ -105,7 +133,7 @@ class Protection:
             if total==1:
                 if proof is None:
                     raise ConfirmationRequired("last_link_confirmation_required")
-                if proof[2:5]!=(loc[0],total,reports):
+                if proof[2:5]!=(loc[0],total,reports) or proof[6]!=_snapshot_digest(c,location_id,include_links=True):
                     raise ConfirmationRequired("confirmation_stale")
                 if reports:
                     # Reset is a separately confirmed flow; never silently delete history.
