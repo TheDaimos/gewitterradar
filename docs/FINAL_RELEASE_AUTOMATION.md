@@ -86,3 +86,10 @@ Ein Merge dieser Datei auf `main` löst die FINAL-Action über das `push`-Ereign
 `deploy/dev` -> DEV-Abnahme -> separater Release-Candidate -> PRE-MERGE altes `main` -> regulärer Merge -> Post-Merge-CI -> Golden Master -> Tag/Release -> HACS-Installationsnachweis.
 
 Kein Auto-Merge bei bloßem Dateiupload; kein Tag bei roter CI; keine private WR-CI; keine Rechte- oder Datenschutzumgehung. Die Original-Export2Git-Sicherung erfolgt im privaten `TheDaimos/Project-Log-And-Export@main`; diese Infrastruktur ersetzt sie nicht.
+
+
+## Pflicht zur eigenständigen Fehlerbehebung und Wiederaufnahme
+
+Siehe [FINALIZATION_RUNBOOK, Abschnitt 7](FINALIZATION_RUNBOOK.md): DIAGNOSE → FIX → RETEST → RESUME bis zum tatsächlich verifizierten öffentlichen Release. Weder Fehlerbericht noch korrigierte Teilphase, gestarteter Workflow oder vorhandener Draft erfüllen den Auftrag. Bei neuen SHAs sind die daran gebundenen Tests neu auszuführen. Fallback bei lokalem DNS-/CLI-Problem: Connector + öffentliche GitHub Actions. Sicherheits- und Freigabeschranken bleiben strikt.
+
+**V4.13 konkret:** Der ursprüngliche finale Run 45576565922 hatte CI, Golden Master, beide ZIPs und alle sieben Release-Assets korrekt erzeugt, brach aber beim Abruf von refs/tags/v4.13 ab. Grund war die fehlende Tag-Ref beim zuerst angelegten Draft. Run 45579237291 verifizierte Originaldaten und Hashes, erzeugte den exakten Tag, veröffentlichte den bestehenden Draft (ID 457838854) und bestätigte das offizielle Release. **Immer Tag explizit auf das verifizierte main-SHA setzen und vor Draft-Erstellung prüfen; existierende Entwürfe bei Fehlern idempotent anhand ID/Target/Hashes wiederaufnehmen.** Kein doppeltes Release, kein Tag-Retarget, kein unnötiger Neubuild. Der historische JSON-Beispielwert 0.25.185 oben ist nicht der tatsächliche V4.13-FINAL-Wert; dieser war 0.25.186.

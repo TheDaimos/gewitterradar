@@ -212,16 +212,52 @@ jobs:
         run: |
           set -euo pipefail
           tag="${{ steps.request.outputs.tag }}"
-          if gh release view "$tag" >/dev/null 2>&1; then
-            echo "Release exists. Refusing overwrite: $tag" >&2
-            exit 1
+          # GitHub draft releases may not expose refs/tags/<tag>. Create the
+          # immutable exact-main Git tag FIRST, after all safety gates passed.
+          remote="$(git ls-remote --tags origin "refs/tags/$tag" | awk '{print $1}')"
+          if [ -z "$remote" ]; then
+            git tag "$tag" "$GITHUB_SHA"
+            git push origin "refs/tags/$tag"
+          else
+            test "$remote" = "$GITHUB_SHA" || { echo "Existing tag points to another commit" >&2; exit 1; }
           fi
-          if git ls-remote --tags origin "refs/tags/$tag" | grep -q .; then
-            echo "Tag exists. Refusing retarget: $tag" >&2
-            exit 1
+          test "$(git ls-remote --tags origin "refs/tags/$tag" | awk '{print $1}')" = "$GITHUB_SHA"
+          # Detect an interrupted draft by API (gh release view can hide drafts).
+          gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" > /tmp/gr-releases.json
+          release_id="$(jq -r --arg tag "$tag" '[.[] | select(.tag_name==$tag)] | if length > 1 then error("duplicate releases") else (.[0].id // empty) end' /tmp/gr-releases.json)"
+          if [ -z "$release_id" ]; then
+            gh release create "$tag" --draft --target "$GITHUB_SHA" --title "GewitterRadar V${{ steps.request.outputs.version }} FINAL" --notes-file "${{ steps.request.outputs.notes }}" dist/install/* dist/golden/*
+            gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" > /tmp/gr-releases.json
+            release_id="$(jq -r --arg tag "$tag" '[.[] | select(.tag_name==$tag)] | if length != 1 then error("missing or duplicate release") else .[0].id end' /tmp/gr-releases.json)"
           fi
-          gh release create "$tag" --draft --target "$GITHUB_SHA" --title "GewitterRadar V${{ steps.request.outputs.version }} FINAL" --notes-file "${{ steps.request.outputs.notes }}" dist/install/* dist/golden/*
-          git fetch origin "refs/tags/$tag:refs/tags/$tag"
-          test "$(git rev-list -n1 "$tag")" = "$GITHUB_SHA"
-          gh release view "$tag" --json assets --jq '.assets | length' | grep -Eq '^[6-9][0-9]*$|^[6-9]$'
-          gh release edit "$tag" --draft=false --prerelease=false --latest
+          gh api "repos/$GITHUB_REPOSITORY/releases/$release_id" > /tmp/gr-release-before.json
+          python - <<'PY'
+          import json,os,hashlib
+          from pathlib import Path
+          r=json.loads(Path("/tmp/gr-release-before.json").read_text())
+          assert r["tag_name"]=="${{ steps.request.outputs.tag }}"
+          assert r["target_commitish"]==os.environ["GITHUB_SHA"]
+          assert r["draft"] or (not r["draft"] and not r["prerelease"])
+          expected={}
+          for folder in (Path("dist/install"),Path("dist/golden")):
+              for p in folder.iterdir():
+                  if p.is_file():
+                      assert p.name not in expected
+                      expected[p.name]=(p.stat().st_size,"sha256:"+hashlib.sha256(p.read_bytes()).hexdigest())
+          found={a["name"]:(a["size"],a.get("digest")) for a in r["assets"]}
+          assert expected and found==expected,(expected,found)
+          print("Verified release artifact hashes:",len(found))
+          PY
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$release_id" -F draft=false -F prerelease=false -f make_latest=true > /tmp/gr-published.json
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          r=json.loads(Path("/tmp/gr-published.json").read_text())
+          assert r["tag_name"]=="${{ steps.request.outputs.tag }}"
+          assert r["target_commitish"]==os.environ["GITHUB_SHA"]
+          assert not r["draft"] and not r["prerelease"]
+          print("Published",r["html_url"])
+          PY
+          test "$(git ls-remote --tags origin "refs/tags/$tag" | awk '{print $1}')" = "$GITHUB_SHA"
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main'
+          test "$(git rev-parse refs/remotes/origin/main)" = "$GITHUB_SHA"
