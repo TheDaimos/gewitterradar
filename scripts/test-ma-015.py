@@ -108,6 +108,29 @@ class Tests(unittest.IsolatedAsyncioTestCase):
         removed=await self.call("links_remove",payload,expected=1,request_id=rid,admin=True)
         self.assertTrue(removed["location_deleted"])
         self.assertEqual(await self.call("links_remove",payload,expected=1,request_id=rid,admin=True),removed)
+    async def test_admin_history_reset_preserves_links_and_is_idempotent(self):
+        first=await self.create()
+        loc=first["location"]["location_id"]
+        report=dict(report_id=uid(),location_id=loc,source_key="synthetic",
+                    observed_at=None,received_at=9,time_quality="unknown",
+                    strike_lat=52.5,strike_lon=9.1,location_lat=52.5,location_lon=9.1,
+                    distance_m=0,record_radius_m=10000,alarm_radius_m=10000,
+                    location_revision=1)
+        await self.api._repo.store_report(report)
+        with self.assertRaises(api.ApiError):
+            await self.call("history_reset_preview",{"location_id":loc})
+        proof=await self.call("history_reset_preview",{"location_id":loc},admin=True)
+        self.assertEqual(proof["reports"],1)
+        request_id=uid()
+        payload={"location_id":loc,"confirmation_nonce":proof["nonce"],"explicit_final":True}
+        reset=await self.call("history_reset_commit",payload,expected=1,request_id=request_id,admin=True)
+        self.assertEqual((reset["deleted_reports"],reset["location_revision"]),(1,2))
+        self.assertEqual(await self.call("history_reset_commit",payload,expected=1,request_id=request_id,admin=True),reset)
+        self.assertEqual(await self.db.async_execute(lambda c:c.execute(
+            "SELECT count(*) FROM lightning_reports WHERE location_id=?",(loc,)).fetchone()[0]),0)
+        self.assertIsNotNone(await self.api._repo.get_link(first["link_id"]))
+        self.assertEqual((await self.api._repo.get_location(loc))["revision"],2)
+
     async def test_v3_to_v4_rollback_preserves_data(self):
         c=sqlite3.connect(":memory:",isolation_level=None)
         self.addCleanup(c.close)
