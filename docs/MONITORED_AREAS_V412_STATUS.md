@@ -486,3 +486,8 @@ Geschützte Refs vor Dokumentation: main 37f1aca54cd505fd91a2b1b0014cd7c6c280b26
 - `gate_result=NOT_RUN` für `MA-GATE-P02`; `latest_T2_baseline_sha=0401e966b65f8123101695687d3de48d25dc0601` (weiterhin P01; **keine** P02-T2-Abnahme); `latest_T3_baseline_sha=keine`; `invalidated_baselines`: der P01-T2-Nachweis deckt nicht die neue P02-Autorisierungs-/API-/Receipt-Schema-v4-Fläche ab. `DEV_user_accepted=false`, `production_release=false`.
 - `known_blockers`: P02-T2-Phasengate separat offen; vollständiger Audit-/Receipt-Retention-Vertrag ist nicht durch den aktuellen technischen Request-Receipt-Store ersetzt; Reallauf/DEV-ON/Mehrbenutzerprüfung auf VM109 nicht erfolgt; umfassende Backup-/Restore-Aufgaben bleiben MA-050/051. Keine neue Wetter-Providerfunktion und kein neuer Tracker gestartet.
 - `next_task=MA-GATE-P02`, erst nach gesondertem Auftrag. Danach P03/MA-016 nur nach eigener Betreiberfreigabe.
+
+
+## Dauerhafte Übergabe / Wiederanlauf (25.11.2026)
+
+**Kompakter und geprüfter Fortsetzungsanker:** [MONITORED_AREAS_P02_HANDOFF_2026-11-25.md](MONITORED_AREAS_P02_HANDOFF_2026-11-25.md). Enthält P00–P02-Referenzen, MA-012–015-Sicherheitsentscheidungen, CI-Belege, korrigierte Fehlerursachen, Schema-v4-Migration, geschützte Branches und die konkrete Fortsetzung mit `next_task=MA-GATE-P02`. **P02 T0/T1 ist geprüft; MA-GATE-P02 T2 NOT_RUN, T3/VM109 ON nicht abgenommen.** Vor Fortsetzung immer aktuellen Remote-HEAD und den aktuellen CI-Status neu abrufen.
