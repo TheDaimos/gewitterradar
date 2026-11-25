@@ -1,0 +1,23 @@
+name: MA-012 location CRUD contracts
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths:
+      - 'custom_components/gewitterradar/monitored_areas/locations.py'
+      - 'scripts/test-ma-012.py'
+      - '.github/workflows/ma-012.yml'
+permissions:
+  contents: read
+jobs:
+  location:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: |
+          git rev-parse HEAD
+          python -m compileall -q custom_components/gewitterradar/monitored_areas
+          python scripts/test-ma-012.py
+          python scripts/test-ma-011.py
