@@ -50,7 +50,7 @@ export function initializeMonitoredAreas(owner, enabled = false) {
   if (enabled !== true) return null;
   let runtime = active.get(owner);
   if (runtime) return runtime;
-  let stopped = false, checkedProfile = null, checking = false, interval = null, dialog = null;
+  let stopped = false, checkedProfile = null, checking = false, interval = null, dialog = null, attempts = 0;
   let shadow = null;
   const vault = () => owner._settingsVault;
   const hass = () => owner.hass || owner._hass || owner._vaultHass;
@@ -133,7 +133,9 @@ export function initializeMonitoredAreas(owner, enabled = false) {
       if (stopped || profile() !== pid || vault() !== client) return;
       const mode = status?.capabilities?.saved_places_mode;
       if (mode !== "db_active") {
-        // Do not cache an uncompleted migration as a successful reminder check.
+        // Startup is checked once; the wizard explicitly reopens after cutover.
+        if (mode === "migration_pending") checkedProfile = pid;
+        if (interval && checkedProfile) {clearInterval(interval);interval=null;}
         return;
       }
       const present = exists();
@@ -202,7 +204,14 @@ export function initializeMonitoredAreas(owner, enabled = false) {
   });
   active.set(owner,runtime);
   // The optional card can mount before Vault has resolved its HA profile.
-  interval = setInterval(() => {if (!stopped && !checkedProfile) void refresh();},1500);
+  interval = setInterval(() => {
+    if (stopped || checkedProfile || ++attempts > 20) {
+      if(interval)clearInterval(interval);
+      interval=null;
+      return;
+    }
+    void refresh();
+  },1500);
   void refresh();
   return runtime;
 }
