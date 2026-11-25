@@ -23,7 +23,7 @@ async def async_setup_monitored_areas(
     try:
         if not is_enabled(entry.options):
             return None
-        runtime = MonitoredAreasRuntime()
+        runtime = MonitoredAreasRuntime(hass)
         await runtime.async_start()
     except Exception:
         _LOGGER.exception("Monitored Areas startup failed; Gewitterradar continues")
