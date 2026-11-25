@@ -36,7 +36,7 @@ class Tests(unittest.TestCase):
     def test_migration_preserves_rows(self):
         before=self.snapshot()
         schema.initialize_schema(self.c)
-        self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(3,))
+        self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(4,))
         self.assertEqual(self.snapshot(),before)
         self.assertEqual(self.c.execute("SELECT count(*) FROM tracker_refs").fetchone(),(0,))
         schema.initialize_schema(self.c)
