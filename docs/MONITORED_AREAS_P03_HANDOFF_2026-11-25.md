@@ -49,3 +49,25 @@ Alle Funktionen sind bislang **Feature-Branch-Implementierungen** und nicht durc
 Am 25.11.2026 entschied der Betreiber, dass die verbleibende **leere** Local-To-do-Liste von HA-Benutzern manuell gelöscht wird. Daraus folgt kein Auftrag, HA-ConfigEntries/Listenentitäten programmatisch zu entfernen. MA-020 soll nach **vollständigem** verifizierten Import und gesonderter bestätigter Leerung ausschließlich betroffene Einträge über das unterstützte `todo.remove_item` löschen; anschließend Quellliste vollständig nachlesen, die persistente Migration finalisieren und erst dann im bestehenden GR-Dialog ein Erfolgs-Popup anzeigen („Standorte übernommen. Die Local-To-do-Liste ist jetzt leer und kann bei Bedarf unter Home Assistant manuell entfernt werden.“).
 
 Bei ungültigen, übersprungenen oder fremden Einträgen darf weder pauschal geleert noch eine vollständige Übernahme behauptet werden. Fail-closed, Admin-/Vault-ACL, aktuelle Digests, dauerhafte Saga und Readback-/Neustart-Reconciliation bleiben verbindlich; keine `db_active`-Umschaltung nach nur teilweise erfolgreichem Versuch. Damit entfällt **nur** der Sicherheitsblocker, dass die HA-Listenentität selbst automatisch entfernt werden müsse. `next_task=MA-020`, bislang noch keine Implementierung oder CI zu diesem neuen Ablauf nachgewiesen.
+
+
+### MA-020 – Verbindlicher Text für das einmalige Erfolgs-Pop-up (25.11.2026)
+
+**Titel:** Standortübernahme erfolgreich
+
+**Text:** Alle gespeicherten Standorte wurden erfolgreich in GewitterRadar übernommen. Die bisherige To-do-Liste wurde vollständig geleert und wird nicht mehr benötigt.
+
+**So entfernst du die alte Liste:**
+
+1. Öffne in Home Assistant **Einstellungen**.
+2. Wähle **Geräte & Dienste → Integrationen**.
+3. Öffne die Integration **Local To-do**.
+4. Suche den Eintrag **„GewitterRadar Orte“**.
+5. Öffne das Drei-Punkte-Menü (**⋮**) dieses Eintrags und wähle **Löschen**.
+6. Bestätige das Entfernen.
+
+**Info-Hinweis:** Die neue Standortverwaltung in GewitterRadar bleibt davon unberührt. Entferne ausschließlich die alte Liste „GewitterRadar Orte“, nicht andere To-do-Listen.
+
+**Schaltfläche:** Verstanden
+
+Diese Nachricht nur nach vollständigem nachgewiesenem Import, erfolgreich bestätigter Eintragsleerung, erneutem Quell-/DB-Readback und persistierter Finalisierung anzeigen. Keinen Erfolgstext bei Teilmigration, offenem Recovery, verbliebenen Einträgen oder Fehlern anzeigen. Weder automatische Listenentfernung noch MA-GATE-P03 oder Release durch diese Textfestlegung autorisiert.
