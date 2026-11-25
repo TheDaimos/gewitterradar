@@ -1,0 +1,23 @@
+name: MA-010 transactional repositories
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths: ['custom_components/gewitterradar/monitored_areas/storage/**','scripts/test-ma-010.py','.github/workflows/ma-010.yml']
+permissions:
+  contents: read
+jobs:
+  repositories:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: |
+          git rev-parse HEAD
+          python -m compileall -q custom_components/gewitterradar/monitored_areas
+          python scripts/test-ma-010.py
+          python scripts/test-ma-009.py
+          python scripts/test-ma-008.py
+          python scripts/test-ma-007.py
+          python scripts/test-ma-006.py
