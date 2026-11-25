@@ -10,7 +10,11 @@ import time
 from .storage.repositories import Repositories, ConstraintViolation, RevisionConflict, MissingRecord
 
 
-class ConfirmationRequired(PermissionError):
+class ProtectionDenied(RuntimeError):
+    pass
+
+
+class ConfirmationRequired(ProtectionDenied):
     pass
 
 
@@ -33,7 +37,7 @@ class Protection:
 
     async def preview_final_delete(self, *, actor_user_id, is_admin, location_id):
         if not actor_user_id or is_admin is not True:
-            raise PermissionError("forbidden")
+            raise ProtectionDenied("forbidden")
         def snapshot(c):
             loc=c.execute("SELECT revision FROM locations WHERE location_id=?",(location_id,)).fetchone()
             if loc is None:
@@ -52,7 +56,7 @@ class Protection:
     async def remove_link(self, *, link_id, location_id, actor_user_id, actor_profile_id, is_admin=False,
                           confirmation_nonce=None, explicit_final=False, expected_revision):
         if not actor_user_id or not actor_profile_id:
-            raise PermissionError("unauthorized")
+            raise ProtectionDenied("unauthorized")
         proof=None
         if explicit_final:
             if is_admin is not True or not confirmation_nonce:
