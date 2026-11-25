@@ -5,6 +5,10 @@ on:
     paths:
       - 'custom_components/gewitterradar/monitored_areas/api.py'
       - 'scripts/test-ma-016.py'
+      - 'scripts/test-ma-016.mjs'
+      - 'frontend/modules/monitored-areas/location-port.js'
+      - 'dashboard/dist/modules/monitored-areas/location-port.js'
+      - 'custom_components/gewitterradar/frontend/modules/monitored-areas/location-port.js'
       - '.github/workflows/ma-016.yml'
 permissions:
   contents: read
@@ -22,5 +26,6 @@ jobs:
           git rev-parse HEAD
           python -m compileall -q custom_components/gewitterradar/monitored_areas
           python scripts/test-ma-016.py
+          node --test scripts/test-ma-016.mjs
           python scripts/test-ma-gate-p02.py
           python scripts/test-ma-015.py
