@@ -57,7 +57,7 @@ try{for(const [name,width,height,touch]of [['desktop',1280,900,false],['portrait
  }return cases;});assert.equal(appearances,72);
  await page.evaluate(()=>preferences.patchLegend(card,'temperature',{presentation:'compact',orientation:'horizontal',size:'M',labels:'after',ticks:'inside',style:'thermometer',mode:'on'}));await page.waitForTimeout(150);await page.screenshot({path:path.join(out,name+'-compact.png')});
  // Configuration UI and keyboard focus, not just the internal patch API.
- await page.evaluate(()=>views.openLegendConfig(card,'temperature'));await page.locator('[data-lh-key=orientation]').selectOption('vertical');await page.locator('[data-lh-key=foreground]').selectOption('gold');await page.locator('[data-lh-key=shadow]').uncheck();await page.locator('[data-lh-key=outline]').uncheck();await page.locator('.lh-dialog [data-lh-close]').click();assert.equal(await page.evaluate(()=>lh.config.legends.temperature.foreground),'gold');
+ await page.evaluate(()=>views.openLegendConfig(card,'temperature'));await page.locator('[data-lh-key=orientation]').selectOption('vertical');await page.locator('[data-lh-choice=foreground]>summary').click();await page.locator('[data-lh-choice=foreground] input[value=gold]').check();assert.equal(await page.locator('[data-lh-key=foreground]').inputValue(),'gold');await page.locator('[data-lh-key=shadow]').uncheck();await page.locator('[data-lh-key=outline]').uncheck();await page.locator('.lh-dialog [data-lh-close]').click();assert.equal(await page.evaluate(()=>lh.config.legends.temperature.foreground),'gold');
  // Actual synthetic fields: legend preferences/units cannot fetch or alter
  // native weather values; a denied temperature provider leaves Wind intact.
  if(name==='desktop'){
