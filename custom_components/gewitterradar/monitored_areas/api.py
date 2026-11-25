@@ -303,7 +303,8 @@ class Api:
                                 {"name":candidate["name"],"lat":candidate["lat"],
                                  "lon":candidate["lon"],"updated_at":now})
                     imported.append({"uid":uid,"location_id":location_id,"action":action})
-                return {"imported":imported,"source_digest":snapshot["source_digest"],
+                return {"imported":imported,"profile_id":profile,
+                        "source_digest":snapshot["source_digest"],
                         "legacy_preserved":True,"mode":"migration_pending"}
             return await self._write(actor_user_id,op,request,mutate,is_admin=is_admin)
 
