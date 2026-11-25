@@ -42,3 +42,10 @@ Alle Funktionen sind bislang **Feature-Branch-Implementierungen** und nicht durc
 5. Nach allen sieben Arbeitspaketen eigenes `MA-GATE-P03` T2 durchführen; VM109-Installation, DRA oder FINAL nie eigenständig auslösen.
 
 **Aktueller Projektzustand:** P03 **IN_PROGRESS**, MA-016–019 technische Ports mit grünen gezielten CI-Läufen, notwendiges UI-Handoff und MA-020–022 **OFFEN**, `MA-GATE-P03=NOT_RUN`, `T3=keine`.
+
+
+## Betreiberentscheidung: MA-020 ohne automatisches Entfernen der Local-To-do-Liste
+
+Am 25.11.2026 entschied der Betreiber, dass die verbleibende **leere** Local-To-do-Liste von HA-Benutzern manuell gelöscht wird. Daraus folgt kein Auftrag, HA-ConfigEntries/Listenentitäten programmatisch zu entfernen. MA-020 soll nach **vollständigem** verifizierten Import und gesonderter bestätigter Leerung ausschließlich betroffene Einträge über das unterstützte `todo.remove_item` löschen; anschließend Quellliste vollständig nachlesen, die persistente Migration finalisieren und erst dann im bestehenden GR-Dialog ein Erfolgs-Popup anzeigen („Standorte übernommen. Die Local-To-do-Liste ist jetzt leer und kann bei Bedarf unter Home Assistant manuell entfernt werden.“).
+
+Bei ungültigen, übersprungenen oder fremden Einträgen darf weder pauschal geleert noch eine vollständige Übernahme behauptet werden. Fail-closed, Admin-/Vault-ACL, aktuelle Digests, dauerhafte Saga und Readback-/Neustart-Reconciliation bleiben verbindlich; keine `db_active`-Umschaltung nach nur teilweise erfolgreichem Versuch. Damit entfällt **nur** der Sicherheitsblocker, dass die HA-Listenentität selbst automatisch entfernt werden müsse. `next_task=MA-020`, bislang noch keine Implementierung oder CI zu diesem neuen Ablauf nachgewiesen.
