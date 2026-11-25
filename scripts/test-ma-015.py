@@ -107,7 +107,11 @@ class Tests(unittest.IsolatedAsyncioTestCase):
         payload={"location_id":loc,"link_id":first["link_id"],"explicit_final":True,"confirmation_nonce":proof["nonce"]}
         removed=await self.call("links_remove",payload,expected=1,request_id=rid,admin=True)
         self.assertTrue(removed["location_deleted"])
-        self.assertEqual(await self.call("links_remove",payload,expected=1,request_id=rid,admin=True),removed)
+        # A saved receipt proves an earlier commit, but cannot revive authorization
+        # after the last link and location have been deleted.
+        with self.assertRaises(api.ApiError) as error:
+            await self.call("links_remove",payload,expected=1,request_id=rid,admin=True)
+        self.assertEqual(error.exception.code,"not_found")
     async def test_admin_history_reset_preserves_links_and_is_idempotent(self):
         first=await self.create()
         loc=first["location"]["location_id"]
