@@ -1,6 +1,8 @@
 """MA-009: versioned location, profile, tracker and event history schema, initialized only by the SQLite owner thread."""
 import sqlite3
 
+from .errors import StorageIntegrityError
+
 SCHEMA_VERSION = 3
 
 
@@ -183,7 +185,7 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
             if _objects(conn) != DDL_V1:
                 raise UnsupportedSchema("v1 schema identity mismatch")
             if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
-                raise sqlite3.DatabaseError("v1 foreign key check failed")
+                raise StorageIntegrityError("v1 foreign key check failed")
             # Migration is additive; the transaction preserves all v1 data on failure.
             for statement in DDL_V2_ADDITIONS.values():
                 conn.execute(statement)
@@ -194,7 +196,7 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
             if _objects(conn) != expected_v2:
                 raise UnsupportedSchema("v2 schema identity mismatch")
             if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
-                raise sqlite3.DatabaseError("v2 foreign key check failed")
+                raise StorageIntegrityError("v2 foreign key check failed")
             for statement in DDL_V3_ADDITIONS.values():
                 conn.execute(statement)
             conn.execute("PRAGMA user_version=3")
@@ -204,9 +206,9 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
         if _objects(conn) != DDL:
             raise UnsupportedSchema("schema identity mismatch")
         if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
-            raise sqlite3.DatabaseError("schema foreign key check failed")
+            raise StorageIntegrityError("schema foreign key check failed")
         if conn.execute("PRAGMA quick_check").fetchall() != [("ok",)]:
-            raise sqlite3.DatabaseError("schema integrity check failed")
+            raise StorageIntegrityError("schema integrity check failed")
         conn.commit()
     except BaseException:
         conn.rollback()

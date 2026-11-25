@@ -113,10 +113,10 @@ class Repositories:
             except BaseException:
                 c.rollback()
                 raise
-        return await self._db.async_execute(transaction)
+        return await self._db.async_execute(transaction, kind="write")
 
     async def _get(self, table, key):
-        return await self._db.async_execute(lambda c: _read(c,table,key))
+        return await self._db.async_execute(lambda c: _read(c,table,key), kind="read")
 
     async def _create(self, table, values):
         data = _values(table,values)
