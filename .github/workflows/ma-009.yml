@@ -7,6 +7,7 @@ on:
       - 'scripts/test-ma-009.py'
       - 'scripts/test-ma-008.py'
       - 'scripts/test-ma-007.py'
+      - 'scripts/test-ma-006.py'
       - '.github/workflows/ma-009.yml'
 permissions:
   contents: read
