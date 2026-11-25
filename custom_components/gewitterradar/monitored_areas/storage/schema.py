@@ -3,7 +3,7 @@ import sqlite3
 
 from .errors import StorageIntegrityError
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 
 class UnsupportedSchema(sqlite3.DatabaseError):
@@ -161,7 +161,19 @@ DDL_V3_ADDITIONS = {
         generation INTEGER NOT NULL DEFAULT 0 CHECK (generation>=0)
     ) STRICT""",
 }
-DDL = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS}
+# MA-015: idempotency receipts committed in the SAME SQL transaction as mutation.
+DDL_V4_ADDITIONS = {
+    "request_receipts": f"""CREATE TABLE request_receipts (
+        actor_user_id TEXT NOT NULL CHECK (length(trim(actor_user_id))>0),
+        request_id TEXT NOT NULL CHECK ({_uuid('request_id')}),
+        operation TEXT NOT NULL CHECK (length(trim(operation))>0),
+        payload_hash TEXT NOT NULL CHECK (length(payload_hash)=64 AND payload_hash NOT GLOB '*[^0-9a-f]*'),
+        result_json TEXT NOT NULL CHECK (CASE WHEN json_valid(result_json) THEN json_type(result_json)='object' ELSE 0 END),
+        created_at INTEGER NOT NULL CHECK (created_at>=0),
+        PRIMARY KEY(actor_user_id,request_id)
+    ) STRICT""",
+}
+DDL = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS, **DDL_V4_ADDITIONS}
 
 
 def _objects(conn):
@@ -201,6 +213,16 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
                 conn.execute(statement)
             conn.execute("PRAGMA user_version=3")
             version = 3
+        if version == 3:
+            expected_v3 = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS}
+            if _objects(conn) != expected_v3:
+                raise UnsupportedSchema("v3 schema identity mismatch")
+            if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
+                raise StorageIntegrityError("v3 foreign key check failed")
+            for statement in DDL_V4_ADDITIONS.values():
+                conn.execute(statement)
+            conn.execute("PRAGMA user_version=4")
+            version = 4
         if version != SCHEMA_VERSION:
             raise UnsupportedSchema(f"unsupported schema version {version}")
         if _objects(conn) != DDL:
