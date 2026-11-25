@@ -13,6 +13,7 @@ from uuid import UUID, uuid4
 from .identity import Links, ProfileNotVerified
 from .locations import _coord, _name
 from .migration import MigrationPreview, MigrationSourceError, _hash as _migration_hash
+from .finalization import Finalizer, FinalizationError
 from .permissions import Protection, ConfirmationRequired, ProtectionDenied, _snapshot_digest
 from .storage import repositories as sql
 from .storage.database import DatabaseUnavailable
@@ -20,7 +21,8 @@ from .storage.errors import StorageError
 
 PREFIX = "gewitterradar/monitored_areas/"
 OPS = (
-    "status", "locations_list", "places_list", "migration_preview", "migration_commit", "location_get", "location_create", "location_update",
+    "status", "locations_list", "places_list", "migration_preview", "migration_commit",
+    "migration_finalize_preview", "migration_finalize_commit", "location_get", "location_create", "location_update",
     "monitoring_update", "links_list", "links_share", "links_transfer", "links_remove",
     "links_remove_preview", "history_reset_preview", "history_reset_commit", "preferences_update",
 )
@@ -122,13 +124,16 @@ def _authorize_cached_result(c, actor, profile, op, request, result, is_admin):
 
 
 class Api:
-    def __init__(self, database, vault, *, target_user_active=None, fetch_legacy_items=None):
+    def __init__(self, database, vault, *, target_user_active=None, fetch_legacy_items=None,
+                 remove_legacy_item=None):
         self._repo = sql.Repositories(database)
         self._links = Links(self._repo, vault)
         self._protect = Protection(self._repo)
         self._target_active = target_user_active
         self._migration = (MigrationPreview(self._repo,self._links,fetch_legacy_items)
                            if callable(fetch_legacy_items) else None)
+        self._finalizer = (Finalizer(self._repo,self._links,fetch_legacy_items,remove_legacy_item)
+                           if callable(fetch_legacy_items) and callable(remove_legacy_item) else None)
 
     async def _write(self, actor, op, request, fn, *, is_admin=False):
         request_id = _uuid(request.get("request_id"))
@@ -179,11 +184,15 @@ class Api:
             "profile_id", "payload", "request_id", "expected_revision"}:
             raise ApiError("invalid_request")
         if op=="status":
+            mode = "migration_pending"
+            if self._finalizer is not None and request.get("profile_id") is not None:
+                mode = await self._finalizer.mode(actor_user_id,request["profile_id"])
             return {"schema":1,"enabled":True,"capabilities":{
                 "locations":True,"links":True,"preferences":True,"tracker_create":False,
                 "monitoring_active":False,"notifications":False,"exports":False,"history_reset":True,
-                "saved_places_mode":"migration_pending",
-                "migration_preview":self._migration is not None}}
+                "saved_places_mode":mode,
+                "migration_preview":self._migration is not None,
+                "migration_finalize":self._finalizer is not None}}
         profile=request.get("profile_id")
         await self._links.require_profile(actor_user_id,profile)
         payload=_payload(request, {
@@ -192,13 +201,23 @@ class Api:
             "alarm_radius_m","target_user_id","target_profile_id","notification_mode",
             "push_enabled","critical_enabled","closure_enabled","quiet_minutes",
             "status_push","display_settings_json","confirmation_nonce",
-            "explicit_final","limit","query","cursor","preview_id","decisions"})
+            "explicit_final","limit","query","cursor","preview_id","decisions","nonce"})
         if op in MUTATIONS:
             if not request.get("request_id"):
                 raise ApiError("invalid_request")
             replay = await self._existing_receipt(actor_user_id,op,request,is_admin=is_admin)
             if replay is not None:
                 return replay
+        if op=="migration_finalize_preview":
+            if payload or self._finalizer is None:
+                raise ApiError("invalid_request" if payload else "migration_source_unavailable")
+            return await self._finalizer.preview(actor=actor_user_id,profile=profile,is_admin=is_admin)
+        if op=="migration_finalize_commit":
+            if self._finalizer is None or set(payload)!={"nonce","explicit_final"}:
+                raise ApiError("invalid_request")
+            _uuid(request.get("request_id"))
+            return await self._finalizer.commit(actor=actor_user_id,profile=profile,
+                is_admin=is_admin,nonce=payload["nonce"],explicit=payload["explicit_final"])
         if op=="migration_preview":
             if payload:
                 raise ApiError("invalid_request")
@@ -300,6 +319,8 @@ class Api:
                 return {"locations":[dict(zip(("location_id","name","lat","lon","revision"),row)) for row in cursor]}
             return await self._repo._db.async_execute(read,kind="read")
         if op=="places_list":
+            active_mode = (await self._finalizer.mode(actor_user_id,profile)
+                           if self._finalizer is not None else "migration_pending")
             # MA-016: DB is an opt-in read candidate source only. The legacy
             # Local-To-do store remains authoritative until MA-020 finalizes a
             # validated migration. Never silently substitute an empty DB list.
@@ -334,7 +355,7 @@ class Api:
                          "latitude":lat,"longitude":lon,"revision":revision,
                          "provider":"monitored_areas_sqlite"}
                         for lid,name,lat,lon,revision in rows[:limit]]
-                return {"mode":"migration_pending","places":places,
+                return {"mode":active_mode,"places":places,
                         "next_cursor":places[-1]["location_id"] if more else None}
             return await self._repo._db.async_execute(read_places,kind="read")
         if op=="location_get":
@@ -541,6 +562,7 @@ class Api:
 
 def _stable_code(exc):
     if isinstance(exc,ApiError): return exc.code
+    if isinstance(exc,FinalizationError): return exc.code
     if isinstance(exc,ProfileNotVerified): return "profile_not_found"
     if isinstance(exc,MigrationSourceError): return "migration_source_unavailable"
     if isinstance(exc,sql.RevisionConflict): return "revision_conflict"
