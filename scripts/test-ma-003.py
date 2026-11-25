@@ -33,20 +33,24 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                         {config.CONF_MONITORED_AREAS_ENABLED: 1},
                         {config.CONF_MONITORED_AREAS_ENABLED: "true"}):
             before = dict(options)
-            with patch.object(ma, "MonitoredAreasRuntime", side_effect=AssertionError), \
-                 patch("builtins.open", side_effect=AssertionError), \
-                 patch("sqlite3.connect", side_effect=AssertionError), \
-                 patch("asyncio.create_task", side_effect=AssertionError):
+            with patch.object(ma, "MonitoredAreasRuntime", side_effect=AssertionError) as factory, \
+                 patch("builtins.open", side_effect=AssertionError) as file_open, \
+                 patch("sqlite3.connect", side_effect=AssertionError) as db, \
+                 patch("asyncio.create_task", side_effect=AssertionError) as task, \
+                 self.assertNoLogs(ma._LOGGER, level="ERROR"):
                 self.assertIsNone(await ma.async_setup_monitored_areas(
                     NoHA(), types.SimpleNamespace(options=options)))
                 await ma.async_unload_monitored_areas(None)
+                for spy in (factory, file_open, db, task):
+                    spy.assert_not_called()
             self.assertEqual(options, before)
 
     async def test_on_inert_restart(self):
         entry = types.SimpleNamespace(options={config.CONF_MONITORED_AREAS_ENABLED: True})
         with patch("builtins.open", side_effect=AssertionError), \
              patch("sqlite3.connect", side_effect=AssertionError), \
-             patch("asyncio.create_task", side_effect=AssertionError):
+             patch("asyncio.create_task", side_effect=AssertionError), \
+             self.assertNoLogs(ma._LOGGER, level="ERROR"):
             before = asyncio.all_tasks()
             runtime = await ma.async_setup_monitored_areas(NoHA(), entry)
             self.assertEqual(runtime.status, contracts.LifecycleStatus.READY)
