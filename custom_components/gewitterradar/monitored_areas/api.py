@@ -12,6 +12,7 @@ from uuid import UUID, uuid4
 
 from .identity import Links, ProfileNotVerified
 from .locations import _coord, _name
+from .migration import MigrationPreview, MigrationSourceError
 from .permissions import Protection, ConfirmationRequired, ProtectionDenied, _snapshot_digest
 from .storage import repositories as sql
 from .storage.database import DatabaseUnavailable
@@ -19,7 +20,7 @@ from .storage.errors import StorageError
 
 PREFIX = "gewitterradar/monitored_areas/"
 OPS = (
-    "status", "locations_list", "places_list", "location_get", "location_create", "location_update",
+    "status", "locations_list", "places_list", "migration_preview", "location_get", "location_create", "location_update",
     "monitoring_update", "links_list", "links_share", "links_transfer", "links_remove",
     "links_remove_preview", "history_reset_preview", "history_reset_commit", "preferences_update",
 )
@@ -115,11 +116,13 @@ def _authorize_cached_result(c, actor, profile, op, request, result, is_admin):
 
 
 class Api:
-    def __init__(self, database, vault, *, target_user_active=None):
+    def __init__(self, database, vault, *, target_user_active=None, fetch_legacy_items=None):
         self._repo = sql.Repositories(database)
         self._links = Links(self._repo, vault)
         self._protect = Protection(self._repo)
         self._target_active = target_user_active
+        self._migration = (MigrationPreview(self._repo,self._links,fetch_legacy_items)
+                           if callable(fetch_legacy_items) else None)
 
     async def _write(self, actor, op, request, fn, *, is_admin=False):
         request_id = _uuid(request.get("request_id"))
@@ -173,7 +176,8 @@ class Api:
             return {"schema":1,"enabled":True,"capabilities":{
                 "locations":True,"links":True,"preferences":True,"tracker_create":False,
                 "monitoring_active":False,"notifications":False,"exports":False,"history_reset":True,
-                "saved_places_mode":"migration_pending"}}
+                "saved_places_mode":"migration_pending",
+                "migration_preview":self._migration is not None}}
         profile=request.get("profile_id")
         await self._links.require_profile(actor_user_id,profile)
         payload=_payload(request, {
@@ -189,6 +193,12 @@ class Api:
             replay = await self._existing_receipt(actor_user_id,op,request,is_admin=is_admin)
             if replay is not None:
                 return replay
+        if op=="migration_preview":
+            if payload:
+                raise ApiError("invalid_request")
+            if self._migration is None:
+                raise ApiError("migration_source_unavailable")
+            return await self._migration.build(actor_user_id=actor_user_id,profile_id=profile)
         if op=="locations_list":
             limit=payload.get("limit",50)
             if type(limit) is not int or not 1<=limit<=100:
@@ -443,6 +453,7 @@ class Api:
 def _stable_code(exc):
     if isinstance(exc,ApiError): return exc.code
     if isinstance(exc,ProfileNotVerified): return "profile_not_found"
+    if isinstance(exc,MigrationSourceError): return "migration_source_unavailable"
     if isinstance(exc,sql.RevisionConflict): return "revision_conflict"
     if isinstance(exc,sql.MissingRecord): return "not_found"
     if isinstance(exc,sql.ConstraintViolation): return "invalid_request"
