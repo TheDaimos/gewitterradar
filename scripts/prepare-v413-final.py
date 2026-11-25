@@ -48,28 +48,12 @@ matching[0]["sha256"]=hashlib.sha256(raw).hexdigest()
 matching[0]["sizeBytes"]=len(raw)
 p.write_text(json.dumps(assets,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 
-p=ROOT/"scripts/build-frontend.mjs"
-s=p.read_text(encoding="utf-8")
-needle="  const identityIsFinal=release.version==='4.11.249'"
-if needle not in s:raise RuntimeError("Unrecognized build-frontend identity section")
-if "identityIs413Final" in s:raise RuntimeError("V4.13 FINAL guard already exists; avoid double application")
-lines=s.splitlines(keepends=True)
-identity=[i for i,l in enumerate(lines) if "const identityIsFinal=release.version==='4.11.249'" in l]
-assert len(identity)==1
-idx=identity[0]
-lines.insert(idx+1, "  const identityIs412Final=release.version==='4.12.15'&&release.displayVersion==='V4.12 FINAL'&&/^V4\\.12-FINAL-\\d{4}-\\d\\d-\\d\\d$/.test(release.build);\n"
-    if not any("identityIs412Final" in l for l in lines) else "")
-lines=[line for line in lines if line]
-idx=[i for i,l in enumerate(lines) if "const identityIsFinal=release.version==='4.11.249'" in l][0]
-# Insert the new guard immediately after historical guards.
-position=idx+2 if any("const identityIs412Final" in l for l in lines[idx+1:idx+3]) else idx+1
-lines.insert(position,
-    "  const identityIs413Final=release.version==='4.13.7'&&release.displayVersion==='V4.13 FINAL'&&/^V4\\.13-FINAL-\\d{4}-\\d\\d-\\d\\d$/.test(release.build);\n")
-s="".join(lines)
-s=s.replace("identityIsDev||identityIsFinal||identityIs412Final)", "identityIsDev||identityIsFinal||identityIs412Final||identityIs413Final)")
-s=s.replace("identityIsDev||identityIsFinal)", "identityIsDev||identityIsFinal||identityIs412Final||identityIs413Final)")
-assert "identityIs413Final)||!revision" in s
-p.write_text(s,encoding="utf-8")
+# The active 4.13 developer branch already includes a strict 4.11/4.12/4.13 FINAL identity guard.
+# Preserve it; never replace the canonical check with a weaker historical exception.
+build_guard=(ROOT/"scripts/build-frontend.mjs").read_text(encoding="utf-8")
+assert "const finalSeries={'4.11.249':'4.11','4.12.15':'4.12','4.13.7':'4.13'}" in build_guard
+assert "identityIsDev||identityIsFinal" in build_guard
+assert "Canonical release identity mismatch" in build_guard
 v=(ROOT/"frontend/version.js").read_text()
 assert 'version:"4.13.7"' in v and 'displayVersion:"V4.13 FINAL"' in v
 assert 'runtimeRevision:"4137r2"' in v and 'moduleSetId:"E413-7A2"' in v
