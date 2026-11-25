@@ -40,31 +40,48 @@ class MonitoredAreasRuntime:
                         return bool(user is not None and user.is_active)
 
                     from .migration import MigrationSourceError
+                    from .finalization import SOURCE_ENTITY
+
+                    def source_exists():
+                        # Never choose the first of several similarly named lists.
+                        # Only the exact Local To-do list may be touched.
+                        state = self._hass.states.get(SOURCE_ENTITY)
+                        if state is None:
+                            return False
+                        if state.state in ("unknown", "unavailable"):
+                            raise MigrationSourceError("migration_source_unavailable")
+                        from homeassistant.helpers import entity_registry as er
+                        record = er.async_get(self._hass).async_get(SOURCE_ENTITY)
+                        if record is None or record.platform != "local_todo":
+                            raise MigrationSourceError("migration_source_unverified")
+                        return True
 
                     async def fetch_legacy_items():
-                        # Home Assistant's supported To-do service is the sole
-                        # legacy source. Never open HA .storage files directly.
-                        states = getattr(self._hass, "states", None)
-                        candidates = ("todo.gewitterradar_orte",
-                                      "todo.gewitterradar_saved_places",
-                                      "todo.gewitterradar")
-                        available = [eid for eid in candidates if states is not None and states.get(eid)]
-                        if not available:
+                        if not source_exists():
                             raise MigrationSourceError("migration_source_missing")
-                        entity_id = available[0]
                         result = await self._hass.services.async_call(
-                            "todo", "get_items", {"status":["needs_action","completed"]},
-                            target={"entity_id":entity_id}, blocking=True,
+                            "todo", "get_items", {"status": ["needs_action", "completed"]},
+                            target={"entity_id": SOURCE_ENTITY}, blocking=True,
                             return_response=True)
-                        if not isinstance(result, dict):
+                        if not isinstance(result, dict) or set(result) != {SOURCE_ENTITY}:
                             raise MigrationSourceError("migration_source_invalid")
-                        entry = result.get(entity_id)
-                        if not isinstance(entry,dict) or not isinstance(entry.get("items"),list):
+                        entry = result[SOURCE_ENTITY]
+                        if not isinstance(entry, dict) or not isinstance(entry.get("items"), list):
                             raise MigrationSourceError("migration_source_invalid")
                         return entry["items"]
 
+                    async def remove_legacy_item(uid):
+                        # Delete one verified UID at a time; never delete the list
+                        # entity or modify Home Assistant's private storage.
+                        if not source_exists():
+                            raise MigrationSourceError("migration_source_missing")
+                        await self._hass.services.async_call(
+                            "todo", "remove_item", {"item": uid},
+                            target={"entity_id": SOURCE_ENTITY}, blocking=True)
+
                     self.api = Api(self.database, vault, target_user_active=target_active,
-                                   fetch_legacy_items=fetch_legacy_items)
+                                   fetch_legacy_items=fetch_legacy_items,
+                                   remove_legacy_item=remove_legacy_item)
                 self._unsubscribe = self._hass.bus.async_listen_once(
                     "homeassistant_stop", self._async_shutdown)
                 self._status = LifecycleStatus.READY
