@@ -5,10 +5,10 @@ const consumer=await readFile(new URL("../frontend/modules/weather/consumer-clie
 const skeleton=await readFile(new URL("../frontend/modules/ui/skeleton.js",import.meta.url),"utf8");
 const version=await readFile(new URL("../frontend/version.js",import.meta.url),"utf8");
 
-assert.match(version,/version:"4\.(?:11|12|13)\.\d+"/);
-const versionParts=version.match(/version:"4\.(11|12|13)\.(\d+)"/);
-assert(versionParts,'Current V4.11-V4.13 product version is canonical');
-const runtimeSuffix=version.match(/runtimeRevision:"(4(?:11|12|13)\d+r([1-9]\d*))"/);
+assert.match(version,/version:"4\.(?:11|12|13|14)\.\d+"/);
+const versionParts=version.match(/version:"4\.(11|12|13|14)\.(\d+)"/);
+assert(versionParts,'Current V4.11-V4.14 product version is canonical');
+const runtimeSuffix=version.match(/runtimeRevision:"(4(?:11|12|13|14)\d+r([1-9]\d*))"/);
 assert(runtimeSuffix,'Runtime revision must have nonzero revision number');
 const expectedSeries='4'+versionParts[1]+versionParts[2];
 assert.equal(runtimeSuffix[1],expectedSeries+'r'+runtimeSuffix[2],'Runtime version tracks canonical product version');

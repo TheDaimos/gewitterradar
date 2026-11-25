@@ -24,12 +24,14 @@ const {temperatureFixture}=require('./temperature-browser-fixture.cjs');
   await page.locator('#legend-hub-popout').waitFor({state:'visible'});
   await page.locator('#legend-hub-control').click();
   await page.evaluate(()=>card._setMapDisplayMode('standard',{persist:false}));
-  await page.locator('#location-main-button').click();
-  await page.locator('.location-search-action').click();
-  await page.locator('#v407-location-search-backdrop').waitFor({state:'visible'});
-  await page.locator('.v407-location-search-close').click();
+  // No location helper in this fixture: the legacy protection must disable the control.
+  const location=page.locator('#location-main-button');
+  assert.equal(await location.count(),1);
+  assert.equal(await location.isDisabled(),true,'missing location helper must keep legacy control disabled');
+  assert.equal(await page.locator('#v407-location-search-backdrop').count(),0);
+  console.log('PASS P00: legacy location guard with missing helper (configured search remains DEV smoke)');
   const result=await page.evaluate(()=>({maNodes:[...card.shadow.querySelectorAll('*')].filter(n=>/monitored[-_]areas/i.test(n.id+' '+(typeof n.className==='string'?n.className:''))).length,maWS:requests.filter(q=>/monitored[-_]areas/i.test(JSON.stringify(q))),wr:requests.some(q=>q.type==='weather_router/consumer/discovery'),maStorage:Object.keys(localStorage).filter(k=>/monitored[-_]areas/i.test(k))}));
   assert.equal(result.maNodes,0);assert.deepEqual(result.maWS,[]);assert.deepEqual(result.maStorage,[]);assert.equal(result.wr,true);assert.deepEqual(maRequests,[]);assert.deepEqual(errors,[]);
-  console.log('PASS P00: actual card boot, 37 mandatory registrations, map, Eye Hub, Legend Hub, location search, WR discovery; no MA import/DOM/WS/storage');
+  console.log('PASS P00: actual card boot, 37 mandatory registrations, map, Eye Hub, Legend Hub, missing-helper location guard, WR discovery; no MA import/DOM/WS/storage');
  }finally{await browser.close();f.server.closeAllConnections();await new Promise(r=>f.server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1});

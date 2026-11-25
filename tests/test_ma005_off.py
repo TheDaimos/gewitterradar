@@ -23,7 +23,7 @@ async def test_feature_off_native(hass, flag):
         assert entry.runtime_data.monitored_areas is None
         assert dict(entry.options) == options
         ids = {e.entity_id for e in er.async_entries_for_config_entry(registry, entry.entry_id)}
-        from test_migration_fresh_install import EXPECTED_NATIVE_ENTITY_IDS
+        from tests.test_migration_fresh_install import EXPECTED_NATIVE_ENTITY_IDS
         assert ids == EXPECTED_NATIVE_ENTITY_IDS
         assert all("monitored" not in key.lower() for key in hass.services.async_services().get(DOMAIN, {}))
         assert await hass.config_entries.async_reload(entry.entry_id)
