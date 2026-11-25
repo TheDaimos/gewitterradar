@@ -88,6 +88,45 @@ class Tests(unittest.IsolatedAsyncioTestCase):
         a=await self.call("location_update",{"location_id":lid,"name":"A"},rid=request_id,rev=2)
         b=await self.call("location_update",{"location_id":lid,"name":"B"},rid=request_id,rev=3,actor="bob")
         self.assertNotEqual(a["location"]["name"],b["location"]["name"])
+    async def test_admin_receipt_replay_revoked_admin_role_denied(self):
+        created=await self.create()
+        lid=created["location"]["location_id"]
+        proof=await self.call("history_reset_preview",{"location_id":lid},admin=True)
+        rid=uid()
+        payload={"location_id":lid,"confirmation_nonce":proof["nonce"],"explicit_final":True}
+        result=await self.call("history_reset_commit",payload,rid=rid,rev=1,admin=True)
+        self.assertTrue(result["reset"])
+        with self.assertRaises(api.ApiError) as caught:
+            await self.call("history_reset_commit",payload,rid=rid,rev=1,admin=False)
+        self.assertEqual(caught.exception.code,"forbidden")
+
+    async def test_nonce_bound_to_vault_profile_even_same_ha_user(self):
+        created=await self.create()
+        lid=created["location"]["location_id"]
+        alternate=uid()
+        self.vault.owners["alice"].add(alternate)
+        await self.call("links_share",{"location_id":lid,"target_user_id":"alice",
+             "target_profile_id":alternate},rid=uid(),rev=1)
+        proof=await self.call("history_reset_preview",{"location_id":lid},admin=True)
+        with self.assertRaises(api.ApiError) as caught:
+            await self.call("history_reset_commit",
+                {"location_id":lid,"confirmation_nonce":proof["nonce"],"explicit_final":True},
+                profile=alternate,rid=uid(),rev=2,admin=True)
+        self.assertEqual(caught.exception.code,"confirmation_stale")
+
+    async def test_concurrent_same_receipt_is_single_mutation(self):
+        import asyncio
+        rid=uid()
+        request={"name":"Concurrent","lat":0,"lon":0}
+        first,second=await asyncio.gather(
+            self.call("location_create",request,rid=rid),
+            self.call("location_create",request,rid=rid))
+        self.assertEqual(first,second)
+        self.assertEqual(await self.database.async_execute(
+            lambda c:c.execute("SELECT count(*) FROM locations").fetchone()[0],kind="read"),1)
+        self.assertEqual(await self.database.async_execute(
+            lambda c:c.execute("SELECT count(*) FROM request_receipts").fetchone()[0],kind="read"),1)
+
     async def test_storage_restart_preserves_receipt_and_fk(self):
         result=await self.create()
         self.assertEqual(await self.database.async_execute(lambda c:c.execute("PRAGMA user_version").fetchone()[0],kind="read"),4)
