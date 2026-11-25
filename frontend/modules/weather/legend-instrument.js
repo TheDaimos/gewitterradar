@@ -91,6 +91,9 @@ export function createLegendInstrument(owner,{id,elementId,title,position,savePo
   const b=instrumentBounds(owner,host).storage,p=state.config.eyePosition,key=positionKey(p),c=legendOptions(owner,id),area=[b.left,b.top,b.right+host.offsetWidth,b.bottom+host.offsetHeight].join(','),layout=[c.orientation,c.size,c.style,c.labels,c.ticks,c.presentation].join(',');
   if(!accepted||accepted.key!==key){const wanted={x:b.left+(b.right-b.left)*p.x,y:b.top+(b.bottom-b.top)*p.y},point=!accepted&&!explicitPosition?clearInstrumentPosition(owner,host,b,wanted):wanted;accepted={...point,key,area,layout};}
   else{const resized=accepted.area!==area||accepted.layout!==layout,outside=accepted.x<b.left-Math.max(32,host.offsetWidth*.25)||accepted.x>b.right+Math.max(32,host.offsetWidth*.25)||accepted.y<b.top-Math.max(32,host.offsetHeight*.25)||accepted.y>b.bottom+Math.max(32,host.offsetHeight*.25);if(resized||outside){accepted.x=clamp(accepted.x,b.left,b.right);accepted.y=clamp(accepted.y,b.top,b.bottom);}accepted.area=area;accepted.layout=layout;}
+  // Default placements track interactive controls that appear after the instrument.
+  // Explicit user positions remain untouched, including deliberate overlaps.
+  if(!explicitPosition){const free=clearInstrumentPosition(owner,host,b,{x:accepted.x,y:accepted.y});accepted.x=free.x;accepted.y=free.y;}
   const left=accepted.x+'px',top=accepted.y+'px';if(host.style.left!==left)host.style.left=left;if(host.style.top!==top)host.style.top=top;if(!popup.hidden)popupPosition();
  };
 
