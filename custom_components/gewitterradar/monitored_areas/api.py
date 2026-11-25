@@ -19,7 +19,7 @@ from .storage.errors import StorageError
 
 PREFIX = "gewitterradar/monitored_areas/"
 OPS = (
-    "status", "locations_list", "location_get", "location_create", "location_update",
+    "status", "locations_list", "places_list", "location_get", "location_create", "location_update",
     "monitoring_update", "links_list", "links_share", "links_transfer", "links_remove",
     "links_remove_preview", "history_reset_preview", "history_reset_commit", "preferences_update",
 )
@@ -172,7 +172,8 @@ class Api:
         if op=="status":
             return {"schema":1,"enabled":True,"capabilities":{
                 "locations":True,"links":True,"preferences":True,"tracker_create":False,
-                "monitoring_active":False,"notifications":False,"exports":False,"history_reset":True}}
+                "monitoring_active":False,"notifications":False,"exports":False,"history_reset":True,
+                "saved_places_mode":"migration_pending"}}
         profile=request.get("profile_id")
         await self._links.require_profile(actor_user_id,profile)
         payload=_payload(request, {
@@ -181,7 +182,7 @@ class Api:
             "alarm_radius_m","target_user_id","target_profile_id","notification_mode",
             "push_enabled","critical_enabled","closure_enabled","quiet_minutes",
             "status_push","display_settings_json","confirmation_nonce",
-            "explicit_final","limit"})
+            "explicit_final","limit","query","cursor"})
         if op in MUTATIONS:
             if not request.get("request_id"):
                 raise ApiError("invalid_request")
@@ -199,6 +200,44 @@ class Api:
                     ORDER BY l.location_id LIMIT ?""",(actor_user_id,profile,limit))
                 return {"locations":[dict(zip(("location_id","name","lat","lon","revision"),row)) for row in cursor]}
             return await self._repo._db.async_execute(read,kind="read")
+        if op=="places_list":
+            # MA-016: DB is an opt-in read candidate source only. The legacy
+            # Local-To-do store remains authoritative until MA-020 finalizes a
+            # validated migration. Never silently substitute an empty DB list.
+            if not set(payload) <= {"query","cursor","limit"}:
+                raise ApiError("invalid_request")
+            query=payload.get("query","")
+            cursor_id=payload.get("cursor")
+            limit=payload.get("limit",50)
+            if (not isinstance(query,str) or len(query)>120 or
+                type(limit) is not int or not 1<=limit<=100):
+                raise ApiError("invalid_request")
+            if cursor_id is not None:
+                cursor_id=_uuid(cursor_id)
+            def read_places(c):
+                # Stable UUID ordering for race-resistant, server-side paging.
+                if cursor_id is not None and c.execute(
+                    "SELECT 1 FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
+                    "WHERE l.location_id=? AND p.ha_user_id=? AND p.vault_profile_id=?",
+                    (cursor_id,actor_user_id,profile)).fetchone() is None:
+                    raise ApiError("invalid_cursor")
+                escaped=query.replace("\\","\\\\").replace("%","\\%").replace("_","\\_")
+                rows=c.execute(
+                    "SELECT l.location_id,l.name,l.lat,l.lon,l.revision "
+                    "FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
+                    "WHERE p.ha_user_id=? AND p.vault_profile_id=? "
+                    "AND (?='' OR l.name LIKE ? ESCAPE '\\\\' COLLATE NOCASE) "
+                    "AND (? IS NULL OR l.location_id>?) "
+                    "ORDER BY l.location_id LIMIT ?",
+                    (actor_user_id,profile,query,"%"+escaped+"%",cursor_id,cursor_id,limit+1)).fetchall()
+                more=len(rows)>limit
+                places=[{"location_id":lid,"name":name,"displayLabel":name,
+                         "latitude":lat,"longitude":lon,"revision":revision,
+                         "provider":"monitored_areas_sqlite"}
+                        for lid,name,lat,lon,revision in rows[:limit]]
+                return {"mode":"migration_pending","places":places,
+                        "next_cursor":places[-1]["location_id"] if more else None}
+            return await self._repo._db.async_execute(read_places,kind="read")
         if op=="location_get":
             location_id=_uuid(payload.get("location_id"))
             def read(c):
