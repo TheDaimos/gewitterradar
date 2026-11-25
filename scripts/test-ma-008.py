@@ -36,7 +36,7 @@ class Tests(unittest.TestCase):
     def test_migration_preserves_rows(self):
         before=self.snapshot()
         schema.initialize_schema(self.c)
-        self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(2,))
+        self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(3,))
         self.assertEqual(self.snapshot(),before)
         self.assertEqual(self.c.execute("SELECT count(*) FROM tracker_refs").fetchone(),(0,))
         schema.initialize_schema(self.c)
@@ -58,7 +58,7 @@ class Tests(unittest.TestCase):
             self.c.execute("INSERT INTO tracker_refs(location_id,stable_slug,unique_id,actual_entity_id,display_name) VALUES(?,?,?,?,?)",(loc,slug,"ma_"+loc+"_tracker",entity,"name"))
         add(self.loc)
         add(self.other)
-        self.assertEqual(self.c.execute("SELECT count(*) FROM tracker_refs WHERE actual_entity_id IS NULL AND lifecycle_state='pending'").fetchone(),(2,))
+        self.assertEqual(self.c.execute("SELECT count(*) FROM tracker_refs WHERE actual_entity_id IS NULL AND lifecycle_state='pending'").fetchone(),(3,))
         with self.assertRaises(sqlite3.IntegrityError): add(self.loc)
         with self.assertRaises(sqlite3.IntegrityError): add(str(uuid4()))
         with self.assertRaises(sqlite3.IntegrityError):
