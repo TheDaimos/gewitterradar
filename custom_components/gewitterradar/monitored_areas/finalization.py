@@ -81,7 +81,7 @@ def _lookup_receipt(c, actor, profile, digest, records):
         "WHERE actor_user_id=? AND operation='migration_commit'", (actor,)
     ):
         result = json.loads(blob)
-        if result.get("source_digest") != digest:
+        if result.get("source_digest") != digest or result.get("profile_id") != profile:
             continue
         imported = result.get("imported", [])
         if len(imported) != len(records):
