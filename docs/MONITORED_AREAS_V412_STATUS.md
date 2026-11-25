@@ -554,3 +554,13 @@ Geschützte Refs vor Dokumentation: main 37f1aca54cd505fd91a2b1b0014cd7c6c280b26
 ### P03-Fortsetzungsanker
 
 [MONITORED_AREAS_P03_HANDOFF_2026-11-25.md](MONITORED_AREAS_P03_HANDOFF_2026-11-25.md) enthält die tatsächlich ausgeführten MA-016–019-Commits, CI-Ergebnisse, die unvollständige UI-Anbindung und die zwingenden Sicherheitsgrenzen für MA-020–022. **Keine P03-Freigabe, kein DEV-/PROD-Deployment.**
+
+
+## MA-020 – Sicherheitsprüfung der Finalisierung (25.11.2026; BLOCKED, kein Abschluss)
+
+- `task_id=MA-020`; `state=BLOCKED`; `next_task=MA-020`. **Keine Finalisierung, kein Löschen, kein DB-Cutover, kein MA-GATE-P03.** MA-021/022 weiterhin offen.
+- Geprüfter Feature-Branch-HEAD vor dieser Diagnose: `37324599583a80eafa2080750180d2af9cd704f5`. Der vorhandene MA-019-Import schreibt den SQL-Request-Receipt, aber keinen dauerhaften pro Quell-UID abgesicherten Migrationsabschluss und keinen externen Saga-/Wiederanlaufzustand. `saved_places_mode=migration_pending` ist absichtlich unverändert.
+- Der implementierte HA-Quelladapter (`monitored_areas/runtime.py`) verwendet ausschließlich `todo.get_items`. Ein autorisierter Mechanismus zum Entfernen einer vollständigen Local-To-do-Listenentität ist nicht vorhanden. Das dokumentierte `todo.remove_item` entfernt **Einträge**, nicht die Liste/Integration. Eine automatische ConfigEntry-Entfernung wäre mangels nachgewiesener autorisierter, integrationsübergreifender Schnittstelle unzulässig. Daher **kein destruktiver Versuch**.
+- Fehlende Sicherheitsverträge: feste und eindeutige Quell-Entity-/ConfigEntry-Identität statt erster gefundener Kandidat; vollständige Deckung aller Quell-UIDs inklusive ungültiger/übersprungener Kandidaten; vor externem Seiteneffekt persistierte Actor-/Vault-/Source-Digest-/DB-Readback-/TTL-/Nonce-Finalisierungsabsicht; SQLite-/HA-übergreifender restartfähiger Saga-/Receipt-Reconcile; HA-Adminprüfung; abschließender Readback. Ohne diese Verträge keine Freigabe `db_active` und keine Liste löschen.
+- `test_level=NOT_RUN`; `commands=GitHub Connector: fetch branch/docs/runtime/api/migration/schema/tests; externe HA-Dokumentation zum todo-Dienstvertrag gelesen`; `results=design/safety blocker only; no implementation or CI claim`; `latest_T2_baseline_sha=9c09745ed76b1baaf38e1c2e31b50f61e1dc792c` (P02); `latest_T3_baseline_sha=keine`.
+- `known_blockers=missing safe list-entity removal contract and persisted cross-system reconciliation`. Nächster Schritt **bleibt MA-020**: sichere unterstützte Entfernung der *gesamten* Local-To-do-Liste klären und alle P0-Schutzmechanismen mit T0/T1 implementieren/testen; ggf. Finalisierung ausdrücklich nur nach manueller HA-Admin-Aktion entwerfen, aber niemals automatisch als erfolgt verbuchen.
