@@ -140,7 +140,7 @@ Historischer Vorbereitungsstand, durch nachfolgenden MA-004-Abschluss abgelöst.
 
 ## MA-004 – Unsichtbares Frontend-Skelett | Abschluss 25.11.2026
 
-**Status: IMPLEMENTED / T0 und T1 sowie betroffene Build-/Inventar-/Integritätsprüfungen erfolgreich im öffentlichen GitHub-Actions-Runner. Unabhängige MA-004-Abnahme ausstehend; keine HA-/Browser-DEV-Laufzeitabnahme.**
+**Status: ACCEPTED_USER – MA-004 fachlich unabhängig abgenommen; T0/T1 und Build-/Inventar-/Integritätsprüfungen erfolgreich. Keine HA-DEV-Laufzeitabnahme.**
 
 MA-001 bis MA-003 fachlich abgenommen. Die drei MA-002-Vorbehalte bleiben unverändert. Keine erneute Grundsatzanalyse. Ausschließlich der autorisierte Branch feature/v4.14-monitored-areas enthält MA-Code. Vorheriger Feature-HEAD: 2e1cea524c540b9e9c2a3625b1d23713b564eeb9. V4.13 FINAL geschützt: main 37f1aca54cd505fd91a2b1b0014cd7c6c280b26f, v4.13 509daeb7245f42b23e46f72b4d002c42f0d7f56e; WR deploy/dev 850c3542a8b3b181edc5837205bbeb374ed72eab; alle drei Refs vor/nach Implementierung unverändert.
 
@@ -222,13 +222,13 @@ Zusätzlicher GitHub-Tree-Abgleich des Implementierungsstands: 114/114 erwartete
 
 task_id=MA-004; implementation_commit=16f638d0926fb434fb89eb822a8802b3babfe01f; distribution_commit=7e565565ec386a7efef9ef0bdb5f945ed32afb4f; test_commit=777ba55a836ac83b9356a4a125358264b5de6e1d; tested_commit=3d3b88aaf47c12b2b72eeef4f2cd2c629f3822c6; changed_paths=obige Compare-Liste plus Statusdokumentation; affected_contracts=optionaler Frontend-Lifecycle, Modulregister/Manifest, Build/Inventar, Spiegel/Hash/DRA; test_level=T0/T1 plus betroffene Build-/Integritätsverträge; commands=obige Tabelle; results=5/5 PASS, Syntax PASS, Build/Determinismus/Manipulationsproben/Spiegel/SHA PASS; latest_T2_baseline_sha=keine MA-Baseline; latest_T3_baseline_sha=keine MA-Baseline; invalidated_baselines=keine MA-Baseline; known_blockers=keine für den vereinbarten MA-004-Umfang, reale HA-/Dashboard-Abnahme erst mit separater Freigabe; next_task=MA-005.
 
-## Nächster Auftrag: MA-005 – Feature-OFF-Smoke / P00-Gate
+## Historische Übergabe an MA-005 – vor abschließendem CI-Nachweis
 
-**MA-005 ist beauftragt und implementiert; T2-Feature-OFF-Vertragstests bestanden.** Abschließender Shared-Frontend-CI-Nachweis und reale HA-DEV-Laufzeitabnahme stehen aus; P00 ist noch nicht freigegeben. Keine automatische Installation/Promotion. Kanonischer Übergabepunkt bleibt die Statusdatei auf deploy/dev; dorthin ausschließlich Dokumentation, kein MA-Anwendungscode.
+Historischer Zwischenstand: MA-005 war beauftragt und implementiert; Feature-OFF-Vertragstests bestanden, Shared-Frontend-Nachweis damals offen. Durch den unten dokumentierten T2-Abschluss abgelöst. P00-Laufzeitfreigabe weiterhin offen. Keine automatische Installation/Promotion. Kanonischer Übergabepunkt bleibt die Statusdatei auf deploy/dev; dorthin ausschließlich Dokumentation, kein MA-Anwendungscode.
 
-## MA-005 – P00 Feature-OFF | Fortschritt und T2-Vertragsnachweise (25.11.2026)
+## MA-005 – Historischer Zwischenstand vor letzter Shared-Frontend-Korrektur (25.11.2026)
 
-**Status: IMPLEMENTED / T2-Vertragsprüfungen für Feature-OFF erfolgreich; Shared-Frontend-Revalidierung auf Korrekturcommit noch nicht abgeschlossen; reale HA-DEV-Laufzeitabnahme ausstehend. Nicht ACCEPTED_USER / P00 nicht freigegeben.**
+**Historischer Prüfstand, nicht aktueller Status:** Feature-OFF erfolgreich; Shared-Frontend damals noch offen. Nachfolgender T2-Abschluss maßgeblich.
 
 - Arbeitsbranch: `feature/v4.14-monitored-areas`; keine Promotion von MA-Code nach `deploy/dev` oder `main`.
 - Testimplementierung: [6d8597a3](https://github.com/TheDaimos/gewitterradar/commit/6d8597a3d55008a7ab389cc026be3838d747a272) – native HA-Testumgebung, Chromium mit tatsächlichem GewitterRadar-Frontend und eigener öffentlicher P00-CI.
@@ -245,11 +245,11 @@ task_id=MA-004; implementation_commit=16f638d0926fb434fb89eb822a8802b3babfe01f; 
 | Hi-Res-Asset-Schutz | [CI](https://github.com/TheDaimos/gewitterradar/actions/runs/45619118608) | SUCCESS auf 9ec7f8ba |
 | Erneute HA-Integration | [CI](https://github.com/TheDaimos/gewitterradar/actions/runs/45619118645) | SUCCESS auf 9ec7f8ba |
 | Erneute MA-004-Schutzverträge | [CI](https://github.com/TheDaimos/gewitterradar/actions/runs/45619118830) | SUCCESS auf 9ec7f8ba |
-| Shared Frontend – erneuter Lauf | [CI](https://github.com/TheDaimos/gewitterradar/actions/runs/45619118557) | IN_PROGRESS – Ergebnis noch ausstehend |
+| Shared Frontend – erneuter Lauf | [CI](https://github.com/TheDaimos/gewitterradar/actions/runs/45619118557) | FAIL – historischer Lauf: About-Identitätsprüfung kannte V4.14 noch nicht (verify-about-golden-v408.cjs:310). |
 
-Der erfolgreiche MA-005-P00-Lauf bezieht sich auf den tatsächlich getesteten SHA `2ce7039dafa066d75af225a52e10a6c91f8df6f5`. Native HA-Vertragstests **6/6 PASS**, Chromium-Feature-OFF **PASS**; bestehender Standort-Button bei fehlendem Helper korrekt deaktiviert, Karten-/Eye-/Legend-Hub-Boot und WR-Erkennung nachgewiesen, kein MA-Import/DOM/WS/Storage bei OFF. Die spätere Korrektur `9ec7f8ba` ändert nur einen bestehenden Shared-Frontend-Diagnosetest; dennoch ist dessen eigener CI-Abschluss abzuwarten, statt grüne Ergebnisse zu unterstellen.
+Der erfolgreiche MA-005-P00-Lauf bezieht sich auf den tatsächlich getesteten SHA `2ce7039dafa066d75af225a52e10a6c91f8df6f5`. Native HA-Vertragstests **6/6 PASS**, Chromium-Feature-OFF **PASS**; bestehender Standort-Button bei fehlendem Helper korrekt deaktiviert, Karten-/Eye-/Legend-Hub-Boot und WR-Erkennung nachgewiesen, kein MA-Import/DOM/WS/Storage bei OFF. Die spätere Korrektur `9ec7f8ba` ändert nur einen bestehenden Shared-Frontend-Diagnosetest; der anschließende Shared-Frontend-Lauf scheiterte noch an der historischen About-Versionsprüfung; nachfolgend korrigiert.
 
-### Offene Abschlussbedingungen
+### Historische Abschlussbedingungen (Punkte 1–2 inzwischen erledigt)
 
 1. [Shared-Frontend-Revalidierung 45619118557](https://github.com/TheDaimos/gewitterradar/actions/runs/45619118557) abschließend auf SUCCESS prüfen oder reale Fehler gezielt beheben und betroffene Prüfungen wiederholen.
 2. Finalen getesteten Code-/Test-SHA, CI-Logs, Umfang sowie die erste gültige P00-T2-Baseline dokumentieren und unabhängig gegen GitHub verifizieren.
@@ -258,4 +258,90 @@ Der erfolgreiche MA-005-P00-Lauf bezieht sich auf den tatsächlich getesteten SH
 
 MA-001 bis MA-004 bleiben für ihre jeweils geprüften Umfänge abgenommen; V4.13 FINAL und WeatherRouter werden nicht geändert.
 
-**Statusvertrag:** task_id=MA-005; implementation_commit=6d8597a3d55008a7ab389cc026be3838d747a272; test_fix_commit=2ce7039dafa066d75af225a52e10a6c91f8df6f5; shared_test_fix_commit=9ec7f8ba216971694ed0b4181c453408d43a0f8d; latest_successful_p00_t2_sha=2ce7039dafa066d75af225a52e10a6c91f8df6f5; latest_T2_baseline_sha=vorläufig 2ce7039d (P00-Teilnachweis, Phasenfreigabe offen); latest_T3_baseline_sha=keine; affected_contracts=HA-native Feature-OFF, Browser Feature-OFF, bestehende Modulidentitäten; known_blockers=Shared-Frontend-Abschluss und VM109-Laufzeitnachweis ausstehend; next_task=MA-005 Abschluss/P00-Gate, nicht MA-006.
+**Historischer Statusvertrag (durch aktuellen Vertrag unten ersetzt):** task_id=MA-005; implementation_commit=6d8597a3d55008a7ab389cc026be3838d747a272; test_fix_commit=2ce7039dafa066d75af225a52e10a6c91f8df6f5; shared_test_fix_commit=9ec7f8ba216971694ed0b4181c453408d43a0f8d; latest_successful_p00_t2_sha=2ce7039dafa066d75af225a52e10a6c91f8df6f5; latest_T2_baseline_sha=damals vorläufig 2ce7039d (P00-Teilnachweis); latest_T3_baseline_sha=keine; affected_contracts=HA-native Feature-OFF, Browser Feature-OFF, bestehende Modulidentitäten; known_blockers=damals Shared-Frontend-Abschluss und VM109-Laufzeitnachweis ausstehend; next_task=MA-005 Abschluss/P00-Gate, nicht MA-006.
+
+
+## MA-005 – T2-Abschluss / verbindlicher aktueller Stand (25.11.2026)
+
+**MA-005 – T2-Vertragsprüfungen erfolgreich abgeschlossen; HA-DEV-Laufzeitabnahme ausstehend.**
+
+MA-001 bis MA-004 sind abgenommen. MA-005 ist für den CI-Vertragsumfang abgeschlossen, nicht VERIFIED_DEV/ACCEPTED_USER für die reale Laufzeit. P00 bleibt bis zur separaten VM109-Abnahme und Freigabe gesperrt. MA-006/P01 nicht begonnen. Keine Installation, Veröffentlichung oder Promotion.
+
+### Exakte Nachweise und Baseline
+
+- Implementierung: [6d8597a3d55008a7ab389cc026be3838d747a272](https://github.com/TheDaimos/gewitterradar/commit/6d8597a3d55008a7ab389cc026be3838d747a272).
+- Korrektur: [2ce7039dafa066d75af225a52e10a6c91f8df6f5](https://github.com/TheDaimos/gewitterradar/commit/2ce7039dafa066d75af225a52e10a6c91f8df6f5), paketierter Entity-Import, fehlender Standort-Helper als deaktivierter Schutzvertrag, Weather-Engine-Versionsprüfung V4.14.
+- [9ec7f8ba216971694ed0b4181c453408d43a0f8d](https://github.com/TheDaimos/gewitterradar/commit/9ec7f8ba216971694ed0b4181c453408d43a0f8d): exakt 37 Pflichtmodulidentitäten im Diagnose-UI bei OFF.
+- [773281094963298f3410f4fa9a040e4a6d866ee1](https://github.com/TheDaimos/gewitterradar/commit/773281094963298f3410f4fa9a040e4a6d866ee1) und [18f505ba8933d1036660133fc5c5ca1b627c596a](https://github.com/TheDaimos/gewitterradar/commit/18f505ba8933d1036660133fc5c5ca1b627c596a): About-Golden-Identitätsprüfung für V4.14 erweitert und Regex-Endanker korrigiert; historische Identitäts-, Pixel- und Geometrieassertions erhalten.
+- GitHub-Compare 2ce7039d..18f505ba: exakt drei geänderte Pfade: diese Statusdatei, scripts/test-v40756-settings-help.cjs und scripts/verify-about-golden-v408.cjs. Keine Änderung der P00-Testskripte, ihrer Fixture oder der Anwendungsdateien; ursprünglicher P00-Nachweis weiter gültig.
+
+| Tatsächlich ausgeführter Befehl / Vertrag | SHA | Ergebnis / CI |
+|---|---|---|
+| python -m pytest -q tests/test_ma005_off.py tests/test_migration_fresh_install.py | 2ce7039dafa066d75af225a52e10a6c91f8df6f5 | 6 passed in 0.62s, [Job 139220008908](https://github.com/TheDaimos/gewitterradar/actions/runs/45618483155/job/139220008908) |
+| node scripts/test-ma-005-browser.cjs | derselbe SHA | PASS, [Job 139220008199](https://github.com/TheDaimos/gewitterradar/actions/runs/45618483155/job/139220008199) |
+| python -m pytest -q tests; python -m compileall -q custom_components tests | 18f505ba8933d1036660133fc5c5ca1b627c596a | 83 passed in 2.87s, Syntax PASS; [HA-Runtime-Job](https://github.com/TheDaimos/gewitterradar/actions/runs/45620920718/job/139228502406); Hassfest/HACS/Paket-/DRA-Verträge ebenfalls SUCCESS |
+| node scripts/test-ma-004.mjs; node scripts/test-module-registry.mjs; node scripts/test-v41169-data-sources.mjs; node scripts/verify-frontend.mjs; node scripts/test-frontend-build.mjs; node scripts/verify-current-frontend.mjs; sha256sum -c SHA256SUMS_FRONTEND.txt --quiet; git diff --exit-code | 18f505ba8933d1036660133fc5c5ca1b627c596a | [SUCCESS](https://github.com/TheDaimos/gewitterradar/actions/runs/45620920902), alle Schritte einschließlich Syntax, deterministischer Build und Integritätsproben grün |
+| node scripts/verify-hires-asset-retention.mjs | 18f505ba8933d1036660133fc5c5ca1b627c596a | [SUCCESS](https://github.com/TheDaimos/gewitterradar/actions/runs/45620920703) |
+| node scripts/test-v40756-settings-help.cjs "$(node -p "require('playwright').chromium.executablePath()")"; node scripts/verify-about-golden-v408.cjs "$(node -p "require('playwright').chromium.executablePath()")" | 18f505ba8933d1036660133fc5c5ca1b627c596a | [SUCCESS, Shared-Frontend-Job](https://github.com/TheDaimos/gewitterradar/actions/runs/45620921237/job/139228686408), einschließlich historischer Golden-Geometrie, Settings/Help, Sprachprofile, Browser-Suiten beider Distributionen und weiterer aktivierter Schutzprüfungen |
+| WeatherRouter map control position and touch regression | 18f505ba8933d1036660133fc5c5ca1b627c596a | [SUCCESS](https://github.com/TheDaimos/gewitterradar/actions/runs/45620921237/job/139228503160) |
+
+Shared-Frontend-Run 45620921237: completed/success, letztes Update 2026-11-25 13:17:11 UTC. Release-scope und alle tatsächlich ausgeführten Jobs erfolgreich; versionsspezifisch nicht ausgewählte Jobs wurden übersprungen, nicht als getestet gewertet. Keine T3-Gesamtregression behauptet. HA-Integration auf demselben SHA: Python 3.14.10, HA 2026.9.0 final, pytest-homeassistant-custom-component 0.13.362. P00: öffentlicher Ubuntu-Runner mit gleicher HA-Paketversion, Chromium headless/Playwright 1.62.1, Leaflet 1.9.4, Node 22, synthetischer HA/WR-Transport, tatsächlicher Card-/Leaflet-Code. Kein realer Provider- oder VM109-Test. Die P00-Joblogs bestätigen OFF/default, keine zusätzliche MA-Entity/Service-/Dateierzeugung im HA-Testumfang, kein MA-Import/DOM/WS/localStorage im Browser-Testumfang, tatsächlichen Kartenboot, 37 Pflichtmodule, Eye und Legend Hub, WR-Discovery und deaktivierten Standortschalter ohne Helper. Konfigurierte Ortssuche und echte Provider bleiben DEV-Smoke. Keine weitergehende Behauptung über globale Hintergrundtasks oder Dateien auf VM109.
+
+### Baseline-Vertrag
+
+- baseline_sha=18f505ba8933d1036660133fc5c5ca1b627c596a
+- evidence_p00_sha=2ce7039dafa066d75af225a52e10a6c91f8df6f5
+- result=PASS (T2 CI-Vertragsumfang); environment=öffentliche GitHub-Actions-Runner; timestamp=2026-11-25T13:17:11Z
+- run_urls=https://github.com/TheDaimos/gewitterradar/actions/runs/45618483155, https://github.com/TheDaimos/gewitterradar/actions/runs/45620920718, https://github.com/TheDaimos/gewitterradar/actions/runs/45620920902, https://github.com/TheDaimos/gewitterradar/actions/runs/45620920703, https://github.com/TheDaimos/gewitterradar/actions/runs/45620921237
+- test_suite_digest (Git-Blob-SHA1-Identitätsvektor, kein erfundener aggregierter SHA256): tests/test_ma005_off.py=77e2bda468ede394f4f2ca7610a7a6e6221d4bc3; scripts/test-ma-005-browser.cjs=4f60a09b35bd0429dc3c159ca3ee4fbd5e662394; .github/workflows/ma-005-p00.yml=f4c3d51a67fe16e9b26e505d222c8a14128d8053; scripts/test-v41106-weather-engine-diagnostics.mjs=32c4e88864f1edb915ed9842b3be10af2d8125d5; scripts/test-v40756-settings-help.cjs=fd69a6b9777ac0dc4d9954bc4fc2edbbfd73c534; scripts/verify-about-golden-v408.cjs=717bdab3d76f485c5d2b632086c728b10b3b6a55; .github/workflows/shared-frontend.yml=52383ebe6fb02e1d364535d08eb3f7b2bd6e69c0; .github/workflows/validate.yml=72c861c1de0e72a4cf48af3ad5a132016f9e02e5; .github/workflows/ma-004-targeted.yml=acf1b39c754cb8462fdeda3e036805194fde637d; scripts/verify-hires-asset-retention.mjs=bb164f1da3fd6aacb4fe251872efe32840916c75. Vollständige transitiv verwendete Suite über baseline_sha fixiert.
+- scope=MA-003/004 Lifecycle, default OFF, native Bestandsschutz, Browser-Smoke, Modulidentität, Distribution, Build, Asset-/DRA-/historische Shared-Frontend-Verträge; keine reale DEV-Abnahme.
+- invalidated_baselines=vorläufiger P00-Teilstatus ersetzt; keine T3-Baseline; erneute Prüfung nur bei Änderungen betroffener Schnittstellen/Testverträge.
+- changed_paths seit MA-004: tests/test_ma005_off.py, scripts/test-ma-005-browser.cjs, .github/workflows/ma-005-p00.yml, scripts/test-v41106-weather-engine-diagnostics.mjs, scripts/test-v40756-settings-help.cjs, scripts/verify-about-golden-v408.cjs, diese Statusdatei.
+- current_task=MA-005; test_level=T2_CI_PASS; latest_T2_baseline_sha=18f505ba8933d1036660133fc5c5ca1b627c596a; latest_T3_baseline_sha=keine; DEV_user_accepted=false; known_blockers=separate Installationsgenehmigung und reale Laufzeitabnahme VM109; next_task=MA-005/P00 DEV-Smoke nach Freigabe, MA-006 gesperrt.
+
+## P00 – ausführbarer DEV-Abnahmeplan (nur Vorbereitung, keine Installation freigegeben)
+
+**Zielsystem ausschließlich Proxmox VM109 / HA DEV.** Keine Verbindung zu VM101, keine Änderung an WR, keine Freigabe durch dieses Dokument. Durchführung erst nach gesonderter Betreiberfreigabe. Prüfer trägt zu jedem Schritt UTC-Zeit, PASS/FAIL/BLOCKED, Istwerte und Nachweis ein. Nicht vorhandene Diagnosedaten nicht durch Vermutungen ersetzen.
+
+| ID | Vorgehen und PASS-Kriterium | Nachweis |
+|---|---|---|
+| DEV-00 | Vor jeder Aktion VM-ID 109 in Proxmox und HA-Systemidentität verifizieren. HA Core/OS/Supervisor und GR/WR-Versionen, aktuelle Karte/Profil, installierte HACS-Quellen notieren. Ist-HA-Version gegen kompatible Manifestanforderungen und CI-HA 2026.9.0 abgleichen; Abweichung ausdrücklich dokumentieren, kein ungefragtes HA-Upgrade. | 00-system.txt |
+| DEV-01 | Vollständiges HA-Backup mit Konfiguration und Integration erstellen; zusätzlich konsistenten VM109-Snapshot bzw. vollständiges Proxmox-Backup gemäß vorhandener Backup-Policy erstellen. Backup-ID, Datum, Speicherort, Erfolg, GR-Vorversion und deren Paket-SHA256 festhalten, Wiederherstellbarkeit prüfen. Ohne gültigen Rückfallpunkt STOP. | 01-backup.txt |
+| DEV-02 | Vor Installation Bestandsmessung: HA-Entitäten, GR-Dienste, Referenztracker-ID/Koordinaten, Local-To-do-Liste und gespeicherte Orte, Eye-/Legend-/Mond-/Kartenprofil, WR-Version/Provider-Konfiguration und verfügbare Layer, HA-Logs und vorhandene MA-Dateien/Tasks erfassen. Keine bestehenden Dateien löschen. | 02-before/ |
+| DEV-03 | Nach separater Freigabe ausschließlich exakt 18f505ba8933d1036660133fc5c5ca1b627c596a als DEV-Kandidat über genehmigten isolierten Installationsweg installieren. Kein Public-Release, kein deploy/dev-Merge. Vorab Paket aus exaktem SHA bauen/identifizieren, SHA256 des Pakets verifizieren und dokumentieren; falls kein geeignetes isoliertes Paket verfügbar STOP. Erwartung GR V4.14.1 DEV / HA 0.25.187, 4141r1, E414-1A1; vollständiger HA-Neustart, Moduldiagnose 37 Pflichtmodule OK, optionales MA-Modul nicht geladen. | 03-identity.txt, module-diagnostics.json |
+| DEV-04 | Ohne Feature-Aktivierung GR-Config-Entry-Optionen über autorisierte lesende Diagnose prüfen (monitored_areas_enabled fehlt oder exakt false); Card-Konfiguration ebenso. Kein neuer Schalter, kein persistenter ON-Wert. Keine manuelle Bearbeitung der HA .storage. | 04-off.json (redigiert) |
+| DEV-05 | HA-Entitätsregister und Dienste nach Boot mit 02 vergleichen; erwartete bestehende GR-Entitäten einschließlich Referenztracker unverändert, keine MA-Tracker/Entities/Services. HA-WS/API-Diagnose und Browser-Netzwerk auf MA-Aufrufe prüfen. | 05-entities-services.diff, network.json |
+| DEV-06 | Terminal auf HA DEV: lesend `find /config -iname '*monitored*area*' -print`; zusätzlich erwarteten Pfad `/config/gewitterradar/monitored_areas/monitored_areas.sqlite3` und WAL/SHM/Journal prüfen. Vergleich vor/nach: keine neuen MA-Dateien, DB, Verzeichnisse oder Persistenz. Keine bestehende fremde Datei löschen. | 06-files-before-after.txt |
+| DEV-07 | HA-Logs, verfügbare Task-/Listener-/Profiler-Diagnose auf MA prüfen; Browser DevTools Network/Performance (mindestens 60 s nach Bereitschaft) auf MA-Module, Timer/Polling und MA-Netzverkehr prüfen. Keine MA-Aktivität, Fehler oder Ressourcenregistrierung; wenn HA keine ausreichend aufgelöste Task-/Timer-Diagnose bereitstellt, Nachweis BLOCKED, nicht PASS. Keine dauerhafte Instrumentierung im Produktivcode. | 07-runtime-logs.txt, browser-performance.json |
+| DEV-08 | Standard- und Vollbildkarte, Hilfe, Einstellungen, Eye Hub und Legend Hub in Desktop und Mobile öffnen. Keine MA-UI, kein MA-Dialog, keine MA-CSS-/JS-Requests, keine MA-Storage-Keys; bestehende Navigation und Moduldiagnose unverändert. Browser-Konsole ohne MA-bezogene Fehler. | 08-ui/ screenshots, console.txt |
+| DEV-09 | Bei vorhandener Local-To-do-Liste und aktiviertem Standortschalter echte Ortssuche öffnen, vorhandenen Ort auswählen, Referenztracker-Bewegung und Kartenfokus prüfen, ursprünglichen Standort wiederherstellen. Gespeicherte Liste und Tracker-ID unverändert. Wenn Voraussetzungen fehlen, dokumentieren und erst nach Betreiberfreigabe Testfixture herstellen; nicht einfach PASS. | 09-location-before-after.json, screenshots |
+| DEV-10 | Eye Hub öffnen/schließen, Gruppierung/Slots prüfen; Legend Hub öffnen und vorhandene Legende ein-/ausblenden; Mondlegende öffnen, Position und Skala prüfen; Karte zoomen/verschieben. Ursprüngliche Einstellungen wiederherstellen. Kein Verlust von Slots, Profilen oder unabhängiger Wetterdarstellung. | 10-existing-ui/ |
+| DEV-11 | WR-Integration unverändert lassen, Discovery/Provider-Diagnose vor/nach vergleichen. Vorher funktionierende DWD/OPERA/NASA, Wind, Temperatur, Synoptik und Mond soweit tatsächlich verfügbar stichprobenartig prüfen. Natürliche Wetter-/Freshness-Änderungen getrennt dokumentieren; kein Provider deaktiviert, keine WR-Konfigurationsänderung und kein zusätzlicher MA-Verbraucher. Nicht verfügbare Provider nicht als erfolgreich darstellen. | 11-wr-before-after.json, screenshots |
+| DEV-12 | GR-Integration über HA UI neu laden, anschließend Karte neu laden und Browser vollständig schließen/neustarten; nach jedem Schritt DEV-04–08 kurz wiederholen. Bestehender Tracker, Orte, Eye/Legend/Mond/Karte und WR-Erkennung weiterhin funktionsfähig, keine MA-Ressourcen. Bei fehlender Reload-Option dokumentiert vollständigen HA-Neustart nur nach Freigabe verwenden. | 12-restart/ |
+| DEV-13 | Alle Prüfungen abzeichnen, Export2Git-Nachweis und Rückfallentscheidung dokumentieren. PASS nur wenn alle verbindlichen Nachweise vollständig sind und keine Regression vorliegt. FAIL bei MA-Ressourcen, UI, unerwarteter Persistenz, Fehlern, Bestandsregression oder falscher Identität: sofort Test beenden, Beweise sichern, genehmigten Rückfall auf Backup/Snapshot durchführen, Vorversion und Bestand erneut prüfen. BLOCKED bei fehlenden Voraussetzungen oder nicht beobachtbarer Invariante; keine P00-Freigabe. | 13-result.md |
+
+### Nachweispfade und Abnahmeformular
+
+Export2Git ausschließlich über den vorhandenen privaten Diagnoseweg TheDaimos/Project-Log-And-Export@main. Vorgeschlagener neuer Ablagepfad (noch nicht angelegt, erst bei Ausführung): `GR/V4.14/MA-005/P00-DEV/<UTC-Zeitstempel>/` mit obigen relativen Dateinamen. Keine Tokens, privaten Standortkoordinaten, Zugangsdaten oder unveränderten vollständigen HA-Storage-Dumps veröffentlichen; sensible Felder redigieren, Vergleiche lokal dokumentieren. Ergebnisdatei:
+
+```text
+task=MA-005
+vm=109
+test_candidate_sha=18f505ba8933d1036660133fc5c5ca1b627c596a
+package_sha256=
+ha_core= ; ha_os= ; supervisor=
+gr_before= ; gr_after= ; wr_before= ; wr_after=
+backup_id= ; rollback_ref=
+DEV-00= ; DEV-01= ; DEV-02= ; DEV-03= ; DEV-04= ; DEV-05=
+DEV-06= ; DEV-07= ; DEV-08= ; DEV-09= ; DEV-10= ; DEV-11=
+DEV-12= ; DEV-13=
+evidence_path=
+result=PASS|FAIL|BLOCKED
+rollback_required=
+operator_acceptance=
+P00_release=separate approval required
+```
+
+Status heute: sämtliche DEV-Schritte NOT_RUN. Keine Installation, keine Verbindung zu VM101 oder VM109 in diesem Dokumentationsauftrag. MA-006 erst nach dokumentiertem DEV-Nachweis und separater P00-Freigabe.
+
+Geschützte Refs vor Dokumentation: main 37f1aca54cd505fd91a2b1b0014cd7c6c280b26f; v4.13 509daeb7245f42b23e46f72b4d002c42f0d7f56e; WR deploy/dev 850c3542a8b3b181edc5837205bbeb374ed72eab. Ausschließlich diese Markdown-Datei wird auf beide GR-Branches geschrieben, kein Code-Merge.
