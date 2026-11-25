@@ -1,5 +1,6 @@
 // MA-020: optional, profile-owned cleanup reminder. Never acts on To-do data.
 import { registerModule } from "../core/registry.js?v=4141r1";
+import { openMigrationWizard } from "./migration-wizard.js?v=4141r1";
 export const MODULE_META=Object.freeze({"id":"monitored-areas.lifecycle","version":"0.2.0","group":"Monitored Areas","function":"Optional lifecycle","subfunctions":["Initialize","Teardown","Migration cleanup reminder"],"file":"modules/monitored-areas/index.js","optional":true});
 registerModule(MODULE_META);
 export const CLEANUP_DISMISSED = "gewitterradar-ma020-cleanup-dismissed";
@@ -149,6 +150,22 @@ export function initializeMonitoredAreas(owner, enabled = false) {
       checking = false;
     }
   };
+  const openWorkflow = async () => {
+    if (stopped || !storageReady()) return;
+    const transport = hass(), pid = profile();
+    if (!transport?.callWS || !pid) return;
+    try {
+      const status = await transport.callWS({
+        type:"gewitterradar/monitored_areas/status",schema:1,
+        request:{profile_id:pid,payload:{}}
+      });
+      if (status?.capabilities?.saved_places_mode === "db_active")
+        return refresh({manual:true});
+      return openMigrationWizard(owner);
+    } catch {
+      // No false success dialog when the backend cannot be verified.
+    }
+  };
   const helpLink = event => {
     const path = typeof event.composedPath === "function" ? event.composedPath() : [event.target];
     if (!path.some(node => node?.id === "settings-help")) return;
@@ -163,13 +180,13 @@ export function initializeMonitoredAreas(owner, enabled = false) {
       link.style.cssText = "display:block;width:100%;min-height:44px;margin:0 0 12px;padding:10px 14px;border:1px solid #c7a15c;border-radius:9px;background:linear-gradient(#25323b,#101a22);color:#f5dc9e;font-size:14px;font-weight:600;cursor:pointer;text-align:start";
       link.addEventListener("click", () => {
         owner._closeHelp?.(false);
-        void refresh({manual:true});
+        void openWorkflow();
       });
       topics.prepend(link);
     });
   };
   owner.shadow?.addEventListener("click", helpLink, true);
-  owner._openMigrationCleanupHelp = () => refresh({manual:true});
+  owner._openMigrationCleanupHelp = () => openWorkflow();
   runtime = Object.freeze({
     get status() {return stopped?"stopped":"ready";},
     refresh,
