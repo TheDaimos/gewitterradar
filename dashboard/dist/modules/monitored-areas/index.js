@@ -187,8 +187,11 @@ export function initializeMonitoredAreas(owner, enabled = false) {
       topics.prepend(link);
     });
   };
-  owner.shadow?.addEventListener("click", helpLink, true);
-  owner._openMigrationCleanupHelp = () => openWorkflow();
+  const mutableOwner = Object.isExtensible(owner);
+  if (mutableOwner) {
+    owner.shadow?.addEventListener("click", helpLink, true);
+    owner._openMigrationCleanupHelp = () => openWorkflow();
+  }
   runtime = Object.freeze({
     get status() {return stopped?"stopped":"ready";},
     refresh,
@@ -196,15 +199,15 @@ export function initializeMonitoredAreas(owner, enabled = false) {
       if (stopped) return;
       stopped = true;
       if (interval) clearInterval(interval);
-      owner.shadow?.removeEventListener("click", helpLink, true);
+      if (mutableOwner) owner.shadow?.removeEventListener("click", helpLink, true);
       close();
-      if (owner._openMigrationCleanupHelp) delete owner._openMigrationCleanupHelp;
+      if (mutableOwner && owner._openMigrationCleanupHelp) delete owner._openMigrationCleanupHelp;
       if (active.get(owner) === runtime) active.delete(owner);
     }
   });
   active.set(owner,runtime);
   // The optional card can mount before Vault has resolved its HA profile.
-  interval = setInterval(() => {
+  if (mutableOwner && owner.shadow && hass()) interval = setInterval(() => {
     if (stopped || checkedProfile || ++attempts > 20) {
       if(interval)clearInterval(interval);
       interval=null;
