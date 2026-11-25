@@ -45,12 +45,12 @@ class Tests(unittest.IsolatedAsyncioTestCase):
         self.assertNotEqual(values[0], threading.get_ident())
         self.assertEqual(values[1:], (1,"wal",2,5000))
         self.assertTrue(self.path.is_file())
-        self.assertEqual(await self.store.async_execute(lambda c: c.execute("PRAGMA user_version").fetchone()[0]),2)
+        self.assertEqual(await self.store.async_execute(lambda c: c.execute("PRAGMA user_version").fetchone()[0]),3)
         await self.store.async_stop()
         self.assertFalse(worker.is_alive())
         await self.store.async_stop()
         await self.store.async_start()
-        self.assertEqual(await self.store.async_execute(lambda c: c.execute("PRAGMA user_version").fetchone()[0]),2)
+        self.assertEqual(await self.store.async_execute(lambda c: c.execute("PRAGMA user_version").fetchone()[0]),3)
 
     async def test_queue_and_drain(self):
         await self.store.async_start()
