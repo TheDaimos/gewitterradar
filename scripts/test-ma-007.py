@@ -28,7 +28,7 @@ class SchemaTests(unittest.TestCase):
         self.conn.execute("INSERT INTO profile_links(link_id,location_id,ha_user_id,vault_profile_id) VALUES(?,?,?,?)",
                           (self.link,self.loc,"user","profile"))
     def test_version_defaults_reopen(self):
-        self.assertEqual(self.conn.execute("PRAGMA user_version").fetchone(),(3,))
+        self.assertEqual(self.conn.execute("PRAGMA user_version").fetchone(),(4,))
         self.assertEqual(self.conn.execute("SELECT record_radius_m,entities_enabled,monitor_enabled FROM locations").fetchone(),(10000,0,0))
         schema.initialize_schema(self.conn)
         self.assertEqual(self.conn.execute("SELECT count(*) FROM locations").fetchone(),(1,))
@@ -95,7 +95,7 @@ class WorkerTests(unittest.IsolatedAsyncioTestCase):
             store=database.Database(path,config_root=root)
             try:
                 await store.async_start()
-                self.assertEqual(await store.async_execute(lambda c:c.execute("PRAGMA user_version").fetchone()),(3,))
+                self.assertEqual(await store.async_execute(lambda c:c.execute("PRAGMA user_version").fetchone()),(4,))
                 await store.async_stop()
                 await store.async_start()
                 self.assertEqual(await store.async_execute(lambda c:c.execute("SELECT count(*) FROM locations").fetchone()),(0,))
