@@ -12,7 +12,7 @@ from uuid import UUID, uuid4
 
 from .identity import Links, ProfileNotVerified
 from .locations import _coord, _name
-from .migration import MigrationPreview, MigrationSourceError
+from .migration import MigrationPreview, MigrationSourceError, _hash as _migration_hash
 from .permissions import Protection, ConfirmationRequired, ProtectionDenied, _snapshot_digest
 from .storage import repositories as sql
 from .storage.database import DatabaseUnavailable
@@ -20,11 +20,11 @@ from .storage.errors import StorageError
 
 PREFIX = "gewitterradar/monitored_areas/"
 OPS = (
-    "status", "locations_list", "places_list", "migration_preview", "location_get", "location_create", "location_update",
+    "status", "locations_list", "places_list", "migration_preview", "migration_commit", "location_get", "location_create", "location_update",
     "monitoring_update", "links_list", "links_share", "links_transfer", "links_remove",
     "links_remove_preview", "history_reset_preview", "history_reset_commit", "preferences_update",
 )
-MUTATIONS = {"location_create", "location_update", "monitoring_update",
+MUTATIONS = {"migration_commit","location_create", "location_update", "monitoring_update",
              "links_share", "links_transfer", "links_remove", "history_reset_commit", "preferences_update"}
 MA_API_REGISTERED = "gewitterradar_ma_api_registered"
 
@@ -98,6 +98,12 @@ def _authorize_cached_result(c, actor, profile, op, request, result, is_admin):
          (op == "links_remove" and payload.get("explicit_final") is True))
          and is_admin is not True):
         raise ApiError("forbidden")
+    if op == "migration_commit":
+        for imported in result.get("imported",[]):
+            location_id = imported.get("location_id")
+            if location_id is not None:
+                _actor_link(c, location_id, actor, profile)
+        return
     if op == "location_create":
         location_id = result.get("location", {}).get("location_id")
     elif op == "preferences_update":
@@ -186,7 +192,7 @@ class Api:
             "alarm_radius_m","target_user_id","target_profile_id","notification_mode",
             "push_enabled","critical_enabled","closure_enabled","quiet_minutes",
             "status_push","display_settings_json","confirmation_nonce",
-            "explicit_final","limit","query","cursor"})
+            "explicit_final","limit","query","cursor","preview_id","decisions"})
         if op in MUTATIONS:
             if not request.get("request_id"):
                 raise ApiError("invalid_request")
@@ -199,6 +205,87 @@ class Api:
             if self._migration is None:
                 raise ApiError("migration_source_unavailable")
             return await self._migration.build(actor_user_id=actor_user_id,profile_id=profile)
+        if op=="migration_commit":
+            if self._migration is None:
+                raise ApiError("migration_source_unavailable")
+            if set(payload)!={"preview_id","decisions"}:
+                raise ApiError("invalid_request")
+            old_id=payload["preview_id"]
+            decisions=payload["decisions"]
+            if (not isinstance(old_id,str) or len(old_id)!=64 or
+                not isinstance(decisions,list) or len(decisions)>1000):
+                raise ApiError("invalid_request")
+            # Fresh HA source and worker-backed profile view. The client can
+            # select decisions, never supply/import arbitrary coordinates.
+            snapshot=await self._migration.build(actor_user_id=actor_user_id,profile_id=profile)
+            if snapshot["preview_id"]!=old_id:
+                raise ApiError("migration_preview_stale")
+            candidates={x["uid"]:x for x in snapshot["candidates"]}
+            if len(candidates)!=len(snapshot["candidates"]):
+                raise ApiError("migration_duplicate_uid")
+            if len(decisions)!=len(candidates):
+                raise ApiError("migration_decisions_incomplete")
+            choices={}
+            for d in decisions:
+                if not isinstance(d,dict) or not set(d) <= {"uid","action","location_id","expected_revision"}:
+                    raise ApiError("invalid_request")
+                uid=d.get("uid")
+                action=d.get("action")
+                if uid not in candidates or uid in choices or action not in ("create","use_existing","replace","skip"):
+                    raise ApiError("invalid_request")
+                if action in ("use_existing","replace"):
+                    location_id=_uuid(d.get("location_id"))
+                    if action=="replace" and (
+                        type(d.get("expected_revision")) is not int or d["expected_revision"]<1):
+                        raise ApiError("invalid_request")
+                elif set(d)!={"uid","action"}:
+                    raise ApiError("invalid_request")
+                choices[uid]=d
+            if set(choices)!=set(candidates):
+                raise ApiError("migration_decisions_incomplete")
+            def mutate(c):
+                # Bound to the SAME transaction as all INSERT/UPDATEs and
+                # the idempotency receipt; no stale SQLite snapshot may import.
+                rows=c.execute("""
+                    SELECT l.location_id,l.name,l.lat,l.lon,l.revision
+                    FROM locations l JOIN profile_links p ON p.location_id=l.location_id
+                    WHERE p.ha_user_id=? AND p.vault_profile_id=?
+                    ORDER BY l.location_id
+                """,(actor_user_id,profile)).fetchall()
+                current=[dict(zip(("location_id","name","lat","lon","revision"),row)) for row in rows]
+                if _migration_hash(current)!=snapshot["db_digest"]:
+                    raise ApiError("migration_preview_stale")
+                imported=[]
+                now=time.time_ns()//1000
+                for uid,d in choices.items():
+                    candidate=candidates[uid]
+                    if candidate["status"]!="needs_action" and d["action"]!="skip":
+                        raise ApiError("migration_inactive_source")
+                    action=d["action"]
+                    if action=="skip":
+                        continue
+                    if action=="create":
+                        location_id=str(uuid4())
+                        link_id=str(uuid4())
+                        sql._insert(c,"locations",dict(location_id=location_id,
+                            name=candidate["name"],lat=candidate["lat"],
+                            lon=candidate["lon"],created_at=now,updated_at=now))
+                        sql._insert(c,"profile_links",dict(link_id=link_id,
+                            location_id=location_id,ha_user_id=actor_user_id,
+                            vault_profile_id=profile))
+                        sql._insert(c,"profile_preferences",{"link_id":link_id})
+                    else:
+                        location_id=d["location_id"]
+                        _actor_link(c,location_id,actor_user_id,profile)
+                        if action=="replace":
+                            sql._update(c,"locations",location_id,d["expected_revision"],
+                                {"name":candidate["name"],"lat":candidate["lat"],
+                                 "lon":candidate["lon"],"updated_at":now})
+                    imported.append({"uid":uid,"location_id":location_id,"action":action})
+                return {"imported":imported,"source_digest":snapshot["source_digest"],
+                        "legacy_preserved":True,"mode":"migration_pending"}
+            return await self._write(actor_user_id,op,request,mutate,is_admin=is_admin)
+
         if op=="locations_list":
             limit=payload.get("limit",50)
             if type(limit) is not int or not 1<=limit<=100:
