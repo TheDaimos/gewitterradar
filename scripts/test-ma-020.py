@@ -41,7 +41,7 @@ class JournalSchemaTests(unittest.TestCase):
         c.execute("INSERT INTO request_receipts VALUES(?,?,?,?,?,?)",
                   ("alice", str(uuid4()), "migration_commit", "0" * 64, "{}", 1))
         schema.initialize_schema(c)
-        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 5)
+        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 6)
         self.assertEqual(c.execute("SELECT count(*) FROM request_receipts").fetchone()[0], 1)
         self.assertEqual(c.execute("PRAGMA foreign_key_check").fetchall(), [])
 
