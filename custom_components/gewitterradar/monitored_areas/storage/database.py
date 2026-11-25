@@ -9,6 +9,8 @@ import sqlite3
 from threading import Thread
 from typing import Callable, TypeVar
 
+from .schema import initialize_schema
+
 T = TypeVar("T")
 
 
@@ -59,6 +61,7 @@ class Database:
             conn.execute("PRAGMA synchronous=FULL")
             if tuple(conn.execute("PRAGMA quick_check").fetchall()) != (("ok",),):
                 raise sqlite3.DatabaseError("database integrity check failed")
+            initialize_schema(conn)
             return conn
         except BaseException:
             conn.close()
