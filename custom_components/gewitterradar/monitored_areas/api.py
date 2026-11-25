@@ -85,7 +85,7 @@ def _revision(request):
     return value
 
 
-def _authorize_cached_result(c, actor, profile, op, request, result):
+def _authorize_cached_result(c, actor, profile, op, request, result, is_admin):
     """Re-check CURRENT location/link ownership before revealing a prior result.
 
     A receipt proves a prior commit, not continued authorization. In particular
@@ -93,6 +93,10 @@ def _authorize_cached_result(c, actor, profile, op, request, result):
     disappeared. Check on the worker in the same transaction as receipt reading.
     """
     payload = request.get("payload", {})
+    if ((op == "history_reset_commit" or
+         (op == "links_remove" and payload.get("explicit_final") is True))
+         and is_admin is not True):
+        raise ApiError("forbidden")
     if op == "location_create":
         location_id = result.get("location", {}).get("location_id")
     elif op == "preferences_update":
@@ -117,7 +121,7 @@ class Api:
         self._protect = Protection(self._repo)
         self._target_active = target_user_active
 
-    async def _write(self, actor, op, request, fn):
+    async def _write(self, actor, op, request, fn, *, is_admin=False):
         request_id = _uuid(request.get("request_id"))
         digest = _hash(op, request)
         def transaction(c):
@@ -129,7 +133,7 @@ class Api:
                     raise ApiError("request_conflict")
                 prior = json.loads(row[2])
                 _authorize_cached_result(c, actor, request.get("profile_id"),
-                                         op, request, prior)
+                                         op, request, prior, is_admin)
                 return prior
             result = fn(c)
             if type(result) is not dict:
@@ -140,7 +144,7 @@ class Api:
             return result
         return await self._repo._write(transaction)
 
-    async def _existing_receipt(self, actor, op, request):
+    async def _existing_receipt(self, actor, op, request, *, is_admin=False):
         """Resolve a committed retry before access to a possibly deleted object."""
         request_id = _uuid(request.get("request_id"))
         digest = _hash(op, request)
@@ -155,7 +159,7 @@ class Api:
                 raise ApiError("request_conflict")
             prior = json.loads(row[2])
             _authorize_cached_result(c, actor, request.get("profile_id"),
-                                     op, request, prior)
+                                     op, request, prior, is_admin)
             return prior
         return await self._repo._db.async_execute(read,kind="read")
 
@@ -181,7 +185,7 @@ class Api:
         if op in MUTATIONS:
             if not request.get("request_id"):
                 raise ApiError("invalid_request")
-            replay = await self._existing_receipt(actor_user_id,op,request)
+            replay = await self._existing_receipt(actor_user_id,op,request,is_admin=is_admin)
             if replay is not None:
                 return replay
         if op=="locations_list":
@@ -217,7 +221,8 @@ class Api:
                 raise ApiError("not_found")
             if is_admin is not True:
                 raise ApiError("forbidden")
-            proof=await self._protect.preview_final_delete(actor_user_id=actor_user_id,is_admin=True,location_id=location_id)
+            proof=await self._protect.preview_final_delete(actor_user_id=actor_user_id,is_admin=True,
+                location_id=location_id,actor_profile_id=profile)
             return {"nonce":proof.nonce,"revision":proof.revision,"links":proof.links,
                     "reports":proof.reports,"expires_at_monotonic":proof.expires_at}
 
@@ -228,7 +233,8 @@ class Api:
             await self._repo._db.async_execute(
                 lambda c:_actor_link(c,location_id,actor_user_id,profile),kind="read")
             return await self._protect.preview_history_reset(
-                actor_user_id=actor_user_id,is_admin=True,location_id=location_id)
+                actor_user_id=actor_user_id,is_admin=True,location_id=location_id,
+                actor_profile_id=profile)
 
         if op=="history_reset_commit":
             if set(payload)!={"location_id","confirmation_nonce","explicit_final"}:
@@ -254,7 +260,7 @@ class Api:
                     raise sql.RevisionConflict("revision_conflict")
                 if (proof is None or proof[0]!=actor_user_id or proof[1]!=location_id or
                     proof[2]!=expected or proof[3:6]!=counts or proof[6]<=time.monotonic() or
-                    proof[7]!=_snapshot_digest(c,location_id)):
+                    proof[7]!=_snapshot_digest(c,location_id) or proof[8]!=profile):
                     raise ApiError("confirmation_stale")
                 # A destructive action is all-or-nothing. Leave locations, links,
                 # tracker refs and personal preferences intact.
@@ -268,7 +274,7 @@ class Api:
                 return {"reset":True,"deleted_reports":counts[0],
                         "deleted_sessions":counts[1],"deleted_gaps":counts[2],
                         "location_revision":expected+1}
-            result=await self._write(actor_user_id,op,request,mutate)
+            result=await self._write(actor_user_id,op,request,mutate,is_admin=is_admin)
             async with self._protect._lock:
                 self._protect._pending_resets.pop(nonce,None)
             return result
@@ -284,7 +290,7 @@ class Api:
                 sql._insert(c,"profile_links",dict(link_id=link_id,location_id=location_id,ha_user_id=actor_user_id,vault_profile_id=profile))
                 sql._insert(c,"profile_preferences",dict(link_id=link_id))
                 return {"location":sql._read(c,"locations",location_id),"link_id":link_id}
-            return await self._write(actor_user_id,op,request,mutate)
+            return await self._write(actor_user_id,op,request,mutate,is_admin=is_admin)
 
         location_id=_uuid(payload.get("location_id")) if op!="preferences_update" else None
         # Always scope access to the real user + independently verified profile.
@@ -308,7 +314,7 @@ class Api:
             def mutate(c):
                 _actor_link(c,location_id,actor_user_id,profile)
                 return {"location":sql._update(c,"locations",location_id,expected,patch)}
-            return await self._write(actor_user_id,op,request,mutate)
+            return await self._write(actor_user_id,op,request,mutate,is_admin=is_admin)
 
         if op=="preferences_update":
             link_id=_uuid(payload.get("link_id"))
@@ -322,7 +328,7 @@ class Api:
                 if row is None or row["ha_user_id"]!=actor_user_id or row["vault_profile_id"]!=profile:
                     raise ApiError("not_found")
                 return {"preferences":sql._update(c,"profile_preferences",link_id,expected,patch)}
-            return await self._write(actor_user_id,op,request,mutate)
+            return await self._write(actor_user_id,op,request,mutate,is_admin=is_admin)
 
         if op in {"links_share","links_transfer"}:
             target_user=payload.get("target_user_id")
@@ -349,7 +355,7 @@ class Api:
                     c.execute("DELETE FROM profile_links WHERE link_id=?",(old_link,))
                 c.execute("UPDATE locations SET revision=revision+1 WHERE location_id=?",(location_id,))
                 return {"link_id":new_link,"location_revision":expected+1}
-            return await self._write(actor_user_id,op,request,mutate)
+            return await self._write(actor_user_id,op,request,mutate,is_admin=is_admin)
 
         if op=="links_remove":
             expected=_revision(request)
@@ -375,7 +381,7 @@ class Api:
                     if (is_admin is not True or not explicit or proof is None or
                         proof[0]!=actor_user_id or proof[1]!=location_id or
                         proof[2:5]!=(expected,total,reports) or proof[5]<=time.monotonic() or
-                        proof[6]!=_snapshot_digest(c,location_id,include_links=True)):
+                        proof[6]!=_snapshot_digest(c,location_id,include_links=True) or proof[7]!=profile):
                         raise ApiError("last_link_confirmation_required")
                     if reports or c.execute("SELECT 1 FROM tracker_refs WHERE location_id=?",(location_id,)).fetchone():
                         raise ApiError("history_exists")
@@ -387,7 +393,7 @@ class Api:
                 else:
                     c.execute("UPDATE locations SET revision=revision+1 WHERE location_id=?",(location_id,))
                 return {"removed":True,"location_deleted":total==1}
-            result=await self._write(actor_user_id,op,request,mutate)
+            result=await self._write(actor_user_id,op,request,mutate,is_admin=is_admin)
             if explicit and nonce:
                 async with self._protect._lock:
                     self._protect._pending.pop(nonce,None)
