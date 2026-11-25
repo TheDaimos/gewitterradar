@@ -1,0 +1,69 @@
+name: V4.14.1 pinned DEV distribution
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths: ['scripts/build-dev-packages.py','.github/workflows/ma-005-dev-package.yml']
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Freeze original candidate and build
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp scripts/build-dev-packages.py "$RUNNER_TEMP/build-dev-packages.py"
+          git checkout --detach 18f505ba8933d1036660133fc5c5ca1b627c596a
+          test "$(git rev-parse HEAD)" = "18f505ba8933d1036660133fc5c5ca1b627c596a"
+          cp "$RUNNER_TEMP/build-dev-packages.py" scripts/build-dev-packages.py
+          node scripts/test-frontend-build.mjs
+          node scripts/verify-current-frontend.mjs
+          sha256sum -c SHA256SUMS_FRONTEND.txt --quiet
+          python scripts/verify-deploy-relay-contract.py
+          python scripts/build-dev-packages.py "$RUNNER_TEMP/ma005-payload" --revision 18f505ba8933d1036660133fc5c5ca1b627c596a
+          (cd "$RUNNER_TEMP/ma005-payload" && sha256sum -c SHA256SUMS.txt && cat SHA256SUMS.txt)
+      - name: Exact DRA source and payload inventory
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api repos/TheDaimos/gewitterradar/commits/18f505ba8933d1036660133fc5c5ca1b627c596a --jq .sha | grep -Fx 18f505ba8933d1036660133fc5c5ca1b627c596a
+          python - <<'PY'
+          import os,json,subprocess,zipfile,pathlib,hashlib
+          h="18f505ba8933d1036660133fc5c5ca1b627c596a"
+          p=pathlib.Path(os.environ["RUNNER_TEMP"])/"ma005-payload"
+          d=json.loads((p/"deployment.json").read_text())
+          assert (d["commit"],d["version"],d["integrationVersion"],d["runtimeRevision"],d["moduleSetId"])==(h,"4.14.1","0.25.187","4141r1","E414-1A1")
+          m=json.loads(pathlib.Path("deploy-relay.json").read_text())
+          assert m["source"]["mode"]=="repository_contents"
+          assert m["deployment"]["groups"][0]["source"]=="custom_components/gewitterradar"
+          assert m["lifecycle"]["after_install"]=="home_assistant_restart"
+          with zipfile.ZipFile(p/"gewitterradar-0.25.187-dev.zip") as z:
+              expected=set(subprocess.check_output(["git","ls-tree","-r","--name-only",h,"custom_components/gewitterradar"]).decode().splitlines())
+              assert set(z.namelist())==expected
+              assert len(expected)<=m["policy"]["max_files"]
+              assert sum(i.file_size for i in z.infolist())<=m["policy"]["max_uncompressed_bytes"]
+              for name in expected:
+                  assert z.read(name)==subprocess.check_output(["git","show",h+":"+name])
+              print("DRA exact source payload:",len(expected),"files")
+          print("PASS frozen commit, manifest, byte-identical DRA integration inventory")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GR-4.14.1-DEV-pinned
+          path: ${{ runner.temp }}/ma005-payload/
+          if-no-files-found: error
+          retention-days: 30

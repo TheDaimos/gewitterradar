@@ -11,15 +11,25 @@ import tarfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = Path(sys.argv[1]).resolve()
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("output")
+parser.add_argument("--revision", help="Explicit full commit SHA; default remains deploy/dev HEAD")
+args = parser.parse_args()
+OUT = Path(args.output).resolve()
 OUT.mkdir(parents=True, exist_ok=True)
 
 def git(*args):
     return subprocess.check_output(["git", *args], cwd=ROOT)
 
-assert git("branch", "--show-current").decode().strip() == "deploy/dev"
-head = git("rev-parse", "HEAD").decode().strip()
-source = git("show", "HEAD:frontend/version.js").decode()
+if args.revision:
+    assert re.fullmatch(r"[0-9a-f]{40}", args.revision), "full immutable commit SHA required"
+    head = git("rev-parse", "--verify", args.revision + "^{commit}").decode().strip()
+    assert head == args.revision
+else:
+    assert git("branch", "--show-current").decode().strip() == "deploy/dev"
+    head = git("rev-parse", "HEAD").decode().strip()
+source = git("show", head + ":frontend/version.js").decode()
 def field(name):
     return re.search(name + r':"([^"]+)"', source).group(1)
 
@@ -30,7 +40,7 @@ for tree, prefix, filename in [
     ("dashboard/dist", "www/gewitterradar/", f"gewitterradar-dashboard-{version}-dev.zip"),
 ]:
     content = {}
-    with tarfile.open(fileobj=io.BytesIO(git("archive", "--format=tar", "HEAD", tree))) as archive:
+    with tarfile.open(fileobj=io.BytesIO(git("archive", "--format=tar", head, tree))) as archive:
         for member in archive.getmembers():
             if not member.isfile():
                 continue
@@ -65,7 +75,7 @@ for name, data in ha.items():
 
 metadata = {"schema": "gewitterradar.dev-install-payload.v1", "commit": head, "version": version,
             "integrationVersion": integration, "runtimeRevision": field("runtimeRevision"), "moduleSetId": field("moduleSetId"),
-            "source": {"repository": "TheDaimos/gewitterradar", "type": "branch", "ref": "deploy/dev"},
+            "source": {"repository": "TheDaimos/gewitterradar", "type": "commit" if args.revision else "branch", "ref": head if args.revision else "deploy/dev"},
             "packages": packages, "frontendParityFiles": sum(n.startswith(front) for n in ha),
             "realInstallation": "not_performed", "draConfigurationChanged": False}
 (OUT / "deployment.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
