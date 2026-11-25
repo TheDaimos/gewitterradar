@@ -64,7 +64,7 @@ class Protection:
         self._pending = {}
         self._pending_resets = {}
 
-    async def preview_final_delete(self, *, actor_user_id, is_admin, location_id):
+    async def preview_final_delete(self, *, actor_user_id, is_admin, location_id, actor_profile_id=None):
         if not actor_user_id or is_admin is not True:
             raise ProtectionDenied("forbidden")
         def snapshot(c):
@@ -79,10 +79,10 @@ class Protection:
         expires=time.monotonic()+self._ttl
         async with self._lock:
             self._pending={k:v for k,v in self._pending.items() if v[5]>time.monotonic()}
-            self._pending[nonce]=(actor_user_id,location_id,revision,links,reports,expires,digest)
+            self._pending[nonce]=(actor_user_id,location_id,revision,links,reports,expires,digest,actor_profile_id)
         return DeletionPreview(nonce,location_id,revision,links,reports,expires,digest)
 
-    async def preview_history_reset(self, *, actor_user_id, is_admin, location_id):
+    async def preview_history_reset(self, *, actor_user_id, is_admin, location_id, actor_profile_id=None):
         """Issue a bounded, user/area/revision/count-scoped destructive token."""
         if not actor_user_id or is_admin is not True:
             raise ProtectionDenied("forbidden")
@@ -101,7 +101,7 @@ class Protection:
             self._pending_resets={
                 k:v for k,v in self._pending_resets.items() if v[6]>time.monotonic()
             }
-            self._pending_resets[nonce]=(actor_user_id,location_id,revision,reports,sessions,gaps,expires,digest)
+            self._pending_resets[nonce]=(actor_user_id,location_id,revision,reports,sessions,gaps,expires,digest,actor_profile_id)
         return {"nonce":nonce,"location_id":location_id,"revision":revision,
                 "reports":reports,"sessions":sessions,"gaps":gaps,
                 "expires_at_monotonic":expires}
