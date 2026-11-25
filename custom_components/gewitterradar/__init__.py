@@ -535,6 +535,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: GewitterradarConfigEntry
     if options[CONF_SHOW_SIDEBAR_PANEL]:
         await _async_register_sidebar_panel(hass)
     entry.runtime_data.monitored_areas = await async_setup_monitored_areas(hass, entry)
+    ma = entry.runtime_data.monitored_areas
+    if ma is not None and ma.api is not None:
+        from .monitored_areas.api import register_websocket_api
+        register_websocket_api(hass)
     return True
 
 
