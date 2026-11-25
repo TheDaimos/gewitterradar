@@ -34,7 +34,7 @@ class Approval:
     deadline: float
 
 
-def _canonical(items):
+def _canonical(items, *, allow_empty=False):
     if not isinstance(items, list) or len(items) > 10000:
         raise FinalizationError("migration_source_invalid")
     records = {}
@@ -54,7 +54,7 @@ def _canonical(items):
             "status": item.get("status"),
             "record": record,
         }
-    if not records:
+    if not records and not allow_empty:
         raise FinalizationError("migration_empty_source")
     names = [r["summary"] for r in records.values()]
     if any(uid in names and records[uid]["summary"] != uid for uid in records):
@@ -124,9 +124,9 @@ class Finalizer:
         self._lock = asyncio.Lock()
         self._approvals = {}
 
-    async def _read_source(self):
+    async def _read_source(self, *, allow_empty=False):
         try:
-            return _canonical(await self._fetch())
+            return _canonical(await self._fetch(), allow_empty=allow_empty)
         except FinalizationError:
             raise
         except Exception as exc:
@@ -146,7 +146,7 @@ class Finalizer:
             raise FinalizationError("forbidden")
         await self._ownership.require_profile(actor, profile)
         async with self._lock:
-            records = await self._read_source()
+            records = await self._read_source(allow_empty=True)
             digest = _source_digest(records)
             def inspect(c):
                 existing = c.execute(
@@ -192,6 +192,11 @@ class Finalizer:
             if row is None:
                 raise FinalizationError("migration_target_changed")
             if uid in records:
+                item = records[uid]["record"]
+                loc = c.execute("SELECT name,lat,lon FROM locations WHERE location_id=?", (lid,)).fetchone()
+                if (loc is None or loc[0] != item["name"] or abs(loc[1]-item["lat"]) > 1e-9
+                        or abs(loc[2]-item["lon"]) > 1e-9):
+                    raise FinalizationError("migration_target_changed")
                 if _item_digest(records[uid]) != digest or state == "absence_verified":
                     raise FinalizationError("migration_source_changed")
             elif state == "pending":
@@ -217,7 +222,7 @@ class Finalizer:
             if (approval is None or approval.actor != actor or approval.profile != profile
                     or approval.deadline <= time.monotonic()):
                 raise FinalizationError("confirmation_expired")
-            records = await self._read_source()
+            records = await self._read_source(allow_empty=True)
             digest = _source_digest(records)
             # For a resumable, partially deleted saga the current digest differs.
             def begin(c):
@@ -247,7 +252,7 @@ class Finalizer:
             saga_id = await self._repo._write(begin)
             while True:
                 # Each step is reconciled against the latest supported HA read.
-                records = await self._read_source()
+                records = await self._read_source(allow_empty=True)
                 def select(c):
                     known = self._reconcile(c,saga_id,records,mutate=True)
                     next_uid = next((uid for uid,(_,_,s) in known.items()
@@ -279,7 +284,7 @@ class Finalizer:
                     # Service call might have completed before disconnect. Preserve
                     # requested and let a subsequent authorized preview reconcile.
                     raise FinalizationError("migration_remove_uncertain") from exc
-                after = await self._read_source()
+                after = await self._read_source(allow_empty=True)
                 if uid in after:
                     raise FinalizationError("migration_remove_unverified")
                 await self._repo._write(
