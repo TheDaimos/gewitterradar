@@ -65,3 +65,15 @@ async def test_ma015_ws_uses_authenticated_identity_and_rejects_profile_spoofing
     assert await hass.config_entries.async_unload(entry.entry_id)
     disabled=await send(reader,"locations_list",{"profile_id":reader_profile,"payload":{}})
     assert not disabled["success"] and disabled["error"]["code"]=="feature_disabled"
+    # The HA fixture reuses testing_config for subsequent native OFF checks.
+    # Remove ONLY this test's newly created SQLite artifacts after full unload.
+    from pathlib import Path
+    db_path=Path(hass.config.path("gewitterradar","monitored_areas","monitored_areas.sqlite3"))
+    for suffix in ("","-wal","-shm","-journal"):
+        db_path.with_name(db_path.name+suffix).unlink(missing_ok=True)
+    for directory in (db_path.parent,db_path.parent.parent):
+        try:
+            directory.rmdir()
+        except OSError:
+            pass
+
