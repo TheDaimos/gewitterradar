@@ -1,0 +1,38 @@
+name: V4.12 PRE-MERGE immutable source preservation
+on:
+  push:
+    branches:
+      - freeze/v4.12-final-candidate
+    paths:
+      - '.github/workflows/premerge-v4.12.yml'
+permissions:
+  contents: read
+jobs:
+  preserve:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify old main has not changed
+        run: |
+          set -euo pipefail
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main'
+          test "$(git rev-parse refs/remotes/origin/main)" = 'af70fe2bf85a88fdea402cf46e3bd6a11903189b'
+      - name: Generate preserved PRE-MERGE ZIP and Git bundle
+        run: |
+          set -euo pipefail
+          bash scripts/create-source-archive.sh PRE_MERGE af70fe2bf85a88fdea402cf46e3bd6a11903189b V4.12 dist/source-archives
+          (cd dist/source-archives && for checksums in *_SHA256SUMS.txt; do sha256sum -c "$checksums"; done)
+          unzip -tq dist/source-archives/*.zip
+          git bundle verify dist/source-archives/*.bundle
+      - name: Preserve recovery assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: GewitterRadar_V4.12_PRE_MERGE_af70fe2b
+          path: dist/source-archives/*
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0

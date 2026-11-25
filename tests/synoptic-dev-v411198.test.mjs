@@ -52,7 +52,8 @@ test('frontend mirrors, version and Eye registration match canonical build',()=>
  const version=read('frontend/version.js');
  const product=version.match(/version:"(4\.(?:11|12|13)\.\d+)"/)?.[1], revision=version.match(/runtimeRevision:"([^"]+)"/)?.[1];
  assert.ok(product&&revision,'application version and runtime revision must be declared');
- assert.equal(revision,product.split('.').slice(0,2).join('')+product.split('.').at(-1)+'r1');
+ const stem=product.split('.').slice(0,2).join('')+product.split('.').at(-1)+'r'; const number=Number(revision.slice(stem.length));
+ assert.ok(revision.startsWith(stem)&&Number.isSafeInteger(number)&&number>0&&String(number)===revision.slice(stem.length),'canonical nonzero runtime revision');
  assert.match(read('frontend/modules/weather/eye-hub-registry.js'),/id:'synoptic'/);
  assert.match(read('frontend/modules/weather/eye-hub-view.js'),/\.weather-synoptic-toggle/);
  assert.ok(!read('frontend/modules/weather/wind-display.js').includes('Gespeicherte Hoch-/Tiefdruckfarben (inaktiv)'));

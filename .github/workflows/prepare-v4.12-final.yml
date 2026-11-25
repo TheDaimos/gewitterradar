@@ -1,0 +1,64 @@
+name: Prepare accepted GewitterRadar V4.12 FINAL
+on:
+  push:
+    branches:
+      - freeze/v4.12-final-candidate
+    paths:
+      - '.github/workflows/prepare-v4.12-final.yml'
+      - 'scripts/prepare-v412-final.py'
+permissions:
+  contents: write
+  actions: read
+jobs:
+  prepare:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Assert immutable predecessor backup is complete
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/45274845031 --jq .conclusion)" = success
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main'
+          test "$(git rev-parse refs/remotes/origin/main)" = af70fe2bf85a88fdea402cf46e3bd6a11903189b
+          git fetch origin '+refs/heads/freeze/v4.12-final-candidate:refs/remotes/origin/freeze/v4.12-final-candidate'
+          test "$(git rev-parse HEAD)" = "$(git rev-parse refs/remotes/origin/freeze/v4.12-final-candidate)"
+      - name: Merge latest V4.11.3 hotfixes into candidate without touching main
+        run: |
+          set -euo pipefail
+          git config user.name 'TheDaimos Release Automation'
+          git config user.email '157001884+TheDaimos@users.noreply.github.com'
+          git merge -X ours --no-ff --no-edit refs/remotes/origin/main
+          grep -Fq "checkbox.checked = storage.getItem(FIRST_STEPS_DISMISSED) === '1'" frontend/modules/ui/first-steps.js
+          grep -Fq "else storage.removeItem(FIRST_STEPS_DISMISSED)" frontend/modules/ui/first-steps.js
+      - name: Prepare final identity and rebuild exact shared deliveries
+        run: |
+          set -euo pipefail
+          python scripts/prepare-v412-final.py
+          node scripts/build-frontend.mjs
+          node scripts/verify-frontend.mjs
+          python scripts/verify-hacs-integration-package.py
+          node scripts/verify-hires-asset-retention.mjs
+          node scripts/verify-diagnostic-contract.mjs
+          node scripts/verify-source-archive-contract.mjs
+          python -m json.tool custom_components/gewitterradar/manifest.json >/dev/null
+          git diff --check
+      - name: Commit and stage final candidate with verified source identity
+        run: |
+          set -euo pipefail
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m 'release(v4.12): freeze accepted FINAL runtime and preserve V4.11.3 maintenance fixes'
+          fi
+          test "$(python -c 'import json;print(json.load(open("custom_components/gewitterradar/manifest.json"))["version"])')" = '0.25.177'
+          test "$(grep -c 'displayVersion:"V4.12 FINAL"' frontend/version.js)" = 1
+          git push origin HEAD:refs/heads/freeze/v4.12-final-candidate
+          echo "Final freeze candidate: $(git rev-parse HEAD)"

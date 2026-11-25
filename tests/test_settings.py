@@ -66,7 +66,7 @@ EXPECTED_DEFAULT_OPTIONS = {
     "aura_effects": True,
     "warning_animation": True,
     "storm_simulation": False,
-    "show_location_selector": False,
+    "show_location_selector": True,
     "show_sidebar_panel": False,
     "compass_nearest_strike": False,
     "compass_device_orientation": False,

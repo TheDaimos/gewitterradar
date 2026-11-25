@@ -1,0 +1,118 @@
+name: Publish GewitterRadar PRO V4.12 FINAL
+# FINAL publication trigger after verified full post-merge integration, frontend, Aura and protected About tests.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-v4.12-final.yml'
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify exact promoted release commit and preserved predecessor
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main'
+          test "$(git rev-parse refs/remotes/origin/main)" = "$GITHUB_SHA"
+          test "$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/45274845031 --jq .conclusion)" = success
+          git merge-base --is-ancestor af70fe2bf85a88fdea402cf46e3bd6a11903189b "$GITHUB_SHA"
+          grep -Fq 'displayVersion:"V4.12 FINAL"' frontend/version.js
+          grep -Fq 'runtimeRevision:"41215r2"' frontend/version.js
+          test "$(python -c 'import json;print(json.load(open("custom_components/gewitterradar/manifest.json"))["version"])')" = '0.25.177'
+          grep -Fq "checkbox.checked = storage.getItem(FIRST_STEPS_DISMISSED) === '1'" frontend/modules/ui/first-steps.js
+      - name: Validate exact main source and packaging contracts
+        run: |
+          set -euo pipefail
+          node scripts/verify-frontend.mjs
+          node scripts/verify-diagnostic-contract.mjs
+          node scripts/verify-hires-asset-retention.mjs
+          node scripts/verify-source-archive-contract.mjs
+          python scripts/verify-hacs-integration-package.py
+          python -m json.tool custom_components/gewitterradar/manifest.json >/dev/null
+          bash -n scripts/create-source-archive.sh
+          git diff --exit-code
+      - name: Wait for essential post-promotion CI on exact main commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          required=('Validate Gewitterradar integration' 'Validate shared Gewitterradar frontend' 'Hi-Res asset retention')
+          for attempt in $(seq 1 300); do
+            data="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${GITHUB_SHA}&per_page=100")"
+            waiting=0
+            for name in "${required[@]}"; do
+              row="$(printf '%s' "$data" | jq -r --arg name "$name" '[.workflow_runs[] | select(.name==$name)] | sort_by(.created_at) | last | if . == null then "missing" else (.status + ":" + (.conclusion // "")) end')"
+              echo "$name -> $row"
+              case "$row" in completed:success) ;; completed:*) exit 1 ;; *) waiting=1 ;; esac
+            done
+            if [ "$waiting" -eq 0 ]; then exit 0; fi
+            sleep 15
+          done
+          echo 'Post-merge CI timed out' >&2
+          exit 1
+      - name: Generate and verify immutable Golden Master
+        run: |
+          set -euo pipefail
+          bash scripts/create-source-archive.sh GOLDEN_MASTER "$GITHUB_SHA" V4.12 dist/source-archives
+          (cd dist/source-archives && for checksums in *_SHA256SUMS.txt; do sha256sum -c "$checksums"; done)
+          unzip -tq dist/source-archives/*.zip
+          git bundle verify dist/source-archives/*.bundle
+      - name: Preserve recovery archives as CI artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: GewitterRadar_V4.12_GOLDEN_MASTER
+          path: dist/source-archives/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 90
+      - name: Build and verify exact stable integration and dashboard packages
+        run: |
+          set -euo pipefail
+          python scripts/build-public-packages.py release-assets 4.12
+          (cd release-assets && sha256sum -c SHA256SUMS.txt)
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("release-assets/deployment.json").read_text())
+          assert m["commit"]==__import__("os").environ["GITHUB_SHA"]
+          assert m["frontendParity"]=="verified"
+          assert len(m["packages"])==2
+          PY
+      - name: Freeze exact stable main and publish public GitHub / HACS release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          sha="$GITHUB_SHA"
+          if git ls-remote --exit-code --heads origin refs/heads/frozen/v4.12 >/dev/null 2>&1; then
+            test "$(git ls-remote --heads origin refs/heads/frozen/v4.12 | cut -f1)" = "$sha"
+          else
+            git push origin "$sha:refs/heads/frozen/v4.12"
+          fi
+          if gh release view v4.12 >/dev/null 2>&1; then
+            git fetch origin refs/tags/v4.12:refs/tags/v4.12 --force
+            test "$(git rev-list -n1 v4.12)" = "$sha"
+          else
+            gh release create v4.12 release-assets/* dist/source-archives/* \
+              --target "$sha" \
+              --title 'GewitterRadar PRO V4.12 FINAL – Dynamic Aura & Legend Hub' \
+              --notes-file docs/RELEASE_NOTES_V4_12_FINAL.md \
+              --latest
+          fi
+          git fetch origin refs/tags/v4.12:refs/tags/v4.12 --force
+          test "$(git rev-list -n1 v4.12)" = "$sha"
+          gh release view v4.12 --json tagName,isDraft,isPrerelease,url,targetCommitish

@@ -1,0 +1,33 @@
+name: Publish GewitterRadar V4.11.3
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/publish-v4.11.3.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.repository == 'TheDaimos/gewitterradar'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate delivery
+        run: |
+          node scripts/test-frontend-build.mjs
+          python scripts/test-first-steps-status.py
+      - name: Build release assets
+        run: python scripts/build-public-packages.py release-assets 4.11.3
+      - name: Publish official release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v4.11.3 release-assets/* \
+            --target "$GITHUB_SHA" \
+            --title 'GewitterRadar V4.11.03 FINAL – First Steps Checkbox' \
+            --notes 'Die Checkbox „Diesen Hinweis nicht mehr anzeigen“ zeigt beim erneuten Öffnen von First Steps & Useful Tips über Hilfe & Hinweise den gespeicherten Zustand an. Wird der Haken entfernt, erscheint der Dialog beim nächsten Start wieder automatisch. Bestehende Einstellungen und Wetterfunktionen bleiben erhalten. Interne Produktversion 4.11.254, HA-Integration 0.25.161.' \
+            --latest
