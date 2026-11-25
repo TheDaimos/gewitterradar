@@ -53,6 +53,7 @@ def _canonical(items, *, allow_empty=False):
             "description": item.get("description"),
             "status": item.get("status"),
             "record": record,
+            "raw": dict(item),
         }
     if not records and not allow_empty:
         raise FinalizationError("migration_empty_source")
@@ -184,6 +185,13 @@ class Finalizer:
             raise FinalizationError("migration_source_changed")
         changes = []
         for uid, (digest,lid,state) in known.items():
+            backup = c.execute(
+                "SELECT source_sha,source_json FROM migration_source_backups "
+                "WHERE finalization_id=? AND item_uid=?", (saga_id,uid)).fetchone()
+            if backup is None or _hash(json.loads(backup[1])) != backup[0]:
+                raise FinalizationError("migration_backup_incomplete")
+            if uid in records and _hash(records[uid]["raw"]) != backup[0]:
+                raise FinalizationError("migration_source_changed")
             row = c.execute(
                 "SELECT l.location_id FROM locations l JOIN profile_links p "
                 "ON p.location_id=l.location_id WHERE l.location_id=? "
@@ -249,6 +257,15 @@ class Finalizer:
                     c.execute(
                         "INSERT INTO migration_finalization_items VALUES(?,?,?,?,?,?)",
                         (saga_id,uid,_item_digest(records[uid]),loc,"pending",now))
+                    raw = records[uid]["raw"]
+                    try:
+                        source_json = json.dumps(raw,sort_keys=True,ensure_ascii=True,
+                                                 allow_nan=False,separators=(",",":"))
+                    except (TypeError,ValueError,OverflowError) as exc:
+                        raise FinalizationError("migration_source_invalid") from exc
+                    c.execute(
+                        "INSERT INTO migration_source_backups VALUES(?,?,?,?)",
+                        (saga_id,uid,_hash(raw),source_json))
                 return saga_id
             saga_id = await self._repo._write(begin)
             while True:
