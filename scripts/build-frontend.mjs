@@ -47,6 +47,7 @@ export async function expectedPayload(){
   if(Number(patch)>=184)support.push('modules/ui/settings-vault-setup.js');
   if(Number(patch)>=224)support.push('modules/ui/presentation-locales.js');
   if(Number(patch)>=227)support.push('modules/weather/p7-010/dwd-frame-mask.js');
+  if(series==='414')support.push('modules/monitored-areas/migration-wizard.js');
   const expected=[...new Set([...modules.map(item=>item.file),...support])].sort();
   if(JSON.stringify(actual)!==JSON.stringify(expected))throw Error('V4.11.165 module inventory mismatch');
   const runtimeVersions=new Map(runtime.modules.map(item=>[item.id,item.version]));
