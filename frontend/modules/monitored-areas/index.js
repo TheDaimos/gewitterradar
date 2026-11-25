@@ -207,7 +207,7 @@ export function initializeMonitoredAreas(owner, enabled = false) {
   });
   active.set(owner,runtime);
   // The optional card can mount before Vault has resolved its HA profile.
-  interval = setInterval(() => {
+  if (mutableOwner && owner.shadow && hass()) interval = setInterval(() => {
     if (stopped || checkedProfile || ++attempts > 20) {
       if(interval)clearInterval(interval);
       interval=null;
