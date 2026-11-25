@@ -6,7 +6,9 @@ const http = require('node:http');
 
 const root = path.resolve(__dirname, '..');
 const manifestSource=fs.readFileSync(path.resolve(root,'frontend/module-manifest.js'),'utf8');
-const expectedModuleCount=JSON.parse(manifestSource.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map/)[1]).length;
+const declaredModules=JSON.parse(manifestSource.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map/)[1]);
+const expectedModuleIds=declaredModules.filter(m=>m.optional!==true).map(m=>m.id).sort();
+const expectedModuleCount=expectedModuleIds.length;
 const expectedModuleSetId=fs.readFileSync(path.resolve(root,'frontend/version.js'),'utf8').match(/moduleSetId:"([^"]+)"/)[1];
 const moduleViewSource = fs.readFileSync(path.resolve(root,'frontend/modules/diagnostics/module-view.js'),'utf8');
 const legacyIdsMatch = moduleViewSource.match(/MODULE_VIEW_IDS=Object\.freeze\((\[[^\]]+\])\)/);
@@ -491,6 +493,7 @@ const server = http.createServer((req, res) => {
           const projectHubRow=row.localizedModuleRows.find((entry) => entry.id==='ui.project-hub');
           assert.ok(projectHubRow?.name&&projectHubRow?.functions,delivery+'/'+profile+' '+row.language+' Project Hub manifest fallback populated');
           assert.equal(new Set(row.localizedModuleRows.map((entry) => entry.id )).size,expectedModuleCount,delivery+'/'+profile+' '+row.language+' unique module ids');
+          assert.deepEqual(row.localizedModuleRows.map(entry=>entry.id).sort(),expectedModuleIds,delivery+'/'+profile+' '+row.language+' exact mandatory module identities; optional MA remains unloaded');
           assert.equal(row.localizedModuleRows.every((entry) => entry.name && entry.functions),true,delivery+'/'+profile+' '+row.language+' module names and functions populated');
           assert.equal(row.moduleSummaryParts.length,4,delivery+'/'+profile+' '+row.language+' module summary segments');
           assert(row.moduleSummaryParts[3].endsWith(expectedModuleSetId),delivery+'/'+profile+' '+row.language+' exact canonical module set fingerprint');
