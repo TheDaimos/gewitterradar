@@ -30,7 +30,7 @@ class MonitoredAreasRuntime:
                 await self.database.async_start()
                 # API remains unavailable unless the private Vault ownership port
                 # is registered. No fallback to browser-supplied profile IDs.
-                vault = self._hass.data.get("gewitterradar_settings_vault")
+                vault = getattr(self._hass, "data", {}).get("gewitterradar_settings_vault")
                 checker = getattr(vault, "async_profile_belongs_to", None)
                 if callable(checker):
                     from .api import Api
