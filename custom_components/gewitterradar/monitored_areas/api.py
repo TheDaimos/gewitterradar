@@ -12,7 +12,7 @@ from uuid import UUID, uuid4
 
 from .identity import Links, ProfileNotVerified
 from .locations import _coord, _name
-from .permissions import Protection, ConfirmationRequired, ProtectionDenied
+from .permissions import Protection, ConfirmationRequired, ProtectionDenied, _snapshot_digest
 from .storage import repositories as sql
 from .storage.database import DatabaseUnavailable
 from .storage.errors import StorageError
@@ -85,6 +85,31 @@ def _revision(request):
     return value
 
 
+def _authorize_cached_result(c, actor, profile, op, request, result):
+    """Re-check CURRENT location/link ownership before revealing a prior result.
+
+    A receipt proves a prior commit, not continued authorization. In particular
+    destructive operations cannot replay private data after the last link
+    disappeared. Check on the worker in the same transaction as receipt reading.
+    """
+    payload = request.get("payload", {})
+    if op == "location_create":
+        location_id = result.get("location", {}).get("location_id")
+    elif op == "preferences_update":
+        link_id = payload.get("link_id")
+        row = c.execute(
+            "SELECT location_id FROM profile_links WHERE link_id=? AND ha_user_id=? AND vault_profile_id=?",
+            (link_id, actor, profile)).fetchone()
+        if row is None:
+            raise ApiError("not_found")
+        location_id = row[0]
+    else:
+        location_id = payload.get("location_id")
+    if not isinstance(location_id, str):
+        raise ApiError("not_found")
+    _actor_link(c, location_id, actor, profile)
+
+
 class Api:
     def __init__(self, database, vault, *, target_user_active=None):
         self._repo = sql.Repositories(database)
@@ -102,7 +127,10 @@ class Api:
             if row is not None:
                 if row[0] != op or row[1] != digest:
                     raise ApiError("request_conflict")
-                return json.loads(row[2])
+                prior = json.loads(row[2])
+                _authorize_cached_result(c, actor, request.get("profile_id"),
+                                         op, request, prior)
+                return prior
             result = fn(c)
             if type(result) is not dict:
                 raise RuntimeError("invalid mutation result")
@@ -116,16 +144,20 @@ class Api:
         """Resolve a committed retry before access to a possibly deleted object."""
         request_id = _uuid(request.get("request_id"))
         digest = _hash(op, request)
-        row = await self._repo._db.async_execute(
-            lambda c: c.execute(
+        def read(c):
+            row = c.execute(
                 "SELECT operation,payload_hash,result_json FROM request_receipts "
                 "WHERE actor_user_id=? AND request_id=?", (actor,request_id)
-            ).fetchone(),kind="read")
-        if row is None:
-            return None
-        if row[0]!=op or row[1]!=digest:
-            raise ApiError("request_conflict")
-        return json.loads(row[2])
+            ).fetchone()
+            if row is None:
+                return None
+            if row[0]!=op or row[1]!=digest:
+                raise ApiError("request_conflict")
+            prior = json.loads(row[2])
+            _authorize_cached_result(c, actor, request.get("profile_id"),
+                                     op, request, prior)
+            return prior
+        return await self._repo._db.async_execute(read,kind="read")
 
     async def dispatch(self, *, actor_user_id, is_admin, op, request):
         if not actor_user_id:
@@ -221,7 +253,8 @@ class Api:
                 if current["revision"]!=expected:
                     raise sql.RevisionConflict("revision_conflict")
                 if (proof is None or proof[0]!=actor_user_id or proof[1]!=location_id or
-                    proof[2]!=expected or proof[3:6]!=counts or proof[6]<=time.monotonic()):
+                    proof[2]!=expected or proof[3:6]!=counts or proof[6]<=time.monotonic() or
+                    proof[7]!=_snapshot_digest(c,location_id)):
                     raise ApiError("confirmation_stale")
                 # A destructive action is all-or-nothing. Leave locations, links,
                 # tracker refs and personal preferences intact.
@@ -341,7 +374,8 @@ class Api:
                 if total==1:
                     if (is_admin is not True or not explicit or proof is None or
                         proof[0]!=actor_user_id or proof[1]!=location_id or
-                        proof[2:5]!=(expected,total,reports) or proof[5]<=time.monotonic()):
+                        proof[2:5]!=(expected,total,reports) or proof[5]<=time.monotonic() or
+                        proof[6]!=_snapshot_digest(c,location_id,include_links=True)):
                         raise ApiError("last_link_confirmation_required")
                     if reports or c.execute("SELECT 1 FROM tracker_refs WHERE location_id=?",(location_id,)).fetchone():
                         raise ApiError("history_exists")
