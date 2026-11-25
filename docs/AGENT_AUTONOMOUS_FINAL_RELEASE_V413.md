@@ -45,3 +45,11 @@ Stand: 2026-11-25. Dieses Dokument ergänzt `AGENTS.md`, `docs/FINALIZATION_RUNB
 Release-Version; HA-/Frontend-/Runtime-Identität; finaler `main`-SHA; PRE-MERGE-SHA und Offsite-Hash; PR/Merge-Link; Kandidaten- und Post-Merge-CI-Run-IDs; FINAL-Workflow-ID/Ergebnis; Golden-Master-Asset/Hashes; HACS- und Dashboard-Paketnamen/Hashes; Tag-SHA; offizieller Release-Link; noch offene reale Betreiber- oder DEV-Abnahmen. Alle Felder belegen; unbekannte Angaben ausdrücklich als offen markieren.
 
 **Wiederanlaufregel:** Wenn Lauf abbricht, Ursachen und genaue fehlgeschlagene Stufe nachweisen, minimal reparieren, die dadurch ungültigen Prüfungen wiederholen und ohne erneuten generischen Auftrag bis zum Endzustand weiterarbeiten. Sicherungen, die weiterhin zum exakt gleichen alten SHA gehören und verifiziert sind, nicht unnötig neu herstellen.
+
+## Nachtrag: tatsächlicher FINAL-Abschluss am 25.11.2026
+
+- Originaler FINAL-Workflow: https://github.com/TheDaimos/gewitterradar/actions/runs/45576565922 — alle CI-/Sicherungs-/Golden-/Paketgates bestanden, nur Draft-Tag-Fetch scheiterte nach Erstellung der sieben Assets.
+- Ausgeführte Veröffentlichungskorrektur: https://github.com/TheDaimos/gewitterradar/actions/runs/45579237291 — **success**. Zunächst exakte SHA-/CI- und sieben Asset-Digest-Prüfungen, danach expliziter Git-Tag, Veröffentlichung des bereits vorhandenen Drafts und unabhängige Schlussverifikation.
+- Tag und main bei Veröffentlichung: `509daeb7245f42b23e46f72b4d002c42f0d7f56e`; Tag `v4.13`; Release-ID `457838854`; offizielles Release https://github.com/TheDaimos/gewitterradar/releases/tag/v4.13 (`draft=false`, `prerelease=false`, sieben Assets).
+- Kernlehre: **Nach einer Korrektur nicht aufhören.** Fehlender Git-Tag ist *kein* manueller Betreiberauftrag, wenn GitHub-Runner über das erforderliche Schreibrecht verfügt. `gh release create --draft` garantiert noch keinen Remote-Tag. Der Tag muss vor dem Draft explizit und unveränderlich auf exakt verifiziertes SHA geschrieben werden; vorhandene Drafts sind idempotent anhand ID, Ziel und SHA256 fortzuführen.
+- Für alle zukünftigen Releases gilt die operative Pflicht aus `FINALIZATION_RUNBOOK.md`, Abschnitt 7. Das Regelwerk und die nachträgliche Workflow-Reparatur ändern den bereits veröffentlichten V4.13-Tag/Golden Master nicht.
