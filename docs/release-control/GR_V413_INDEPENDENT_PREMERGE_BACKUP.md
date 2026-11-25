@@ -21,3 +21,8 @@ Dieser Nachweis bezieht sich **ausschließlich** auf die unveränderliche PRE-ME
 ## FINAL-Kandidaten-Spiegelprüfung
 
 Der getrennte öffentliche GitHub-Runner [45562538664](https://github.com/TheDaimos/gewitterradar/actions/runs/45562538664) hat nach dem späten Legend-Hub-Platzierungsfix die beiden Frontend-Spiegel und das SHA256-Inventar aus dem kanonischen FINAL-Kandidaten deterministisch neu erzeugt, alle zugehörigen Build-/Paket-/Diagnoseprüfungen bestanden und den Kandidaten als Commit `ee5ce2a1e4debd6e729545c64bd06d9557d06370` gespeichert. Der endgültige PR-/POST-MERGE-CI-Nachweis für einen späteren SHA ist gesondert zu prüfen.
+
+
+## Zweite geprüfte Lieferbaum-Synchronisierung
+
+Nach der Korrektur der Standardpositions-Erkennung (Commit `03b847a4907d8341dd420224ca8c782c0ad8325b`) hat der öffentliche GitHub-Runner [45563294422](https://github.com/TheDaimos/gewitterradar/actions/runs/45563294422) Build, HACS-Paket, Hi-Res-, Diagnose- und Frontend-Paritätsprüfung erneut erfolgreich abgeschlossen und die bytegleichen Frontend-Spiegel als Commit `452ba010085abd7c312a28a449c5257c72267fa9` gespeichert. Die nachfolgenden vollständigen Browser-/PR-Prüfungen müssen auf dem neuesten Commit gesondert erfolgreich sein.
