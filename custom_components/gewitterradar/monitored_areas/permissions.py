@@ -34,6 +34,7 @@ class Protection:
         self._ttl = lifetime_s
         self._lock = asyncio.Lock()
         self._pending = {}
+        self._pending_resets = {}
 
     async def preview_final_delete(self, *, actor_user_id, is_admin, location_id):
         if not actor_user_id or is_admin is not True:
@@ -52,6 +53,30 @@ class Protection:
             self._pending={k:v for k,v in self._pending.items() if v[5]>time.monotonic()}
             self._pending[nonce]=(actor_user_id,location_id,revision,links,reports,expires)
         return DeletionPreview(nonce,location_id,revision,links,reports,expires)
+
+    async def preview_history_reset(self, *, actor_user_id, is_admin, location_id):
+        """Issue a bounded, user/area/revision/count-scoped destructive token."""
+        if not actor_user_id or is_admin is not True:
+            raise ProtectionDenied("forbidden")
+        def snapshot(c):
+            location=c.execute("SELECT revision FROM locations WHERE location_id=?",(location_id,)).fetchone()
+            if location is None:
+                raise MissingRecord("not_found")
+            reports=c.execute("SELECT count(*) FROM lightning_reports WHERE location_id=?",(location_id,)).fetchone()[0]
+            sessions=c.execute("SELECT count(*) FROM sessions WHERE location_id=?",(location_id,)).fetchone()[0]
+            gaps=c.execute("SELECT count(*) FROM source_gaps WHERE location_id=?",(location_id,)).fetchone()[0]
+            return (location[0],reports,sessions,gaps)
+        revision,reports,sessions,gaps=await self._repo._db.async_execute(snapshot,kind="read")
+        nonce=secrets.token_urlsafe(32)
+        expires=time.monotonic()+self._ttl
+        async with self._lock:
+            self._pending_resets={
+                k:v for k,v in self._pending_resets.items() if v[6]>time.monotonic()
+            }
+            self._pending_resets[nonce]=(actor_user_id,location_id,revision,reports,sessions,gaps,expires)
+        return {"nonce":nonce,"location_id":location_id,"revision":revision,
+                "reports":reports,"sessions":sessions,"gaps":gaps,
+                "expires_at_monotonic":expires}
 
     async def remove_link(self, *, link_id, location_id, actor_user_id, actor_profile_id, is_admin=False,
                           confirmation_nonce=None, explicit_final=False, expected_revision):
