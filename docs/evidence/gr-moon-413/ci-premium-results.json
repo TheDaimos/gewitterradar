@@ -1,0 +1,140 @@
+[
+  {
+    "name": "desktop",
+    "width": 1920,
+    "height": 1080,
+    "allFourMaterials": true,
+    "sharedPreviewDefinitions": true,
+    "newClose": {
+      "width": 46,
+      "height": 46,
+      "border": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "shadow": "none",
+      "filter": "none",
+      "source": "http://127.0.0.1:41135/frontend/assets/moon/gr-moon-close-platinum-premium-128.png"
+    },
+    "configLongPressAndKeyboard": true,
+    "onlyPositionReset": true,
+    "sevenPreferencesReload": true,
+    "allNineteenLanguages": true,
+    "sixExistingCloses": true,
+    "bilingualHistory": true,
+    "errors": []
+  },
+  {
+    "name": "laptop",
+    "width": 1366,
+    "height": 768,
+    "allFourMaterials": true,
+    "sharedPreviewDefinitions": true,
+    "newClose": {
+      "width": 44.08746337890625,
+      "height": 44.087501525878906,
+      "border": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "shadow": "none",
+      "filter": "none",
+      "source": "http://127.0.0.1:41135/frontend/assets/moon/gr-moon-close-platinum-premium-128.png"
+    },
+    "configLongPressAndKeyboard": true,
+    "onlyPositionReset": true,
+    "sevenPreferencesReload": true,
+    "allNineteenLanguages": false,
+    "sixExistingCloses": false,
+    "bilingualHistory": true,
+    "errors": []
+  },
+  {
+    "name": "short",
+    "width": 1280,
+    "height": 720,
+    "allFourMaterials": true,
+    "sharedPreviewDefinitions": true,
+    "newClose": {
+      "width": 44.0888671875,
+      "height": 44.0888786315918,
+      "border": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "shadow": "none",
+      "filter": "none",
+      "source": "http://127.0.0.1:41135/frontend/assets/moon/gr-moon-close-platinum-premium-128.png"
+    },
+    "configLongPressAndKeyboard": true,
+    "onlyPositionReset": true,
+    "sevenPreferencesReload": true,
+    "allNineteenLanguages": false,
+    "sixExistingCloses": false,
+    "bilingualHistory": true,
+    "errors": []
+  },
+  {
+    "name": "tablet",
+    "width": 1024,
+    "height": 768,
+    "allFourMaterials": true,
+    "sharedPreviewDefinitions": true,
+    "newClose": {
+      "width": 44.09051513671875,
+      "height": 44.09053039550781,
+      "border": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "shadow": "none",
+      "filter": "none",
+      "source": "http://127.0.0.1:41135/frontend/assets/moon/gr-moon-close-platinum-premium-128.png"
+    },
+    "configLongPressAndKeyboard": true,
+    "onlyPositionReset": true,
+    "sevenPreferencesReload": true,
+    "allNineteenLanguages": false,
+    "sixExistingCloses": false,
+    "bilingualHistory": true,
+    "errors": []
+  },
+  {
+    "name": "portrait",
+    "width": 768,
+    "height": 1024,
+    "allFourMaterials": true,
+    "sharedPreviewDefinitions": true,
+    "newClose": {
+      "width": 44.096435546875,
+      "height": 44.09642791748047,
+      "border": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "shadow": "none",
+      "filter": "none",
+      "source": "http://127.0.0.1:41135/frontend/assets/moon/gr-moon-close-platinum-premium-128.png"
+    },
+    "configLongPressAndKeyboard": true,
+    "onlyPositionReset": true,
+    "sevenPreferencesReload": true,
+    "allNineteenLanguages": false,
+    "sixExistingCloses": false,
+    "bilingualHistory": true,
+    "errors": []
+  },
+  {
+    "name": "phone",
+    "width": 390,
+    "height": 844,
+    "allFourMaterials": true,
+    "sharedPreviewDefinitions": true,
+    "newClose": {
+      "width": 44.0938720703125,
+      "height": 44.09385299682617,
+      "border": "0px",
+      "background": "rgba(0, 0, 0, 0)",
+      "shadow": "none",
+      "filter": "none",
+      "source": "http://127.0.0.1:41135/frontend/assets/moon/gr-moon-close-platinum-premium-128.png"
+    },
+    "configLongPressAndKeyboard": true,
+    "onlyPositionReset": true,
+    "sevenPreferencesReload": true,
+    "allNineteenLanguages": false,
+    "sixExistingCloses": false,
+    "bilingualHistory": true,
+    "errors": []
+  }
+]

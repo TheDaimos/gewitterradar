@@ -1,15 +1,15 @@
-import {settingsStorage} from '../core/settings-vault.js?v=41215r2';
+import {settingsStorage} from '../core/settings-vault.js?v=4134r1';
 import { defineModule } from "../core/runtime.js?v=41114r1";
-import {createLegendInstrument,instrumentBounds,instrumentScaleSpace} from './legend-instrument.js?v=41215r2';
-import {legendOptions} from './legend-preferences.js?v=41215r2';
-import {renderLegendScale} from './legend-scale.js?v=41213r1';
+import {createLegendInstrument,instrumentBounds,instrumentScaleSpace} from './legend-instrument.js?v=4134r1';
+import {legendOptions} from './legend-preferences.js?v=4134r1';
+import {renderLegendScale} from './legend-scale.js?v=4133r1';
 
-import {precipitationPresentation,precipitationMetadata,precipitationSourceId,precipitationKind,renderPrecipitationScales,lowerDetectionLimits} from './legend-precipitation.js?v=41213r1';
+import {precipitationPresentation,precipitationMetadata,precipitationSourceId,precipitationKind,renderPrecipitationScales,lowerDetectionLimits} from './legend-precipitation.js?v=4133r1';
 import {renderLegendInformation} from './legend-information.js?v=41210r1';
 
 export const MODULE_META=Object.freeze({
   id:"weather.legend-overlay",
-  version:"0.1.67",
+  version:"0.1.73",
   group:"Weather-Engine",
   function:"WeatherRouter-Darstellungslegende",
   subfunctions:["generisches Legendenmodell","Auto/Ein/Aus","WR-Metadaten","Bildlegenden","strukturierte Skalen","Kartenoverlay","mehrere aktive Legenden","sichere Kartenposition"],

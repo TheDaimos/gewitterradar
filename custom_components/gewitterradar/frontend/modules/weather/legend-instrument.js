@@ -1,7 +1,7 @@
-import {settingsStorage} from '../core/settings-vault.js?v=41215r2';
-import {ensureLegendScaleStyle} from './legend-scale.js?v=41213r1';
-import {PREMIUM_INFO} from './premium-ui.js?v=41215r2';
-import {legendOptions} from './legend-preferences.js?v=41215r2';
+import {settingsStorage} from '../core/settings-vault.js?v=4134r1';
+import {ensureLegendScaleStyle} from './legend-scale.js?v=4133r1';
+import {PREMIUM_INFO} from './premium-ui.js?v=4134r1';
+import {legendOptions} from './legend-preferences.js?v=4134r1';
 import {legendInk} from './legend-contrast.js?v=4124r1';
 
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -33,7 +33,14 @@ export function applyInstrumentSurface(element,c){
 }
 function hasStoredPosition(owner,id,position){
  if(!position)return false;if(id==='temperature'||id==='advection')return !!owner._weatherTemperatureState().config.legendPositions[id];
- if(id==='synoptic'||id==='other'){try{return !!JSON.parse(settingsStorage(owner).getItem('gewitterradar:legend-hub:v1'))?.extraPositions?.[id];}catch{return false;}}
+ if(id==='synoptic'||id==='other'){try{
+  const stored=JSON.parse(settingsStorage(owner).getItem('gewitterradar:legend-hub:v1'))?.extraPositions?.[id];
+  if(!stored)return false;
+  // The hub stores normalized default coordinates even before any user drag.
+  // Only non-default saved positions count as explicit overrides.
+  const defaultX=id==='synoptic'?1:0;
+  return Math.abs(stored.x-defaultX)>.000001||Math.abs(stored.y-.12)>.000001;
+ }catch{return false;}}
  return true;
 }
 export function ensureInstrumentStyle(shadow){
@@ -91,6 +98,9 @@ export function createLegendInstrument(owner,{id,elementId,title,position,savePo
   const b=instrumentBounds(owner,host).storage,p=state.config.eyePosition,key=positionKey(p),c=legendOptions(owner,id),area=[b.left,b.top,b.right+host.offsetWidth,b.bottom+host.offsetHeight].join(','),layout=[c.orientation,c.size,c.style,c.labels,c.ticks,c.presentation].join(',');
   if(!accepted||accepted.key!==key){const wanted={x:b.left+(b.right-b.left)*p.x,y:b.top+(b.bottom-b.top)*p.y},point=!accepted&&!explicitPosition?clearInstrumentPosition(owner,host,b,wanted):wanted;accepted={...point,key,area,layout};}
   else{const resized=accepted.area!==area||accepted.layout!==layout,outside=accepted.x<b.left-Math.max(32,host.offsetWidth*.25)||accepted.x>b.right+Math.max(32,host.offsetWidth*.25)||accepted.y<b.top-Math.max(32,host.offsetHeight*.25)||accepted.y>b.bottom+Math.max(32,host.offsetHeight*.25);if(resized||outside){accepted.x=clamp(accepted.x,b.left,b.right);accepted.y=clamp(accepted.y,b.top,b.bottom);}accepted.area=area;accepted.layout=layout;}
+  // Default placements track interactive controls that appear after the instrument.
+  // Explicit user positions remain untouched, including deliberate overlaps.
+  if(!explicitPosition){const free=clearInstrumentPosition(owner,host,b,{x:accepted.x,y:accepted.y});accepted.x=free.x;accepted.y=free.y;}
   const left=accepted.x+'px',top=accepted.y+'px';if(host.style.left!==left)host.style.left=left;if(host.style.top!==top)host.style.top=top;if(!popup.hidden)popupPosition();
  };
 

@@ -1,0 +1,2 @@
+# Preserve supplied ZIP metadata byte for byte, including on Windows checkout.
+sources/zip-metadata/* -text

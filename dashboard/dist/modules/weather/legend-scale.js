@@ -1,5 +1,5 @@
 import {legendInk} from './legend-contrast.js?v=4124r1';
-import {normalizeLegendOptions} from './legend-hub-model.js?v=41213r1';
+import {normalizeLegendOptions} from './legend-hub-model.js?v=4133r1';
 let context;
 const measure=text=>{context||=document.createElement('canvas').getContext('2d');context.font='11px system-ui';return context.measureText(String(text)).width;};
 export function fitLegendLabels(ticks,length,{vertical=false,density='medium',measureText=text=>String(text).length*6.5}={}){

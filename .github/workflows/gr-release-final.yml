@@ -83,10 +83,16 @@ jobs:
           assert now!=old
           subprocess.check_call(['git','merge-base','--is-ancestor',old,now])
           version_text=Path('frontend/version.js').read_text()
-          assert f'version:"{version}"' in version_text
+          # Public release/tag is e.g. 4.13; canonical module product identity is 4.13.7.
+          # Keep strict series/linkage instead of accepting arbitrary unrelated internal builds.
+          internal_match=re.search(r'version:"([^"]+)"',version_text)
+          assert internal_match is not None, 'Missing canonical product version'
+          product_version=internal_match.group(1)
+          assert re.fullmatch(re.escape(version)+r'\.[1-9][0-9]*',product_version), (version,product_version)
           assert f'displayVersion:"V{version} FINAL"' in version_text
+          assert re.search(r'build:"V'+re.escape(version)+r'-FINAL-\d{4}-\d{2}-\d{2}"',version_text)
           assert f'integrationVersion:"{ha}"' in version_text
-          assert f'BUILD_VERSION = "{version}"' in Path('custom_components/gewitterradar/build_info.py').read_text()
+          assert f'BUILD_VERSION = "{product_version}"' in Path('custom_components/gewitterradar/build_info.py').read_text()
           assert json.loads(Path('custom_components/gewitterradar/manifest.json').read_text())['version']==ha
           notes=f'docs/RELEASE_NOTES_V{version.replace(".","_")}.md'
           assert Path(notes).is_file(), f'Missing FINAL notes: {notes}'

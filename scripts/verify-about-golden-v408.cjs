@@ -56,10 +56,10 @@ const isV409Release = frontendText.includes("const CARD_VERSION = '4.09';");
 const isV41001Dev = frontendText.includes("const CARD_VERSION = '4.10.01';");
 const isV41002Dev = frontendText.includes("const CARD_VERSION = '4.10.02';");
 
-const currentRevision=frontendText.match(/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=4(11|12)(\d+)r([1-9][0-9]*)";/);
+const currentRevision=frontendText.match(/import \{ APPLICATION_RELEASE \} from "\.\/version\.js\?v=4(11|12|13)(\d+)r([1-9]\d*)";/);
 if (currentRevision && (Number(currentRevision[1])>=12||Number(currentRevision[2])>=148)
     && frontendText.includes("CARD_VERSION=APPLICATION_META.version;")) {
-  // Current V4.11/V4.12 identity: read the actual release metadata.
+  // Current V4.11/V4.12/V4.13 identity: validate the actual canonical revision; retain the original protected pixel/geometry checks.
   // The historical pixel/geometry golden tests below remain mandatory.
   const versionText = fs.readFileSync(path.join(root, 'frontend/version.js'), 'utf8');
   const runtime = JSON.parse(fs.readFileSync(path.join(root, 'frontend/assets/gewitterradar-runtime-manifest.json'), 'utf8'));

@@ -1,3 +1,11 @@
+## V4.13 FINAL · 2026/11 · Mondlegende / Legend Hub · HA 0.25.186
+
+- Finale Auslieferung des abgenommenen 4.13.7-DEV-Funktionsumfangs: zusätzliche Mondlegende mit eigenen Design-/Skalenoptionen im Legend Hub.
+- Legend-Hub-Mondslot, Premium-/Compact-Optik und vorhandene Wetterlegenden bleiben unabhängig bedienbar.
+- Regressionstests und deterministische Auslieferung für zusätzliche Slot-Kategorien, Grafikpositionen und Menüdarstellung aktualisiert, geschützte Referenzen erhalten.
+- Kanonische Versionsidentität `V4.13 FINAL`, intern `4.13.7`, Runtime `4137r2`, Modulset `E413-7A2`; native HA-Integration `0.25.186`.
+- PRE-MERGE-Snapshot des alten `main` unabhängig außerhalb von GitHub per SHA256 verifiziert; technische Release-Gates und Golden Master bleiben für den exakten Veröffentlichungs-Commit verpflichtend.
+
 ## V4.12.6 DEV · 2026/11 · Einheitliche Temperaturfelder · HA 0.25.167
 
 - Eine vollständig einheitliche Temperaturfläche behält ihren tatsächlichen Einzelwert. Die Legende erzeugt weder einen zusätzlichen oberen Wert noch einen künstlichen Farbverlauf.

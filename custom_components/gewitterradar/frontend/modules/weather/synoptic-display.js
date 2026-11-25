@@ -1,10 +1,10 @@
-import {settingsStorage} from '../core/settings-vault.js?v=41215r2';
+import {settingsStorage} from '../core/settings-vault.js?v=4134r1';
 import {defineModule} from '../core/runtime.js?v=41114r1';
 import {EYE_COLORS} from './eye-hub-model.js?v=4121r1';
-import {ensurePremiumUi,premiumAction,PREMIUM_CLOSE,bindPremiumPanelDrag,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=41215r2';
+import {ensurePremiumUi,premiumAction,PREMIUM_CLOSE,bindPremiumPanelDrag,enhancePremiumSections,syncPremiumPanel,togglePremiumPanel} from './premium-ui.js?v=4134r1';
 import {canonicalWindBounds} from './wind-field.js?v=411211r1';
 
-export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.66',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});
+export const MODULE_META=Object.freeze({id:'weather.synoptic-display',version:'0.1.72',group:'Weather-Engine',function:'Synoptik H/T und Isobaren',subfunctions:['WR V2 H/T','WR V2 Isobaren','geografische Vektordarstellung','Premium-Konfiguration'],file:'modules/weather/synoptic-display.js'});
 export const SYNOPTIC_STORAGE='gewitterradar:synoptic-ui:v1';
 export const SYNOPTIC_CAPABILITIES=Object.freeze({centers:'weather.synoptic.pressure_centers',isobars:'weather.synoptic.isobars',fronts:'weather.synoptic.fronts'});
 export const CLASSIC_COLORS=Object.freeze(['#FFFFFF','#D8E6F3','#FFC442','#FFE17A','#FF9B48','#ED4343','#9F2333','#D94BA8','#8758CE','#377DFF','#36B7E9','#35C3B1','#4FBE76']);

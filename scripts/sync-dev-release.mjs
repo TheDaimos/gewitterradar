@@ -12,7 +12,7 @@ const before=p=>execFileSync('git',['show',base+':'+p],{encoding:'utf8',maxBuffe
 const field=(s,key)=>s.match(new RegExp(key+':"([^"]+)"'))?.[1];
 const bump=s=>{const p=s.split('.').map(Number);if(p.length!==3||p.some(x=>!Number.isInteger(x)))throw Error('Invalid version '+s);p[2]++;return p.join('.');};
 const old=before('frontend/version.js'),version=process.argv[3]||bump(field(old,'version')),patch=version.split('.')[2],series=version.split('.').slice(0,2).join(''),integrationVersion=bump(field(old,'integrationVersion'));
-if(!/^4\.(11|12)\.[1-9][0-9]*$/.test(version)||version.localeCompare(field(old,'version'),undefined,{numeric:true})<=0)throw Error('Expected a new 4.11/4.12 DEV version');
+if(!/^4\.(11|12|13)\.[1-9][0-9]*$/.test(version)||version.localeCompare(field(old,'version'),undefined,{numeric:true})<=0)throw Error('Expected a new 4.11/4.12/4.13 DEV version');
 const release={id:'gewitterradar',version,displayVersion:`V${version} DEV`,build:`V${version}-DEV-${new Date().toISOString().slice(0,10)}`,runtimeRevision:`${series}${patch}r1`,moduleSetId:`E${series}-${patch}A1`,integrationVersion};
 const source='export const APPLICATION_RELEASE=Object.freeze({\n'+Object.entries(release).map(([k,v])=>'  '+k+':'+JSON.stringify(v)).join(',\n')+'\n});\n';
 const manifestPath='frontend/module-manifest.js',manifest=await read(manifestPath),matcher=/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/;
@@ -49,7 +49,7 @@ for(const path of await files('frontend')){
  text=text.replace(/(["'])(\.\.?\/[^"'?]+\.js)\?v=[^"']+\1/g,(all,q,relative)=>modified.has(posix.relative('frontend',posix.normalize(posix.join(posix.dirname(path),relative))))?q+relative+'?v='+release.runtimeRevision+q:all);
  if(path==='frontend/gewitterradar.js'){
   text=text.replace(/gewitterradarImport\((['"])([^'"]+\.js)\1(?:,\s*['"][^'"]*['"])?\)/g,(all,q,p)=>modified.has(p.replace(/^\.\//,''))?`gewitterradarImport(${q}${p}${q},'${release.runtimeRevision}')`:all);
-  text=text.replace(/Gewitterradar Card V4\.(?:11|12)\.\d+ DEV/,'Gewitterradar Card '+release.displayVersion);
+  text=text.replace(/Gewitterradar Card V4\.(?:11|12|13)\.\d+ DEV/,'Gewitterradar Card '+release.displayVersion);
  }
  if(text!==await read(path))await write(path,text);
 }

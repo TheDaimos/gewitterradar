@@ -17,7 +17,7 @@ test('release, runtime and DRA metadata identify the same new delivery',()=>{
  const r=APPLICATION_RELEASE,rt=JSON.parse(read('frontend/assets/gewitterradar-runtime-manifest.json')),p=JSON.parse(read('custom_components/gewitterradar/dra-deployment-provenance.json'));
  const baselineVersion=original('frontend/version.js').toString().match(/version:"([^"]+)"/)[1];
  assert.equal(baselineVersion,'4.11.249','protected FINAL source identity');
- assert.match(r.version,/^4\.(11|12)\.\d+$/);
+ assert.match(r.version,/^4\.(11|12|13)\.\d+$/);
  assert(r.version.localeCompare('4.11.249',undefined,{numeric:true})>=0,'new deliveries must not replace the protected FINAL with an older version');
  for(const [k,v] of Object.entries({productVersion:r.version,build:r.build,runtimeRevision:r.runtimeRevision,moduleSetId:r.moduleSetId})){assert.equal(rt[k],v);assert.equal(p[k],v);}
  assert.equal(JSON.parse(read('custom_components/gewitterradar/manifest.json')).version,r.integrationVersion);

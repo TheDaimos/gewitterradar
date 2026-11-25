@@ -1,0 +1,28 @@
+{
+  "schema": "gewitterradar.dev-install-payload.v1",
+  "commit": "3b06a0d31b51612e4159f7d4d6312a1d5db06677",
+  "version": "4.12.17",
+  "integrationVersion": "0.25.178",
+  "runtimeRevision": "41217r1",
+  "moduleSetId": "E412-17A1",
+  "source": {
+    "repository": "TheDaimos/gewitterradar",
+    "type": "branch",
+    "ref": "deploy/dev"
+  },
+  "packages": {
+    "gewitterradar-0.25.178-dev.zip": {
+      "sha256": "e3b95885b02e96237477e5050ed728e8d2d50fae23f5a2e943692601e153deef",
+      "files": 267,
+      "bytes": 58688120
+    },
+    "gewitterradar-dashboard-4.12.17-dev.zip": {
+      "sha256": "24ce91f7edbb156cf039e3dcc09e6e1d67811a3be2471912d5edf2a9e79dd29d",
+      "files": 250,
+      "bytes": 58091210
+    }
+  },
+  "frontendParityFiles": 248,
+  "realInstallation": "not_performed",
+  "draConfigurationChanged": false
+}

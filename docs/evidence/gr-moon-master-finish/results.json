@@ -1,0 +1,1488 @@
+[
+  {
+    "name": "desktop-1920",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "embedded": null,
+    "initial": {
+      "rect": {
+        "left": 14,
+        "top": 36.078125,
+        "right": 1018,
+        "bottom": 873.171875,
+        "width": 1004,
+        "height": 837.09375
+      },
+      "map": {
+        "left": 0,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1049,
+        "width": 1920,
+        "height": 1049
+      },
+      "inside": true,
+      "scale": 1,
+      "naturalHeight": 837,
+      "fallback": false,
+      "scroll": 0,
+      "phaseCount": 8,
+      "tiles": [
+        {
+          "rect": {
+            "left": 43,
+            "top": 658.078125,
+            "right": 156.875,
+            "bottom": 825.328125,
+            "width": 113.875,
+            "height": 167.25
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 161.875,
+            "top": 658.078125,
+            "right": 275.75,
+            "bottom": 825.328125,
+            "width": 113.875,
+            "height": 167.25
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 280.75,
+            "top": 658.078125,
+            "right": 394.625,
+            "bottom": 825.328125,
+            "width": 113.875,
+            "height": 167.25
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 399.625,
+            "top": 658.078125,
+            "right": 513.5,
+            "bottom": 825.328125,
+            "width": 113.875,
+            "height": 167.25
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 518.5,
+            "top": 658.078125,
+            "right": 632.375,
+            "bottom": 825.328125,
+            "width": 113.875,
+            "height": 167.25
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 637.375,
+            "top": 658.078125,
+            "right": 751.25,
+            "bottom": 825.328125,
+            "width": 113.875,
+            "height": 167.25
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 756.25,
+            "top": 658.078125,
+            "right": 870.125,
+            "bottom": 825.328125,
+            "width": 113.875,
+            "height": 167.25
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 875.125,
+            "top": 658.078125,
+            "right": 989,
+            "bottom": 825.328125,
+            "width": 113.875,
+            "height": 167.25
+          },
+          "inside": true
+        }
+      ],
+      "phaseText": "Vollmond · 100,0 %",
+      "heroRatio": 0.5773935507968128,
+      "preference": {
+        "phasesExpanded": true,
+        "scaleMode": "auto",
+        "scalePercent": 100
+      },
+      "position": {
+        "x": 0,
+        "y": 0.12
+      }
+    },
+    "foldedHeight": 647.859375,
+    "manualScale": true,
+    "fullManualRange": true,
+    "localeFormatting": true,
+    "standardAndFullscreen": true,
+    "safeArea": true,
+    "accordion": true,
+    "keyboard": true,
+    "reducedMotion": true,
+    "drag": true,
+    "mapPan": true,
+    "resize": true,
+    "persistence": true,
+    "errors": []
+  },
+  {
+    "name": "desktop-1366",
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "embedded": null,
+    "initial": {
+      "rect": {
+        "left": 14,
+        "top": 14,
+        "right": 864.461181640625,
+        "bottom": 723.0794067382812,
+        "width": 850.461181640625,
+        "height": 709.0794067382812
+      },
+      "map": {
+        "left": 0,
+        "top": 0,
+        "right": 1366,
+        "bottom": 737,
+        "width": 1366,
+        "height": 737
+      },
+      "inside": true,
+      "scale": 0.8470728793309439,
+      "naturalHeight": 837,
+      "fallback": false,
+      "scroll": 0,
+      "phaseCount": 8,
+      "tiles": [
+        {
+          "rect": {
+            "left": 38.56511688232422,
+            "top": 540.8793334960938,
+            "right": 135.02554321289062,
+            "bottom": 682.5523071289062,
+            "width": 96.4604263305664,
+            "height": 141.6729736328125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 139.26089477539062,
+            "top": 540.8793334960938,
+            "right": 235.72132873535156,
+            "bottom": 682.5523071289062,
+            "width": 96.46043395996094,
+            "height": 141.6729736328125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 239.95669555664062,
+            "top": 540.8793334960938,
+            "right": 336.4171142578125,
+            "bottom": 682.5523071289062,
+            "width": 96.46041870117188,
+            "height": 141.6729736328125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 340.6524963378906,
+            "top": 540.8793334960938,
+            "right": 437.1129150390625,
+            "bottom": 682.5523071289062,
+            "width": 96.46041870117188,
+            "height": 141.6729736328125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 441.3482666015625,
+            "top": 540.8793334960938,
+            "right": 537.8087158203125,
+            "bottom": 682.5523071289062,
+            "width": 96.46044921875,
+            "height": 141.6729736328125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 542.0440673828125,
+            "top": 540.8793334960938,
+            "right": 638.5045166015625,
+            "bottom": 682.5523071289062,
+            "width": 96.46044921875,
+            "height": 141.6729736328125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 642.7398681640625,
+            "top": 540.8793334960938,
+            "right": 739.2002563476562,
+            "bottom": 682.5523071289062,
+            "width": 96.46038818359375,
+            "height": 141.6729736328125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 743.4356689453125,
+            "top": 540.8793334960938,
+            "right": 839.8960571289062,
+            "bottom": 682.5523071289062,
+            "width": 96.46038818359375,
+            "height": 141.6729736328125
+          },
+          "inside": true
+        }
+      ],
+      "phaseText": "Vollmond · 100,0 %",
+      "heroRatio": 0.5773935628905388,
+      "preference": {
+        "phasesExpanded": true,
+        "scaleMode": "auto",
+        "scalePercent": 100
+      },
+      "position": {
+        "x": 0,
+        "y": 0.12
+      }
+    },
+    "foldedHeight": 647.84375,
+    "manualScale": true,
+    "fullManualRange": false,
+    "localeFormatting": false,
+    "standardAndFullscreen": false,
+    "safeArea": false,
+    "accordion": true,
+    "keyboard": true,
+    "reducedMotion": true,
+    "drag": true,
+    "mapPan": true,
+    "resize": true,
+    "persistence": true,
+    "errors": []
+  },
+  {
+    "name": "desktop-1280",
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "embedded": null,
+    "initial": {
+      "rect": {
+        "left": 14,
+        "top": 14,
+        "right": 806.8840942382812,
+        "bottom": 675.0740356445312,
+        "width": 792.8840942382812,
+        "height": 661.0740356445312
+      },
+      "map": {
+        "left": 0,
+        "top": 0,
+        "right": 1280,
+        "bottom": 689,
+        "width": 1280,
+        "height": 689
+      },
+      "inside": true,
+      "scale": 0.7897252090800478,
+      "naturalHeight": 837,
+      "fallback": false,
+      "scroll": 0,
+      "phaseCount": 8,
+      "tiles": [
+        {
+          "rect": {
+            "left": 36.90203094482422,
+            "top": 505.2090759277344,
+            "right": 126.83198547363281,
+            "bottom": 637.2905883789062,
+            "width": 89.9299545288086,
+            "height": 132.08151245117188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 130.78060913085938,
+            "top": 505.2090759277344,
+            "right": 220.7105712890625,
+            "bottom": 637.2905883789062,
+            "width": 89.92996215820312,
+            "height": 132.08151245117188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 224.65919494628906,
+            "top": 505.2090759277344,
+            "right": 314.5891418457031,
+            "bottom": 637.2905883789062,
+            "width": 89.92994689941406,
+            "height": 132.08151245117188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 318.53778076171875,
+            "top": 505.2090759277344,
+            "right": 408.4677429199219,
+            "bottom": 637.2905883789062,
+            "width": 89.92996215820312,
+            "height": 132.08151245117188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 412.4163513183594,
+            "top": 505.2090759277344,
+            "right": 502.3463134765625,
+            "bottom": 637.2905883789062,
+            "width": 89.92996215820312,
+            "height": 132.08151245117188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 506.294921875,
+            "top": 505.2090759277344,
+            "right": 596.2249145507812,
+            "bottom": 637.2905883789062,
+            "width": 89.92999267578125,
+            "height": 132.08151245117188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 600.1735229492188,
+            "top": 505.2090759277344,
+            "right": 690.1034545898438,
+            "bottom": 637.2905883789062,
+            "width": 89.929931640625,
+            "height": 132.08151245117188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 694.0521240234375,
+            "top": 505.2090759277344,
+            "right": 783.9820556640625,
+            "bottom": 637.2905883789062,
+            "width": 89.929931640625,
+            "height": 132.08151245117188
+          },
+          "inside": true
+        }
+      ],
+      "phaseText": "Vollmond · 100,0 %",
+      "heroRatio": 0.5773935379338911,
+      "preference": {
+        "phasesExpanded": true,
+        "scaleMode": "auto",
+        "scalePercent": 100
+      },
+      "position": {
+        "x": 0,
+        "y": 0.12
+      }
+    },
+    "foldedHeight": 647.84375,
+    "manualScale": true,
+    "fullManualRange": false,
+    "localeFormatting": false,
+    "standardAndFullscreen": false,
+    "safeArea": false,
+    "accordion": true,
+    "keyboard": true,
+    "reducedMotion": true,
+    "drag": true,
+    "mapPan": true,
+    "resize": true,
+    "persistence": true,
+    "errors": []
+  },
+  {
+    "name": "tablet-1024",
+    "viewport": {
+      "width": 1024,
+      "height": 768
+    },
+    "embedded": null,
+    "initial": {
+      "rect": {
+        "left": 14,
+        "top": 14,
+        "right": 810.0328369140625,
+        "bottom": 677.6993408203125,
+        "width": 796.0328369140625,
+        "height": 663.6993408203125
+      },
+      "map": {
+        "left": 0,
+        "top": 0,
+        "right": 1024,
+        "bottom": 733.625,
+        "width": 1024,
+        "height": 733.625
+      },
+      "inside": true,
+      "scale": 0.7928614097968937,
+      "naturalHeight": 837,
+      "fallback": false,
+      "scroll": 0,
+      "phaseCount": 8,
+      "tiles": [
+        {
+          "rect": {
+            "left": 36.99298095703125,
+            "top": 507.1597900390625,
+            "right": 127.28007507324219,
+            "bottom": 639.765869140625,
+            "width": 90.28709411621094,
+            "height": 132.6060791015625
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 131.244384765625,
+            "top": 507.1597900390625,
+            "right": 221.53147888183594,
+            "bottom": 639.765869140625,
+            "width": 90.28709411621094,
+            "height": 132.6060791015625
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 225.4957733154297,
+            "top": 507.1597900390625,
+            "right": 315.7828674316406,
+            "bottom": 639.765869140625,
+            "width": 90.28709411621094,
+            "height": 132.6060791015625
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 319.7471923828125,
+            "top": 507.1597900390625,
+            "right": 410.0342712402344,
+            "bottom": 639.765869140625,
+            "width": 90.28707885742188,
+            "height": 132.6060791015625
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 413.9985656738281,
+            "top": 507.1597900390625,
+            "right": 504.2856750488281,
+            "bottom": 639.765869140625,
+            "width": 90.287109375,
+            "height": 132.6060791015625
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 508.2499694824219,
+            "top": 507.1597900390625,
+            "right": 598.5370483398438,
+            "bottom": 639.765869140625,
+            "width": 90.28707885742188,
+            "height": 132.6060791015625
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 602.5014038085938,
+            "top": 507.1597900390625,
+            "right": 692.7884521484375,
+            "bottom": 639.765869140625,
+            "width": 90.28704833984375,
+            "height": 132.6060791015625
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 696.7527465820312,
+            "top": 507.1597900390625,
+            "right": 787.0398559570312,
+            "bottom": 639.765869140625,
+            "width": 90.287109375,
+            "height": 132.6060791015625
+          },
+          "inside": true
+        }
+      ],
+      "phaseText": "Vollmond · 100,0 %",
+      "heroRatio": 0.5773935643689616,
+      "preference": {
+        "phasesExpanded": true,
+        "scaleMode": "auto",
+        "scalePercent": 100
+      },
+      "position": {
+        "x": 0,
+        "y": 0.12
+      }
+    },
+    "foldedHeight": 642.6971435546875,
+    "manualScale": true,
+    "fullManualRange": false,
+    "localeFormatting": false,
+    "standardAndFullscreen": false,
+    "safeArea": false,
+    "accordion": true,
+    "keyboard": true,
+    "reducedMotion": true,
+    "drag": true,
+    "mapPan": true,
+    "resize": true,
+    "persistence": true,
+    "errors": []
+  },
+  {
+    "name": "tablet-portrait",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "embedded": null,
+    "initial": {
+      "rect": {
+        "left": 14,
+        "top": 43.265625,
+        "right": 754,
+        "bottom": 660.2470703125,
+        "width": 740,
+        "height": 616.9814453125
+      },
+      "map": {
+        "left": 0,
+        "top": 0,
+        "right": 768,
+        "bottom": 930.875,
+        "width": 768,
+        "height": 930.875
+      },
+      "inside": true,
+      "scale": 0.7370517928286853,
+      "naturalHeight": 837,
+      "fallback": false,
+      "scroll": 0,
+      "phaseCount": 8,
+      "tiles": [
+        {
+          "rect": {
+            "left": 35.37450408935547,
+            "top": 501.7118225097656,
+            "right": 119.3062744140625,
+            "bottom": 624.9837646484375,
+            "width": 83.93177032470703,
+            "height": 123.27194213867188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 122.99153137207031,
+            "top": 501.7118225097656,
+            "right": 206.92330932617188,
+            "bottom": 624.9837646484375,
+            "width": 83.93177795410156,
+            "height": 123.27194213867188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 210.6085662841797,
+            "top": 501.7118225097656,
+            "right": 294.54034423828125,
+            "bottom": 624.9837646484375,
+            "width": 83.93177795410156,
+            "height": 123.27194213867188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 298.2255859375,
+            "top": 501.7118225097656,
+            "right": 382.1573791503906,
+            "bottom": 624.9837646484375,
+            "width": 83.93179321289062,
+            "height": 123.27194213867188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 385.8426208496094,
+            "top": 501.7118225097656,
+            "right": 469.7743835449219,
+            "bottom": 624.9837646484375,
+            "width": 83.9317626953125,
+            "height": 123.27194213867188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 473.45965576171875,
+            "top": 501.7118225097656,
+            "right": 557.3914184570312,
+            "bottom": 624.9837646484375,
+            "width": 83.9317626953125,
+            "height": 123.27194213867188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 561.07666015625,
+            "top": 501.7118225097656,
+            "right": 645.0084838867188,
+            "bottom": 624.9837646484375,
+            "width": 83.93182373046875,
+            "height": 123.27194213867188
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 648.6937255859375,
+            "top": 501.7118225097656,
+            "right": 732.62548828125,
+            "bottom": 624.9837646484375,
+            "width": 83.9317626953125,
+            "height": 123.27194213867188
+          },
+          "inside": true
+        }
+      ],
+      "phaseText": "Vollmond · 100,0 %",
+      "heroRatio": 0.5773935678842905,
+      "preference": {
+        "phasesExpanded": true,
+        "scaleMode": "auto",
+        "scalePercent": 100
+      },
+      "position": {
+        "x": 0,
+        "y": 0.12
+      }
+    },
+    "foldedHeight": 477.494384765625,
+    "manualScale": true,
+    "fullManualRange": false,
+    "localeFormatting": false,
+    "standardAndFullscreen": false,
+    "safeArea": false,
+    "accordion": true,
+    "keyboard": true,
+    "reducedMotion": true,
+    "drag": true,
+    "mapPan": true,
+    "resize": true,
+    "persistence": true,
+    "errors": []
+  },
+  {
+    "name": "phone-390",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "embedded": null,
+    "initial": {
+      "rect": {
+        "left": 14,
+        "top": 14,
+        "right": 343.398193359375,
+        "bottom": 721.5321655273438,
+        "width": 329.398193359375,
+        "height": 707.5321655273438
+      },
+      "map": {
+        "left": 0,
+        "top": 0,
+        "right": 390,
+        "bottom": 777.421875,
+        "width": 390,
+        "height": 777.421875
+      },
+      "inside": true,
+      "scale": 0.7842814578713969,
+      "naturalHeight": 902,
+      "fallback": false,
+      "scroll": 0,
+      "phaseCount": 8,
+      "tiles": [
+        {
+          "rect": {
+            "left": 29.68562889099121,
+            "top": 508.5997314453125,
+            "right": 101.83952140808105,
+            "bottom": 597.2235107421875,
+            "width": 72.15389251708984,
+            "height": 88.623779296875
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 104.97664642333984,
+            "top": 508.5997314453125,
+            "right": 177.1305389404297,
+            "bottom": 597.2235107421875,
+            "width": 72.15389251708984,
+            "height": 88.623779296875
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 180.26766967773438,
+            "top": 508.5997314453125,
+            "right": 252.4215545654297,
+            "bottom": 597.2235107421875,
+            "width": 72.15388488769531,
+            "height": 88.623779296875
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 255.55868530273438,
+            "top": 508.5997314453125,
+            "right": 327.71258544921875,
+            "bottom": 597.2235107421875,
+            "width": 72.15390014648438,
+            "height": 88.623779296875
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 29.68562889099121,
+            "top": 600.3606567382812,
+            "right": 101.83952140808105,
+            "bottom": 688.9844360351562,
+            "width": 72.15389251708984,
+            "height": 88.623779296875
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 104.97664642333984,
+            "top": 600.3606567382812,
+            "right": 177.1305389404297,
+            "bottom": 688.9844360351562,
+            "width": 72.15389251708984,
+            "height": 88.623779296875
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 180.26766967773438,
+            "top": 600.3606567382812,
+            "right": 252.4215545654297,
+            "bottom": 688.9844360351562,
+            "width": 72.15388488769531,
+            "height": 88.623779296875
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 255.55868530273438,
+            "top": 600.3606567382812,
+            "right": 327.71258544921875,
+            "bottom": 688.9844360351562,
+            "width": 72.15390014648438,
+            "height": 88.623779296875
+          },
+          "inside": true
+        }
+      ],
+      "phaseText": "Vollmond · 100,0 %",
+      "heroRatio": 0.6616815611299904,
+      "preference": {
+        "phasesExpanded": true,
+        "scaleMode": "auto",
+        "scalePercent": 100
+      },
+      "position": {
+        "x": 0,
+        "y": 0.12
+      }
+    },
+    "foldedHeight": 568.9783325195312,
+    "manualScale": true,
+    "fullManualRange": false,
+    "localeFormatting": false,
+    "standardAndFullscreen": false,
+    "safeArea": false,
+    "accordion": true,
+    "keyboard": true,
+    "reducedMotion": true,
+    "drag": true,
+    "mapPan": true,
+    "resize": true,
+    "persistence": true,
+    "errors": []
+  },
+  {
+    "name": "embedded-760",
+    "viewport": {
+      "width": 1366,
+      "height": 900
+    },
+    "embedded": {
+      "width": 760,
+      "height": 500,
+      "ancestorScale": 1
+    },
+    "initial": {
+      "rect": {
+        "left": 104,
+        "top": 84,
+        "right": 826.8800048828125,
+        "bottom": 482.9925231933594,
+        "width": 722.8800048828125,
+        "height": 398.9925231933594
+      },
+      "map": {
+        "left": 90,
+        "top": 70,
+        "right": 850,
+        "bottom": 539,
+        "width": 760,
+        "height": 469
+      },
+      "inside": true,
+      "scale": 0.72,
+      "naturalHeight": 837,
+      "fallback": true,
+      "scroll": 283,
+      "phaseCount": 8,
+      "tiles": [
+        {
+          "rect": {
+            "left": 124.8800048828125,
+            "top": 464.1600036621094,
+            "right": 206.8699951171875,
+            "bottom": 584.5800170898438,
+            "width": 81.989990234375,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 210.47000122070312,
+            "top": 464.1600036621094,
+            "right": 292.46002197265625,
+            "bottom": 584.5800170898438,
+            "width": 81.99002075195312,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 296.05999755859375,
+            "top": 464.1600036621094,
+            "right": 378.0500183105469,
+            "bottom": 584.5800170898438,
+            "width": 81.99002075195312,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 381.6500244140625,
+            "top": 464.1600036621094,
+            "right": 463.6400146484375,
+            "bottom": 584.5800170898438,
+            "width": 81.989990234375,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 467.2400207519531,
+            "top": 464.1600036621094,
+            "right": 549.22998046875,
+            "bottom": 584.5800170898438,
+            "width": 81.98995971679688,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 552.8300170898438,
+            "top": 464.1600036621094,
+            "right": 634.8200073242188,
+            "bottom": 584.5800170898438,
+            "width": 81.989990234375,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 638.4200439453125,
+            "top": 464.1600036621094,
+            "right": 720.4100341796875,
+            "bottom": 584.5800170898438,
+            "width": 81.989990234375,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 724.010009765625,
+            "top": 464.1600036621094,
+            "right": 806,
+            "bottom": 584.5800170898438,
+            "width": 81.989990234375,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        }
+      ],
+      "phaseText": "Vollmond · 100,0 %",
+      "heroRatio": 0.5773936043113678,
+      "preference": {
+        "phasesExpanded": true,
+        "scaleMode": "auto",
+        "scalePercent": 100
+      },
+      "position": {
+        "x": 0,
+        "y": 0.12
+      }
+    },
+    "foldedHeight": 398.9925231933594,
+    "manualScale": true,
+    "fullManualRange": false,
+    "localeFormatting": false,
+    "standardAndFullscreen": false,
+    "safeArea": false,
+    "accordion": true,
+    "keyboard": true,
+    "reducedMotion": true,
+    "drag": true,
+    "mapPan": true,
+    "resize": true,
+    "persistence": false,
+    "errors": []
+  },
+  {
+    "name": "embedded-620",
+    "viewport": {
+      "width": 1366,
+      "height": 900
+    },
+    "embedded": {
+      "width": 620,
+      "height": 350,
+      "ancestorScale": 1
+    },
+    "initial": {
+      "rect": {
+        "left": 104,
+        "top": 84,
+        "right": 696,
+        "bottom": 304.99578857421875,
+        "width": 592,
+        "height": 220.99578857421875
+      },
+      "map": {
+        "left": 90,
+        "top": 70,
+        "right": 710,
+        "bottom": 361,
+        "width": 620,
+        "height": 291
+      },
+      "inside": true,
+      "scale": 0.5896414342629482,
+      "naturalHeight": 837,
+      "fallback": true,
+      "scroll": 462,
+      "phaseCount": 8,
+      "tiles": [
+        {
+          "rect": {
+            "left": 121.09960174560547,
+            "top": 289.78485107421875,
+            "right": 188.24502563476562,
+            "bottom": 388.40240478515625,
+            "width": 67.14542388916016,
+            "height": 98.6175537109375
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 191.1932373046875,
+            "top": 289.78485107421875,
+            "right": 258.3386535644531,
+            "bottom": 388.40240478515625,
+            "width": 67.14541625976562,
+            "height": 98.6175537109375
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 261.286865234375,
+            "top": 289.78485107421875,
+            "right": 328.4322814941406,
+            "bottom": 388.40240478515625,
+            "width": 67.14541625976562,
+            "height": 98.6175537109375
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 331.3804931640625,
+            "top": 289.78485107421875,
+            "right": 398.5259094238281,
+            "bottom": 388.40240478515625,
+            "width": 67.14541625976562,
+            "height": 98.6175537109375
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 401.47412109375,
+            "top": 289.78485107421875,
+            "right": 468.6195373535156,
+            "bottom": 388.40240478515625,
+            "width": 67.14541625976562,
+            "height": 98.6175537109375
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 471.5677490234375,
+            "top": 289.78485107421875,
+            "right": 538.713134765625,
+            "bottom": 388.40240478515625,
+            "width": 67.1453857421875,
+            "height": 98.6175537109375
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 541.661376953125,
+            "top": 289.78485107421875,
+            "right": 608.8067626953125,
+            "bottom": 388.40240478515625,
+            "width": 67.1453857421875,
+            "height": 98.6175537109375
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 611.7550048828125,
+            "top": 289.78485107421875,
+            "right": 678.900390625,
+            "bottom": 388.40240478515625,
+            "width": 67.1453857421875,
+            "height": 98.6175537109375
+          },
+          "inside": false
+        }
+      ],
+      "phaseText": "Vollmond · 100,0 %",
+      "heroRatio": 0.5773935575742979,
+      "preference": {
+        "phasesExpanded": true,
+        "scaleMode": "auto",
+        "scalePercent": 100
+      },
+      "position": {
+        "x": 0,
+        "y": 0.12
+      }
+    },
+    "foldedHeight": 220.99578857421875,
+    "manualScale": true,
+    "fullManualRange": false,
+    "localeFormatting": false,
+    "standardAndFullscreen": false,
+    "safeArea": false,
+    "accordion": true,
+    "keyboard": true,
+    "reducedMotion": true,
+    "drag": true,
+    "mapPan": true,
+    "resize": true,
+    "persistence": false,
+    "errors": []
+  },
+  {
+    "name": "clipped-900",
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "embedded": {
+      "width": 900,
+      "height": 900,
+      "ancestorScale": 1
+    },
+    "initial": {
+      "rect": {
+        "left": 104,
+        "top": 84,
+        "right": 857.2998657226562,
+        "bottom": 712.0703125,
+        "width": 753.2998657226562,
+        "height": 628.0703125
+      },
+      "map": {
+        "left": 90,
+        "top": 70,
+        "right": 990,
+        "bottom": 939,
+        "width": 900,
+        "height": 869
+      },
+      "inside": true,
+      "scale": 0.7502986857825568,
+      "naturalHeight": 837,
+      "fallback": false,
+      "scroll": 0,
+      "phaseCount": 8,
+      "tiles": [
+        {
+          "rect": {
+            "left": 125.75865936279297,
+            "top": 550.685791015625,
+            "right": 211.19891357421875,
+            "bottom": 676.1732177734375,
+            "width": 85.44025421142578,
+            "height": 125.4874267578125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 214.95040893554688,
+            "top": 550.685791015625,
+            "right": 300.39068603515625,
+            "bottom": 676.1732177734375,
+            "width": 85.44027709960938,
+            "height": 125.4874267578125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 304.14215087890625,
+            "top": 550.685791015625,
+            "right": 389.5824279785156,
+            "bottom": 676.1732177734375,
+            "width": 85.44027709960938,
+            "height": 125.4874267578125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 393.33392333984375,
+            "top": 550.685791015625,
+            "right": 478.7742004394531,
+            "bottom": 676.1732177734375,
+            "width": 85.44027709960938,
+            "height": 125.4874267578125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 482.52569580078125,
+            "top": 550.685791015625,
+            "right": 567.9659423828125,
+            "bottom": 676.1732177734375,
+            "width": 85.44024658203125,
+            "height": 125.4874267578125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 571.7174072265625,
+            "top": 550.685791015625,
+            "right": 657.15771484375,
+            "bottom": 676.1732177734375,
+            "width": 85.4403076171875,
+            "height": 125.4874267578125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 660.9091796875,
+            "top": 550.685791015625,
+            "right": 746.3494262695312,
+            "bottom": 676.1732177734375,
+            "width": 85.44024658203125,
+            "height": 125.4874267578125
+          },
+          "inside": true
+        },
+        {
+          "rect": {
+            "left": 750.1009521484375,
+            "top": 550.685791015625,
+            "right": 835.5411987304688,
+            "bottom": 676.1732177734375,
+            "width": 85.44024658203125,
+            "height": 125.4874267578125
+          },
+          "inside": true
+        }
+      ],
+      "phaseText": "Vollmond · 100,0 %",
+      "heroRatio": 0.5773935317955302,
+      "preference": {
+        "phasesExpanded": true,
+        "scaleMode": "auto",
+        "scalePercent": 100
+      },
+      "position": {
+        "x": 0,
+        "y": 0.12
+      }
+    },
+    "foldedHeight": 562.6690673828125,
+    "manualScale": true,
+    "fullManualRange": false,
+    "localeFormatting": false,
+    "standardAndFullscreen": false,
+    "safeArea": false,
+    "accordion": true,
+    "keyboard": true,
+    "reducedMotion": true,
+    "drag": true,
+    "mapPan": true,
+    "resize": true,
+    "persistence": false,
+    "errors": []
+  },
+  {
+    "name": "scaled-760",
+    "viewport": {
+      "width": 1366,
+      "height": 900
+    },
+    "embedded": {
+      "width": 760,
+      "height": 500,
+      "ancestorScale": 0.85
+    },
+    "initial": {
+      "rect": {
+        "left": 104,
+        "top": 84,
+        "right": 826.8800048828125,
+        "bottom": 482.9925231933594,
+        "width": 722.8800048828125,
+        "height": 398.9925231933594
+      },
+      "map": {
+        "left": 90,
+        "top": 70,
+        "right": 850,
+        "bottom": 539,
+        "width": 760,
+        "height": 469
+      },
+      "inside": true,
+      "scale": 0.72,
+      "naturalHeight": 837,
+      "fallback": true,
+      "scroll": 283,
+      "phaseCount": 8,
+      "tiles": [
+        {
+          "rect": {
+            "left": 124.8800048828125,
+            "top": 464.1600036621094,
+            "right": 206.8699951171875,
+            "bottom": 584.5800170898438,
+            "width": 81.989990234375,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 210.47000122070312,
+            "top": 464.1600036621094,
+            "right": 292.46002197265625,
+            "bottom": 584.5800170898438,
+            "width": 81.99002075195312,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 296.05999755859375,
+            "top": 464.1600036621094,
+            "right": 378.0500183105469,
+            "bottom": 584.5800170898438,
+            "width": 81.99002075195312,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 381.6500244140625,
+            "top": 464.1600036621094,
+            "right": 463.6400146484375,
+            "bottom": 584.5800170898438,
+            "width": 81.989990234375,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 467.2400207519531,
+            "top": 464.1600036621094,
+            "right": 549.22998046875,
+            "bottom": 584.5800170898438,
+            "width": 81.98995971679688,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 552.8300170898438,
+            "top": 464.1600036621094,
+            "right": 634.8200073242188,
+            "bottom": 584.5800170898438,
+            "width": 81.989990234375,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 638.4200439453125,
+            "top": 464.1600036621094,
+            "right": 720.4100341796875,
+            "bottom": 584.5800170898438,
+            "width": 81.989990234375,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        },
+        {
+          "rect": {
+            "left": 724.010009765625,
+            "top": 464.1600036621094,
+            "right": 806,
+            "bottom": 584.5800170898438,
+            "width": 81.989990234375,
+            "height": 120.42001342773438
+          },
+          "inside": false
+        }
+      ],
+      "phaseText": "Vollmond · 100,0 %",
+      "heroRatio": 0.5773936043113678,
+      "preference": {
+        "phasesExpanded": true,
+        "scaleMode": "auto",
+        "scalePercent": 100
+      },
+      "position": {
+        "x": 0,
+        "y": 0.12
+      }
+    },
+    "foldedHeight": 398.9925231933594,
+    "manualScale": true,
+    "fullManualRange": false,
+    "localeFormatting": false,
+    "standardAndFullscreen": false,
+    "safeArea": false,
+    "accordion": true,
+    "keyboard": true,
+    "reducedMotion": true,
+    "drag": true,
+    "mapPan": true,
+    "resize": true,
+    "persistence": false,
+    "errors": []
+  }
+]

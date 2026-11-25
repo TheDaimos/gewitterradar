@@ -1,0 +1,90 @@
+{
+  "commit": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+  "allTwelvePublicGatesPassed": true,
+  "runs": [
+    {
+      "id": 45398695869,
+      "name": "P7-010 isolierte Raster-Mosaik-Abnahme",
+      "head_sha": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+      "conclusion": "success",
+      "html_url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45398695869"
+    },
+    {
+      "id": 45398692446,
+      "name": "GR Synoptik - synchronize public DEV delivery",
+      "head_sha": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+      "conclusion": "success",
+      "html_url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45398692446"
+    },
+    {
+      "id": 45398688787,
+      "name": "GR Synoptik Hi-Res Close - targeted DEV check",
+      "head_sha": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+      "conclusion": "success",
+      "html_url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45398688787"
+    },
+    {
+      "id": 45398684692,
+      "name": "GR TEST70-55 Unified Precipitation",
+      "head_sha": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+      "conclusion": "success",
+      "html_url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45398684692"
+    },
+    {
+      "id": 45398680473,
+      "name": "GR TEST70-58 WR authority contracts",
+      "head_sha": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+      "conclusion": "success",
+      "html_url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45398680473"
+    },
+    {
+      "id": 45398576055,
+      "name": "TEST70-76 full repository 900-second audit",
+      "head_sha": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+      "conclusion": "success",
+      "html_url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45398576055"
+    },
+    {
+      "id": 45398576490,
+      "name": "V4.11.40 module consistency and Android map preservation",
+      "head_sha": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+      "conclusion": "success",
+      "html_url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45398576490"
+    },
+    {
+      "id": 45398576494,
+      "name": "V4.11.106 settings navigation and runtime identity",
+      "head_sha": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+      "conclusion": "success",
+      "html_url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45398576494"
+    },
+    {
+      "id": 45398576100,
+      "name": "Validate Gewitterradar integration",
+      "head_sha": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+      "conclusion": "success",
+      "html_url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45398576100"
+    },
+    {
+      "id": 45398576470,
+      "name": "GR Settings Vault DEV acceptance",
+      "head_sha": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+      "conclusion": "success",
+      "html_url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45398576470"
+    },
+    {
+      "id": 45398576398,
+      "name": "GR Synoptik DEV - targeted regression",
+      "head_sha": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+      "conclusion": "success",
+      "html_url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45398576398"
+    },
+    {
+      "id": 45398576382,
+      "name": "Validate shared Gewitterradar frontend",
+      "head_sha": "77689b7eb4691cdc3f93600ffb882a23f9056ab9",
+      "conclusion": "success",
+      "html_url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45398576382"
+    }
+  ]
+}

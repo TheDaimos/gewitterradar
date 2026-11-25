@@ -1,0 +1,89 @@
+{
+  "berlin": {
+    "schema": "weather_router.moon.v1",
+    "status": "ready",
+    "latitude": 52.52,
+    "longitude": 13.405,
+    "timestamp_utc": "2024-03-25T07:00:00+00:00",
+    "timezone": "Europe/Berlin",
+    "local_date": "2024-03-25",
+    "phase": "full_moon",
+    "phase_angle_deg": 179.99216931300694,
+    "moon_age_days": 14.916000489958606,
+    "cycle_days": 29.38920984903234,
+    "cycle_fraction": 0.5075332261935489,
+    "illumination_percent": 99.9930004839103,
+    "next_major_phase": {
+      "phase": "full_moon",
+      "utc": "2024-03-25T07:01:02.293000+00:00",
+      "local": "2024-03-25T08:01:02.293000+01:00"
+    },
+    "moonrise": {
+      "utc": "2024-03-25T17:50:57.611000+00:00",
+      "local": "2024-03-25T18:50:57.611000+01:00"
+    },
+    "moonset": {
+      "utc": "2024-03-25T05:06:32.316000+00:00",
+      "local": "2024-03-25T06:06:32.316000+01:00"
+    },
+    "model": "astronomy-engine/2.1.19"
+  },
+  "new_york": {
+    "schema": "weather_router.moon.v1",
+    "status": "ready",
+    "latitude": 40.7128,
+    "longitude": -74.006,
+    "timestamp_utc": "2024-03-25T07:00:00+00:00",
+    "timezone": "America/New_York",
+    "local_date": "2024-03-25",
+    "phase": "full_moon",
+    "phase_angle_deg": 179.99216931300694,
+    "moon_age_days": 14.916000489958606,
+    "cycle_days": 29.38920984903234,
+    "cycle_fraction": 0.5075332261935489,
+    "illumination_percent": 99.9930004839103,
+    "next_major_phase": {
+      "phase": "full_moon",
+      "utc": "2024-03-25T07:01:02.293000+00:00",
+      "local": "2024-03-25T03:01:02.293000-04:00"
+    },
+    "moonrise": {
+      "utc": "2024-03-25T23:48:13.718000+00:00",
+      "local": "2024-03-25T19:48:13.718000-04:00"
+    },
+    "moonset": {
+      "utc": "2024-03-25T11:02:03.561000+00:00",
+      "local": "2024-03-25T07:02:03.561000-04:00"
+    },
+    "model": "astronomy-engine/2.1.19"
+  },
+  "sydney": {
+    "schema": "weather_router.moon.v1",
+    "status": "ready",
+    "latitude": -33.87,
+    "longitude": 151.21,
+    "timestamp_utc": "2024-03-25T07:00:00+00:00",
+    "timezone": "Australia/Sydney",
+    "local_date": "2024-03-25",
+    "phase": "full_moon",
+    "phase_angle_deg": 179.99216931300694,
+    "moon_age_days": 14.916000489958606,
+    "cycle_days": 29.38920984903234,
+    "cycle_fraction": 0.5075332261935489,
+    "illumination_percent": 99.9930004839103,
+    "next_major_phase": {
+      "phase": "full_moon",
+      "utc": "2024-03-25T07:01:02.293000+00:00",
+      "local": "2024-03-25T18:01:02.293000+11:00"
+    },
+    "moonrise": {
+      "utc": "2024-03-25T08:00:49.954000+00:00",
+      "local": "2024-03-25T19:00:49.954000+11:00"
+    },
+    "moonset": {
+      "utc": "2024-03-24T19:40:09.558000+00:00",
+      "local": "2024-03-25T06:40:09.558000+11:00"
+    },
+    "model": "astronomy-engine/2.1.19"
+  }
+}

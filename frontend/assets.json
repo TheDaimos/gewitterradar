@@ -94,9 +94,9 @@
   },
   {
     "file": "assets/gewitterradar-runtime-manifest.json",
-    "sha256": "0d20b30a250945d134ab9dbc9cfc8c2aa594f6dd89d4c48ccf9e7778432538fb",
+    "sha256": "9b2d18a2dad5b01860d10718917a914d155772fe37e277910b781d5c2d4a19ba",
     "protected": false,
-    "sizeBytes": 2956
+    "sizeBytes": 2954
   },
   {
     "file": "assets/gewitterradar-trend-arrow-01.webp",
@@ -467,6 +467,142 @@
     "sha256": "3055af4389ddd4bfd98648ea18b302055cb297b1825f5f4459512b12d64cfbc9",
     "protected": true,
     "referenced": false
+  },
+  {
+    "file": "assets/moon/00_neumond_512.png",
+    "sha256": "dbfca7f20fbb068bba1de9563a9adce6031b72b5fa2c7507654cff06072cc2c6",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/00_neumond.png",
+    "sha256": "1d7632f206ef3c84fb22aa2c818f9aed0e27a358df69968b3ec5e6be08911b51",
+    "sizeBytes": 906278,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/01_zunehmende_sichel_512.png",
+    "sha256": "d81dd2c830211fd45857cc33430542ec352a84db9ca89e1e6aa515d16b252afc",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/01_zunehmende_sichel.png",
+    "sha256": "08db803675b173c879475ba1bd304bb93477d2f8826b44d8312a2456521b1200",
+    "sizeBytes": 1253349,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/02_erstes_viertel_512.png",
+    "sha256": "d7012ba6acb0cbbe426335f9d6580874417563dbb31d5f33db9ab33dccd88b7b",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/02_erstes_viertel.png",
+    "sha256": "de0b4af24f099832136a8c7c4a910f78238c29fd00213a40f1918043d218191d",
+    "sizeBytes": 1664925,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/03_zunehmender_mond_512.png",
+    "sha256": "847696ece72cd1a4dbad8857b22cdab4472d0af881ea8d0750f0ef039ebcc570",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/03_zunehmender_mond.png",
+    "sha256": "46fa83aa0aef2e64391c3914f4135230c817eccf4fb161c6a1dbbde4ca925cad",
+    "sizeBytes": 1980826,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/04_vollmond_512.png",
+    "sha256": "975ababa9322f11aea3c40f5054c0abd0926983ab9f7cd44a7b661824c67b67d",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/05_abnehmender_mond_512.png",
+    "sha256": "9f5125cb547a681aeea7a5c162c539a0cee5947b1234378b3851343a5ec2ca6d",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/05_abnehmender_mond.png",
+    "sha256": "c938699fdf51c2ab1637bae9cca262f6d442909ef5a222ead56e50c7cf41db5a",
+    "sizeBytes": 1989893,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/06_letztes_viertel_512.png",
+    "sha256": "e323ddec4bff2aa7ed1f934fca71c998ac5d233b39a26bc08ce81f2b84c16ad2",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/06_letztes_viertel.png",
+    "sha256": "826a2004fbdcc889cbfc84cbf7f02f1b0fbbc9a898302f3c901f7db50d63bddd",
+    "sizeBytes": 1674513,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/07_abnehmende_sichel_512.png",
+    "sha256": "a32a1b5dcae679179a68779601b78c23f83f47a09f902b3bacad137f4b6124d8",
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/07_abnehmende_sichel.png",
+    "sha256": "0c18f009a9ae6b8cf6968b8557c72726690366ea1bdccd09aeacb8e556abffe4",
+    "sizeBytes": 1261191,
+    "protected": true,
+    "referenced": true
+  },
+  {
+    "file": "assets/moon/gr_moon_scale_icon_expand_256.png",
+    "sha256": "c68f38066a37bd00842337902b431c8784f044ade194fdb95707a7da613f4f9a"
+  },
+  {
+    "file": "assets/moon/gr_moon_scale_icon_moon_256.png",
+    "sha256": "1d74aa8a12ea1b7551a7f1d96f264b360c7be6076e2d06539b3f329f24b4d958"
+  },
+  {
+    "file": "assets/moon/gr_moon_scale_icon_ruler_256.png",
+    "sha256": "a74f5bdf47b679e67b333f635b61c67e425d0d5ab529cf5bcc2499aaa570dbae"
+  },
+  {
+    "file": "assets/moon/gr-moon-close-platinum-premium-128.png",
+    "sizeBytes": 21735,
+    "sha256": "252fa8a6180a66bd58ceae7ec2571aef8d9b0e9be4729ce05708f9e093177459"
+  },
+  {
+    "file": "assets/moon/gr-moon-close-platinum-premium-256.png",
+    "sizeBytes": 67705,
+    "sha256": "91eb5851a58862f8d3d41e08004c79d37944606d3fa5f7bc126ce17a8e6fb87b"
+  },
+  {
+    "file": "assets/moon/gr-moon-close-platinum-premium-512.png",
+    "sizeBytes": 227858,
+    "sha256": "1a6f8b79b13d715b46a27394524bb62d278a1670933a183931e10e374ffb2f95"
+  },
+  {
+    "file": "assets/moon/mineral-glass.svg",
+    "sizeBytes": 1694,
+    "sha256": "e6e798a49adc97efcc0be3544a5018c98bacbedb8f71373d794b68e59d07a642"
+  },
+  {
+    "file": "assets/moon/moon_full_silver_platinum_master.png",
+    "sizeBytes": 2479968,
+    "sha256": "d74592ad1f104cad2c102c06fedf87e66b4c6c61dd7d26bb880d87caf506c9b9",
+    "referenced": true,
+    "protected": true
   },
   {
     "file": "assets/weather-router-emblem-v004-256.png",

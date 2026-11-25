@@ -1,0 +1,58 @@
+[
+  {
+    "file": "00_neumond.png",
+    "label": "Neumond",
+    "phase_fraction": 0.0,
+    "illuminated_fraction": 0.0,
+    "master": false
+  },
+  {
+    "file": "01_zunehmende_sichel.png",
+    "label": "Zunehmende Sichel",
+    "phase_fraction": 0.125,
+    "illuminated_fraction": 0.1464,
+    "master": false
+  },
+  {
+    "file": "02_erstes_viertel.png",
+    "label": "Erstes Viertel",
+    "phase_fraction": 0.25,
+    "illuminated_fraction": 0.5,
+    "master": false
+  },
+  {
+    "file": "03_zunehmender_mond.png",
+    "label": "Zunehmender Mond",
+    "phase_fraction": 0.375,
+    "illuminated_fraction": 0.8536,
+    "master": false
+  },
+  {
+    "file": "04_vollmond.png",
+    "label": "Vollmond",
+    "phase_fraction": 0.5,
+    "illuminated_fraction": 1.0,
+    "master": true
+  },
+  {
+    "file": "05_abnehmender_mond.png",
+    "label": "Abnehmender Mond",
+    "phase_fraction": 0.625,
+    "illuminated_fraction": 0.8536,
+    "master": false
+  },
+  {
+    "file": "06_letztes_viertel.png",
+    "label": "Letztes Viertel",
+    "phase_fraction": 0.75,
+    "illuminated_fraction": 0.5,
+    "master": false
+  },
+  {
+    "file": "07_abnehmende_sichel.png",
+    "label": "Abnehmende Sichel",
+    "phase_fraction": 0.875,
+    "illuminated_fraction": 0.1464,
+    "master": false
+  }
+]

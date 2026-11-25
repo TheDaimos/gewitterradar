@@ -5,8 +5,59 @@ on:
 permissions:
   contents: read
 jobs:
+  scope:
+    runs-on: ubuntu-latest
+    outputs:
+      targeted: ${{ steps.detect.outputs.targeted }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: detect
+        run: |
+          if grep -Eq 'version:"4.13.[23]"' frontend/version.js; then
+            echo 'targeted=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'targeted=false' >> "$GITHUB_OUTPUT"
+          fi
+  moon-4132-targeted:
+    needs: scope
+    if: needs.scope.outputs.targeted == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify focused scope, delivery and optional schema
+        run: |
+          if grep -q 'version:"4.13.3"' frontend/version.js; then
+            node scripts/test-moon-scale-scope.mjs
+          else
+            node scripts/test-moon-4132-scope.mjs
+          fi
+          node scripts/verify-current-frontend.mjs
+          python scripts/test-moon-4132-schema.py
+      - name: Focused compact size control browser checks (4.13.3)
+        run: |
+          if grep -q 'version:"4.13.3"' frontend/version.js; then
+            npm install --prefix "$RUNNER_TEMP/moon-scale-deps" playwright leaflet
+            "$RUNNER_TEMP/moon-scale-deps/node_modules/.bin/playwright" install --with-deps chromium
+            PLAYWRIGHT_MODULE="$RUNNER_TEMP/moon-scale-deps/node_modules/playwright" NODE_PATH="$RUNNER_TEMP/moon-scale-deps/node_modules" node scripts/test-moon-scale-control.cjs
+          fi
+      - name: Build deterministic install packages
+        run: python scripts/build-dev-packages.py "$RUNNER_TEMP/moon-packages"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: moon-4132-dev-packages
+          path: ${{ runner.temp }}/moon-packages/
   aura:
-    if: github.repository == 'TheDaimos/gewitterradar'
+    needs: scope
+    if: github.repository == 'TheDaimos/gewitterradar' && needs.scope.outputs.targeted != 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -54,6 +105,24 @@ jobs:
             node scripts/verify-release-history-scope.mjs
             echo "focused=true" >> "$GITHUB_OUTPUT"
             echo "history=true" >> "$GITHUB_OUTPUT"
+          elif node -e "process.exit(require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.12.16\"')?0:1)"; then
+            node scripts/test-moon-isolation.mjs
+            echo "focused=true" >> "$GITHUB_OUTPUT"
+            echo "moon=true" >> "$GITHUB_OUTPUT"
+          elif node -e "process.exit(require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.12.17\"')?0:1)"; then
+            node scripts/test-moon-finish-isolation.mjs
+            node scripts/test-moon-finish-model.mjs
+            echo "focused=true" >> "$GITHUB_OUTPUT"
+            echo "moon=true" >> "$GITHUB_OUTPUT"
+            echo "moon_finish=true" >> "$GITHUB_OUTPUT"
+          elif node -e "process.exit(require('node:fs').readFileSync('frontend/version.js','utf8').includes('version:\"4.13.1\"')?0:1)"; then
+            node scripts/test-moon-413-isolation.mjs
+            node scripts/test-moon-finish-model.mjs
+            python scripts/test-moon-413-assets.py
+            echo "focused=true" >> "$GITHUB_OUTPUT"
+            echo "moon=true" >> "$GITHUB_OUTPUT"
+            echo "moon_finish=true" >> "$GITHUB_OUTPUT"
+            echo "moon_413=true" >> "$GITHUB_OUTPUT"
           else
             echo "focused=false" >> "$GITHUB_OUTPUT"
           fi
@@ -64,6 +133,7 @@ jobs:
           node scripts/test-v412-legend-model.mjs
           node scripts/test-v412-sources-model.mjs
           node scripts/test-v412-legend-isolation.mjs
+          node scripts/test-moon-legend-contract.mjs
           node scripts/test-eye-hub-model.mjs
           node scripts/test-eye-wow-model.mjs
           python scripts/test-v412-vault-schema.py
@@ -95,7 +165,7 @@ jobs:
           node scripts/test-settings-vault-browser.cjs
           node scripts/test-eye-wow-browser.cjs
       - name: Focused premium dialog, units and source information acceptance
-        if: steps.ui_scope.outputs.focused == 'true' && steps.ui_scope.outputs.polish != 'true' && steps.ui_scope.outputs.swatch != 'true' && steps.ui_scope.outputs.glass != 'true' && steps.ui_scope.outputs.slot_return != 'true' && steps.ui_scope.outputs.history != 'true'
+        if: steps.ui_scope.outputs.focused == 'true' && steps.ui_scope.outputs.polish != 'true' && steps.ui_scope.outputs.swatch != 'true' && steps.ui_scope.outputs.glass != 'true' && steps.ui_scope.outputs.slot_return != 'true' && steps.ui_scope.outputs.history != 'true' && steps.ui_scope.outputs.moon != 'true'
         env:
           NODE_PATH: ${{ runner.temp }}/aura/node_modules
           GR_PREMIUM_EVIDENCE: ${{ runner.temp }}/premium-evidence
@@ -124,6 +194,27 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/aura/node_modules
           GR_SLOT_RETURN_EVIDENCE: ${{ runner.temp }}/slot-return-evidence
         run: node scripts/test-v412-slot-return-browser.cjs
+      - name: Premium Moon, current Legend Hub, authenticated Vault, Aura and map recovery
+        if: steps.ui_scope.outputs.moon == 'true'
+        env:
+          NODE_PATH: ${{ runner.temp }}/aura/node_modules
+          GR_MOON_EVIDENCE: ${{ runner.temp }}/moon-evidence
+          GR_SLOT_RETURN_EVIDENCE: ${{ runner.temp }}/slot-return-evidence
+          GR_AURA_EVIDENCE: ${{ runner.temp }}/aura-evidence
+        run: |
+          node scripts/test-moon-legend-browser.cjs
+          node scripts/test-v412-slot-return-browser.cjs
+          node scripts/test-v412-aura-browser.cjs
+          node scripts/test-eye-edge-browser.cjs
+          node scripts/test-delayed-eye-recovery-browser.cjs
+      - name: Moon Premium Master materials, full composition Auto-Fit and saved controls
+        if: steps.ui_scope.outputs.moon_finish == 'true'
+        env:
+          NODE_PATH: ${{ runner.temp }}/aura/node_modules
+          GR_MOON_FINISH_EVIDENCE: ${{ runner.temp }}/moon-finish-evidence
+        run: |
+          node scripts/test-moon-finish-browser.cjs
+          if [ "${{ steps.ui_scope.outputs.moon_413 }}" = "true" ]; then node scripts/test-moon-413-browser.cjs; node scripts/test-moon-413-history.cjs; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -139,4 +230,8 @@ jobs:
             ${{ runner.temp }}/glass-evidence
             ${{ runner.temp }}/slot-return-evidence
             ${{ runner.temp }}/history-evidence
+            ${{ runner.temp }}/moon-evidence
+            ${{ runner.temp }}/moon-finish-evidence
+            .task413/evidence
+            .task413/history-final
           if-no-files-found: ignore

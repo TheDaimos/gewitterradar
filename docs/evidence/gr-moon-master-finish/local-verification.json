@@ -1,0 +1,159 @@
+{
+  "baseline": "617d40466a65097458047cc3fc0771d7d46465ca",
+  "version": "4.12.17",
+  "integrationVersion": "0.25.178",
+  "moonFitModelCases": 1680,
+  "optionalVaultCombinations": 16,
+  "protectedOtherModuleBodies": 111,
+  "browserCases": 10,
+  "defaultViewportCasesWithoutInternalScroll": 6,
+  "regressionCommandsPass": [
+    "test-v412-legend-model.mjs",
+    "test-v412-aura-model.mjs",
+    "test-v412-legend-isolation.mjs",
+    "test-moon-legend-contract.mjs",
+    "test-frontend-build.mjs",
+    "verify-current-frontend.mjs",
+    "verify-hires-asset-retention.mjs",
+    "test-v412-vault-schema.py",
+    "check-static.py"
+  ],
+  "sharedNodeCommandsPass": 17,
+  "weatherMenuNodeTestsPass": 30,
+  "authenticatedProfileBrowserPass": true,
+  "realHAInstallation": false,
+  "physicalAndroidAcceptance": false,
+  "operatorGraphicApproval": false,
+  "wrCommitUnchanged": "cfdc8c722ff4aef9d919e7cc3e0a783314473334",
+  "screenshots": [
+    {
+      "file": "clipped-900-collapsed.png",
+      "sha256": "74e28b5ce461c6d9923ebc104c0baa22546c2809ac024a300ddc54f732bd76fa"
+    },
+    {
+      "file": "clipped-900-expanded.png",
+      "sha256": "93a1186115f929bd8e03e15f1dac95978ff284cb95c5273bdbd6c74f011f5f7a"
+    },
+    {
+      "file": "desktop-1280-collapsed.png",
+      "sha256": "1f3ee0f01eaf6eef19122c4e78b64dff1518ef00fad3cbdb1e1e78bf5953e44e"
+    },
+    {
+      "file": "desktop-1280-expanded.png",
+      "sha256": "c54ec195d238106e29dadcd5d7c23a0fbf8c0a9928672c8316ab26fe2dbafaea"
+    },
+    {
+      "file": "desktop-1366-collapsed.png",
+      "sha256": "02e92f205bfe62e6bd65e86e4b6ee37ca364a499943ba6d7b44a5ce5c29aaa50"
+    },
+    {
+      "file": "desktop-1366-expanded.png",
+      "sha256": "de98f52439a923554d57618395634248cb537d8dcdb40b6a76b190b1749b03af"
+    },
+    {
+      "file": "desktop-1920-collapsed.png",
+      "sha256": "1ab9af52a221053f8ebdece5d45c364efe58ed8090736d8da73f41ea68339388"
+    },
+    {
+      "file": "desktop-1920-expanded.png",
+      "sha256": "7bea1ed84b260d3f70573e6a942646b1f1a25c9586a0a6bf0aa0812317451005"
+    },
+    {
+      "file": "desktop-1920-manual-125.png",
+      "sha256": "0197e5c3dfcfdc91743667034edf352a57c77a3b1fd971260c88524f0265feb3"
+    },
+    {
+      "file": "desktop-1920-manual-50.png",
+      "sha256": "9ae74c79a2a10c32c9592559c62e4e2ba41c17a04d19c05cc6372972ef5f232d"
+    },
+    {
+      "file": "desktop-1920-standard-map.png",
+      "sha256": "747a77c84a58da219734e075911babc1e82ad0bc9a560866c5765a5491de5230"
+    },
+    {
+      "file": "desktop-v41216-before.png",
+      "sha256": "cf3093a3d464a9add78ce2f8067f25f01c972ba9b81a4a59f24f9dc9599c769a"
+    },
+    {
+      "file": "desktop-zoom.png",
+      "sha256": "902e1c1bef09c6ec5292ccddf2905ea6da8a6a83249f231d4f1206fb96264076"
+    },
+    {
+      "file": "embedded-620-collapsed.png",
+      "sha256": "daf127d7499e10bbdfae864f849e73b0c8d14840d35bbc57956ced2495711217"
+    },
+    {
+      "file": "embedded-620-expanded.png",
+      "sha256": "80eec88f9d0a3ba3d0c53f706765bc94df2a36f223506637a01bb3145667649c"
+    },
+    {
+      "file": "embedded-620-fallback-bottom.png",
+      "sha256": "fe7376fa50f61d5a9ffa692fa62074255ecf24e98d72c9059bbfb68a4b90ccba"
+    },
+    {
+      "file": "embedded-760-collapsed.png",
+      "sha256": "168ea09ead3996cd469f8748fd1041331ca271457b346dced5f52619e9660651"
+    },
+    {
+      "file": "embedded-760-expanded.png",
+      "sha256": "c4e9c27e0f69d442631ecf3d14da229cdf7af0f28c74a4b141bbc4b1660a72c8"
+    },
+    {
+      "file": "embedded-760-fallback-bottom.png",
+      "sha256": "2403ca8708e8b63280c3b43dd2fe6ada1ff172d4ae9f3e2fc1e0005f576b9243"
+    },
+    {
+      "file": "phone-390-collapsed.png",
+      "sha256": "83ebf0f9b856049584fab8f6ec232ec2083c9237bf4747d3314fe7d4a6bda72d"
+    },
+    {
+      "file": "phone-390-expanded.png",
+      "sha256": "75f87a4b77cb44344f6d4731747665ed1927edd3e01d622ea8d33e2b86d66f25"
+    },
+    {
+      "file": "phone-landscape-v41216-before.png",
+      "sha256": "e1436d71e8d9746325d775515af51897d50330ad39213161bcfe9b5936f0bbbf"
+    },
+    {
+      "file": "scaled-760-collapsed.png",
+      "sha256": "168ea09ead3996cd469f8748fd1041331ca271457b346dced5f52619e9660651"
+    },
+    {
+      "file": "scaled-760-expanded.png",
+      "sha256": "c4e9c27e0f69d442631ecf3d14da229cdf7af0f28c74a4b141bbc4b1660a72c8"
+    },
+    {
+      "file": "scaled-760-fallback-bottom.png",
+      "sha256": "2403ca8708e8b63280c3b43dd2fe6ada1ff172d4ae9f3e2fc1e0005f576b9243"
+    },
+    {
+      "file": "smartphone-v41216-before.png",
+      "sha256": "1272f1f1c459e5f24628096a63e91c97dd0b2490b06766428e0a4b6a0dc98558"
+    },
+    {
+      "file": "smartphone-zoom.png",
+      "sha256": "7e074165a109570e1892b2bd27057c07c356a069100e5e897d23e929e065180d"
+    },
+    {
+      "file": "tablet-1024-collapsed.png",
+      "sha256": "9f04fb2fdfdb87f23bf388d9dfa63a5d15cb177e1c4d2708798ea7d30d267d4a"
+    },
+    {
+      "file": "tablet-1024-expanded.png",
+      "sha256": "9993112d1727a852edd2c69276fe16c82270a99b82ba34cfc9f2a50d444fb309"
+    },
+    {
+      "file": "tablet-portrait-collapsed.png",
+      "sha256": "b235e3ecee122ee9199e43a04ba411f12827b1ec3bb449eef09546bcf16d8642"
+    },
+    {
+      "file": "tablet-portrait-expanded.png",
+      "sha256": "3b17ad2b0a324dd5e74563308fbfc8133590e07084503e28e8c1a0c00882f070"
+    },
+    {
+      "file": "tablet-v41216-before.png",
+      "sha256": "85515b1c5b5c36d7a9c60db27fb03acb87e225da3bb60e6583003263085529f5"
+    }
+  ],
+  "moonRegressionBrowserCases": 4
+}

@@ -1,0 +1,4 @@
+{
+  "platinum": "linear-gradient(130deg,#586c80 0%,#eff8ff 17%,#8197ac 31%,#dce8f1 49%,#455e76 70%,#c8dbe9 88%,#637b90 100%)",
+  "gold": "linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c)"
+}

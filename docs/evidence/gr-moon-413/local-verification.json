@@ -1,0 +1,101 @@
+{
+  "baseline": "43ec5071d557f97b1300dbc072062646ed52d670",
+  "featureCommit": "f5b0cbe277a554944ffb071836f788ee2894b6ea",
+  "version": "4.13.1",
+  "integrationVersion": "0.25.179",
+  "premiumLayouts": 6,
+  "materialCombinationsPerLayout": 4,
+  "fitLayouts": 10,
+  "fullFitDefaults": 6,
+  "moonRegressionCases": 4,
+  "authenticatedProfileLayouts": 3,
+  "supportedLocales": 19,
+  "protectedOtherModuleBodies": 105,
+  "scaleModelCases": 1680,
+  "materialModelAndSchemaCases": 32,
+  "weatherMenuTests": 30,
+  "sharedNodeCommands": 17,
+  "realHAInstallation": false,
+  "physicalAndroidTest": false,
+  "operatorGraphicApproval": false,
+  "screenshots": [
+    {
+      "file": "desktop-1920-collapsed.png",
+      "sha256": "f276df0593060c3258760306d45cd259544844d821afe6278efa9b30c6e17fb1"
+    },
+    {
+      "file": "desktop-configuration.png",
+      "sha256": "1ecbff831a8dfbd740953b1174facc09b882d84ceb40928811dc7c9fdf28d532"
+    },
+    {
+      "file": "desktop-gold-mineral.png",
+      "sha256": "d57a5af28c1f88d40fd5939b5f8be5746610522e6990d2b1333f1995158cbefa"
+    },
+    {
+      "file": "desktop-history-de.png",
+      "sha256": "5b47f217f7c88b4c4c8cb537d2bd11cdbedd9e1cb4d9be22ec89fbe9162c6040"
+    },
+    {
+      "file": "desktop-history-en.png",
+      "sha256": "d8ce27bdf1ecedf287b5d80a98fed25563dfc773a34240e38b0dc6a1eda59509"
+    },
+    {
+      "file": "desktop-platinum-night.png",
+      "sha256": "cf349b7e8106f8a348a7830f537449e5d39c118c9c43883e8dcb4b5998b24002"
+    },
+    {
+      "file": "desktop-zoom.png",
+      "sha256": "767483e2bfeb5a33f0f550d11877eebeb530e5ef8b20608517c949b647b7d430"
+    },
+    {
+      "file": "laptop-platinum-night.png",
+      "sha256": "041e1d4440a6a31a1896b97640acc382a888b70f9b73d6a44a88bbcddcaed680"
+    },
+    {
+      "file": "phone-390-collapsed.png",
+      "sha256": "7bb16e2bfd9e1aa644b1af5b56c8dd3d0671396617c7a1e050a31c2893cfc2e0"
+    },
+    {
+      "file": "phone-configuration.png",
+      "sha256": "0e680dc5097509bf3e3f5fad384ee9493c7da59c3bd6e1febeee55beb1daa07d"
+    },
+    {
+      "file": "phone-gold-mineral.png",
+      "sha256": "1f68c3eea762a517d8559f765746bc0a0518613fc63b4c9f5b4ac138f27a8409"
+    },
+    {
+      "file": "phone-history-de.png",
+      "sha256": "bab8d519e7ba7c967323a03932b8df3ca85451f2ae26ee71cbbeea29dc225a81"
+    },
+    {
+      "file": "phone-history-en.png",
+      "sha256": "35056e19efdabdcd0216797dd341a9dd7accbe18712ed3254ea91ad75dda5c08"
+    },
+    {
+      "file": "phone-platinum-night.png",
+      "sha256": "af8aa7c61902040c2d003f1f76ede88384057121d2dd775cb96f0616b7b240e8"
+    },
+    {
+      "file": "portrait-gold-mineral.png",
+      "sha256": "28d8323420687524d2407b1b432cf84b343f41322dbc9321c5a974d715e6061c"
+    },
+    {
+      "file": "portrait-platinum-night.png",
+      "sha256": "001d33fdc6b973573f3f907e7210d9c9c4b5039d2cb8bbc580f1c51600de3712"
+    },
+    {
+      "file": "short-platinum-night.png",
+      "sha256": "826364ee28c74802c5ce652ffaac24995e3e75d26684a36b2ce22aecafb69d00"
+    },
+    {
+      "file": "smartphone-zoom.png",
+      "sha256": "edb9a86cce81fc9ca4f1f8277c241edcdede0ad2c4d932038d5e7f9275bebae4"
+    },
+    {
+      "file": "tablet-platinum-night.png",
+      "sha256": "5633afb8ff5d8c0fbfa727e50fda7edd3378826222351202732785e8aef12c73"
+    }
+  ],
+  "dedicatedBilingualHistoryLayouts": 6,
+  "historyTypographyMatchesExisting": true
+}

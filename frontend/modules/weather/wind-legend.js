@@ -1,5 +1,5 @@
-import {createScientificLegend,legendParagraphs,legendScale} from './premium-legend.js?v=41215r2';
-import {legendVisible,patchLegend} from './legend-preferences.js?v=41215r2';
+import {createScientificLegend,legendParagraphs,legendScale} from './premium-legend.js?v=4134r1';
+import {legendVisible,patchLegend} from './legend-preferences.js?v=4134r1';
 import {WIND_COLORS,BEAUFORT_LIMITS,windSpeedText} from './wind-data.js?v=411211r1';
 import {WIND_FIELD_COLORS} from './wind-field.js?v=411211r1';
 import {drawWindGlyph} from './wind-canvas.js?v=411211r1';

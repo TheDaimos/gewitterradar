@@ -1,0 +1,125 @@
+{
+  "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+  "workflowRuns": [
+    {
+      "conclusion": "success",
+      "id": 45367445932,
+      "name": "GR TEST70-58 WR authority contracts",
+      "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+      "status": "completed",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45367445932"
+    },
+    {
+      "conclusion": "success",
+      "id": 45367446080,
+      "name": "GR TEST70-55 Unified Precipitation",
+      "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+      "status": "completed",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45367446080"
+    },
+    {
+      "conclusion": "success",
+      "id": 45367445584,
+      "name": "GR Synoptik - synchronize public DEV delivery",
+      "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+      "status": "completed",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45367445584"
+    },
+    {
+      "conclusion": "success",
+      "id": 45367445500,
+      "name": "GR Synoptik Hi-Res Close - targeted DEV check",
+      "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+      "status": "completed",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45367445500"
+    },
+    {
+      "conclusion": "success",
+      "id": 45367445416,
+      "name": "TEST70-76 full repository 900-second audit",
+      "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+      "status": "completed",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45367445416"
+    },
+    {
+      "conclusion": "success",
+      "id": 45367445800,
+      "name": "V4.11.40 module consistency and Android map preservation",
+      "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+      "status": "completed",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45367445800"
+    },
+    {
+      "conclusion": "success",
+      "id": 45367445769,
+      "name": "P7-010 isolierte Raster-Mosaik-Abnahme",
+      "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+      "status": "completed",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45367445769"
+    },
+    {
+      "conclusion": "success",
+      "id": 45367445468,
+      "name": "V4.11.106 settings navigation and runtime identity",
+      "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+      "status": "completed",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45367445468"
+    },
+    {
+      "conclusion": "success",
+      "id": 45367445548,
+      "name": "Validate Gewitterradar integration",
+      "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+      "status": "completed",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45367445548"
+    },
+    {
+      "conclusion": "success",
+      "id": 45367445561,
+      "name": "GR Settings Vault DEV acceptance",
+      "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+      "status": "completed",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45367445561"
+    },
+    {
+      "conclusion": "success",
+      "id": 45367446051,
+      "name": "GR Synoptik DEV - targeted regression",
+      "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+      "status": "completed",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45367446051"
+    },
+    {
+      "conclusion": "success",
+      "id": 45367445714,
+      "name": "Validate shared Gewitterradar frontend",
+      "sourceCommit": "d49915fd96bc39a5c54300e48e5492de5f89c093",
+      "status": "completed",
+      "url": "https://github.com/TheDaimos/gewitterradar/actions/runs/45367445714"
+    }
+  ],
+  "subsequentInventoryCommit": "9309899e4190c5724280d2084f86716898238ffc",
+  "subsequentInventoryChange": "automatic public workflow sorted source-only assets.json; existing optional unreferenced emblem entry removed; installed package trees unchanged",
+  "identicalTrees": {
+    "custom_components/gewitterradar": {
+      "tested": "bd399284a6d5049e56b78e952437b3554d288211",
+      "current": "bd399284a6d5049e56b78e952437b3554d288211"
+    },
+    "dashboard/dist": {
+      "tested": "2ad77ecf935ca7ade0efd1882d1c06d59e5169a1",
+      "current": "2ad77ecf935ca7ade0efd1882d1c06d59e5169a1"
+    },
+    "scripts": {
+      "tested": "b3ef3da3ec68fba4c0e50a0b5a7501c9945a35a8",
+      "current": "b3ef3da3ec68fba4c0e50a0b5a7501c9945a35a8"
+    },
+    "tests": {
+      "tested": "164338619f4dd8b7c8e64c2b4276643ac0962f8f",
+      "current": "164338619f4dd8b7c8e64c2b4276643ac0962f8f"
+    },
+    ".github": {
+      "tested": "c2e9ef332a98fbc0b0ee089b5705109fa00954bd",
+      "current": "c2e9ef332a98fbc0b0ee089b5705109fa00954bd"
+    }
+  }
+}

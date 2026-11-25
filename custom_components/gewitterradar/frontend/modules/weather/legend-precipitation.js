@@ -1,4 +1,4 @@
-import {renderLegendScale} from './legend-scale.js?v=41213r1';
+import {renderLegendScale} from './legend-scale.js?v=4133r1';
 
 // Presentation only: never sort/mutate the router snapshot or raster layers.
 export const precipitationSourceId=model=>String(model.source_id||model.source||model.id||'').replace(/^precipitation:/,'').replace(/#(?:rain|snow)$/,'');

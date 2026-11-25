@@ -1,0 +1,61 @@
+{
+  "commit": "3b06a0d31b51612e4159f7d4d6312a1d5db06677",
+  "tag": "v4.12.17-dev",
+  "releaseId": 456695860,
+  "url": "https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.17-dev",
+  "prerelease": true,
+  "draft": false,
+  "allFiveAssetsVerified": true,
+  "assets": [
+    {
+      "file": "deployment.json",
+      "bytes": 827,
+      "sha256": "5bc31f6f47f75d847ed92dab43561544b4b9e8fb9407f1a716102b5a8804d96c",
+      "githubDigestMatches": true,
+      "url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.17-dev/deployment.json"
+    },
+    {
+      "file": "gewitterradar-0.25.178-dev.zip",
+      "bytes": 58688120,
+      "sha256": "e3b95885b02e96237477e5050ed728e8d2d50fae23f5a2e943692601e153deef",
+      "githubDigestMatches": true,
+      "url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.17-dev/gewitterradar-0.25.178-dev.zip"
+    },
+    {
+      "file": "gewitterradar-dashboard-4.12.17-dev.zip",
+      "bytes": 58091210,
+      "sha256": "24ce91f7edbb156cf039e3dcc09e6e1d67811a3be2471912d5edf2a9e79dd29d",
+      "githubDigestMatches": true,
+      "url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.17-dev/gewitterradar-dashboard-4.12.17-dev.zip"
+    },
+    {
+      "file": "GR_MOON_MASTER_FINISH_2026-11-24.md",
+      "bytes": 16578,
+      "sha256": "936279a2dc917e2eccaa4c9ee26989d6a8d4af2e83c2bcc750a6b8283f1e29b1",
+      "githubDigestMatches": true,
+      "url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.17-dev/GR_MOON_MASTER_FINISH_2026-11-24.md"
+    },
+    {
+      "file": "SHA256SUMS.txt",
+      "bytes": 285,
+      "sha256": "569d92d9fd476a7f2ec588817026d45b37d2348c7904699744837731062f6156",
+      "githubDigestMatches": true,
+      "url": "https://github.com/TheDaimos/gewitterradar/releases/download/v4.12.17-dev/SHA256SUMS.txt"
+    }
+  ],
+  "stableLatestUnchanged": {
+    "id": 456077680,
+    "tag": "v4.12"
+  },
+  "remoteRefs": {
+    "refs/heads/deploy/dev": "3b06a0d31b51612e4159f7d4d6312a1d5db06677",
+    "refs/tags/v4.11.3": "af70fe2bf85a88fdea402cf46e3bd6a11903189b",
+    "refs/tags/v4.12": "c712a2526faeb55b9cc1926a656268611f56e776",
+    "refs/tags/v4.12.17-dev": "3b06a0d31b51612e4159f7d4d6312a1d5db06677",
+    "refs/tags/v4.12.3-dev": "b96f1e350eb054972bfffe3e9a631069c4c5d358"
+  },
+  "wrCommitUnchanged": "cfdc8c722ff4aef9d919e7cc3e0a783314473334",
+  "draConfigurationChanged": false,
+  "realHAInstallation": false,
+  "operatorGraphicApproval": false
+}

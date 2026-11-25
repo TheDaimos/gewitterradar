@@ -1,0 +1,47 @@
+name: Sync V4.13 FINAL candidate frontend mirrors
+# Resynchronize guarded default-position handling; never alter manually placed legends.
+on:
+  push:
+    branches:
+      - release/v4.13-final-candidate
+    paths:
+      - .github/workflows/gr-sync-candidate-frontend.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: gr-v413-sync-frontend
+  cancel-in-progress: false
+jobs:
+  rebuild:
+    if: github.repository == 'TheDaimos/gewitterradar' && github.ref == 'refs/heads/release/v4.13-final-candidate'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify current FINAL source and rebuild strict delivery parity
+        run: |
+          set -euo pipefail
+          grep -Fq 'displayVersion:"V4.13 FINAL"' frontend/version.js
+          node scripts/build-frontend.mjs
+          node scripts/verify-frontend.mjs
+          node scripts/verify-hires-asset-retention.mjs
+          node scripts/verify-diagnostic-contract.mjs
+          python scripts/verify-hacs-integration-package.py
+          git diff --check
+      - name: Push deterministic source mirrors, hash inventory and exact candidate
+        run: |
+          set -euo pipefail
+          git config user.name 'TheDaimos Release Automation'
+          git config user.email '157001884+TheDaimos@users.noreply.github.com'
+          git add SHA256SUMS_FRONTEND.txt dashboard/dist custom_components/gewitterradar/frontend
+          if ! git diff --cached --quiet; then
+            git commit -m 'build(v4.13): synchronize validated final frontend mirrors and checksums'
+          fi
+          git push origin HEAD:refs/heads/release/v4.13-final-candidate
+          echo "Candidate with deterministic mirrors: $(git rev-parse HEAD)"

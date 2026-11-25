@@ -1,10 +1,10 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.12.15",
-  "build": "V4.12-FINAL-2026-11-23",
-  "runtimeRevision": "41215r2",
-  "moduleSetId": "E412-15A2",
-  "baselineFeatureHead": "761bf3d290bf63dd6d4be60eebf3fe450438e916",
+  "productVersion": "4.13.7",
+  "build": "V4.13-FINAL-2026-11-25",
+  "runtimeRevision": "4137r2",
+  "moduleSetId": "E413-7A2",
+  "baselineFeatureHead": "2d1e16f6502b94ff9ff0665af7a5add7d3f0e4ad",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
     "mode": "ci-offline-r19-center-aware-fit",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "deploy/dev",
-    "purpose": "User-facing release history for dynamic Auras and Legend Hub",
+    "purpose": "Legend Hub: DRA DEV delivery of centered Moon badge and layered Eye-gold frame from 15c19d88; no further UI or functional changes.",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
