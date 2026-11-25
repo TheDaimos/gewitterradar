@@ -30,3 +30,15 @@ assert.match(ui,/maPort\.listPlaces/);
 assert.match(ui,/maPort\.saveCandidate/);
 assert.match(ui,/MA_DB_SOFT_DELETE_NOT_YET_AVAILABLE/);
 console.log('MA-020 optional startup reminder, location cutover and mirror contracts PASS');
+
+const wizard=readFileSync(resolve('frontend/modules/monitored-areas/migration-wizard.js'),'utf8');
+for (const path of [
+  'dashboard/dist/modules/monitored-areas/migration-wizard.js',
+  'custom_components/gewitterradar/frontend/modules/monitored-areas/migration-wizard.js'
+]) assert.equal(readFileSync(resolve(path),'utf8'),wizard,path+' mirror drift');
+assert.match(wizard,/migration_preview/);
+assert.match(wizard,/migration_commit/);
+assert.match(wizard,/migration_finalize_preview/);
+assert.match(wizard,/migration_finalize_commit/);
+assert.match(wizard,/explicit_final:true/);
+assert.match(wizard,/crypto\.randomUUID\(\)/);
