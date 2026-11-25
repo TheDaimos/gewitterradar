@@ -166,11 +166,13 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
         await self.imported()
         approval = await self.approved()
         self.items[0]["due"] = "2026-12-31"
-        # The base import digest ignores due dates; the full-fidelity per-item
-        # source backup must still protect this field before any removal.
-        await self.commit(approval)
+        # A metadata edit invalidates the operator's confirmation even when
+        # name/coordinates and the original MA-019 source digest are unchanged.
+        with self.assertRaises(final_mod.FinalizationError):
+            await self.commit(approval)
+        self.assertEqual(self.removed,[])
         self.assertEqual(await self.db.async_execute(lambda c:
-            c.execute("SELECT count(*) FROM migration_source_backups").fetchone()[0]),2)
+            c.execute("SELECT count(*) FROM migration_source_backups").fetchone()[0]),0)
 
     async def test_source_uid_summary_collision_fail_closed(self):
         await self.imported()
