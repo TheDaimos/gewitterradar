@@ -3,7 +3,7 @@
   "project_id": "gewitterradar",
   "recommended": {
     "channel": "dev",
-    "kind": "branch",
-    "ref": "deploy/dev"
+    "kind": "tag",
+    "ref": "v4.14.1-dev"
   }
 }
