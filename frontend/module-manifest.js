@@ -1,10 +1,10 @@
-import { APPLICATION_RELEASE } from "./version.js?v=4137r2";
-import { registerModule } from "./modules/core/registry.js?v=41108r1";
+import { APPLICATION_RELEASE } from "./version.js?v=4141r1";
+import { registerModule } from "./modules/core/registry.js?v=4141r1";
 export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.278",
+    "version": "1.2.279",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -31,7 +31,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.registry",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "group": "Kern",
     "function": "Modulregister",
     "subfunctions": [
@@ -55,7 +55,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "core.card-lifecycle",
-    "version": "1.0.76",
+    "version": "1.0.77",
     "group": "Kern",
     "function": "Karten-Lebenszyklus",
     "subfunctions": [
@@ -533,6 +533,18 @@ export const EXPECTED_MODULES=Object.freeze([
       "Premium-Konfiguration"
     ],
     "file": "modules/weather/synoptic-display.js"
+  },
+  {
+    "id": "monitored-areas.lifecycle",
+    "version": "0.1.0",
+    "group": "Monitored Areas",
+    "function": "Optional lifecycle",
+    "subfunctions": [
+      "Initialize",
+      "Teardown"
+    ],
+    "file": "modules/monitored-areas/index.js",
+    "optional": true
   }
 ].map(item=>Object.freeze(item)));
 export const MODULE_META=Object.freeze({id:"core.manifest",version:EXPECTED_MODULES.find(item=>item.id==="core.manifest")?.version,group:"Kern",function:"Modulmanifest",subfunctions:["Sollstand","Produktversion","Buildkennung"],file:"module-manifest.js",build:APPLICATION_META.build});registerModule(MODULE_META);

@@ -1,7 +1,7 @@
 import {readFile,readdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {root,hash,expectedPayload,expectedHelpPayload,expectedDashboardPackages,destinations} from './build-frontend.mjs';
-const canonicalVersion=(await readFile(resolve(root,'frontend/version.js'),'utf8')).match(/version:"4\.(11|12|13)\.(\d+)"/);
+const canonicalVersion=(await readFile(resolve(root,'frontend/version.js'),'utf8')).match(/version:"4\.(11|12|13|14)\.(\d+)"/);
 if(canonicalVersion&&(Number(canonicalVersion[1])>=12||Number(canonicalVersion[2])>=168)){
  await import('./verify-current-frontend.mjs');
 }else{

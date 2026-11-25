@@ -9,9 +9,9 @@ const read=p=>readFile(resolve(root,p),'utf8');
 const entry=await read('frontend/gewitterradar.js'),manifest=await read('frontend/module-manifest.js');
 const runtime=JSON.parse(await read('frontend/assets/gewitterradar-runtime-manifest.json'));
 const modules=JSON.parse(manifest.match(/EXPECTED_MODULES=Object\.freeze\((\[[\s\S]+?\])\.map\(item=>Object\.freeze\(item\)\)\)/)[1]);
-assert.equal(modules.length,37);assert.equal(new Set(modules.map(m=>m.id)).size,modules.length);
+assert.equal(modules.length,release.version.startsWith('4.14.')?38:37);assert.equal(new Set(modules.map(m=>m.id)).size,modules.length);
 for(const [k,v] of Object.entries({productVersion:release.version,displayVersion:release.displayVersion,build:release.build,runtimeRevision:release.runtimeRevision,moduleSetId:release.moduleSetId}))assert.equal(runtime[k],v,'Runtime identity: '+k);
-assert.deepEqual(runtime.modules,modules.map(({id,version})=>({id,version})));
+assert.deepEqual(runtime.modules,modules.map(({id,version,optional})=>optional?{id,version,optional:true}:{id,version}));
 for(const m of modules){
  if(m.id==='core.manifest')continue;
  const text=await read('frontend/'+m.file),meta=text.match(/(?:export\s+)?const\s+MODULE_META\s*=\s*Object\.freeze\(\{([\s\S]*?)\}\)/)?.[1]||(m.id==='core.registry'?text.match(/registerModule\(\{(id:"core\.registry"[\s\S]*?)\}\)/)?.[1]:null);
