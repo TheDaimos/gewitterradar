@@ -3,7 +3,7 @@ import sqlite3
 
 from .errors import StorageIntegrityError
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 
 
 class UnsupportedSchema(sqlite3.DatabaseError):
@@ -173,7 +173,32 @@ DDL_V4_ADDITIONS = {
         PRIMARY KEY(actor_user_id,request_id)
     ) STRICT""",
 }
-DDL = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS, **DDL_V4_ADDITIONS}
+# MA-020: durable, item-level journal. This table does not authorize deletion.
+# A source item is never considered removed merely because an external call was sent.
+DDL_V5_ADDITIONS = {
+    "migration_finalizations": f"""CREATE TABLE migration_finalizations (
+        finalization_id TEXT NOT NULL PRIMARY KEY CHECK ({_uuid('finalization_id')}),
+        actor_user_id TEXT NOT NULL CHECK (length(trim(actor_user_id))>0),
+        vault_profile_id TEXT NOT NULL CHECK (length(trim(vault_profile_id))>0),
+        source_entity_id TEXT NOT NULL CHECK (length(trim(source_entity_id))>0),
+        source_digest TEXT NOT NULL CHECK (length(source_digest)=64 AND source_digest NOT GLOB '*[^0-9a-f]*'),
+        item_count INTEGER NOT NULL CHECK (item_count>=0),
+        state TEXT NOT NULL DEFAULT 'prepared' CHECK (state IN ('prepared','removing','verified','blocked')),
+        created_at INTEGER NOT NULL CHECK (created_at>=0),
+        updated_at INTEGER NOT NULL CHECK (updated_at>=created_at)
+    ) STRICT""",
+    "migration_finalization_items": """CREATE TABLE migration_finalization_items (
+        finalization_id TEXT NOT NULL REFERENCES migration_finalizations(finalization_id) ON DELETE RESTRICT,
+        item_uid TEXT NOT NULL CHECK (length(item_uid)>0),
+        item_digest TEXT NOT NULL CHECK (length(item_digest)=64 AND item_digest NOT GLOB '*[^0-9a-f]*'),
+        location_id TEXT NOT NULL REFERENCES locations(location_id) ON DELETE RESTRICT,
+        state TEXT NOT NULL DEFAULT 'pending' CHECK (state IN ('pending','requested','absence_verified')),
+        updated_at INTEGER NOT NULL CHECK (updated_at>=0),
+        PRIMARY KEY(finalization_id,item_uid)
+    ) STRICT""",
+    "idx_migration_finalizations_actor": """CREATE INDEX idx_migration_finalizations_actor ON migration_finalizations(actor_user_id,vault_profile_id,created_at)""",
+}
+DDL = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS, **DDL_V4_ADDITIONS, **DDL_V5_ADDITIONS}
 
 
 def _objects(conn):
@@ -223,6 +248,16 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
                 conn.execute(statement)
             conn.execute("PRAGMA user_version=4")
             version = 4
+        if version == 4:
+            expected_v4 = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS, **DDL_V4_ADDITIONS}
+            if _objects(conn) != expected_v4:
+                raise UnsupportedSchema("v4 schema identity mismatch")
+            if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
+                raise StorageIntegrityError("v4 foreign key check failed")
+            for statement in DDL_V5_ADDITIONS.values():
+                conn.execute(statement)
+            conn.execute("PRAGMA user_version=5")
+            version = 5
         if version != SCHEMA_VERSION:
             raise UnsupportedSchema(f"unsupported schema version {version}")
         if _objects(conn) != DDL:
