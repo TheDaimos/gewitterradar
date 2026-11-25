@@ -8,6 +8,17 @@ on:
       - 'custom_components/gewitterradar/monitored_areas/api.py'
       - 'custom_components/gewitterradar/monitored_areas/runtime.py'
       - 'scripts/test-ma-020-finalization.py'
+      - 'scripts/test-ma-020-ui.mjs'
+      - 'custom_components/gewitterradar/vault_schema.py'
+      - 'frontend/modules/monitored-areas/**'
+      - 'frontend/modules/ui/controls.js'
+      - 'frontend/module-manifest.js'
+      - 'dashboard/dist/modules/monitored-areas/**'
+      - 'dashboard/dist/modules/ui/controls.js'
+      - 'dashboard/dist/module-manifest.js'
+      - 'custom_components/gewitterradar/frontend/modules/monitored-areas/**'
+      - 'custom_components/gewitterradar/frontend/modules/ui/controls.js'
+      - 'custom_components/gewitterradar/frontend/module-manifest.js'
       - 'scripts/test-ma-020.py'
       - '.github/workflows/ma-020.yml'
 permissions:
@@ -21,6 +32,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.14'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Targeted MA-020 T0 T1 and schema regression
         run: |
           git rev-parse HEAD
@@ -28,3 +42,7 @@ jobs:
           python scripts/test-ma-020.py
           python scripts/test-ma-020-finalization.py
           python scripts/test-ma-019.py
+          node --check frontend/modules/monitored-areas/index.js
+          node --check frontend/modules/ui/controls.js
+          node scripts/test-ma-020-ui.mjs
+          node scripts/test-ma-016.mjs
