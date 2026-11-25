@@ -149,6 +149,26 @@ export function initializeMonitoredAreas(owner, enabled = false) {
       checking = false;
     }
   };
+  const helpLink = event => {
+    const path = typeof event.composedPath === "function" ? event.composedPath() : [event.target];
+    if (!path.some(node => node?.id === "settings-help")) return;
+    queueMicrotask(() => {
+      if (stopped) return;
+      const topics = owner.shadow?.getElementById("gr-help-standard-topics");
+      if (!topics || topics.querySelector("[data-ma020-cleanup-help]")) return;
+      const link = document.createElement("button");
+      link.type = "button";
+      link.dataset.ma020CleanupHelp = "true";
+      link.textContent = "Standortübernahme · Local To-do";
+      link.style.cssText = "display:block;width:100%;min-height:44px;margin:0 0 12px;padding:10px 14px;border:1px solid #c7a15c;border-radius:9px;background:linear-gradient(#25323b,#101a22);color:#f5dc9e;font-size:14px;font-weight:600;cursor:pointer;text-align:start";
+      link.addEventListener("click", () => {
+        owner._closeHelp?.(false);
+        void refresh({manual:true});
+      });
+      topics.prepend(link);
+    });
+  };
+  owner.shadow?.addEventListener("click", helpLink, true);
   owner._openMigrationCleanupHelp = () => refresh({manual:true});
   runtime = Object.freeze({
     get status() {return stopped?"stopped":"ready";},
@@ -157,6 +177,7 @@ export function initializeMonitoredAreas(owner, enabled = false) {
       if (stopped) return;
       stopped = true;
       if (interval) clearInterval(interval);
+      owner.shadow?.removeEventListener("click", helpLink, true);
       close();
       if (owner._openMigrationCleanupHelp) delete owner._openMigrationCleanupHelp;
       if (active.get(owner) === runtime) active.delete(owner);
