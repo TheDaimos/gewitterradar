@@ -96,3 +96,53 @@ Die Veröffentlichung erfolgte **erst nach** erfolgreich nachgewiesener Post-Mer
 ## 6. Zukunft: generischer Finalize-Workflow
 
 Eine wiederverwendbare `Finalize GewitterRadar`-Pipeline ist sinnvoll, **aber noch nicht als universeller Ein-Klick-Workflow umgesetzt**. Die V4.12-Workflows enthalten bewusst fest kodierte SHAs, Run-IDs, Versionen, Zweige und historische Hotfix-Checks und dürfen **niemals** unverändert für V4.13 kopiert oder gestartet werden. Eine generische neue Pipeline benötigt parametrisierte Kandidaten-/main-SHAs, Version/Tag, Versionierungslogik, Rückfallpfad, Gates, dedizierte Zugriffsrechte und unveränderliche Sicherungen; Einführung erst nach eigener Prüfung.
+
+
+---
+
+## 7. Agentenpflicht: selbstständig bis zum überprüfbaren FINAL-Ergebnis arbeiten
+
+**Nicht verhandelbar:** Ein Auftrag „finalisieren und veröffentlichen“ bedeutet *durchführen*, nicht einen Plan, eine Fehlerbeschreibung oder die Bitte um den nächsten Auftrag liefern. Jeder korrigierbare Fehler ist nur eine Zwischenstation.
+
+### 7.1 Verbindlicher Arbeitsautomat
+
+1. **DISCOVER:** GitHub-Remote, tatsächliche Berechtigungen, alter/neuer main-SHA, Kandidat, freigegebene Referenzen, Workflows, bereits erfolgreich geprüfte Nachweise und aktuellen Release-Zustand lesen.
+2. **ACT:** Die nächste autorisierte, noch nicht erledigte Aktion tatsächlich ausführen. Erfolge anhand der Rückgabe der GitHub-API/Runner belegen, nicht aus Absichten ableiten.
+3. **DIAGNOSE bei FAIL:** Fehlgeschlagenen Job und die exakte problematische Kommandozeile lesen. Einordnen: Anwendungsfehler, Regression/Fixture, Asset-/Hash-/Spiegelproblem, Runner-Abhängigkeiten, Git/Release-API, Rechte, Sicherungs-/Betreiberfreigabe.
+4. **FIX:** Kleinste zulässige Lösung umsetzen. Keine CI-Gates abschalten; keine Referenz, keinen Tag, keinen Golden Master überschreiben. Tool-Fallbacks prüfen: GitHub-Connector, öffentliche Actions und CLI im berechtigten Runner.
+5. **RETEST:** Korrigierte Stufe wirklich erneut testen, einschließlich aller durch die Änderung ungültigen Tests. **Anderer Commit-SHA bedeutet: alle zwingenden SHA-gebundenen CI-Belege neu!**
+6. **RESUME:** Sofort wieder zum nächsten noch offenen Schritt des **ursprünglichen** Auftrags gehen. Nicht nach einem Teilfix, erfolgreich gestarteten Run, grünen Build, PR-Merge oder Golden Master aufhören.
+7. **VERIFY:** Remote-Tag und Release-Target auf akzeptiertem Commit; offizielles Release ist öffentlich und weder Draft noch Prerelease; Golden-Master-ZIP und Git-Bundle, SHA256, beide installierbaren ZIPs, PRE-MERGE-Offsite-Nachweis und relevante CI sind gültig.
+8. **REPORT:** Nur bei vollständig bestandenem VERIFY „FINAL veröffentlicht“. Andernfalls präziser Status BLOCKED mit Log, bereits belegten Stufen und exakter nächster Aktion.
+
+**Wiederholungspflicht:** Bei korrigierbarem Fehler die Schleife DIAGNOSE → FIX → RETEST → RESUME **selbstständig** durchlaufen; keine Bitte um erneute Einzelbeauftragung. Bei wiederholt identischem Fehler die Diagnose ändern, statt blind denselben Lauf zu starten. Nicht absehbar oder nicht erlaubbar: tatsächlichen Blocker nennen; niemals Berechtigungen/Sicherheitsmaßnahmen umgehen. Nicht geprüfte Betreiber-Realtests bleiben ausdrücklich offen.
+
+### 7.2 Entscheidungs- und Wiederaufnahmematrix
+
+| Situation | Verbindlich nächste Aktion | Keinesfalls |
+| --- | --- | --- |
+| Lokales DNS, gh oder Python-Dependency fehlt | Connector für GitHub-Operationen und öffentliche GitHub-Actions-Runner verwenden; Dependencies gemäß Manifest installieren | Gesamtauftrag wegen eines lokalen Tool-Problems aufgeben |
+| Keine direkte Connector-Release-/Dispatch-Funktion | Live-Rechte und bestehende Actions/Push-Request-/PR-Merge-Pfade prüfen | Ohne Prüfung behaupten, Veröffentlichung sei unmöglich |
+| Roter Test oder falsche Versions-/Asset-Hashannahme | Logs → minimaler Fix → Build/Spiegel/Verträge → exakte aktuelle CI → weiter | Alte grüne Runs eines anderen SHA zitieren |
+| Externe PRE-MERGE-Kopie fehlt oder alter main-SHA wechselte | Vollständige ZIP/Bundle-Sicherung des exakten SHA erzeugen, außerhalb GitHub erneut herunterladen und Hash vergleichen | main mergen |
+| Post-Merge-CI noch in progress | Jobstatus weiter prüfen, bei Fehler selbst korrigieren und nachtesten | Als Erfolg ausgeben |
+| Alle Prüfungen/Golden Master bestanden, nur Veröffentlichung rot | Unveränderte geprüfte Pakete/Assets und Ziel-SHA prüfen; gezielte Publish-Recovery | Den gesamten Build grundlos neu starten oder Release-Tag ändern |
+| Draft angelegt, Remote-Tag fehlt | Draft-ID, Target und Asset-Digests prüfen; exakten Tag explizit erzeugen, Draft veröffentlichen und remote verifizieren | Zweiten Draft erzeugen, Tag auf fremden SHA verschieben |
+| Tag vorhanden, Release fehlt | Tag-SHA prüfen; nur aus geprüften Paketen idempotent veröffentlichen | Tag überschreiben |
+| Tatsächlich fehlende Freigabe oder Permission | Konkreten BLOCKED-Status mit API-/Freigabenachweis und Wiederaufnahmepunkt melden | Freigabe oder Rechte fingieren |
+
+### 7.3 Reale V4.13-Fallstudie (25.11.2026)
+
+- Gesicherter früherer main: 0bbb47772667c8ff252157ac6a6fab269877a0d6; PRE-MERGE-Run 45496499861; externe verifizierte Kopie in docs/release-control/GR_V413_INDEPENDENT_PREMERGE_BACKUP.md.
+- Publikations-PR #44 wurde nach grünen Kandidaten- und Post-Merge-Gates gemergt: endgültiger Release-Commit 509daeb7245f42b23e46f72b4d002c42f0d7f56e.
+- Originaler FINAL-Run 45576565922 bestand alle Prüfungen inklusive Golden-Master-ZIP+Git-Bundle, Prüfsummen und zwei Installations-ZIPs. Die GitHub-CLI erzeugte den **Draft mit sieben vorhandenen Assets**, aber ein anschließender Git-Fetch scheiterte: fatal: couldn't find remote ref refs/tags/v4.13 (Exit 128).
+- Ursache: Ein mit gh release create --draft angelegter Entwurf erzeugt **nicht zwingend bereits einen sichtbaren Remote-Tag**. Das ist ein Workflow-/Publikationsfehler, kein Fehler des Produktcodes und kein Anlass, alle Pakete grundlos neu zu bauen.
+- Recovery: Isolierter Workflow auf release/v413-publish-recovery, Run 45579237291 (success). Er prüfte unveränderten main, alte erfolgreichen Checks, Draft-ID 457838854, Ziel-Commit und **SHA256 aller sieben Original-Assets**; erzeugte/verifizierte Remote-Tag v4.13 auf 509daeb7..., veröffentlichte den existierenden Draft und bestätigte anschließend Tag-SHA, main, Release-Status und Assets. Offiziell: https://github.com/TheDaimos/gewitterradar/releases/tag/v4.13
+- **Pflicht für künftige Workflows:** Nach den Gates den exakten Tag explizit erzeugen und remote prüfen, bevor ein Draft angelegt wird. Bei existierendem Draft den ursprünglichen Release anhand ID/Tag/Target und Asset-Hashes **idempotent fortsetzen**, nie einen zweiten Draft anlegen oder geschützte Tags umhängen.
+- Die Release-Dokumentation kann erst **nach** dem Release auf main übernommen werden. Das neue main-Dokumentations-SHA ist dann nicht rückwirkend Bestandteil des unveränderlichen V4.13-Golden-Masters. Ein frozen/v4.13-Branch ist nicht allein wegen der allgemeinen Runbook-Regel als vorhanden anzunehmen.
+
+### 7.4 Pflichtprotokoll
+
+Für jede finale Veröffentlichung erfassen: Release-/HA-/Frontend-Version; exakter früherer main-SHA; PRE-MERGE-Run + unabhängiger Offsite-SHA256; finaler main-SHA; erforderliche grüne CI-Run-IDs auf **diesem** SHA; Golden-Master-ZIP/Bundle und Checksummen; HA-/Dashboard-ZIP und Checksummen; Tag-Ziel-SHA; offizielle Release-URL und ID; draft=false, prerelease=false; tatsächliche Assetliste/Digests; gesondert noch offene Realtests; PASS oder BLOCKED mit Beleg.
+
+**Stop-Bedingung:** Nur PASS nach echter Endkontrolle oder ein *nicht selbst behebbarer* nachgewiesener BLOCKED-Grund. Ein normaler korrigierbarer Fehler ist keine Stop-Bedingung.
