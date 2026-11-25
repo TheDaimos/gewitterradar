@@ -1,0 +1,30 @@
+name: MA-017 saved-place search and editing contracts
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths:
+      - 'frontend/modules/monitored-areas/location-port.js'
+      - 'dashboard/dist/modules/monitored-areas/location-port.js'
+      - 'custom_components/gewitterradar/frontend/modules/monitored-areas/location-port.js'
+      - 'scripts/test-ma-017.mjs'
+      - '.github/workflows/ma-017.yml'
+permissions:
+  contents: read
+jobs:
+  place-editing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Clipboard, editing, search, and regressions
+        run: |
+          git rev-parse HEAD
+          node --test scripts/test-ma-017.mjs scripts/test-ma-016.mjs
+          python scripts/test-ma-016.py
+          python scripts/test-ma-015.py
