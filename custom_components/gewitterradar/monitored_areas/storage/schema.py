@@ -1,7 +1,7 @@
-"""MA-008: versioned location, profile and tracker schema, initialized only by the SQLite owner thread."""
+"""MA-009: versioned location, profile, tracker and event history schema, initialized only by the SQLite owner thread."""
 import sqlite3
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 
 class UnsupportedSchema(sqlite3.DatabaseError):
@@ -77,7 +77,89 @@ DDL_V2_ADDITIONS = {
         revision INTEGER NOT NULL DEFAULT 1 CHECK (revision>=1)
     ) STRICT""",
 }
-DDL = {**DDL_V1, **DDL_V2_ADDITIONS}
+
+# MA-009: immutable observations, candidate duplicates, shared sessions and gaps.
+# No source subscriptions, notification queues or user-facing mutations.
+DDL_V3_ADDITIONS = {
+    "lightning_reports": f"""CREATE TABLE lightning_reports (
+        report_id TEXT NOT NULL PRIMARY KEY CHECK ({_uuid('report_id')}),
+        location_id TEXT NOT NULL REFERENCES locations(location_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+        source_key TEXT NOT NULL CHECK (length(trim(source_key))>0),
+        source_event_id TEXT,
+        replay_key TEXT,
+        observed_at INTEGER CHECK (observed_at IS NULL OR observed_at>=0),
+        received_at INTEGER NOT NULL CHECK (received_at>=0),
+        time_quality TEXT NOT NULL CHECK (time_quality IN ('observed','received_only','estimated','unknown')),
+        strike_lat REAL NOT NULL CHECK (strike_lat BETWEEN -90 AND 90),
+        strike_lon REAL NOT NULL CHECK (strike_lon BETWEEN -180 AND 180),
+        location_lat REAL NOT NULL CHECK (location_lat BETWEEN -90 AND 90),
+        location_lon REAL NOT NULL CHECK (location_lon BETWEEN -180 AND 180),
+        distance_m REAL NOT NULL CHECK (distance_m>=0 AND distance_m<=50000000),
+        record_radius_m INTEGER NOT NULL CHECK (record_radius_m BETWEEN 0 AND 50000),
+        alarm_radius_m INTEGER NOT NULL CHECK (alarm_radius_m BETWEEN 0 AND 50000),
+        location_revision INTEGER NOT NULL CHECK (location_revision>=1),
+        provenance_json TEXT NOT NULL DEFAULT '{{}}' CHECK (CASE WHEN json_valid(provenance_json) THEN json_type(provenance_json)='object' ELSE 0 END),
+        UNIQUE(location_id,report_id)
+    ) STRICT""",
+    "idx_reports_observed": """CREATE INDEX idx_reports_observed ON lightning_reports(location_id,observed_at,report_id)""",
+    "idx_reports_received": """CREATE INDEX idx_reports_received ON lightning_reports(location_id,received_at,report_id)""",
+    # Only non-null, source-scoped replay keys are unique. A missing replay identity
+    # does not suppress distinct physical observations.
+    "idx_reports_replay": """CREATE UNIQUE INDEX idx_reports_replay ON lightning_reports(location_id,source_key,replay_key) WHERE replay_key IS NOT NULL""",
+    "possible_duplicates": """CREATE TABLE possible_duplicates (
+        location_id TEXT NOT NULL REFERENCES locations(location_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+        report_a TEXT NOT NULL,
+        report_b TEXT NOT NULL,
+        reason TEXT NOT NULL CHECK (length(trim(reason))>0),
+        evidence_json TEXT NOT NULL DEFAULT '{}' CHECK (CASE WHEN json_valid(evidence_json) THEN json_type(evidence_json)='object' ELSE 0 END),
+        rule_version INTEGER NOT NULL CHECK (rule_version>=1),
+        PRIMARY KEY(location_id,report_a,report_b),
+        CHECK (report_a<report_b),
+        FOREIGN KEY(location_id,report_a) REFERENCES lightning_reports(location_id,report_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+        FOREIGN KEY(location_id,report_b) REFERENCES lightning_reports(location_id,report_id) ON DELETE RESTRICT ON UPDATE RESTRICT
+    ) STRICT""",
+    "sessions": f"""CREATE TABLE sessions (
+        session_id TEXT NOT NULL PRIMARY KEY CHECK ({_uuid('session_id')}),
+        location_id TEXT NOT NULL REFERENCES locations(location_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+        started_at INTEGER NOT NULL CHECK (started_at>=0),
+        last_event_at INTEGER NOT NULL CHECK (last_event_at>=started_at),
+        status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open','closed','interrupted')),
+        closed_at INTEGER CHECK (closed_at IS NULL OR closed_at>=last_event_at),
+        event_count INTEGER NOT NULL DEFAULT 0 CHECK (event_count>=0),
+        min_distance_m REAL CHECK (min_distance_m IS NULL OR min_distance_m>=0),
+        gap_seen INTEGER NOT NULL DEFAULT 0 CHECK (gap_seen IN (0,1)),
+        revision INTEGER NOT NULL DEFAULT 1 CHECK (revision>=1),
+        CHECK ((status='closed' AND closed_at IS NOT NULL) OR (status<>'closed' AND closed_at IS NULL)),
+        UNIQUE(location_id,session_id)
+    ) STRICT""",
+    "idx_sessions_started": """CREATE INDEX idx_sessions_started ON sessions(location_id,started_at,session_id)""",
+    "session_reports": """CREATE TABLE session_reports (
+        location_id TEXT NOT NULL,
+        session_id TEXT NOT NULL,
+        report_id TEXT NOT NULL,
+        PRIMARY KEY(session_id,report_id),
+        FOREIGN KEY(location_id,session_id) REFERENCES sessions(location_id,session_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+        FOREIGN KEY(location_id,report_id) REFERENCES lightning_reports(location_id,report_id) ON DELETE RESTRICT ON UPDATE RESTRICT
+    ) STRICT""",
+    "source_gaps": f"""CREATE TABLE source_gaps (
+        gap_id TEXT NOT NULL PRIMARY KEY CHECK ({_uuid('gap_id')}),
+        source_key TEXT NOT NULL CHECK (length(trim(source_key))>0),
+        location_id TEXT REFERENCES locations(location_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+        started_at INTEGER NOT NULL CHECK (started_at>=0),
+        ended_at INTEGER CHECK (ended_at IS NULL OR ended_at>=started_at),
+        cause TEXT NOT NULL CHECK (length(trim(cause))>0),
+        coverage_confidence TEXT NOT NULL DEFAULT 'unknown' CHECK (coverage_confidence IN ('unknown','partial','confirmed')),
+        CHECK (location_id IS NOT NULL OR source_key<>'')
+    ) STRICT""",
+    "idx_source_gaps_started": """CREATE INDEX idx_source_gaps_started ON source_gaps(location_id,started_at,gap_id)""",
+    "runtime_checkpoint": """CREATE TABLE runtime_checkpoint (
+        singleton INTEGER NOT NULL PRIMARY KEY CHECK (singleton=1),
+        last_observed_at INTEGER CHECK (last_observed_at IS NULL OR last_observed_at>=0),
+        clean_shutdown INTEGER NOT NULL DEFAULT 0 CHECK (clean_shutdown IN (0,1)),
+        generation INTEGER NOT NULL DEFAULT 0 CHECK (generation>=0)
+    ) STRICT""",
+}
+DDL = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS}
 
 
 def _objects(conn):
@@ -106,7 +188,18 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
             for statement in DDL_V2_ADDITIONS.values():
                 conn.execute(statement)
             conn.execute("PRAGMA user_version=2")
-        elif version != SCHEMA_VERSION:
+            version = 2
+        if version == 2:
+            expected_v2 = {**DDL_V1, **DDL_V2_ADDITIONS}
+            if _objects(conn) != expected_v2:
+                raise UnsupportedSchema("v2 schema identity mismatch")
+            if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
+                raise sqlite3.DatabaseError("v2 foreign key check failed")
+            for statement in DDL_V3_ADDITIONS.values():
+                conn.execute(statement)
+            conn.execute("PRAGMA user_version=3")
+            version = 3
+        if version != SCHEMA_VERSION:
             raise UnsupportedSchema(f"unsupported schema version {version}")
         if _objects(conn) != DDL:
             raise UnsupportedSchema("schema identity mismatch")
