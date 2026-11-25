@@ -1,0 +1,61 @@
+name: Register V4.14.1 DEV prerelease
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths: ['.github/workflows/ma-005-dev-register.yml']
+permissions:
+  contents: read
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: TheDaimos/gewitterradar
+      SOURCE: 18f505ba8933d1036660133fc5c5ca1b627c596a
+      BUILD: a32bd406460cc991b87787fa8408695722bff830
+      TAG: v4.14.1-dev
+    steps:
+      - name: Download exact verified build (no rebuild)
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api repos/$GH_REPO/actions/runs/45625279568 | jq -e --arg sha "$BUILD" '.conclusion=="success" and .head_sha==$sha'
+          gh api repos/$GH_REPO/actions/artifacts/15026189368 | jq -e '.expired==false and .workflow_run.id==45625279568'
+          mkdir payload
+          gh run download 45625279568 -n GR-4.14.1-DEV-pinned -D payload
+          cd payload
+          sha256sum -c SHA256SUMS.txt
+          echo '8d33ef3fecc1efced424482b499721c83f0e7e69235c4eee1c47e51cf0ae2767  gewitterradar-0.25.187-dev.zip' | sha256sum -c -
+          jq -e --arg sha "$SOURCE" '.commit==$sha and .version=="4.14.1" and .integrationVersion=="0.25.187" and .runtimeRevision=="4141r1" and .moduleSetId=="E414-1A1" and .packages["gewitterradar-0.25.187-dev.zip"].files==279' deployment.json
+      - name: Register immutable DEV tag and prerelease
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api repos/$GH_REPO/git/matching-refs/tags/$TAG > refs.json
+          if jq -e 'length==0' refs.json >/dev/null; then
+            gh api --method POST repos/$GH_REPO/git/refs -f ref="refs/tags/$TAG" -f sha="$SOURCE"
+          fi
+          test "$(gh api repos/$GH_REPO/commits/$TAG --jq .sha)" = "$SOURCE"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Existing release: verify only, never overwrite assets"
+          else
+            gh release create "$TAG" payload/gewitterradar-0.25.187-dev.zip payload/gewitterradar-dashboard-4.14.1-dev.zip payload/deployment.json payload/SHA256SUMS.txt --verify-tag --prerelease --latest=false --title "GewitterRadar V4.14.1 DEV" --notes "HA 0.25.187 | Runtime 4141r1 | E414-1A1. P00 Feature-OFF T2 PASS; VM109 operator test pending. Exact source 18f505ba8933d1036660133fc5c5ca1b627c596a. Build run 45625279568. DEV only; no FINAL promotion."
+          fi
+      - name: Verify live DRA version source and released bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --paginate repos/$GH_REPO/tags | jq -s -e --arg tag "$TAG" --arg sha "$SOURCE" 'flatten | any(.name==$tag and .commit.sha==$sha)'
+          gh api --paginate repos/$GH_REPO/releases | jq -s -e --arg tag "$TAG" 'flatten | any(.tag_name==$tag and .prerelease==true and .draft==false and .name=="GewitterRadar V4.14.1 DEV")'
+          gh api repos/$GH_REPO/releases/tags/$TAG | jq -e '.prerelease and (.draft|not) and (.assets|length==4)'
+          gh api "repos/$GH_REPO/contents/deploy-relay.json?ref=$SOURCE" --jq .content | base64 -d | jq -e '.schema=="deploy-relay.deployment.v1" and .project.id=="gewitterradar" and .source.repository=="TheDaimos/gewitterradar" and .source.mode=="repository_contents" and .deployment.root=="/config" and .deployment.groups==[{"id":"integration","source":"custom_components/gewitterradar","target":"custom_components/gewitterradar","mode":"replace_directory"}] and .lifecycle.after_install=="home_assistant_restart"'
+          mkdir readback
+          gh release download "$TAG" -D readback
+          (cd readback && sha256sum -c SHA256SUMS.txt)
+          for f in payload/*; do cmp "$f" "readback/$(basename "$f")"; done
+          gh api repos/$GH_REPO/git/ref/tags/v4.13 --jq .object.sha | grep -Fx 509daeb7245f42b23e46f72b4d002c42f0d7f56e
+          gh api repos/$GH_REPO/git/ref/heads/main --jq .object.sha | grep -Fx 37f1aca54cd505fd91a2b1b0014cd7c6c280b26f
+          echo "PASS DRA tag/release discovery source, exact manifest, all published bytes"
