@@ -58,7 +58,7 @@ class Tests(unittest.TestCase):
             self.c.execute("INSERT INTO tracker_refs(location_id,stable_slug,unique_id,actual_entity_id,display_name) VALUES(?,?,?,?,?)",(loc,slug,"ma_"+loc+"_tracker",entity,"name"))
         add(self.loc)
         add(self.other)
-        self.assertEqual(self.c.execute("SELECT count(*) FROM tracker_refs WHERE actual_entity_id IS NULL AND lifecycle_state='pending'").fetchone(),(3,))
+        self.assertEqual(self.c.execute("SELECT count(*) FROM tracker_refs WHERE actual_entity_id IS NULL AND lifecycle_state='pending'").fetchone(),(2,))
         with self.assertRaises(sqlite3.IntegrityError): add(self.loc)
         with self.assertRaises(sqlite3.IntegrityError): add(str(uuid4()))
         with self.assertRaises(sqlite3.IntegrityError):
