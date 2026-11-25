@@ -39,7 +39,32 @@ class MonitoredAreasRuntime:
                         user = await self._hass.auth.async_get_user(user_id)
                         return bool(user is not None and user.is_active)
 
-                    self.api = Api(self.database, vault, target_user_active=target_active)
+                    from .migration import MigrationSourceError
+
+                    async def fetch_legacy_items():
+                        # Home Assistant's supported To-do service is the sole
+                        # legacy source. Never open HA .storage files directly.
+                        states = getattr(self._hass, "states", None)
+                        candidates = ("todo.gewitterradar_orte",
+                                      "todo.gewitterradar_saved_places",
+                                      "todo.gewitterradar")
+                        available = [eid for eid in candidates if states is not None and states.get(eid)]
+                        if not available:
+                            raise MigrationSourceError("migration_source_missing")
+                        entity_id = available[0]
+                        result = await self._hass.services.async_call(
+                            "todo", "get_items", {"status":["needs_action","completed"]},
+                            target={"entity_id":entity_id}, blocking=True,
+                            return_response=True)
+                        if not isinstance(result, dict):
+                            raise MigrationSourceError("migration_source_invalid")
+                        entry = result.get(entity_id)
+                        if not isinstance(entry,dict) or not isinstance(entry.get("items"),list):
+                            raise MigrationSourceError("migration_source_invalid")
+                        return entry["items"]
+
+                    self.api = Api(self.database, vault, target_user_active=target_active,
+                                   fetch_legacy_items=fetch_legacy_items)
                 self._unsubscribe = self._hass.bus.async_listen_once(
                     "homeassistant_stop", self._async_shutdown)
                 self._status = LifecycleStatus.READY
