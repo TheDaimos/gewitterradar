@@ -80,3 +80,16 @@ Nach **nachweislich vollständig erfolgreich abgeschlossener Migration**, Eintra
 Wurde die alte Liste tatsächlich entfernt, ist kein automatisches Aufräum-Pop-up mehr erforderlich. Ist die HA-Quellabfrage nicht zuverlässig möglich (unavailable, Berechtigungsfehler, mehrdeutige Quellidentität), darf ein Fehlschlag **nicht als entfernte Liste interpretiert** werden; kein irreführender Erfolg und keine erneute destructive Aktion. Das Popup ist **rein informativ**: es löscht keine Liste, löscht keine weiteren Einträge und schaltet die Datenquelle nicht um. Die wiederholte Anzeige ist strikt an den bereits verifizierten Finalisierungszustand gebunden, nicht an eine bloße sichtbare To-do-Entität vor Migration. Kein ungeprüftes Wiederholen des Imports.
 
 `next_task=MA-020`; diese Ergänzung ist ausschließlich Dokumentation, keine Code-/CI-Abnahme, keine Installation und kein MA-GATE-P03.
+
+
+## MA-020 Implementierungsübergabe – nach dokumentiertem EC-Stillstand (25.11.2026)
+
+Der ursprünglich offene MA-020-Auftrag wurde inzwischen **in echtem Code** weitergeführt; die frühere reine Eingangskontrolle gilt nicht mehr als aktueller Implementierungsstand. Backend-Saga und optionaler UI-Workflow liegen auf dem Feature-Branch, **MA-020 bleibt jedoch IN_PROGRESS**.
+
+- Backend: `monitored_areas/finalization.py` plus `api.py`/`runtime.py`. Admin-/Vault-bestätigte Preview/Commit-WebSockets, explizite separate Löschbestätigung, persistierte UID-Zustände `pending/requested/absence_verified`, HA-`todo.remove_item` mit frischem HA-Readback, Restart-Wiederaufnahme; serverseitige `db_active`-Projektion nur nach verified Saga. Exakte Local-To-do-Entity-ID, keine Löschung der Listenentität.
+- Storage: Schema V5-Journal + transaktionales V6-Originalquellen-Backup `migration_source_backups`; vollständige Quellmetadaten/Bestätigungs-Nonce gegen Änderungen absichern. Migration von früheren Schemas und Integrität prüfen.
+- UI: `modules/monitored-areas/migration-wizard.js` (explizite Vorschau/Import/Finalisieren), `index.js` (Hilfe und Hinweise, Start-Erinnerung und Vault-Checkbox), `controls.js` (SQLite-Read/Save-Cutover über MA-016/017 LocationPort); synchronisierte drei Frontend-Bäume, Modulmanifest auf optional 0.2.0. Der Cleanup-Text entspricht den Betreiberentscheidungen. Soft-Delete/Restore im SQLite-Modus noch deaktiviert, um keinesfalls leere/gelöschte Altlisten anzuschreiben.
+- Frühere echte grüne gezielte CI: [45713717791](https://github.com/TheDaimos/gewitterradar/actions/runs/45713717791) `completed/success` auf `9e3c084a` (3 Schema, 7 Saga, 4 Import, JS und 5 LocationPort). Die **neueren V6- und Wizard-Commits müssen auf ihrem finalen SHA erneut nachgewiesen** werden; zuletzt [45714308135](https://github.com/TheDaimos/gewitterradar/actions/runs/45714308135) queued.
+- Sicher noch offen: echte UI-Interaktion und VM109, Behebung verbliebener DB-Soft-Delete/Restore-Parität und Konflikt-/completed-Quellflüsse, finale CI auf aktuellem SHA, Dokumentation des endgültigen Auditresultats. Erst dann `MA-020=IMPLEMENTED` bzw. `VERIFIED_DEV` prüfen; aktuell `next_task=MA-020`.
+
+Keine MA-021/022-Vorziehung, kein MA-GATE-P03, keine DEV-/PROD-Installation und keine Veröffentlichung.
