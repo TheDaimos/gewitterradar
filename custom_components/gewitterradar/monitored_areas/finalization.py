@@ -31,6 +31,7 @@ class Approval:
     actor: str
     profile: str
     source_digest: str
+    full_digest: str
     deadline: float
 
 
@@ -69,6 +70,10 @@ def _source_digest(records):
         ({"uid": x["uid"], "summary": x["summary"],
           "description": x["description"], "status": x["status"]}
          for x in records.values()), key=lambda x: x["uid"]))
+
+
+def _full_digest(records):
+    return _hash([records[uid]["raw"] for uid in sorted(records)])
 
 
 def _item_digest(item):
@@ -166,7 +171,8 @@ class Finalizer:
                 return None, False
             saga_id, resume = await self._repo._db.async_execute(inspect, kind="read")
             token = secrets.token_urlsafe(32)
-            self._approvals[token] = Approval(actor, profile, digest, time.monotonic() + TTL_SECONDS)
+            self._approvals[token] = Approval(actor, profile, digest, _full_digest(records),
+                                              time.monotonic() + TTL_SECONDS)
             self._approvals = {k:v for k,v in self._approvals.items()
                                if v.deadline > time.monotonic()}
             return {"nonce":token, "expires_in_seconds":TTL_SECONDS,
@@ -244,7 +250,7 @@ class Finalizer:
                         return existing[0]
                     self._reconcile(c,existing[0],records,mutate=True)
                     return existing[0]
-                if digest != approval.source_digest:
+                if digest != approval.source_digest or _full_digest(records) != approval.full_digest:
                     raise FinalizationError("migration_source_changed")
                 mapping = _lookup_receipt(c,actor,profile,digest,records)
                 saga_id = str(uuid4())
