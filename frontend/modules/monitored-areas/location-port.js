@@ -13,7 +13,7 @@ export function formatCoordinates({latitude,longitude}) {
 }
 export function parseCoordinates(raw) {
   if(typeof raw!=="string" || raw.length>100)throw new TypeError("MA_INVALID_COORDINATES");
-  const match=raw.trim().match(/^([+-]?(?:\\d+(?:\\.\\d+)?|\\.\\d+))\\s*[,;]\\s*([+-]?(?:\\d+(?:\\.\\d+)?|\\.\\d+))$/);
+  const match=raw.trim().match(/^([+-]?(?:[0-9]+(?:[.][0-9]+)?|[.][0-9]+))[ \t]*[,;][ \t]*([+-]?(?:[0-9]+(?:[.][0-9]+)?|[.][0-9]+))$/);
   if(!match)throw new TypeError("MA_INVALID_COORDINATES");
   return {latitude:coordinate(Number(match[1]),-90,90),longitude:coordinate(Number(match[2]),-180,180)};
 }
