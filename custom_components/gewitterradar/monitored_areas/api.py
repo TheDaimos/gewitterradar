@@ -1,0 +1,368 @@
+"""MA-015 authenticated WebSocket commands over the MA v4 transactional store.
+
+No WebSocket identity fields grant rights. All actor/admin properties come from
+the Home Assistant connection. A missing or unverifiable Vault denies access.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import time
+from uuid import UUID, uuid4
+
+from .identity import Links, ProfileNotVerified
+from .locations import _coord, _name
+from .permissions import Protection, ConfirmationRequired, ProtectionDenied
+from .storage import repositories as sql
+from .storage.database import DatabaseUnavailable
+from .storage.errors import StorageError
+
+PREFIX = "gewitterradar/monitored_areas/"
+OPS = (
+    "status", "locations_list", "location_get", "location_create", "location_update",
+    "monitoring_update", "links_list", "links_share", "links_transfer", "links_remove",
+    "links_remove_preview", "preferences_update",
+)
+MUTATIONS = {"location_create", "location_update", "monitoring_update",
+             "links_share", "links_transfer", "links_remove", "preferences_update"}
+MA_API_REGISTERED = "gewitterradar_ma_api_registered"
+
+
+class ApiError(RuntimeError):
+    def __init__(self, code):
+        self.code = code
+        super().__init__(code)
+
+
+def _uuid(value):
+    try:
+        parsed = UUID(value, version=4)
+    except (ValueError, AttributeError, TypeError) as exc:
+        raise ApiError("invalid_request") from exc
+    if parsed.version != 4 or str(parsed) != value:
+        raise ApiError("invalid_request")
+    return value
+
+
+def _payload(request, expected):
+    value = request.get("payload", {})
+    if not isinstance(value, dict) or not set(value) <= set(expected):
+        raise ApiError("invalid_request")
+    return value
+
+
+def _hash(op, request):
+    try:
+        blob = json.dumps([op, request], sort_keys=True, allow_nan=False,
+                          separators=(",", ":"), ensure_ascii=True).encode("ascii")
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ApiError("invalid_request") from exc
+    if len(blob) > 16384:
+        raise ApiError("invalid_request")
+    return hashlib.sha256(blob).hexdigest()
+
+
+def _actor_link(c, location_id, actor_user_id, profile_id):
+    row = c.execute(
+        "SELECT link_id FROM profile_links WHERE location_id=? AND ha_user_id=? AND vault_profile_id=?",
+        (location_id, actor_user_id, profile_id)).fetchone()
+    if row is None:
+        raise ApiError("not_found")
+    return row[0]
+
+
+def _location(c, location_id):
+    item = sql._read(c, "locations", location_id)
+    if item is None:
+        raise ApiError("not_found")
+    return item
+
+
+def _revision(request):
+    value = request.get("expected_revision")
+    if type(value) is not int or value < 1:
+        raise ApiError("invalid_request")
+    return value
+
+
+class Api:
+    def __init__(self, database, vault, *, target_user_active=None):
+        self._repo = sql.Repositories(database)
+        self._links = Links(self._repo, vault)
+        self._protect = Protection(self._repo)
+        self._target_active = target_user_active
+
+    async def _write(self, actor, op, request, fn):
+        request_id = _uuid(request.get("request_id"))
+        digest = _hash(op, request)
+        def transaction(c):
+            row = c.execute(
+                "SELECT operation,payload_hash,result_json FROM request_receipts WHERE actor_user_id=? AND request_id=?",
+                (actor, request_id)).fetchone()
+            if row is not None:
+                if row[0] != op or row[1] != digest:
+                    raise ApiError("request_conflict")
+                return json.loads(row[2])
+            result = fn(c)
+            if type(result) is not dict:
+                raise RuntimeError("invalid mutation result")
+            c.execute(
+                "INSERT INTO request_receipts(actor_user_id,request_id,operation,payload_hash,result_json,created_at) VALUES(?,?,?,?,?,?)",
+                (actor,request_id,op,digest,json.dumps(result,sort_keys=True,allow_nan=False),time.time_ns()//1000))
+            return result
+        return await self._repo._write(transaction)
+
+    async def dispatch(self, *, actor_user_id, is_admin, op, request):
+        if not actor_user_id:
+            raise ApiError("unauthorized")
+        if op not in OPS or not isinstance(request,dict) or not set(request) <= {
+            "profile_id", "payload", "request_id", "expected_revision"}:
+            raise ApiError("invalid_request")
+        if op=="status":
+            return {"schema":1,"enabled":True,"capabilities":{
+                "locations":True,"links":True,"preferences":True,"tracker_create":False,
+                "monitoring_active":False,"notifications":False,"exports":False}}
+        profile=request.get("profile_id")
+        await self._links.require_profile(actor_user_id,profile)
+        payload=_payload(request, {
+            "location_id","link_id","name","lat","lon","monitor_enabled","paused",
+            "record_enabled","mode","record_radius_m","alarm_radius_linked",
+            "alarm_radius_m","target_user_id","target_profile_id","notification_mode",
+            "push_enabled","critical_enabled","closure_enabled","quiet_minutes",
+            "status_push","display_settings_json","confirmation_nonce",
+            "explicit_final","limit"})
+        if op in MUTATIONS and not request.get("request_id"):
+            raise ApiError("invalid_request")
+        if op=="locations_list":
+            limit=payload.get("limit",50)
+            if type(limit) is not int or not 1<=limit<=100:
+                raise ApiError("invalid_request")
+            def read(c):
+                cursor=c.execute("""SELECT l.location_id,l.name,l.lat,l.lon,l.revision
+                    FROM locations l JOIN profile_links p ON p.location_id=l.location_id
+                    WHERE p.ha_user_id=? AND p.vault_profile_id=?
+                    ORDER BY l.location_id LIMIT ?""",(actor_user_id,profile,limit))
+                return {"locations":[dict(zip(("location_id","name","lat","lon","revision"),row)) for row in cursor]}
+            return await self._repo._db.async_execute(read,kind="read")
+        if op=="location_get":
+            location_id=_uuid(payload.get("location_id"))
+            def read(c):
+                _actor_link(c,location_id,actor_user_id,profile)
+                return {"location":_location(c,location_id)}
+            return await self._repo._db.async_execute(read,kind="read")
+        if op=="links_list":
+            location_id=_uuid(payload.get("location_id"))
+            def read(c):
+                link_id=_actor_link(c,location_id,actor_user_id,profile)
+                count=c.execute("SELECT count(*) FROM profile_links WHERE location_id=?",(location_id,)).fetchone()[0]
+                return {"own_link_id":link_id,"shared_link_count":count}
+            return await self._repo._db.async_execute(read,kind="read")
+        if op=="links_remove_preview":
+            location_id=_uuid(payload.get("location_id"))
+            link_id=_uuid(payload.get("link_id"))
+            def verify(c):
+                return _actor_link(c,location_id,actor_user_id,profile)==link_id
+            if not await self._repo._db.async_execute(verify,kind="read"):
+                raise ApiError("not_found")
+            if is_admin is not True:
+                raise ApiError("forbidden")
+            proof=await self._protect.preview_final_delete(actor_user_id=actor_user_id,is_admin=True,location_id=location_id)
+            return {"nonce":proof.nonce,"revision":proof.revision,"links":proof.links,
+                    "reports":proof.reports,"expires_at_monotonic":proof.expires_at}
+
+        if op=="location_create":
+            if set(payload) != {"name","lat","lon"}:
+                raise ApiError("invalid_request")
+            name=_name(payload["name"]);lat=_coord(payload["lat"],-90,90);lon=_coord(payload["lon"],-180,180)
+            def mutate(c):
+                now=time.time_ns()//1000
+                location_id=str(uuid4());link_id=str(uuid4())
+                sql._insert(c,"locations",dict(location_id=location_id,name=name,lat=lat,lon=lon,created_at=now,updated_at=now))
+                sql._insert(c,"profile_links",dict(link_id=link_id,location_id=location_id,ha_user_id=actor_user_id,vault_profile_id=profile))
+                sql._insert(c,"profile_preferences",dict(link_id=link_id))
+                return {"location":sql._read(c,"locations",location_id),"link_id":link_id}
+            return await self._write(actor_user_id,op,request,mutate)
+
+        location_id=_uuid(payload.get("location_id"))
+        # Always scope access to the real user + independently verified profile.
+        if op in {"location_update","monitoring_update","links_share","links_transfer","links_remove"}:
+            await self._repo._db.async_execute(
+                lambda c:_actor_link(c,location_id,actor_user_id,profile),kind="read")
+
+        if op in {"location_update","monitoring_update"}:
+            expected=_revision(request)
+            allowed=({"name","lat","lon"} if op=="location_update" else
+                {"monitor_enabled","paused","record_enabled","mode","record_radius_m",
+                 "alarm_radius_linked","alarm_radius_m"})
+            if not payload.keys()-{"location_id"} or not set(payload)-{"location_id"}<=allowed:
+                raise ApiError("invalid_request")
+            patch={k:v for k,v in payload.items() if k!="location_id"}
+            if "name" in patch: patch["name"]=_name(patch["name"])
+            for key,lo,hi in (("lat",-90,90),("lon",-180,180)):
+                if key in patch: patch[key]=_coord(patch[key],lo,hi)
+            if op=="location_update":
+                patch["updated_at"]=time.time_ns()//1000
+            def mutate(c):
+                _actor_link(c,location_id,actor_user_id,profile)
+                return {"location":sql._update(c,"locations",location_id,expected,patch)}
+            return await self._write(actor_user_id,op,request,mutate)
+
+        if op=="preferences_update":
+            link_id=_uuid(payload.get("link_id"))
+            expected=_revision(request)
+            allowed={"push_enabled","critical_enabled","notification_mode",
+                     "closure_enabled","quiet_minutes","status_push","display_settings_json"}
+            patch={k:v for k,v in payload.items() if k!="link_id"}
+            if not patch or not set(patch)<=allowed: raise ApiError("invalid_request")
+            def mutate(c):
+                row=sql._read(c,"profile_links",link_id)
+                if row is None or row["ha_user_id"]!=actor_user_id or row["vault_profile_id"]!=profile:
+                    raise ApiError("not_found")
+                return {"preferences":sql._update(c,"profile_preferences",link_id,expected,patch)}
+            return await self._write(actor_user_id,op,request,mutate)
+
+        if op in {"links_share","links_transfer"}:
+            target_user=payload.get("target_user_id")
+            target_profile=payload.get("target_profile_id")
+            if not isinstance(target_user,str) or not target_user:
+                raise ApiError("invalid_request")
+            # The client supplies an ID to look up, not an authorization claim.
+            if self._target_active is None or await self._target_active(target_user) is not True:
+                raise ApiError("profile_not_found")
+            await self._links.require_profile(target_user,target_profile)
+            expected=_revision(request)
+            if set(payload)!={"location_id","target_user_id","target_profile_id"}:
+                raise ApiError("invalid_request")
+            def mutate(c):
+                old=_location(c,location_id)
+                if old["revision"]!=expected: raise sql.RevisionConflict("revision_conflict")
+                old_link=_actor_link(c,location_id,actor_user_id,profile)
+                new_link=str(uuid4())
+                sql._insert(c,"profile_links",dict(link_id=new_link,location_id=location_id,ha_user_id=target_user,vault_profile_id=target_profile))
+                sql._insert(c,"profile_preferences",dict(link_id=new_link))
+                if op=="links_transfer":
+                    c.execute("DELETE FROM notification_targets WHERE link_id=?",(old_link,))
+                    c.execute("DELETE FROM profile_preferences WHERE link_id=?",(old_link,))
+                    c.execute("DELETE FROM profile_links WHERE link_id=?",(old_link,))
+                c.execute("UPDATE locations SET revision=revision+1 WHERE location_id=?",(location_id,))
+                return {"link_id":new_link,"location_revision":expected+1}
+            return await self._write(actor_user_id,op,request,mutate)
+
+        if op=="links_remove":
+            expected=_revision(request)
+            if not set(payload)<= {"location_id","link_id","explicit_final","confirmation_nonce"}:
+                raise ApiError("invalid_request")
+            link_id=_uuid(payload.get("link_id"))
+            explicit=payload.get("explicit_final") is True
+            nonce=payload.get("confirmation_nonce")
+            proof=None
+            if explicit:
+                if is_admin is not True or not isinstance(nonce,str):
+                    raise ApiError("last_link_confirmation_required")
+                async with self._protect._lock:
+                    proof=self._protect._pending.get(nonce)
+            def mutate(c):
+                link=_actor_link(c,location_id,actor_user_id,profile)
+                if link != link_id: raise ApiError("not_found")
+                old=_location(c,location_id)
+                if old["revision"]!=expected: raise sql.RevisionConflict("revision_conflict")
+                total=c.execute("SELECT count(*) FROM profile_links WHERE location_id=?",(location_id,)).fetchone()[0]
+                reports=c.execute("SELECT count(*) FROM lightning_reports WHERE location_id=?",(location_id,)).fetchone()[0]
+                if total==1:
+                    if (is_admin is not True or not explicit or proof is None or
+                        proof[0]!=actor_user_id or proof[1]!=location_id or
+                        proof[2:5]!=(expected,total,reports) or proof[5]<=time.monotonic()):
+                        raise ApiError("last_link_confirmation_required")
+                    if reports or c.execute("SELECT 1 FROM tracker_refs WHERE location_id=?",(location_id,)).fetchone():
+                        raise ApiError("history_exists")
+                c.execute("DELETE FROM notification_targets WHERE link_id=?",(link_id,))
+                c.execute("DELETE FROM profile_preferences WHERE link_id=?",(link_id,))
+                c.execute("DELETE FROM profile_links WHERE link_id=?",(link_id,))
+                if total==1:
+                    c.execute("DELETE FROM locations WHERE location_id=?",(location_id,))
+                else:
+                    c.execute("UPDATE locations SET revision=revision+1 WHERE location_id=?",(location_id,))
+                return {"removed":True,"location_deleted":total==1}
+            result=await self._write(actor_user_id,op,request,mutate)
+            if explicit and nonce:
+                async with self._protect._lock:
+                    self._protect._pending.pop(nonce,None)
+            return result
+        raise ApiError("invalid_request")
+
+
+def _stable_code(exc):
+    if isinstance(exc,ApiError): return exc.code
+    if isinstance(exc,ProfileNotVerified): return "profile_not_found"
+    if isinstance(exc,sql.RevisionConflict): return "revision_conflict"
+    if isinstance(exc,sql.MissingRecord): return "not_found"
+    if isinstance(exc,sql.ConstraintViolation): return "invalid_request"
+    if isinstance(exc,sql.ReplayConflict): return "request_conflict"
+    if isinstance(exc,StorageError): return exc.code
+    if isinstance(exc,DatabaseUnavailable): return "storage_unavailable"
+    if isinstance(exc,ValueError): return "invalid_request"
+    return "internal_error"
+
+
+def register_websocket_api(hass):
+    """Register once, only after opted-in MA runtime has successfully started.
+
+    HA's WS command registry is process-scoped. On OFF/unload, commands remain
+    registered but strictly return feature_disabled with no DB interaction.
+    """
+    if hass.data.get(MA_API_REGISTERED):
+        return
+    import voluptuous as vol
+    from homeassistant.components import websocket_api
+
+    async def active_user(user_id):
+        user=await hass.auth.async_get_user(user_id)
+        return bool(user is not None and user.is_active)
+
+    def runtime():
+        for entry in hass.config_entries.async_entries("gewitterradar"):
+            data=getattr(entry,"runtime_data",None)
+            ma=getattr(data,"monitored_areas",None)
+            if ma is not None and ma.database is not None and ma.database.running:
+                return ma
+        return None
+
+    def register(op):
+        @websocket_api.websocket_command({
+            "type": PREFIX+op,
+            vol.Required("schema"): int,
+            vol.Optional("request",default=dict): dict,
+        })
+        @websocket_api.async_response
+        async def command(_hass,connection,msg):
+            user=connection.user
+            if user is None or not user.is_active:
+                connection.send_error(msg["id"],"unauthorized","Home Assistant sign-in required")
+                return
+            if msg["schema"]!=1:
+                connection.send_error(msg["id"],"invalid_request","Unsupported API schema")
+                return
+            ma=runtime()
+            if ma is None:
+                connection.send_error(msg["id"],"feature_disabled","Monitored Areas disabled")
+                return
+            vault=hass.data.get("gewitterradar_settings_vault")
+            if vault is None:
+                connection.send_error(msg["id"],"not_ready","Verified Settings Vault unavailable")
+                return
+            try:
+                # Avoid persistence/service-side errors being mistaken for user claims.
+                api=ma.api if getattr(ma,"api",None) is not None else None
+                if api is None:
+                    raise ApiError("not_ready")
+                result=await api.dispatch(actor_user_id=user.id,is_admin=user.is_admin,
+                                          op=op,request=msg["request"])
+            except Exception as exc:
+                code=_stable_code(exc)
+                connection.send_error(msg["id"],code,code)
+                return
+            connection.send_result(msg["id"],result)
+        websocket_api.async_register_command(hass,command)
+    for op in OPS:
+        register(op)
+    hass.data[MA_API_REGISTERED]=True
