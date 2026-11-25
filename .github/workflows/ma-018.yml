@@ -1,0 +1,29 @@
+name: MA-018 read-only Local To-do migration preview
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths:
+      - 'custom_components/gewitterradar/monitored_areas/migration.py'
+      - 'custom_components/gewitterradar/monitored_areas/api.py'
+      - 'custom_components/gewitterradar/monitored_areas/runtime.py'
+      - 'scripts/test-ma-018.py'
+      - '.github/workflows/ma-018.yml'
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Preview contracts, ACL, DB safety and P02 regression
+        run: |
+          git rev-parse HEAD
+          python -m compileall -q custom_components/gewitterradar/monitored_areas
+          python scripts/test-ma-018.py
+          python scripts/test-ma-016.py
+          python scripts/test-ma-gate-p02.py
+          python scripts/test-ma-015.py
