@@ -104,6 +104,12 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(places["places"]),2)
         self.assertEqual(await self.db.async_execute(lambda c:
             c.execute("SELECT count(*) FROM migration_finalization_items WHERE state='absence_verified'").fetchone()[0]),2)
+        backups = await self.db.async_execute(lambda c:
+            c.execute("SELECT source_json FROM migration_source_backups ORDER BY item_uid").fetchall())
+        self.assertEqual(len(backups),2)
+        self.assertEqual({json.loads(row[0])["summary"] for row in backups},{"Alpha","Beta"})
+        self.assertTrue(all(json.loads(row[0])["description"].startswith("GEWITTERRADAR_PLACE_V1")
+                            for row in backups))
 
     async def test_admin_and_confirmation_required_without_deletion(self):
         await self.imported()
@@ -155,6 +161,16 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.items),2)
         self.assertEqual(self.removed,[])
         self.assertEqual((await self.call("status"))["capabilities"]["saved_places_mode"],"migration_pending")
+
+    async def test_metadata_change_after_approval_cannot_delete(self):
+        await self.imported()
+        approval = await self.approved()
+        self.items[0]["due"] = "2026-12-31"
+        # The base import digest ignores due dates; the full-fidelity per-item
+        # source backup must still protect this field before any removal.
+        await self.commit(approval)
+        self.assertEqual(await self.db.async_execute(lambda c:
+            c.execute("SELECT count(*) FROM migration_source_backups").fetchone()[0]),2)
 
     async def test_source_uid_summary_collision_fail_closed(self):
         await self.imported()
