@@ -69,3 +69,26 @@
 6. Gate-Ergebnis **PASS/FAIL/BLOCKED** mit exaktem getesteten Commit und Scope dokumentieren. Status auf Feature fortschreiben, **nur Dokumentation** nach `deploy/dev` synchronisieren. P03/MA-016 nicht selbst starten; keine VM109-Installation oder Veröffentlichung.
 
 **Dokumentationshierarchie:** Diese Datei ist ein point-in-time-Handoff. `MONITORED_AREAS_V412_STATUS.md` führt die fortlaufende Chronik, die Architektur enthält Sollverträge, der Implementierungsplan die Aufgaben- und Gatefolge. Spätere Commits können hier genannte Ausgangsstände überholen; deshalb bei Fortsetzung den Remote-Readback wiederholen.
+
+
+---
+
+## Nachtrag 25.11.2026 – MA-GATE-P02 tatsächlich erfolgreich abgeschlossen
+
+**Dieser Nachtrag ist neuer als alle oben genannten `NOT_RUN`-/`PENDING`-Angaben.** Die frühere Eingangskontrolle allein war BLOCKED; inzwischen wurde das eigenständige T2-Gate implementiert, zwei Sicherheitsfehler reproduziert und behoben, danach die unabhängige GitHub-CI vollständig mit **PASS** abgeschlossen.
+
+**Kanonischer geprüfter P02-T2-Code-/Testsuitenstand:** `9c09745ed76b1baaf38e1c2e31b50f61e1dc792c`. **Gate-Run:** [45700987419](https://github.com/TheDaimos/gewitterradar/actions/runs/45700987419), `completed/success`; Storage-/API-Job **8 neue T2 + 7 bestehende MA-015 Tests**; nativer HA-Job **1 Vault-Profilzugehörigkeit + 1 echter WS-Actor/Profilspoofing-Test + 2 Feature-OFF** (insgesamt **19 grüne Prüfungen**). T2-Testskript-SHA256: `9b245ec205373312bb4fa02c02cd163ead279367a296aaf6bd9648b35ea25d25`.
+
+**Zwei P0-Befunde und Reparaturen:**
+
+1. **Request-Receipt ohne aktuelle Autorisierung.** Der ursprüngliche T2-Negativtest belegte, dass nach Entfernen einer Profilverknüpfung der Cache eines identischen Request-Receipts private Daten zurückgab. Reparatur in `monitored_areas/api.py`: bestehende Receipts werden nur nach aktueller serverseitiger Vault-/Actor-Verifikation **und** erneuter Standort-/Profil-Link-Prüfung im selben serialisierten SQLite-Zugriff gelesen; in der eigentlichen Write-Transaktion wird ein gegebenenfalls zwischenzeitlich aufgetauchtes Receipt ebenfalls erneut autorisiert. Nach endgültiger Link-/Standortlöschung keine privaten Alt-Receipts ausliefern; Adminrechte für destruktive Replays stets neu prüfen. Der alte MA-015-Test, der einen Replay-Erfolg nach endgültiger Löschung erwartete, wurde **sicherheitsbegründet korrigiert** und prüft nun kontrollierte Ablehnung statt Rechtewiederbelebung.
+2. **Same-count-Verwechslung bei Bestätigungs-Nonces.** Der ursprüngliche T2-Negativtest belegte, dass Austausch einer historischen Blitzmeldung bei unveränderter Datensatzanzahl die zuvor ausgegebene Reset-Nonce nicht ungültig machte. Reparatur in `monitored_areas/permissions.py` und `api.py`: Ein vollständiger SHA256-Datenfingerabdruck der betreffenden Tabellenzeilen (Blitzreports, Dubletten, Sessions, Sessionzuordnungen, Quellenlücken; bei finaler Linklöschung zusätzlich Links/Preferences/Ziele/Tracker) wird bei Vorschau auf dem Worker ermittelt und innerhalb der Löschtransaktion gegen den aktuellen Zustand geprüft. Nonce zusätzlich an HA-Actor, Vault-Profil, Standort, Revision und TTL gebunden. Bei Veränderung **fail-closed**, atomarer Rollback.
+
+Weitere grüne T2-Fälle: Entzug realer Vault-Eigentümerschaft, nachträglicher Admin-Entzug bei Receipt-Replay, Cross-Actor-Isolation, gleicher Request parallel (nur eine Mutation), Wiederanlauf/persistierte Schema-v4-Receipts und profilspezifische Nonce-Validierung. Native HA-WS- und OFF-Fälle bestätigt.
+
+**Aktuelle maßgebliche Werte:**
+- `task_id=MA-GATE-P02`; `gate_result=PASS` für Repository- und native HA-CI-Verträge; `latest_T2_baseline_sha=9c09745ed76b1baaf38e1c2e31b50f61e1dc792c`.
+- `latest_T3_baseline_sha=keine`; `DEV_user_accepted=false` für die neuen MA-ON-Funktionen; noch **keine** reale MA-ON-Installation auf VM109.
+- `next_task=MA-016` nur nach gesonderter Betreiberfreigabe; P03 noch nicht begonnen. P03 umfasst MA-016–022 (Ortssuche-DB-Leseadapter, Suche/Bearbeiten, Local-To-do-Migrationsvorschau/-Import/-Finalisierung, Havanna-Details, Profil-/Freigabe-UI). Jede Aufgabe T0/T1, eigenes P03-T2-Gate nach MA-022.
+- Geschützt: V4.13 FINAL, `v4.14.1-dev` → `18f505ba8933d1036660133fc5c5ca1b627c596a`, WR/Provider, PROD VM101. Keine DRA-Bereitstellung oder Release durch das Gate.
+- Referenz: [Kanonische Statusdatei](MONITORED_AREAS_V412_STATUS.md) enthält die vollständigen Funde, Korrekturcommits, CI-URLs, Baseline-Invalidation und Gate-Prüfwerte. Vor neuen Commits immer **aktuellen Remote-HEAD** lesen; Dokumentationscommits nach `9c09745e` sind nicht neue geprüfte Anwendungscode-Baselines.
