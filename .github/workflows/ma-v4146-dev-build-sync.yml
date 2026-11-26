@@ -1,20 +1,7 @@
 name: Build V4.14.6 MA opt-in and migration DEV mirrors
+# Superseded by V4.14.7 build; historical V4.14.6 runner is manual only.
 on:
-  push:
-    branches:
-      - feature/v4.14-monitored-areas
-    paths:
-      - '.github/workflows/ma-v4146-dev-build-sync.yml'
-      - 'frontend/modules/ui/settings-vault-view.js'
-      - 'tests/test_ma_location_manager.mjs'
-      - 'tests/test_ma_v4146_optin_contract.py'
-      - 'custom_components/gewitterradar/monitored_areas/api.py'
-      - 'custom_components/gewitterradar/monitored_areas/finalization.py'
-      - 'frontend/modules/monitored-areas/migration-wizard.js'
-      - 'scripts/test-ma-020-finalization.py'
-      - 'frontend/modules/monitored-areas/index.js'
-      - 'frontend/module-manifest.js'
-      - 'docs/GR_4146_MA_SQLITE_OPTIN_MIGRATION_2026-11-26.md'
+  workflow_dispatch:
 
 concurrency:
   group: ma-4146-build-${{ github.ref }}
