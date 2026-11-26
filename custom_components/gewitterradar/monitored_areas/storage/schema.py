@@ -3,7 +3,7 @@ import sqlite3
 
 from .errors import StorageIntegrityError
 
-SCHEMA_VERSION = 8
+SCHEMA_VERSION = 9
 
 
 class UnsupportedSchema(sqlite3.DatabaseError):
@@ -221,6 +221,29 @@ DDL_V7_ADDITIONS = {
 DDL = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS, **DDL_V4_ADDITIONS, **DDL_V5_ADDITIONS, **DDL_V6_ADDITIONS, **DDL_V7_ADDITIONS}
 
 
+# V9: identities are independent of coordinates and of Home Assistant entity names.
+# A monitored location can have multiple source bindings; one HA instance may
+# participate in a named logical cluster without sharing the SQLite database.
+DDL_V9_ADDITIONS = {
+    "source_instances": f"""CREATE TABLE source_instances (
+        instance_id TEXT NOT NULL PRIMARY KEY CHECK ({_uuid('instance_id')}),
+        cluster_id TEXT CHECK (cluster_id IS NULL OR ({_uuid('cluster_id')})),
+        label TEXT NOT NULL CHECK (length(trim(label)) BETWEEN 1 AND 120),
+        revision INTEGER NOT NULL DEFAULT 1 CHECK (revision>=1)
+    ) STRICT""",
+    "location_source_refs": f"""CREATE TABLE location_source_refs (
+        reference_id TEXT NOT NULL PRIMARY KEY CHECK ({_uuid('reference_id')}),
+        location_id TEXT NOT NULL REFERENCES locations(location_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+        instance_id TEXT NOT NULL REFERENCES source_instances(instance_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+        entity_id TEXT NOT NULL CHECK (length(trim(entity_id)) BETWEEN 3 AND 255),
+        physical_device_id TEXT CHECK (physical_device_id IS NULL OR length(trim(physical_device_id)) BETWEEN 1 AND 255),
+        revision INTEGER NOT NULL DEFAULT 1 CHECK (revision>=1),
+        UNIQUE (location_id, instance_id, entity_id)
+    ) STRICT""",
+    "idx_location_source_refs_instance": """CREATE INDEX idx_location_source_refs_instance ON location_source_refs(instance_id,entity_id)""",
+    "idx_location_source_refs_location": """CREATE INDEX idx_location_source_refs_location ON location_source_refs(location_id)""",
+}
+
 LOCATION_ORIGIN_COLUMN = ("location_origin TEXT NOT NULL DEFAULT 'unknown' "
                           "CHECK (location_origin IN ('gr_manual','device','tracker','external','unknown'))")
 # SQLite ALTER TABLE appends the column before the final parenthesis.
@@ -235,6 +258,10 @@ def _expected_v8():
         return {**DDL, "locations": canonical}
     finally:
         probe.close()
+
+
+def _expected_v9():
+    return {**_expected_v8(), **DDL_V9_ADDITIONS}
 
 
 def _objects(conn):
@@ -323,9 +350,18 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
             conn.execute("ALTER TABLE locations ADD COLUMN " + LOCATION_ORIGIN_COLUMN)
             conn.execute("PRAGMA user_version=8")
             version = 8
+        if version == 8:
+            if _objects(conn) != _expected_v8():
+                raise UnsupportedSchema("v8 schema identity mismatch")
+            if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
+                raise StorageIntegrityError("v8 foreign key check failed")
+            for statement in DDL_V9_ADDITIONS.values():
+                conn.execute(statement)
+            conn.execute("PRAGMA user_version=9")
+            version = 9
         if version != SCHEMA_VERSION:
             raise UnsupportedSchema(f"unsupported schema version {version}")
-        if _objects(conn) != _expected_v8():
+        if _objects(conn) != _expected_v9():
             raise UnsupportedSchema("schema identity mismatch")
         if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
             raise StorageIntegrityError("schema foreign key check failed")
