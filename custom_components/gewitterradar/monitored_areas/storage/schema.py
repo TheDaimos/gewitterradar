@@ -3,7 +3,7 @@ import sqlite3
 
 from .errors import StorageIntegrityError
 
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 7
 
 
 class UnsupportedSchema(sqlite3.DatabaseError):
@@ -210,7 +210,15 @@ DDL_V6_ADDITIONS = {
         FOREIGN KEY(finalization_id,item_uid) REFERENCES migration_finalization_items(finalization_id,item_uid) ON DELETE RESTRICT
     ) STRICT""",
 }
-DDL = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS, **DDL_V4_ADDITIONS, **DDL_V5_ADDITIONS, **DDL_V6_ADDITIONS}
+# MA-020: archive is per profile-link, never delete a shared location or
+# alter monitoring/history/tracker relations. Restoring just removes this mark.
+DDL_V7_ADDITIONS = {
+    "archived_profile_links": """CREATE TABLE archived_profile_links (
+        link_id TEXT NOT NULL PRIMARY KEY REFERENCES profile_links(link_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+        archived_at INTEGER NOT NULL CHECK (archived_at>=0)
+    ) STRICT""",
+}
+DDL = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS, **DDL_V4_ADDITIONS, **DDL_V5_ADDITIONS, **DDL_V6_ADDITIONS, **DDL_V7_ADDITIONS}
 
 
 def _objects(conn):
@@ -280,6 +288,17 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
                 conn.execute(statement)
             conn.execute("PRAGMA user_version=6")
             version = 6
+        if version == 6:
+            expected_v6 = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS,
+                           **DDL_V4_ADDITIONS, **DDL_V5_ADDITIONS, **DDL_V6_ADDITIONS}
+            if _objects(conn) != expected_v6:
+                raise UnsupportedSchema("v6 schema identity mismatch")
+            if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
+                raise StorageIntegrityError("v6 foreign key check failed")
+            for statement in DDL_V7_ADDITIONS.values():
+                conn.execute(statement)
+            conn.execute("PRAGMA user_version=7")
+            version = 7
         if version != SCHEMA_VERSION:
             raise UnsupportedSchema(f"unsupported schema version {version}")
         if _objects(conn) != DDL:
