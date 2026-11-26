@@ -155,6 +155,44 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.removed),2)
         self.assertEqual(len(self.items),0)
 
+    async def test_removed_item_target_changed_after_restart_blocks_resume(self):
+        await self.imported()
+        self.fail_once = True
+        with self.assertRaises(final_mod.FinalizationError):
+            await self.commit(await self.approved())
+        self.assertEqual(len(self.items),1)
+        deleted_uid = self.removed[0]
+        def corrupt_target(c):
+            lid = c.execute(
+                "SELECT location_id FROM migration_finalization_items WHERE item_uid=?",
+                (deleted_uid,)).fetchone()[0]
+            c.execute("UPDATE locations SET lat=lat+1 WHERE location_id=?", (lid,))
+        await self.db.async_execute(corrupt_target)
+        self.api = Api(self.db,self.vault,fetch_legacy_items=self.source,
+                       remove_legacy_item=self.remove)
+        with self.assertRaises(final_mod.FinalizationError) as error:
+            await self.approved()
+        self.assertEqual(error.exception.code,"migration_target_changed")
+        self.assertEqual(self.removed,[deleted_uid])
+        self.assertEqual((await self.call("status"))["capabilities"]["saved_places_mode"],
+                         "migration_pending")
+
+    async def test_removed_item_backup_tampering_blocks_resume(self):
+        await self.imported()
+        self.fail_once = True
+        with self.assertRaises(final_mod.FinalizationError):
+            await self.commit(await self.approved())
+        removed_uid = self.removed[0]
+        await self.db.async_execute(lambda c: c.execute(
+            "UPDATE migration_source_backups SET source_json=? WHERE item_uid=?",
+            (json.dumps({"uid":removed_uid,"summary":"tampered"}),removed_uid)))
+        self.api = Api(self.db,self.vault,fetch_legacy_items=self.source,
+                       remove_legacy_item=self.remove)
+        with self.assertRaises(final_mod.FinalizationError) as error:
+            await self.approved()
+        self.assertEqual(error.exception.code,"migration_backup_incomplete")
+        self.assertEqual(len(self.removed),1)
+
     async def test_no_import_no_deletion_and_no_db_active(self):
         with self.assertRaises(final_mod.FinalizationError):
             await self.approved()
