@@ -225,7 +225,7 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
         removed_uid = self.removed[0]
         await self.db.async_execute(lambda c: c.execute(
             "UPDATE migration_source_backups SET source_json=? WHERE item_uid=?",
-            (json.dumps({"uid":removed_uid,"summary":"tampered"}),removed_uid)))
+            (json.dumps({"uid":removed_uid,"summary":"tampered"}),removed_uid)).rowcount)
         self.api = Api(self.db,self.vault,fetch_legacy_items=self.source,
                        remove_legacy_item=self.remove)
         with self.assertRaises(final_mod.FinalizationError) as error:
