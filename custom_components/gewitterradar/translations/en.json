@@ -74,9 +74,10 @@
     "step": {
       "init": {
         "title": "Configure Gewitterradar",
-        "description": "Control direct access to Gewitterradar from the Home Assistant sidebar.",
+        "description": "Sidebar and optional SQLite location management. Monitored Areas starts only after explicit activation; Local To-do is neither migrated nor deleted.",
         "data": {
-          "show_sidebar_panel": "Show in sidebar"
+          "show_sidebar_panel": "Show in sidebar",
+          "monitored_areas_enabled": "Enable Monitored Areas (SQLite) · no automatic migration"
         }
       }
     }
