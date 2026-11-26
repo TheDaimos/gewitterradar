@@ -27,7 +27,7 @@ class ReplayConflict(RepositoryError):
 
 # Only internal static identifiers can enter SQL. Values are always bound.
 _FIELDS = {
-    "locations": "location_id name lat lon created_at updated_at monitor_enabled paused record_enabled mode record_radius_m alarm_radius_linked alarm_radius_m entities_enabled",
+    "locations": "location_id name lat lon location_origin created_at updated_at monitor_enabled paused record_enabled mode record_radius_m alarm_radius_linked alarm_radius_m entities_enabled",
     "profile_links": "link_id location_id ha_user_id vault_profile_id",
     "profile_preferences": "link_id push_enabled critical_enabled notification_mode closure_enabled quiet_minutes status_push display_settings_json",
     "notification_targets": "link_id target_key verified_state",
@@ -44,7 +44,7 @@ _KEYS = {"locations":"location_id", "profile_links":"link_id", "profile_preferen
          "tracker_refs":"location_id", "lightning_reports":"report_id", "sessions":"session_id",
          "source_gaps":"gap_id", "runtime_checkpoint":"singleton"}
 _PATCH = {
-    "locations": _FIELDS["locations"] - {"location_id","created_at"},
+    "locations": _FIELDS["locations"] - {"location_id","created_at","location_origin"},
     "profile_preferences": _FIELDS["profile_preferences"] - {"link_id"},
     "tracker_refs": frozenset({"actual_entity_id","display_name","lifecycle_state"}),
     "sessions": _FIELDS["sessions"] - {"session_id","location_id","started_at"},
