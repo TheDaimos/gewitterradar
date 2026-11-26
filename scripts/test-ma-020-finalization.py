@@ -123,11 +123,12 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
         await self.imported()
         self.assertEqual(len(self.items), 2, "import must not remove Local To-do")
         # A profile-level archive exists BEFORE any source deletion.
-        by_name = await self.db.async_execute(lambda c: c.execute(
-            "SELECT l.name,CASE WHEN a.link_id IS NULL THEN 0 ELSE 1 END "
-            "FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
-            "LEFT JOIN archived_profile_links a ON a.link_id=p.link_id "
-            "ORDER BY l.name").fetchall())
+        by_name = await self.db.async_execute(lambda c: [
+            (row[0], row[1]) for row in c.execute(
+                "SELECT l.name,CASE WHEN a.link_id IS NULL THEN 0 ELSE 1 END "
+                "FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
+                "LEFT JOIN archived_profile_links a ON a.link_id=p.link_id "
+                "ORDER BY l.name").fetchall()])
         self.assertEqual(by_name, [("Alpha", 0), ("Beta", 1)])
         approval = await self.approved()
         self.assertEqual(approval["item_count"], 2)
