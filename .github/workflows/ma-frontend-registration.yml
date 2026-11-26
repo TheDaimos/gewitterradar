@@ -1,0 +1,36 @@
+name: MA frontend module registration DEV
+on:
+  push:
+    branches:
+      - feature/v4.14-monitored-areas
+    paths:
+      - 'frontend/**'
+      - 'custom_components/gewitterradar/frontend/**'
+      - 'custom_components/gewitterradar/manifest.json'
+      - 'tests/test_ma_frontend_module_registration.py'
+      - '.github/workflows/ma-frontend-registration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ma-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify MA registration and mirrored artifacts
+        run: python -m unittest discover -s tests -p 'test_ma_frontend_module_registration.py' -v
+      - name: Check ES module syntax
+        run: |
+          for file in frontend/gewitterradar.js frontend/module-manifest.js frontend/modules/monitored-areas/index.js; do
+            node --check --input-type=module < "$file"
+          done
+      - name: Verify integration manifest JSON
+        run: python -m json.tool custom_components/gewitterradar/manifest.json > /dev/null
