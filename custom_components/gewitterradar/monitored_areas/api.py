@@ -270,7 +270,7 @@ class Api:
                 # Bound to the SAME transaction as all INSERT/UPDATEs and
                 # the idempotency receipt; no stale SQLite snapshot may import.
                 rows=c.execute("""
-                    SELECT l.location_id,l.name,l.lat,l.lon,l.revision
+                    SELECT l.location_id,l.name,l.lat,l.lon,l.revision,l.location_origin
                     FROM locations l JOIN profile_links p ON p.location_id=l.location_id
                     WHERE p.ha_user_id=? AND p.vault_profile_id=?
                     ORDER BY l.location_id
@@ -294,7 +294,7 @@ class Api:
                         location_id=str(uuid4())
                         link_id=str(uuid4())
                         sql._insert(c,"locations",dict(location_id=location_id,
-                            name=candidate["name"],lat=candidate["lat"],
+                            name=candidate["name"],location_origin="gr_manual",lat=candidate["lat"],
                             lon=candidate["lon"],created_at=now,updated_at=now))
                         sql._insert(c,"profile_links",dict(link_id=link_id,
                             location_id=location_id,ha_user_id=actor_user_id,
@@ -330,7 +330,7 @@ class Api:
                     FROM locations l JOIN profile_links p ON p.location_id=l.location_id
                     WHERE p.ha_user_id=? AND p.vault_profile_id=?
                     ORDER BY l.location_id LIMIT ?""",(actor_user_id,profile,limit))
-                return {"locations":[dict(zip(("location_id","name","lat","lon","revision"),row)) for row in cursor]}
+                return {"locations":[dict(zip(("location_id","name","lat","lon","revision","location_origin"),row)) for row in cursor]}
             return await self._repo._db.async_execute(read,kind="read")
         if op=="places_list":
             active_mode = (await self._finalizer.mode(actor_user_id,profile)
@@ -360,7 +360,7 @@ class Api:
                     raise ApiError("invalid_cursor")
                 escaped=query.replace("!","!!").replace("%","!%").replace("_","!_")
                 rows=c.execute(
-                    "SELECT l.location_id,l.name,l.lat,l.lon,l.revision, "
+                    "SELECT l.location_id,l.name,l.lat,l.lon,l.revision,l.location_origin, "
                     "CASE WHEN a.link_id IS NULL THEN 0 ELSE 1 END "
                     "FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
                     "LEFT JOIN archived_profile_links a ON a.link_id=p.link_id "
@@ -371,11 +371,11 @@ class Api:
                     "ORDER BY l.location_id LIMIT ?",
                     (actor_user_id,profile,int(include_archived),query,"%"+escaped+"%",cursor_id,cursor_id,limit+1)).fetchall()
                 more=len(rows)>limit
-                places=[{"location_id":lid,"name":name,"displayLabel":name,
+                places=[{"location_id":lid,"name":name,"displayLabel":name,"location_origin":origin,
                          "latitude":lat,"longitude":lon,"revision":revision,
                          "archived":bool(archived),
                          "provider":"monitored_areas_sqlite"}
-                        for lid,name,lat,lon,revision,archived in rows[:limit]]
+                        for lid,name,lat,lon,revision,origin,archived in rows[:limit]]
                 return {"mode":active_mode,"places":places,
                         "next_cursor":places[-1]["location_id"] if more else None}
             return await self._repo._db.async_execute(read_places,kind="read")
@@ -491,7 +491,7 @@ class Api:
             def mutate(c):
                 now=time.time_ns()//1000
                 location_id=str(uuid4());link_id=str(uuid4())
-                sql._insert(c,"locations",dict(location_id=location_id,name=name,lat=lat,lon=lon,created_at=now,updated_at=now))
+                sql._insert(c,"locations",dict(location_id=location_id,name=name,location_origin="gr_manual",lat=lat,lon=lon,created_at=now,updated_at=now))
                 sql._insert(c,"profile_links",dict(link_id=link_id,location_id=location_id,ha_user_id=actor_user_id,vault_profile_id=profile))
                 sql._insert(c,"profile_preferences",dict(link_id=link_id))
                 return {"location":sql._read(c,"locations",location_id),"link_id":link_id}
