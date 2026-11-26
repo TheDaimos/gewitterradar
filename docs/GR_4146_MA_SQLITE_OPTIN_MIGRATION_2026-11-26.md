@@ -61,6 +61,40 @@ vor der Öffnung erneut und lädt erst dann den bereits implementierten
 Die Finalisierungsengine und deren Sicherheits-/Readbackprüfungen sind **nicht umgebaut**.
 Es wurden nur der native Opt-in und ein kontrollierter UI-Zugang ergänzt.
 
+### 3a. MA-020-Hotfix: archivierte Local-To-do-Orte verlustfrei übernehmen
+
+Beim Abgleich mit den echten Betreiber-Screenshots fiel auf, dass die alte
+Local-To-do-Liste neben aktiven Einträgen auch **ENTFERNTE ORTE** (HA-Status
+`completed`) enthält. Der bisherige Migration-Parser akzeptierte diesen
+Status bereits, jedoch verweigerte `migration_commit` dessen Import und
+`finalization.py` anschließend den vollständigen Abschluss. Das hätte die
+Migration auf VM109 blockiert.
+
+Daher in V4.14.6 zusätzlich umgesetzt:
+
+- `api.py`: aktive UND archivierte Local-To-do-Orte werden importiert,
+  mit jeweiligem `profile_links`-Eintrag; abgeschlossene Local-To-do-Einträge
+  erhalten atomar in derselben SQLite-Transaktion einen
+  `archived_profile_links`-Eintrag.
+- `finalization.py`: die gesicherte Importquittung und bei jedem Recovery-
+  Schritt auch die Datenbank-Archivierung **mit** Namen/Koordinaten/UID
+  verifizieren. Fehlt ein Archiv-Flag, wird vor jeder Local-To-do-Löschung
+  gesperrt. Backups bewahren den ursprünglichen HA-Status.
+- `migration-wizard.js`: die Vorschau weist die Anzahl archivierter Orte
+  ausdrücklich aus und bezeichnet entsprechende Kandidaten als
+  **„Archiviert (bleibt archiviert)“**.
+- `scripts/test-ma-020-finalization.py`: neue reale SQLite-Tests prüfen
+  gemischte aktive/archivierte Listen, Cutover mit korrektem `archived`-Flag,
+  verweigerte Finalisierung bei manipuliertem SQLite-Archivstatus und
+  Ablehnung von Quellstatusänderungen nach Freigabe.
+- Das serverseitige Revisions-, Rechte-, Quellhash-, Backup-, UID- und
+  Readback-Sicherheitsmodell bleibt bestehen. Kein Status wird still
+  umgewandelt; keine andere To-do-Liste wird angefasst.
+
+**Das ist eine notwendige Voraussetzung, keine Aufforderung zu sofortiger
+Finalisierung.** Zuerst muss die schreibgeschützte Vorschau auf VM109
+erfolgreich geprüft werden.
+
 ### 4. Keine automatische Tracking-Umschaltung
 
 Die MA-023-Funktion „Auf Karte zeigen“ bleibt eine Kamerabewegung, keine
