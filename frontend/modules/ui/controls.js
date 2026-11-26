@@ -1692,10 +1692,15 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             try {
               const port = await v407MonitoredAreasPort();
               mode = port?.mode || 'legacy';
-            } catch (error) {
-              console.warn('[GewitterRadar MA] Standortverwaltung derzeit nicht erreichbar.', error);
+            } catch {
+              console.warn('[GewitterRadar MA] Standortverwaltung derzeit nicht erreichbar.');
             }
           }
+          // Reconcile visible rows after the server-authoritative mode check.
+          // Failed reads must not expose stale legacy rows as writable DB rows.
+          let loaded = true;
+          try { await v407LoadSavedPlaces({force:true}); }
+          catch { loaded = false; mode = 'legacy'; }
           const reload = async () => {
             await v407LoadSavedPlaces({force:true});
             const currentMode = this._maSavedMode === 'db_active' ? 'db_active' : mode;
@@ -1714,13 +1719,13 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             else throw new Error('MA_INVALID_OPERATION');
           };
           openLocationManager(this,{
-            enabled,mode,
-            places:[...(this._v407SavedPlaces || [])],
-            removed:[...(this._v407RemovedPlaces || [])],
+            enabled:enabled && loaded,mode,
+            places:loaded ? [...(this._v407SavedPlaces || [])] : [],
+            removed:loaded ? [...(this._v407RemovedPlaces || [])] : [],
             refresh:reload,
-            rename:(place,name)=>change('rename',place,name),
-            archive:place=>change('archive',place),
-            restore:place=>change('restore',place),
+            rename:loaded ? (place,name)=>change('rename',place,name) : undefined,
+            archive:loaded ? place=>change('archive',place) : undefined,
+            restore:loaded ? place=>change('restore',place) : undefined,
             // Camera-only. Never invoke the location/reference tracker handoff.
             focus:position=>{
               if (!this._map || !Number.isFinite(position.latitude) || !Number.isFinite(position.longitude))return;
