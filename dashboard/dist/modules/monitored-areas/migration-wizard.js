@@ -72,7 +72,8 @@ export async function openMigrationWizard(owner) {
       preview=await call("migration_preview");
       previewBox.replaceChildren();
       const summary=document.createElement("p");
-      summary.textContent=`Quelle: ${preview.total} Einträge · gültig: ${preview.valid} · nicht importierbar: ${preview.invalid}`;
+      const archivedCount=(preview.candidates||[]).filter(x=>x.status==="completed").length;
+      summary.textContent=`Quelle: ${preview.total} Einträge · gültig: ${preview.valid} · davon archiviert: ${archivedCount} · nicht importierbar: ${preview.invalid}`;
       previewBox.append(summary);
       if(preview.invalid){
         const warning=document.createElement("p");
@@ -86,7 +87,7 @@ export async function openMigrationWizard(owner) {
       for(const candidate of preview.candidates){
         const node=document.createElement("div");node.className="entry";
         const label=document.createElement("label");
-        label.textContent=candidate.name+" · "+candidate.lat+", "+candidate.lon;
+        label.textContent=candidate.name+" · "+candidate.lat+", "+candidate.lon+(candidate.status==="completed"?" · Archiviert (bleibt archiviert)":"");
         const sel=document.createElement("select");sel.dataset.uid=candidate.uid;
         const option=(name,value)=>{const el=document.createElement("option");el.textContent=name;el.value=value;sel.append(el);};
         const hasConflict=!!(candidate.source_coordinate_duplicate||candidate.name_conflicts?.length||candidate.coordinate_matches?.length);

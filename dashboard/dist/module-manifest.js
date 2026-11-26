@@ -4,7 +4,7 @@ export const APPLICATION_META=APPLICATION_RELEASE;
 export const EXPECTED_MODULES=Object.freeze([
   {
     "id": "core.manifest",
-    "version": "1.2.280",
+    "version": "1.2.281",
     "group": "Kern",
     "function": "Modulmanifest",
     "subfunctions": [
@@ -536,7 +536,7 @@ export const EXPECTED_MODULES=Object.freeze([
   },
   {
     "id": "monitored-areas.lifecycle",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "group": "Monitored Areas",
     "function": "Optional lifecycle",
     "subfunctions": [
