@@ -95,7 +95,7 @@ class WorkerTests(unittest.IsolatedAsyncioTestCase):
             store=database.Database(path,config_root=root)
             try:
                 await store.async_start()
-                self.assertEqual(await store.async_execute(lambda c:c.execute("PRAGMA user_version").fetchone()),(4,))
+                self.assertEqual(await store.async_execute(lambda c:c.execute("PRAGMA user_version").fetchone()),(9,))
                 await store.async_stop()
                 await store.async_start()
                 self.assertEqual(await store.async_execute(lambda c:c.execute("SELECT count(*) FROM locations").fetchone()),(0,))
