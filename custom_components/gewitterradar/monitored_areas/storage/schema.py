@@ -224,10 +224,17 @@ DDL = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS, **DDL_V4_ADDITIONS, **D
 LOCATION_ORIGIN_COLUMN = ("location_origin TEXT NOT NULL DEFAULT 'unknown' "
                           "CHECK (location_origin IN ('gr_manual','device','tracker','external','unknown'))")
 # SQLite ALTER TABLE appends the column before the final parenthesis.
-DDL_V8_LOCATIONS = DDL_V1["locations"].replace("\n    ) STRICT", "\n    , " + LOCATION_ORIGIN_COLUMN + ") STRICT")
-
 def _expected_v8():
-    return {**DDL, "locations": DDL_V8_LOCATIONS}
+    # Let the running SQLite version canonicalize ALTER TABLE SQL exactly;
+    # string interpolation does not reproduce its whitespace reliably.
+    probe = sqlite3.connect(":memory:")
+    try:
+        probe.execute(DDL_V1["locations"])
+        probe.execute("ALTER TABLE locations ADD COLUMN " + LOCATION_ORIGIN_COLUMN)
+        canonical = probe.execute("SELECT sql FROM sqlite_schema WHERE name='locations'").fetchone()[0]
+        return {**DDL, "locations": canonical}
+    finally:
+        probe.close()
 
 
 def _objects(conn):
