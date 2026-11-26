@@ -1,4 +1,4 @@
-"""V4.14.3 DEV: optional MA module must be discoverable without activation.
+"""V4.14.4 DEV: optional MA module must be discoverable without activation.
 
 Pure standard-library regression gate; no Home Assistant installation required.
 """
@@ -18,6 +18,7 @@ class MonitoredAreasFrontendRegistrationTests(unittest.TestCase):
         for path in (
             "gewitterradar.js",
             "panel.js",
+            "modules/ui/settings-vault-view.js",
             "module-manifest.js",
             "version.js",
             "assets/gewitterradar-runtime-manifest.json",
@@ -50,14 +51,17 @@ class MonitoredAreasFrontendRegistrationTests(unittest.TestCase):
         self.assertTrue(ma[0]["optional"])
         self.assertEqual(len(runtime["modules"]), 38)
         self.assertEqual(len({item["id"] for item in runtime["modules"]}), 38)
-        self.assertEqual(runtime["productVersion"], "4.14.3")
-        self.assertEqual(runtime["runtimeRevision"], "4143r1")
-        self.assertIn('version:"4.14.3"', version)
-        self.assertEqual(integration["version"], "0.25.189")
+        self.assertEqual(runtime["productVersion"], "4.14.4")
+        self.assertEqual(runtime["runtimeRevision"], "4144r1")
+        self.assertIn('version:"4.14.4"', version)
+        self.assertEqual(integration["version"], "0.25.190")
         panel = (FRONTEND / "panel.js").read_text(encoding="utf-8")
         const = (ROOT / "custom_components/gewitterradar/const.py").read_text(encoding="utf-8")
-        self.assertIn("version.js?v=4143r1", panel)
-        self.assertIn("/gewitterradar/panel.js?v=4143r1", const)
+        self.assertIn("version.js?v=4144r1", panel)
+        self.assertIn("/gewitterradar/panel.js?v=4144r1", const)
+        vault = (FRONTEND / "modules/ui/settings-vault-view.js").read_text(encoding="utf-8")
+        self.assertIn("from '../../version.js?v=4144r1'", vault)
+        self.assertNotIn("version.js?v=4141r1", vault)
 
 
 if __name__ == "__main__":
