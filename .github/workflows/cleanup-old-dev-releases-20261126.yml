@@ -1,0 +1,26 @@
+name: Cleanup superseded DEV releases
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/cleanup-old-dev-releases-20261126.yml']
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove only explicitly approved superseded prereleases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for tag in v4.11.225-dev v4.11.226-dev v4.11.227-dev v4.12.16-dev v4.12.17-dev v4.13.1-dev v4.13.2-dev v4.13.3-dev v4.13.4-dev; do
+            release=$(gh api "repos/$GH_REPO/releases/tags/$tag")
+            jq -e --arg tag "$tag" '.tag_name == $tag and .prerelease == true' <<< "$release" >/dev/null
+            id=$(jq -r .id <<< "$release")
+            gh api --method DELETE "repos/$GH_REPO/releases/$id"
+            echo "Removed release $tag; Git tag retained"
+          done
+          gh release list --repo "$GH_REPO" --limit 100
