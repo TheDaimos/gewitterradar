@@ -26,6 +26,7 @@ on:
       - 'custom_components/gewitterradar/frontend/modules/ui/controls.js'
       - 'custom_components/gewitterradar/frontend/module-manifest.js'
       - 'scripts/test-ma-020.py'
+      - 'tests/test_ma_location_origin.py'
       - '.github/workflows/ma-020.yml'
 permissions:
   contents: read
@@ -45,6 +46,7 @@ jobs:
         run: |
           git rev-parse HEAD
           python -m compileall -q custom_components/gewitterradar/monitored_areas
+          python -m unittest discover -s tests -p test_ma_location_origin.py
           python scripts/test-ma-020.py
           python scripts/test-ma-020-finalization.py
           python scripts/test-ma-019.py
