@@ -32,14 +32,16 @@ class MonitoredAreasFrontendRegistrationTests(unittest.TestCase):
     def test_optional_registration_does_not_activate_ha_runtime(self):
         main = (FRONTEND / "gewitterradar.js").read_text(encoding="utf-8")
         module = (FRONTEND / "modules/monitored-areas/index.js").read_text(encoding="utf-8")
-        self.assertIn("const monitoredAreas = await gewitterradarImport('./modules/monitored-areas/index.js');", main)
-        self.assertIn("({ initializeMonitoredAreas } = monitoredAreas);", main)
+        self.assertIn("let monitoredAreas = null;", main)
+        self.assertIn("monitoredAreas = await gewitterradarImport('./modules/monitored-areas/index.js');", main)
+        self.assertIn("Optional Monitored Areas registration unavailable", main)
+        self.assertIn("({ initializeMonitoredAreas } = monitoredAreas || {});", main)
         self.assertIn("card._config?.monitored_areas_enabled !== true", main)
         self.assertIn("slot.runtime = initializeMonitoredAreas(card, true);", main)
         self.assertNotIn("optional.initializeMonitoredAreas(card, true)", main)
         self.assertIn("registerModule(MODULE_META);", module)
         self.assertIn("if (enabled !== true) return null;", module)
-        self.assertNotIn("initializeMonitoredAreas(", main.split("const monitoredAreas =", 1)[1].split("} catch (error)", 1)[0])
+        self.assertIn("if (typeof initializeMonitoredAreas !== 'function') return;", main)
 
     def test_location_manager_is_discoverable_but_opt_in_writes_are_guarded(self):
         manager = (FRONTEND / "modules/monitored-areas/location-manager.js").read_text(encoding="utf-8")
