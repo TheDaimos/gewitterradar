@@ -29,6 +29,7 @@ class ReplayConflict(RepositoryError):
 _FIELDS = {
     "locations": "location_id name lat lon location_origin created_at updated_at monitor_enabled paused record_enabled mode record_radius_m alarm_radius_linked alarm_radius_m entities_enabled",
     "source_instances": "instance_id cluster_id label",
+    "source_nodes": "node_id instance_id label",
     "location_source_refs": "reference_id location_id instance_id entity_id physical_device_id",
     "profile_links": "link_id location_id ha_user_id vault_profile_id",
     "profile_preferences": "link_id push_enabled critical_enabled notification_mode closure_enabled quiet_minutes status_push display_settings_json",
@@ -42,12 +43,13 @@ _FIELDS = {
     "runtime_checkpoint": "singleton last_observed_at clean_shutdown generation",
 }
 _FIELDS = {name: frozenset(fields.split()) for name, fields in _FIELDS.items()}
-_KEYS = {"source_instances":"instance_id","location_source_refs":"reference_id", "locations":"location_id", "profile_links":"link_id", "profile_preferences":"link_id",
+_KEYS = {"source_instances":"instance_id","source_nodes":"node_id","location_source_refs":"reference_id", "locations":"location_id", "profile_links":"link_id", "profile_preferences":"link_id",
          "tracker_refs":"location_id", "lightning_reports":"report_id", "sessions":"session_id",
          "source_gaps":"gap_id", "runtime_checkpoint":"singleton"}
 _PATCH = {
     "locations": _FIELDS["locations"] - {"location_id","created_at","location_origin"},
     "source_instances": frozenset({"label","cluster_id"}),
+    "source_nodes": frozenset({"label"}),
     "location_source_refs": frozenset({"physical_device_id"}),
     "profile_preferences": _FIELDS["profile_preferences"] - {"link_id"},
     "tracker_refs": frozenset({"actual_entity_id","display_name","lifecycle_state"}),
@@ -162,6 +164,13 @@ class Repositories:
 
     async def get_source_instance(self, instance_id):
         return await self._get("source_instances", instance_id)
+
+    async def register_source_node(self, values):
+        """Explicit HA node of a logical installation, not a second location."""
+        return await self._create("source_nodes", values)
+
+    async def get_source_node(self, node_id):
+        return await self._get("source_nodes", node_id)
 
     async def create_source_reference(self, values):
         """One explicit location-to-HA-source association; no automatic merging."""
