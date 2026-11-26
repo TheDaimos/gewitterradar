@@ -8,48 +8,61 @@ const base = new URL('../', import.meta.url);
 const source = await readFile(new URL('frontend/gewitterradar.js',base),'utf8');
 const code = source.slice(source.indexOf('  const maSlots = new WeakMap();'),source.indexOf('  window.__GEWITTERRADAR_BOOT_DIAGNOSTICS={phase:'));
 assert(code.includes('syncMonitoredAreas') && code.includes('stopMonitoredAreas'));
-const makeHooks = (importer, warnings = []) => new Function('gewitterradarImport','console',code+';return {syncMonitoredAreas,stopMonitoredAreas};')(importer,{warn:(...args)=>warnings.push(args)});
+const makeHooks = (initializer,warnings=[]) =>
+  new Function('initializeMonitoredAreas','console',code+';return {syncMonitoredAreas,stopMonitoredAreas};')(
+    initializer,{warn:(...args)=>warnings.push(args)});
 const flush=()=>new Promise(resolve=>setImmediate(resolve));
-test('default OFF / invalid flags: no import, no owner writes or listeners',()=>{
-  let calls=0;const {syncMonitoredAreas,stopMonitoredAreas}=makeHooks(()=>{calls++;throw Error('must not import')});
+
+test('default OFF / invalid flags: no runtime start, no owner writes or listeners',()=>{
+  let starts=0;
+  const {syncMonitoredAreas,stopMonitoredAreas}=makeHooks(()=>{starts++;throw Error('must not start')});
   for(const value of [undefined,false,1,'true',null]){
     const card=Object.freeze({isConnected:true,_config:Object.freeze({monitored_areas_enabled:value})});
     syncMonitoredAreas(card);stopMonitoredAreas(card);
   }
-  assert.equal(calls,0);
+  assert.equal(starts,0);
   assert(!loadedModules().some(m=>m.id==='monitored-areas.lifecycle'));
   assert(!moduleDiagnostics(EXPECTED_MODULES).rows.some(m=>m.id==='monitored-areas.lifecycle'));
 });
-test('ON inert: actual lazy import, one start, repeated teardown and restart',async()=>{
+test('ON: one runtime start, idempotent teardown and restart',async()=>{
   const mod=await import('../frontend/modules/monitored-areas/index.js');
-  let imports=0;const {syncMonitoredAreas,stopMonitoredAreas}=makeHooks(async()=>{imports++;return mod});
-  const card=Object.freeze({isConnected:true,_config:Object.freeze({monitored_areas_enabled:true})});
+  let starts=0,stops=0;
+  const {syncMonitoredAreas,stopMonitoredAreas}=makeHooks((card,enabled)=>{
+    starts++;assert.equal(enabled,true);
+    const runtime=mod.initializeMonitoredAreas(card,true);
+    return {get status(){return runtime.status;},teardown(){stops++;runtime.teardown();}};
+  });
+  const card={isConnected:true,_config:{monitored_areas_enabled:true}};
   syncMonitoredAreas(card);syncMonitoredAreas(card);await flush();
-  assert.equal(imports,1);
-  const runtime=mod.initializeMonitoredAreas(card,true);
-  assert.equal(runtime.status,'ready');assert.equal(mod.initializeMonitoredAreas(card,true),runtime);
-  stopMonitoredAreas(card);stopMonitoredAreas(card);assert.equal(runtime.status,'stopped');
-  syncMonitoredAreas(card);await flush();assert.equal(imports,2);
-  const again=mod.initializeMonitoredAreas(card,true);assert.notEqual(again,runtime);stopMonitoredAreas(card);assert.equal(again.status,'stopped');
+  assert.equal(starts,1);
+  stopMonitoredAreas(card);stopMonitoredAreas(card);assert.equal(stops,1);
+  syncMonitoredAreas(card);await flush();assert.equal(starts,2);
+  stopMonitoredAreas(card);assert.equal(stops,2);
 });
-test('pending import cannot start after disconnect or OFF',async()=>{
+test('disconnect and OFF terminate active runtime, no restart',async()=>{
   for(const disconnect of [true,false]){
-    let resolve,starts=0;const {syncMonitoredAreas,stopMonitoredAreas}=makeHooks(()=>new Promise(r=>resolve=r));
+    let starts=0,stops=0;
+    const {syncMonitoredAreas,stopMonitoredAreas}=makeHooks(()=>{
+      starts++;return {teardown(){stops++;}};
+    });
     const card={isConnected:true,_config:{monitored_areas_enabled:true}};
-    syncMonitoredAreas(card);
-    if(disconnect){card.isConnected=false;stopMonitoredAreas(card)}else{card._config.monitored_areas_enabled=false;syncMonitoredAreas(card)}
-    resolve({initializeMonitoredAreas(){starts++}});await flush();assert.equal(starts,0);
+    syncMonitoredAreas(card);await flush();
+    if(disconnect){card.isConnected=false;stopMonitoredAreas(card);}
+    else {card._config.monitored_areas_enabled=false;syncMonitoredAreas(card);}
+    syncMonitoredAreas(card);await flush();
+    assert.equal(starts,1);assert.equal(stops,1);
   }
 });
-test('import, initialization and teardown failures isolated',async()=>{
-  const warnings=[];const card={isConnected:true,_config:{monitored_areas_enabled:true}};
-  let mode=0;const {syncMonitoredAreas,stopMonitoredAreas}=makeHooks(async()=>{
-    if(mode===0)throw Error('import');
-    if(mode===1)return {initializeMonitoredAreas(){throw Error('init')}};
-    return {initializeMonitoredAreas(){return {teardown(){throw Error('stop')}}}};
+test('optional initialization and teardown failures remain isolated',async()=>{
+  const warnings=[],card={isConnected:true,_config:{monitored_areas_enabled:true}};
+  let mode=0;
+  const {syncMonitoredAreas,stopMonitoredAreas}=makeHooks(()=>{
+    if(mode===0)throw Error('init');
+    return {teardown(){throw Error('stop');}};
   },warnings);
-  for(mode=0;mode<3;mode++){syncMonitoredAreas(card);await flush();stopMonitoredAreas(card)}
-  assert.equal(warnings.length,3);
+  syncMonitoredAreas(card);await flush();assert.equal(warnings.length,1);
+  mode=1;syncMonitoredAreas(card);await flush();stopMonitoredAreas(card);
+  assert.equal(warnings.length,2);
 });
 test('regular optional registration and exact inventory/mirror hashes',async()=>{
   const mod=await import('../frontend/modules/monitored-areas/index.js');
