@@ -11,6 +11,11 @@ on:
       - 'frontend/modules/monitored-areas/**'
       - 'docs/GR_4147_DEV_TEST_CANDIDATE_2026-11-26.md'
       - 'frontend/version.js'
+      - 'frontend/assets.json'
+      - 'dashboard/dist/**'
+      - 'custom_components/gewitterradar/frontend/**'
+      - 'SHA256SUMS_FRONTEND.txt'
+      - 'custom_components/gewitterradar/dra-deployment-provenance.json'
 permissions:
   contents: read
 jobs:
