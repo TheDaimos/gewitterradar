@@ -6,6 +6,8 @@ on:
     paths:
       - '.github/workflows/ma-v4146-dev-build-sync.yml'
       - 'frontend/modules/ui/settings-vault-view.js'
+      - 'tests/test_ma_location_manager.mjs'
+      - 'tests/test_ma_v4146_optin_contract.py'
 
 concurrency:
   group: ma-4146-build-${{ github.ref }}
