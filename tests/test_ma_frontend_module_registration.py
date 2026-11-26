@@ -55,6 +55,13 @@ class MonitoredAreasFrontendRegistrationTests(unittest.TestCase):
         self.assertEqual(runtime["runtimeRevision"], "4144r1")
         self.assertIn('version:"4.14.4"', version)
         self.assertEqual(integration["version"], "0.25.190")
+        # DRA checks this stronger BUILD_VERSION marker before integration/frontend labels.
+        build = (ROOT / "custom_components/gewitterradar/build_info.py").read_text(encoding="utf-8")
+        import re
+        version_match = re.search(r'^BUILD_VERSION\s*=\s*"([^"]+)"', build, re.MULTILINE)
+        self.assertIsNotNone(version_match)
+        self.assertEqual(version_match.group(1), runtime["productVersion"])
+        self.assertIn(f'version:"{version_match.group(1)}"', version)
         panel = (FRONTEND / "panel.js").read_text(encoding="utf-8")
         const = (ROOT / "custom_components/gewitterradar/const.py").read_text(encoding="utf-8")
         self.assertIn("version.js?v=4144r1", panel)
