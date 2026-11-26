@@ -150,7 +150,7 @@ class Tests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(c.execute("PRAGMA user_version").fetchone(),(3,))
         self.assertEqual(c.execute("SELECT name FROM locations").fetchone(),("kept",))
         schema.initialize_schema(c)
-        self.assertEqual(c.execute("PRAGMA user_version").fetchone(),(4,))
+        self.assertEqual(c.execute("PRAGMA user_version").fetchone(),(7,))
         self.assertEqual(c.execute("SELECT name FROM locations").fetchone(),("kept",))
 
 
