@@ -25,7 +25,7 @@ for(const term of ['refresh','rename','archive','restore','focus']){
  assert.match(file,new RegExp('\\b'+term+'\\b'));
 }
 const controls=readFileSync(new URL('frontend/modules/ui/controls.js',root),'utf8');
-assert.match(controls,/import \{openLocationManager\} from '\.\.\/monitored-areas\/location-manager\.js\?v=4145r1'/);
+assert.match(controls,/import \{openLocationManager\} from '\.\.\/monitored-areas\/location-manager\.js\?v=4146r1'/);
 assert.match(controls,/gr-ma-manage-action/);
 assert.match(controls,/this\._config\?\.monitored_areas_enabled === true/);
 assert.match(controls,/port\?\.mode !== 'db_active'/);
