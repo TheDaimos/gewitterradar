@@ -9,6 +9,8 @@ on:
       - 'tests/test_ma_*.py'
       - 'scripts/build-frontend.mjs'
       - 'frontend/modules/monitored-areas/**'
+      - 'docs/GR_4147_DEV_TEST_CANDIDATE_2026-11-26.md'
+      - 'frontend/version.js'
 permissions:
   contents: read
 jobs:
@@ -65,3 +67,34 @@ jobs:
           node scripts/test-ma-020-ui.mjs
           node scripts/test-frontend-build.mjs
           node scripts/verify-current-frontend.mjs
+
+  dev-package:
+    needs: sqlite-and-api
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify identical DRA frontend mirrors and SHA256
+        run: |
+          node scripts/verify-current-frontend.mjs
+          sha256sum -c SHA256SUMS_FRONTEND.txt --quiet
+          python scripts/verify-deploy-relay-contract.py
+          grep -q 'BUILD_VERSION = "4.14.7"' custom_components/gewitterradar/build_info.py
+      - name: Package exact verified commit
+        run: |
+          python scripts/build-dev-packages.py "$RUNNER_TEMP/ma-v4147" --revision "$GITHUB_SHA"
+          (cd "$RUNNER_TEMP/ma-v4147" && sha256sum -c SHA256SUMS.txt)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GR-V4.14.7-DEV-verified-${{ github.sha }}
+          path: ${{ runner.temp }}/ma-v4147/
+          if-no-files-found: error
+          retention-days: 30
