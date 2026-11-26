@@ -1148,14 +1148,26 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         } catch (_) { return null; }
       };
       const v407MonitoredAreasPort = async () => {
-        if (this._config?.monitored_areas_enabled !== true) return null;
+        const cardEnabled = this._config?.monitored_areas_enabled === true;
         const profileId = this._settingsVault?.profile?.id;
-        if (!profileId || !this._hass?.callWS) throw new Error('MA_LOCATION_VAULT_NOT_READY');
+        if (!profileId || !this._hass?.callWS) {
+          if (cardEnabled) throw new Error('MA_LOCATION_VAULT_NOT_READY');
+          return null;
+        }
         const unavailable = () => {throw new Error('MA_LEGACY_ONLY');};
         const port = createLocationPort({hass:this._hass,profileId,
           legacy:{listPlaces:unavailable,saveCandidate:unavailable}});
-        await port.reconcileMode(); // Server authority; never read a browser flag as db_active.
-        return port;
+        try {
+          // Native HA integration option is an independent, administrator-only
+          // opt-in. The API does not exist when the backend option is off.
+          await port.reconcileMode();
+          return port;
+        } catch (error) {
+          const missing = ['unknown_command','unknown_type'].includes(String(error?.code||''));
+          // Never silently switch back to Local To-do after a DB cutover.
+          if (!cardEnabled && this._maSavedMode !== 'db_active' && missing) return null;
+          throw error;
+        }
       };
       const v407LoadSavedPlaces = async ({force=false} = {}) => {
         const maPort=await v407MonitoredAreasPort();
@@ -1684,17 +1696,15 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         if (manage) {
           event.preventDefault(); event.stopPropagation();
           closeLocationDropdown(false);
-          const enabled = this._config?.monitored_areas_enabled === true;
-          // Only the server can report migration mode. Never infer db_active
-          // from a config flag, the existence of files, or a stale UI cache.
-          let mode = 'legacy';
-          if (enabled) {
-            try {
-              const port = await v407MonitoredAreasPort();
-              mode = port?.mode || 'legacy';
-            } catch {
-              console.warn('[GewitterRadar MA] Standortverwaltung derzeit nicht erreichbar.');
-            }
+          // Only an explicit HA integration opt-in exposes this backend API.
+          // An old card flag alone must never authorize the SQLite cutover.
+          let mode = 'legacy',enabled=false;
+          try {
+            const port = await v407MonitoredAreasPort();
+            enabled = !!port;
+            mode = port?.mode || 'legacy';
+          } catch {
+            console.warn('[GewitterRadar MA] Standortverwaltung derzeit nicht erreichbar.');
           }
           // Reconcile visible rows after the server-authoritative mode check.
           // Failed reads must not expose stale legacy rows as writable DB rows.
@@ -1734,6 +1744,14 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             rename:loaded ? (place,name)=>change('rename',place,name) : undefined,
             archive:loaded ? place=>change('archive',place) : undefined,
             restore:loaded ? place=>change('restore',place) : undefined,
+            migrate:loaded && enabled && mode==='migration_pending' ? async()=>{
+              if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
+              const port=await v407MonitoredAreasPort();
+              if (port?.mode!=='migration_pending') throw new Error('MA_MODE_CHANGED');
+              const module=await import('../monitored-areas/migration-wizard.js?v=4146r1');
+              if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
+              await module.openMigrationWizard(this);
+            } : undefined,
             // Camera-only. Never invoke the location/reference tracker handoff.
             focus:position=>{
               if (!this._map || !Number.isFinite(position.latitude) || !Number.isFinite(position.longitude))return;
