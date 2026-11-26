@@ -1,0 +1,67 @@
+name: MA V9 consolidated regression gate
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths:
+      - '.github/workflows/ma-v9-consolidated-regression.yml'
+      - 'custom_components/gewitterradar/monitored_areas/**'
+      - 'scripts/test-ma-*.py'
+      - 'tests/test_ma_*.py'
+      - 'scripts/build-frontend.mjs'
+      - 'frontend/modules/monitored-areas/**'
+permissions:
+  contents: read
+jobs:
+  sqlite-and-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Current SHA and Python syntax
+        run: |
+          git rev-parse HEAD
+          python -m compileall -q custom_components/gewitterradar/monitored_areas
+      - name: Every MA targeted contract, same commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          for script in \
+            scripts/test-ma-006.py \
+            scripts/test-ma-007.py \
+            scripts/test-ma-008.py \
+            scripts/test-ma-009.py \
+            scripts/test-ma-010.py \
+            scripts/test-ma-011.py \
+            scripts/test-ma-012.py \
+            scripts/test-ma-013.py \
+            scripts/test-ma-014.py \
+            scripts/test-ma-015.py \
+            scripts/test-ma-016.py \
+            scripts/test-ma-018.py \
+            scripts/test-ma-019.py \
+            scripts/test-ma-020.py \
+            scripts/test-ma-020-finalization.py \
+            scripts/test-ma-gate-p01.py \
+            scripts/test-ma-gate-p02.py; do
+            echo "::group::$script"
+            python "$script"
+            echo "::endgroup::"
+          done
+          python -m unittest discover -s tests -p test_ma_location_origin.py -v
+          python -m unittest discover -s tests -p test_ma_instance_identity.py -v
+          python -m unittest discover -s tests -p test_ma_frontend_module_registration.py -v
+          python -m unittest discover -s tests -p test_ma_v4146_optin_contract.py -v
+      - name: Frontend source and MA module regressions
+        run: |
+          node --check frontend/modules/monitored-areas/index.js
+          node tests/test_ma_location_manager.mjs
+          node scripts/test-ma-016.mjs
+          node scripts/test-ma-020-ui.mjs
+          node scripts/test-frontend-build.mjs
+          node scripts/verify-current-frontend.mjs
