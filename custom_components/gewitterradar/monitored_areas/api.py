@@ -326,7 +326,7 @@ class Api:
             if type(limit) is not int or not 1<=limit<=100:
                 raise ApiError("invalid_request")
             def read(c):
-                cursor=c.execute("""SELECT l.location_id,l.name,l.lat,l.lon,l.revision
+                cursor=c.execute("""SELECT l.location_id,l.name,l.lat,l.lon,l.revision,l.location_origin
                     FROM locations l JOIN profile_links p ON p.location_id=l.location_id
                     WHERE p.ha_user_id=? AND p.vault_profile_id=?
                     ORDER BY l.location_id LIMIT ?""",(actor_user_id,profile,limit))
