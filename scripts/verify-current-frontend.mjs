@@ -27,7 +27,15 @@ assert((await read('custom_components/gewitterradar/const.py')).includes('SIDEBA
 assert.equal(JSON.parse(await read('custom_components/gewitterradar/manifest.json')).version,release.integrationVersion);
 const provenance=JSON.parse(await read('custom_components/gewitterradar/dra-deployment-provenance.json'));
 for(const k of ['build','runtimeRevision','moduleSetId'])assert.equal(provenance[k],release[k]);
-assert.equal(provenance.productVersion,release.version);assert.equal(provenance.deployment.channel,'deploy/dev');
+assert.equal(provenance.productVersion,release.version);
+const draFeatureCandidate = release.version==='4.14.2' && release.displayVersion==='V4.14.2 DEV';
+const expectedChannel = draFeatureCandidate ? 'feature/v4.14-monitored-areas' : 'deploy/dev';
+assert.equal(provenance.deployment.channel,expectedChannel);
+if(draFeatureCandidate) {
+  assert.match(provenance.deployment.purpose,/MA-020.*isolated.*DEV VM109.*NOT FINAL/);
+  assert.equal(provenance.runtimeRevision,'4142r1');
+  assert.equal(provenance.moduleSetId,'E414-2A1');
+}
 const deploy=JSON.parse(await read('deploy-relay.json')),channel=JSON.parse(await read('deploy-relay-channel.json'));
 assert.equal(deploy.source.repository,'TheDaimos/gewitterradar');
 assert(JSON.stringify(channel).includes('deploy/dev'));
