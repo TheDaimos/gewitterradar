@@ -139,6 +139,25 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
         self.assertEqual({x["name"]: x["archived"] for x in places},
                          {"Alpha": False, "Beta": True})
 
+    async def test_three_archived_same_name_coordinates_preserve_distinct_uids(self):
+        # Mirrors the operator's legacy "ENTFERNTE ORTE: afrika" duplicates.
+        self.items = [item("afrika", 34.17331, 3.28326) for _ in range(3)]
+        for row in self.items:
+            row["status"] = "completed"
+        preview = await self.call("migration_preview")
+        self.assertEqual(preview["valid"], 3)
+        self.assertTrue(any(x.get("source_coordinate_duplicate") for x in preview["candidates"]))
+        await self.imported()
+        self.assertEqual(len(self.items), 3)
+        approval = await self.approved()
+        self.assertEqual(approval["item_count"], 3)
+        self.assertEqual((await self.commit(approval))["mode"], "db_active")
+        self.assertEqual(len(self.removed), 3)
+        places = (await self.call("places_list", {"include_archived": True}))["places"]
+        self.assertEqual(len(places), 3)
+        self.assertTrue(all(x["archived"] for x in places))
+        self.assertEqual(len({x["location_id"] for x in places}), 3)
+
     async def test_tampering_with_archived_link_blocks_source_deletion(self):
         self.items[1]["status"] = "completed"
         await self.imported()
