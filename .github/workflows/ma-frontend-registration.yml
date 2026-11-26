@@ -33,5 +33,12 @@ jobs:
           for file in frontend/gewitterradar.js frontend/module-manifest.js frontend/modules/monitored-areas/index.js; do
             node --check --input-type=module < "$file"
           done
+      - name: Test MA-023 location manager model and controls wiring
+        run: node tests/test_ma_location_manager.mjs
+      - name: Syntax check location management and controls
+        run: |
+          for file in frontend/modules/monitored-areas/location-manager.js frontend/modules/ui/controls.js; do
+            node --check --input-type=module < "$file"
+          done
       - name: Verify integration manifest JSON
         run: python -m json.tool custom_components/gewitterradar/manifest.json > /dev/null
