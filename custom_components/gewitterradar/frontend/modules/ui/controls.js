@@ -1,6 +1,6 @@
 import {settingsStorage} from '../core/settings-vault.js?v=4134r1';
 import {createLocationPort} from '../monitored-areas/location-port.js?v=4141r1';
-import {openLocationManager} from '../monitored-areas/location-manager.js?v=4145r1';
+import {openLocationManager} from '../monitored-areas/location-manager.js?v=4146r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
