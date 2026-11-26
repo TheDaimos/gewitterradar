@@ -40,10 +40,12 @@ export function createLocationPort({hass, profileId, legacy=defaultLegacy, focus
            serverMode==="migration_pending"?"migration_pending":"legacy";
       return mode;
     },
-    async listPlaces(query="",cursor=null){
+    async listPlaces(query="",cursor=null,includeArchived=false){
       if(typeof query!=="string"||query.length>120)throw new TypeError("MA_PLACE_INVALID_QUERY");
+      if(typeof includeArchived!=="boolean")throw new TypeError("MA_PLACE_INVALID_REQUEST");
       if(mode!=="db_active")return legacy.listPlaces(query,cursor);
-      const result=await request("places_list",{query,cursor,limit:50});
+      const result=await request("places_list",includeArchived
+        ?{query,cursor,limit:50,include_archived:true}:{query,cursor,limit:50});
       if(result?.mode!=="db_active")throw new Error("MA_PLACE_CUTOVER_NOT_VERIFIED");
       if(!Array.isArray(result.places))throw new Error("MA_PLACE_INVALID_RESPONSE");
       return result;
@@ -70,6 +72,22 @@ export function createLocationPort({hass, profileId, legacy=defaultLegacy, focus
       return request("location_update",{location_id:locationId,name:clean},{
         request_id:requestId,expected_revision:expectedRevision
       });
+    },
+    async archivePlace(locationId,expectedRevision,requestId){
+      if(mode!=="db_active")throw new Error("MA_PLACE_DB_NOT_ACTIVE");
+      if(typeof locationId!=="string"||typeof requestId!=="string"||
+         !Number.isInteger(expectedRevision)||expectedRevision<1)
+        throw new TypeError("MA_INVALID_REQUEST");
+      return request("location_archive",{location_id:locationId},{
+        request_id:requestId,expected_revision:expectedRevision});
+    },
+    async restorePlace(locationId,expectedRevision,requestId){
+      if(mode!=="db_active")throw new Error("MA_PLACE_DB_NOT_ACTIVE");
+      if(typeof locationId!=="string"||typeof requestId!=="string"||
+         !Number.isInteger(expectedRevision)||expectedRevision<1)
+        throw new TypeError("MA_INVALID_REQUEST");
+      return request("location_restore",{location_id:locationId},{
+        request_id:requestId,expected_revision:expectedRevision});
     },
     copyCoordinates:formatCoordinates,
     parseCoordinates,
