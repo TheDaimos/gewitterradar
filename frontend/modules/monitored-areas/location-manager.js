@@ -62,7 +62,9 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
   const reloadButton=button(t.refresh,()=>{void reload();});tools.append(filter,reloadButton);
   const list=document.createElement('div'),feedback=node('p','', 'gr-ma-feedback');
   feedback.setAttribute('role','status');panel.append(header,status,tools,list,feedback);root.append(style,panel);
-  owner.shadow.append(root);
+  const fullscreen=owner.shadow.getElementById('map-fullscreen-dialog');
+  const host=fullscreen?.open ? fullscreen : owner.shadow;
+  host.append(root);
   root.addEventListener('click',e=>{if(e.target===root)close();});
   root.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}});
   const state={enabled,mode,places,removed,busy:false};
