@@ -9,6 +9,7 @@ on:
       - 'custom_components/gewitterradar/monitored_areas/runtime.py'
       - 'scripts/test-ma-020-finalization.py'
       - 'scripts/test-ma-020-ui.mjs'
+      - 'scripts/test-ma-020-reminder-browser.cjs'
       - 'scripts/build-frontend.mjs'
       - 'scripts/test-v41169-data-sources.mjs'
       - 'SHA256SUMS_FRONTEND.txt'
@@ -51,3 +52,16 @@ jobs:
           node --check frontend/modules/ui/controls.js
           node scripts/test-ma-020-ui.mjs
           node scripts/test-ma-016.mjs
+
+  reminder-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - name: Real Chromium startup reminder and Settings Vault persistence
+        run: node scripts/test-ma-020-reminder-browser.cjs
