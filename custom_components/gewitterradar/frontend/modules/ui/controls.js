@@ -1,5 +1,6 @@
 import {settingsStorage} from '../core/settings-vault.js?v=4134r1';
 import {createLocationPort} from '../monitored-areas/location-port.js?v=4141r1';
+import {openLocationManager} from '../monitored-areas/location-manager.js?v=4145r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
@@ -916,6 +917,13 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           appendHeader(text.removedPlaces);
           removedPlaces.forEach((place) => appendSavedRow(place,{removed:true}));
         }
+        // MA-023: discoverable management; no implicit Local-To-do cutover.
+        const maManage = document.createElement('button');
+        maManage.type = 'button';
+        maManage.className = 'location-search-action gr-ma-manage-action';
+        maManage.textContent = /Deutsch|Boarisch|Platt|Sächs|Schwäb/i.test(this._languageValue?.() || 'Deutsch')
+          ? 'Standorte verwalten · V4.14' : 'Manage locations · V4.14';
+        frag.appendChild(maManage);
         const wasOpen=locationDropdown.classList.contains('open');
         const previousScroll=wasOpen ? locationDropdown.scrollTop : 0;
         locationDropdown.replaceChildren(frag);
@@ -1672,6 +1680,55 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
       });
 
       locationDropdown?.addEventListener('click',async (event) => {
+        const manage = event.target?.closest?.('.gr-ma-manage-action');
+        if (manage) {
+          event.preventDefault(); event.stopPropagation();
+          closeLocationDropdown(false);
+          const enabled = this._config?.monitored_areas_enabled === true;
+          // Only the server can report migration mode. Never infer db_active
+          // from a config flag, the existence of files, or a stale UI cache.
+          let mode = 'legacy';
+          if (enabled) {
+            try {
+              const port = await v407MonitoredAreasPort();
+              mode = port?.mode || 'legacy';
+            } catch (error) {
+              console.warn('[GewitterRadar MA] Standortverwaltung derzeit nicht erreichbar.', error);
+            }
+          }
+          const reload = async () => {
+            await v407LoadSavedPlaces({force:true});
+            const currentMode = this._maSavedMode === 'db_active' ? 'db_active' : mode;
+            return {mode:currentMode,
+              places:[...(this._v407SavedPlaces || [])],
+              removed:[...(this._v407RemovedPlaces || [])]};
+          };
+          const change = async (operation,place,name) => {
+            if (operation === 'rename') {
+              const port = await v407MonitoredAreasPort();
+              if (port?.mode !== 'db_active') throw new Error('MA_PLACE_DB_NOT_ACTIVE');
+              await port.renamePlace(place.uid,name,place.revision,crypto.randomUUID());
+              await v407LoadSavedPlaces({force:true});
+            } else if (operation === 'archive') await v407RemoveSavedPlace(place);
+            else if (operation === 'restore') await v407RestoreSavedPlace(place);
+            else throw new Error('MA_INVALID_OPERATION');
+          };
+          openLocationManager(this,{
+            enabled,mode,
+            places:[...(this._v407SavedPlaces || [])],
+            removed:[...(this._v407RemovedPlaces || [])],
+            refresh:reload,
+            rename:(place,name)=>change('rename',place,name),
+            archive:place=>change('archive',place),
+            restore:place=>change('restore',place),
+            // Camera-only. Never invoke the location/reference tracker handoff.
+            focus:position=>{
+              if (!this._map || !Number.isFinite(position.latitude) || !Number.isFinite(position.longitude))return;
+              this._map.flyTo([position.latitude,position.longitude],Math.max(this._map.getZoom(),8));
+            }
+          });
+          return;
+        }
         const search = event.target?.closest?.('.location-search-action');
         if (search) {
           event.preventDefault(); event.stopPropagation();
