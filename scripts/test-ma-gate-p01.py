@@ -155,7 +155,7 @@ class Gate(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(self.store._thread)
         with self.assertRaises(db.DatabaseUnavailable): await self.r.get_location(self.loc)
         def repair_fixture():
-            with sqlite3.connect(self.path) as c: c.execute("PRAGMA user_version=7")
+            with sqlite3.connect(self.path) as c: c.execute("PRAGMA user_version=9")
         await asyncio.to_thread(repair_fixture)
         await self.store.async_start()
         self.assertEqual(await self.snapshot(),before)
