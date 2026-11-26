@@ -147,7 +147,7 @@ class Tests(unittest.TestCase):
 
     def test_migration_rollback_future_and_tamper(self):
         self.init_v2()
-        before=self.c.execute("SELECT * FROM locations").fetchall()
+        before=self.c.execute("SELECT location_id,name,lat,lon FROM locations").fetchall()
         with patch.dict(schema.DDL_V3_ADDITIONS,{"invalid":"NOT SQL"}):
             with self.assertRaises(sqlite3.DatabaseError): schema.initialize_schema(self.c)
         self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(2,))
