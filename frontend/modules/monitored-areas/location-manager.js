@@ -22,7 +22,8 @@ const COPY={
   focus:'Auf Karte zeigen',rename:'Umbenennen',archive:'Archivieren',restore:'Wiederherstellen',
   coordinates:'Koordinaten',revision:'Revision',detailHint:'Überwachung und Havanna-Details folgen in einem weiteren Entwicklungsschritt.',
   renamePrompt:'Neuen Namen eingeben',archiveConfirm:'Standort archivieren? Er bleibt wiederherstellbar.',
-  error:'Aktion nicht abgeschlossen',busy:'Bitte warten …',
+  error:'Aktion nicht abgeschlossen',busy:'Bitte warten …',migration:'SQLite-Übernahme prüfen',
+  setupHint:'Aktiviere Monitored Areas unter Einstellungen → Geräte & Dienste → GewitterRadar → Konfigurieren. Deine Local-To-do-Liste bleibt bis zur gesonderten Bestätigung unverändert.',
   legacyHint:'Die alte Local-To-do-Liste bleibt maßgeblich. Eine Migration wird nicht automatisch gestartet.',
   dbHint:'Änderungen werden nur nach Bestätigung durch Home Assistant übernommen.'},
  en:{title:'Manage locations',subtitle:'Monitored Areas · V4.14',db:'SQLite management active',
@@ -33,7 +34,8 @@ const COPY={
   focus:'Show on map',rename:'Rename',archive:'Archive',restore:'Restore',
   coordinates:'Coordinates',revision:'Revision',detailHint:'Monitoring and Havanna details will follow in a later development step.',
   renamePrompt:'Enter new name',archiveConfirm:'Archive location? It can be restored.',
-  error:'Action not completed',busy:'Please wait …',
+  error:'Action not completed',busy:'Please wait …',migration:'Review SQLite migration',
+  setupHint:'Enable Monitored Areas in Settings → Devices & services → GewitterRadar → Configure. Local To-do remains unchanged until separately confirmed.',
   legacyHint:'Local To-do remains authoritative. No migration starts automatically.',
   dbHint:'Changes are only applied following Home Assistant confirmation.'}
 };
@@ -45,7 +47,7 @@ const STYLES='.gr-ma-manager{position:fixed;inset:0;display:grid;place-items:cen
 '@media(max-width:540px){.gr-ma-panel{padding:12px}.gr-ma-row{align-items:stretch;flex-direction:column}.gr-ma-actions{justify-content:start}}';
 const node=(tag,value,cls)=>{const x=document.createElement(tag);x.textContent=String(value??'');if(cls)x.className=cls;return x;};
 const button=(text,handler)=>{const x=node('button',text);x.type='button';x.addEventListener('click',handler);return x;};
-export function openLocationManager(owner,{enabled=false,mode='legacy',places=[],removed=[],refresh,rename,archive,restore,focus}={}){
+export function openLocationManager(owner,{enabled=false,mode='legacy',places=[],removed=[],refresh,rename,archive,restore,focus,migrate}={}){
   if(!owner?.shadow||typeof refresh!=='function')return null;
   const previous=owner.shadow.getElementById('gr-ma-location-manager');
   if(previous){previous.remove();}
@@ -60,6 +62,15 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
   const status=node('div','', 'gr-ma-status'),tools=node('div','', 'gr-ma-tools');
   const filter=document.createElement('input');filter.type='search';filter.placeholder=t.filter;filter.setAttribute('aria-label',t.filter);
   const reloadButton=button(t.refresh,()=>{void reload();});tools.append(filter,reloadButton);
+  const migrationButton=button(t.migration,async()=>{
+    if(state.busy||!state.enabled||state.mode!=='migration_pending'||typeof migrate!=='function')return;
+    state.busy=true;migrationButton.disabled=true;
+    try {
+      await migrate();
+      if(root.isConnected)close(); // migration wizard owns its own explicit approvals
+    } catch {notice(t.error,true);state.busy=false;migrationButton.disabled=false;}
+  });
+  migrationButton.hidden=true;
   const list=document.createElement('div'),feedback=node('p','', 'gr-ma-feedback');
   feedback.setAttribute('role','status');panel.append(header,status,tools,list,feedback);root.append(style,panel);
   const fullscreen=owner.shadow.getElementById('map-fullscreen-dialog');
@@ -74,6 +85,8 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     const plan=planLocations(state),term=filter.value.trim().toLocaleLowerCase();
     status.textContent=plan.mode==='db_active'?t.db:plan.mode==='migration_pending'?t.pending:
       enabled?t.legacy:t.off;
+    migrationButton.hidden=!(plan.mode==='migration_pending'&&typeof migrate==='function');
+    if(!migrationButton.hidden&&!migrationButton.parentNode)tools.append(migrationButton);
     list.replaceChildren();
     const addGroup=(title,records)=>{
       const filtered=records.filter(p=>String(p.name||p.summary||'').toLocaleLowerCase().includes(term));
@@ -96,7 +109,7 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     };
     addGroup(t.active,plan.active);addGroup(t.archived,plan.archived);
     if(!list.children.length)list.append(node('p',t.empty));
-    if(!feedback.textContent)notice(plan.canRename?t.dbHint:t.legacyHint);
+    if(!feedback.textContent)notice(!state.enabled?t.setupHint:plan.canRename?t.dbHint:t.legacyHint);
   };
   const showDetails=place=>{
     list.replaceChildren();tools.hidden=true;
