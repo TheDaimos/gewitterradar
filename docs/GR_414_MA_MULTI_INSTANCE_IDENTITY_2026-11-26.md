@@ -9,6 +9,7 @@ Identitätsvorsorge für (1) mehrere miteinander verbundene, eigenständige Home
 - `locations.location_id` ist weiterhin eine unabhängige UUID der lokalen überwachten Area; gleiche Koordinaten implizieren keine Identität.
 - `locations.location_origin` bleibt die ausdrückliche Herkunft des lokalen Datensatzes.
 - `source_instances.instance_id` ist ein später zu provisionierender, dauerhaft stabiler UUID-Identifikator einer **logischen** HA-Installation. Eine VM-ID, hostname, entity_id, IP-Adresse oder bloße Koordinate ist dafür nicht geeignet.
+- `source_nodes.node_id` bezeichnet einen ausdrücklich registrierten HA-Knoten, der zu einer logischen HA-Instanz gehört. Beim Failover kann derselbe logische Dienst bestehen bleiben, ohne einen neuen überwachten Standort zu erzeugen.
 - `source_instances.cluster_id` (nullable UUID) bezeichnet eine optionale **logische HA-Gruppe**, keine automatische HA-Clustererkennung und keine aktive gemeinsame Speichersteuerung.
 - `location_source_refs` besitzt eigene UUID `reference_id`, Fremdschlüssel auf eine Location und eine HA-Instanz sowie `entity_id`, nullable `physical_device_id`, Revision. Das ergibt eine n:m-Verknüpfung von überwachten Orten und Quellreferenzen mit gesonderter Herkunftsinstanz.
 - `UNIQUE(location_id,instance_id,entity_id)` verhindert nur exakt doppelte **Verknüpfungen**. Weder `entity_id` noch `physical_device_id` noch Koordinaten sind global eindeutig oder bilden eine automatische Merge-Regel.
@@ -16,7 +17,7 @@ Identitätsvorsorge für (1) mehrere miteinander verbundene, eigenständige Home
 
 ## Migration V8 → V9
 
-Transaktionale additive Erstellung von `source_instances`, `location_source_refs` und zwei nicht-eindeutigen Lookup-Indizes nach vollständiger Prüfung des bisherigen V8-Schemas. Es werden **keine alten Daten** umklassifiziert, keine Zuordnungen erfunden und keine Tracker umgeschrieben. Existierende v0–v8-Migrationen laufen anschließend bis V9. Fremdschlüssel- und `quick_check`-Prüfung bleiben verpflichtend; nicht-kanonische bzw. unbekannte Schemata werden ohne Reset abgewiesen.
+Transaktionale additive Erstellung von `source_instances`, `source_nodes`, `location_source_refs` und drei nicht-eindeutigen Lookup-Indizes nach vollständiger Prüfung des bisherigen V8-Schemas. Es werden **keine alten Daten** umklassifiziert, keine Zuordnungen erfunden und keine Tracker umgeschrieben. Existierende v0–v8-Migrationen laufen anschließend bis V9. Fremdschlüssel- und `quick_check`-Prüfung bleiben verpflichtend; nicht-kanonische bzw. unbekannte Schemata werden ohne Reset abgewiesen.
 
 ## Ausdrücklich noch zu entwerfen, bevor irgendeine Multi-HA-Anbindung aktiviert wird
 
@@ -28,4 +29,4 @@ Transaktionale additive Erstellung von `source_instances`, `location_source_refs
 
 ## Regression
 
-`tests/test_ma_instance_identity.py` deckt die V8→V9-Migration, eine frische V9-Datenbank, gleiche Koordinaten und gleich benannte HA-Entitäten in zwei verschiedenen Instanzen, eindeutige Bindungen und FK-Schutz ab. `tests/test_ma_location_origin.py` deckt V7→V9 einschließlich Herkunftserhalt ab. `.github/workflows/ma-020.yml` führt beide gezielten Tests aus.
+`tests/test_ma_instance_identity.py` deckt die V8→V9-Migration, eine frische V9-Datenbank, gleiche Koordinaten und gleich benannte HA-Entitäten in zwei verschiedenen Instanzen, registrierte HA-Knoten, eindeutige Bindungen und FK-Schutz ab. `tests/test_ma_location_origin.py` deckt V7→V9 einschließlich Herkunftserhalt ab. `.github/workflows/ma-020.yml` führt beide gezielten Tests aus.
