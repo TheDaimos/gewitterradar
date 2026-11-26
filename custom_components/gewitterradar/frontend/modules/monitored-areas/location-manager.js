@@ -125,14 +125,14 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
       else if(kind==='archive')await archive(place);
       else await restore(place);
       consume(await refresh());
-    }catch(error){notice(t.error+' ('+String(error?.code||error?.message||'error')+')',true);}
+    }catch(error){notice(t.error,true);}
     finally{state.busy=false;filter.disabled=false;reloadButton.disabled=false;render();}
   };
   const reload=async()=>{
     if(state.busy)return;
     state.busy=true;reloadButton.disabled=true;notice(t.busy);
     try{consume(await refresh());}
-    catch(error){notice(t.error+' ('+String(error?.code||error?.message||'error')+')',true);}
+    catch(error){notice(t.error,true);}
     finally{state.busy=false;reloadButton.disabled=false;}
   };
   filter.addEventListener('input',render);render();filter.focus({preventScroll:true});return root;
