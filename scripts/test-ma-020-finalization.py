@@ -138,6 +138,31 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(restored["archived"])
         self.assertEqual(len((await self.call("places_list"))["places"]),2)
 
+    async def test_archive_isolated_to_profile_link(self):
+        await self.imported()
+        await self.commit(await self.approved())
+        place = (await self.call("places_list"))["places"][0]
+        other_profile=uid()
+        self.vault.owners["alice"].add(other_profile)
+        link_id=uid()
+        def share_test_link(c):
+            c.execute("INSERT INTO profile_links(link_id,location_id,ha_user_id,vault_profile_id)"
+                      " VALUES(?,?,?,?)",
+                      (link_id,place["location_id"],"alice",other_profile))
+            c.execute("INSERT INTO profile_preferences(link_id) VALUES(?)",(link_id,))
+        await self.db.async_execute(share_test_link)
+        request={"profile_id":self.profile,"payload":{"location_id":place["location_id"]},
+                 "request_id":uid(),"expected_revision":place["revision"]}
+        await self.api.dispatch(actor_user_id="alice",is_admin=False,
+                                op="location_archive",request=request)
+        primary=(await self.call("places_list"))["places"]
+        second=await self.api.dispatch(actor_user_id="alice",is_admin=False,
+                   op="places_list",request={"profile_id":other_profile,"payload":{}})
+        self.assertTrue(all(p["location_id"]!=place["location_id"] for p in primary))
+        self.assertTrue(any(p["location_id"]==place["location_id"] for p in second["places"]))
+        self.assertEqual(await self.db.async_execute(lambda c:
+            c.execute("SELECT count(*) FROM archived_profile_links").fetchone()[0]),1)
+
     async def test_archive_disallowed_before_cutover(self):
         await self.imported()
         data=(await self.call("locations_list"))["locations"][0]
