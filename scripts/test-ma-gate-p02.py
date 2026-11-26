@@ -129,7 +129,7 @@ class Tests(unittest.IsolatedAsyncioTestCase):
 
     async def test_storage_restart_preserves_receipt_and_fk(self):
         result=await self.create()
-        self.assertEqual(await self.database.async_execute(lambda c:c.execute("PRAGMA user_version").fetchone()[0],kind="read"),8)
+        self.assertEqual(await self.database.async_execute(lambda c:c.execute("PRAGMA user_version").fetchone()[0],kind="read"),9)
         self.assertEqual(await self.database.async_execute(lambda c:c.execute("PRAGMA foreign_keys").fetchone()[0],kind="read"),1)
         await self.database.async_stop()
         await self.database.async_start()
