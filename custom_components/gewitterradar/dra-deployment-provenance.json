@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.14.2",
-  "build": "V4.14.2-DEV-2026-11-26",
-  "runtimeRevision": "4142r1",
-  "moduleSetId": "E414-2A1",
+  "productVersion": "4.14.6",
+  "build": "V4.14.6-DEV-2026-11-26",
+  "runtimeRevision": "4146r1",
+  "moduleSetId": "E414-6A1",
   "baselineFeatureHead": "3f5f31964c92cee764a7c1e7e218fd4119654e21",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
@@ -18,7 +18,7 @@
   },
   "deployment": {
     "channel": "feature/v4.14-monitored-areas",
-    "purpose": "MA-020 isolated DEV VM109 DRA acceptance candidate only; operator-controlled installation; NOT FINAL; no production installation or live data migration authorized",
+    "purpose": "MA-020 DEV VM109 opt-in SQLite migration and archived-location preservation, operator-controlled read-only preview first; NOT FINAL; no production installation or live data migration authorized",
     "productBehaviorUnchanged": false,
     "fitDataAutoApply": false,
     "previousRealMatrixAccepted": true,
