@@ -54,7 +54,7 @@ class Gate(unittest.IsolatedAsyncioTestCase):
         worker=self.store._thread
         await self.store.async_start()
         self.assertIs(self.store._thread,worker)
-        self.assertEqual(await self.store.async_execute(lambda c:tuple(c.execute("PRAGMA "+p).fetchone()[0] for p in ("foreign_keys","journal_mode","synchronous","user_version"))),(1,"wal",2,4))
+        self.assertEqual(await self.store.async_execute(lambda c:tuple(c.execute("PRAGMA "+p).fetchone()[0] for p in ("foreign_keys","journal_mode","synchronous","user_version"))),(1,"wal",2,7))
         self.assertNotEqual(await self.store.async_execute(lambda c:threading.get_ident()),threading.get_ident())
         await self.r.create_location(self.location(),link=self.profile())
         await self.r.create_tracker(dict(location_id=self.loc,stable_slug="fixture",unique_id="ma_"+self.loc+"_tracker",display_name="fixture"))
@@ -155,7 +155,7 @@ class Gate(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(self.store._thread)
         with self.assertRaises(db.DatabaseUnavailable): await self.r.get_location(self.loc)
         def repair_fixture():
-            with sqlite3.connect(self.path) as c: c.execute("PRAGMA user_version=3")
+            with sqlite3.connect(self.path) as c: c.execute("PRAGMA user_version=7")
         await asyncio.to_thread(repair_fixture)
         await self.store.async_start()
         self.assertEqual(await self.snapshot(),before)
