@@ -3,7 +3,7 @@ import sqlite3
 
 from .errors import StorageIntegrityError
 
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 8
 
 
 class UnsupportedSchema(sqlite3.DatabaseError):
@@ -221,6 +221,15 @@ DDL_V7_ADDITIONS = {
 DDL = {**DDL_V1, **DDL_V2_ADDITIONS, **DDL_V3_ADDITIONS, **DDL_V4_ADDITIONS, **DDL_V5_ADDITIONS, **DDL_V6_ADDITIONS, **DDL_V7_ADDITIONS}
 
 
+LOCATION_ORIGIN_COLUMN = ("location_origin TEXT NOT NULL DEFAULT 'unknown' "
+                          "CHECK (location_origin IN ('gr_manual','device','tracker','external','unknown'))")
+# SQLite ALTER TABLE appends the column before the final parenthesis.
+DDL_V8_LOCATIONS = DDL_V1["locations"].replace("\n    ) STRICT", "\n    , " + LOCATION_ORIGIN_COLUMN + ") STRICT")
+
+def _expected_v8():
+    return {**DDL, "locations": DDL_V8_LOCATIONS}
+
+
 def _objects(conn):
     return dict(conn.execute("SELECT name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%'"))
 
@@ -299,9 +308,17 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
                 conn.execute(statement)
             conn.execute("PRAGMA user_version=7")
             version = 7
+        if version == 7:
+            if _objects(conn) != DDL:
+                raise UnsupportedSchema("v7 schema identity mismatch")
+            if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
+                raise StorageIntegrityError("v7 foreign key check failed")
+            conn.execute("ALTER TABLE locations ADD COLUMN " + LOCATION_ORIGIN_COLUMN)
+            conn.execute("PRAGMA user_version=8")
+            version = 8
         if version != SCHEMA_VERSION:
             raise UnsupportedSchema(f"unsupported schema version {version}")
-        if _objects(conn) != DDL:
+        if _objects(conn) != _expected_v8():
             raise UnsupportedSchema("schema identity mismatch")
         if conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
             raise StorageIntegrityError("schema foreign key check failed")
