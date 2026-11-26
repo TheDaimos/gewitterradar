@@ -9,6 +9,8 @@ on:
       - 'custom_components/gewitterradar/manifest.json'
       - 'custom_components/gewitterradar/build_info.py'
       - 'tests/test_ma_frontend_module_registration.py'
+      - 'tests/test_ma_location_manager.mjs'
+      - 'docs/GR_4145_MA023_LOCATION_MANAGER_2026-11-26.md'
       - '.github/workflows/ma-frontend-registration.yml'
   workflow_dispatch:
 
