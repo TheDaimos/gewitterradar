@@ -41,7 +41,7 @@ def _canonical(items, *, allow_empty=False):
     records = {}
     for item in items:
         record, reason = _parse(item)
-        if reason or record is None or record["status"] != "needs_action":
+        if reason or record is None:
             raise FinalizationError("migration_incomplete")
         uid = record["uid"]
         if len(uid) > 160 or uid in records:
@@ -101,15 +101,17 @@ def _lookup_receipt(c, actor, profile, digest, records):
         for entry in imported:
             uid, location_id = entry["uid"], entry["location_id"]
             row = c.execute(
-                "SELECT l.name,l.lat,l.lon FROM locations l "
-                "JOIN profile_links p ON p.location_id=l.location_id "
+                "SELECT l.name,l.lat,l.lon,CASE WHEN a.link_id IS NULL THEN 0 ELSE 1 END "
+                "FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
+                "LEFT JOIN archived_profile_links a ON a.link_id=p.link_id "
                 "WHERE l.location_id=? AND p.ha_user_id=? AND p.vault_profile_id=?",
                 (location_id, actor, profile)).fetchone()
             rec = records[uid]["record"]
             # Source coordinates/names must actually match the durable target.
             if row is None or row[0] != rec["name"] or (
                 abs(row[1] - rec["lat"]) > 1e-9 or
-                abs(row[2] - rec["lon"]) > 1e-9
+                abs(row[2] - rec["lon"]) > 1e-9 or
+                bool(row[3]) != (rec["status"] == "completed")
             ):
                 break
             mapping[uid] = location_id
@@ -203,7 +205,7 @@ class Finalizer:
                 saved, reason = _parse(original)
             except (ValueError, TypeError, KeyError) as exc:
                 raise FinalizationError("migration_backup_incomplete") from exc
-            if reason or saved is None or saved["uid"] != uid or saved["status"] != "needs_action":
+            if reason or saved is None or saved["uid"] != uid:
                 raise FinalizationError("migration_backup_incomplete")
             original_item = {"uid": uid, "summary": original.get("summary"),
                              "description": original.get("description"), "status": original.get("status")}
@@ -215,14 +217,17 @@ class Finalizer:
             # item already removed from HA in a previous process. Its backup
             # must never be treated as sufficient if the SQLite target moved.
             target = c.execute(
-                "SELECT l.name,l.lat,l.lon FROM locations l JOIN profile_links p "
-                "ON p.location_id=l.location_id WHERE l.location_id=? "
+                "SELECT l.name,l.lat,l.lon,CASE WHEN a.link_id IS NULL THEN 0 ELSE 1 END "
+                "FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
+                "LEFT JOIN archived_profile_links a ON a.link_id=p.link_id "
+                "WHERE l.location_id=? "
                 "AND p.ha_user_id=(SELECT actor_user_id FROM migration_finalizations WHERE finalization_id=?) "
                 "AND p.vault_profile_id=(SELECT vault_profile_id FROM migration_finalizations WHERE finalization_id=?)",
                 (lid,saga_id,saga_id)).fetchone()
             if (target is None or target[0] != saved["name"]
                     or abs(target[1] - saved["lat"]) > 1e-9
-                    or abs(target[2] - saved["lon"]) > 1e-9):
+                    or abs(target[2] - saved["lon"]) > 1e-9
+                    or bool(target[3]) != (saved["status"] == "completed")):
                 raise FinalizationError("migration_target_changed")
             if uid in records:
                 if _item_digest(records[uid]) != digest or state == "absence_verified":
