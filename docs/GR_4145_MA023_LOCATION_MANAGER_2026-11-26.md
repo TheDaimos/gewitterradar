@@ -19,6 +19,33 @@
 
 Die neue Detailansicht zeigt **nur Basisdaten** (Name, Koordinaten, ggf. Revision). Das vollständige **Havanna-Detailfenster (MA-021)** mit Monitoring-/Historienansichten und das profilübergreifende Berechtigungsmenü **MA-022** sind damit **nicht** umgesetzt. Kein automatischer Migrationsstart, keine neue Monitoring-Engine, kein neuer Wetter-Provider. Bei nicht aktivierter MA-Runtime sehen Nutzer die bisherige Local-To-do-Liste und einen expliziten Status, nicht eine vorgetäuschte SQLite-Aktivierung.
 
+## Vollständiger Frontend-DEV-Build ausgeführt
+
+Die öffentliche, auf den V4.14.5-Feature-Branch beschränkte Build-Aktion
+`.github/workflows/ma-v4145-dev-build-sync.yml` hat auf
+[Run 45881359904](https://github.com/TheDaimos/gewitterradar/actions/runs/45881359904)
+mit **Ergebnis success** den regulären Befehl `node scripts/build-frontend.mjs`
+tatsächlich ausgeführt. Vor dem Build wurde der SHA256-/Größeneintrag des
+kanonischen Runtime-Manifests aus den aktuellen Bytes neu erzeugt. Der Builder
+synchronisierte beide installierbaren Frontend-Spiegel einschließlich
+`dashboard/dist` und `SHA256SUMS_FRONTEND.txt`. Im selben Runner wurden
+`node --test scripts/test-ma-004.mjs`,
+`node tests/test_ma_location_manager.mjs` und
+`python -m unittest discover -s tests -p test_ma_frontend_module_registration.py -v`
+erfolgreich ausgeführt.
+
+Der resultierende **Build-Commit** ist
+`27cfeec4b49facc1b2248024576f633cae35c101`.
+Die verwendete ältere MA-004-Lifecycle-Testannahme wurde an die seit V4.14.4
+tatsächlich *beim Start registrierte, aber nur optional gestartete* MA-Runtime
+angepasst. Optionales Modul-Importversagen wird beim Bootstrap isoliert
+abgefangen; andere GR-Module dürfen dadurch nicht abbrechen.
+
+**Statusgrenze:** Ein grüner Build-Runner belegt Code- und Paketkonsistenz,
+nicht die tatsächliche Installation oder Bedienbarkeit auf VM109. Zusätzliche
+vollständige öffentliche CI-Prüfungen werden auf dem nachfolgenden
+Dokumentations-HEAD ausgeführt; deren Ergebnis ist separat zu verifizieren.
+
 ## Verifikation und Abnahme
 
 - `tests/test_ma_location_manager.mjs`: tatsächliche Ausführung des reinen Standort-Modells für `legacy`, `migration_pending`, `db_active`, Dubletten/Koordinaten, plus statische Schnittstellenprüfungen.
