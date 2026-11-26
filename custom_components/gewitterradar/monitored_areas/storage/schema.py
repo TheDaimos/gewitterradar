@@ -231,6 +231,13 @@ DDL_V9_ADDITIONS = {
         label TEXT NOT NULL CHECK (length(trim(label)) BETWEEN 1 AND 120),
         revision INTEGER NOT NULL DEFAULT 1 CHECK (revision>=1)
     ) STRICT""",
+    "source_nodes": f"""CREATE TABLE source_nodes (
+        node_id TEXT NOT NULL PRIMARY KEY CHECK ({_uuid('node_id')}),
+        instance_id TEXT NOT NULL REFERENCES source_instances(instance_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+        label TEXT NOT NULL CHECK (length(trim(label)) BETWEEN 1 AND 120),
+        revision INTEGER NOT NULL DEFAULT 1 CHECK (revision>=1)
+    ) STRICT""",
+    "idx_source_nodes_instance": """CREATE INDEX idx_source_nodes_instance ON source_nodes(instance_id)""",
     "location_source_refs": f"""CREATE TABLE location_source_refs (
         reference_id TEXT NOT NULL PRIMARY KEY CHECK ({_uuid('reference_id')}),
         location_id TEXT NOT NULL REFERENCES locations(location_id) ON DELETE RESTRICT ON UPDATE RESTRICT,
