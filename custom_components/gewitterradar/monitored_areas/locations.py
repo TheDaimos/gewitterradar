@@ -43,7 +43,7 @@ class Locations:
 
     async def create(self, *, name, lat, lon, location_id=None, link=None):
         data = dict(location_id=_uuid(location_id) if location_id is not None else str(uuid4()),
-                    name=_name(name), lat=_coord(lat, -90, 90),
+                    name=_name(name), location_origin="gr_manual", lat=_coord(lat, -90, 90),
                     lon=_coord(lon, -180, 180),
                     created_at=_now_us(), updated_at=_now_us())
         return await self._repo.create_location(data, link=link)
