@@ -28,13 +28,15 @@ assert.equal(JSON.parse(await read('custom_components/gewitterradar/manifest.jso
 const provenance=JSON.parse(await read('custom_components/gewitterradar/dra-deployment-provenance.json'));
 for(const k of ['build','runtimeRevision','moduleSetId'])assert.equal(provenance[k],release[k]);
 assert.equal(provenance.productVersion,release.version);
-const draFeatureCandidate = release.version==='4.14.2' && release.displayVersion==='V4.14.2 DEV';
+const draFeatureCandidate = release.version.startsWith('4.14.') &&
+  release.displayVersion === 'V'+release.version+' DEV';
 const expectedChannel = draFeatureCandidate ? 'feature/v4.14-monitored-areas' : 'deploy/dev';
 assert.equal(provenance.deployment.channel,expectedChannel);
 if(draFeatureCandidate) {
-  assert.match(provenance.deployment.purpose,/MA-020.*isolated.*DEV VM109.*NOT FINAL/);
-  assert.equal(provenance.runtimeRevision,'4142r1');
-  assert.equal(provenance.moduleSetId,'E414-2A1');
+  // Check intent without locking all future V4.14 DEV builds to MA-020's
+  // original 4.14.2 identity. Exact version parity is asserted above.
+  assert.match(provenance.deployment.purpose,/MA-020.*DEV VM109.*NOT FINAL/);
+  assert.match(provenance.deployment.purpose,/no production installation/);
 }
 const deploy=JSON.parse(await read('deploy-relay.json')),channel=JSON.parse(await read('deploy-relay-channel.json'));
 assert.equal(deploy.source.repository,'TheDaimos/gewitterradar');
