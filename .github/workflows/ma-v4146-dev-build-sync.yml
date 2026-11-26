@@ -12,6 +12,9 @@ on:
       - 'custom_components/gewitterradar/monitored_areas/finalization.py'
       - 'frontend/modules/monitored-areas/migration-wizard.js'
       - 'scripts/test-ma-020-finalization.py'
+      - 'frontend/modules/monitored-areas/index.js'
+      - 'frontend/module-manifest.js'
+      - 'docs/GR_4146_MA_SQLITE_OPTIN_MIGRATION_2026-11-26.md'
 
 concurrency:
   group: ma-4146-build-${{ github.ref }}
