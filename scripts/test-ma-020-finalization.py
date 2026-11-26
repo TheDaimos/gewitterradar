@@ -111,6 +111,46 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(all(json.loads(row[0])["description"].startswith("GEWITTERRADAR_PLACE_V1")
                             for row in backups))
 
+    async def test_sqlite_archive_restore_profile_scope_and_idempotency(self):
+        await self.imported()
+        await self.commit(await self.approved())
+        before = (await self.call("places_list"))["places"]
+        self.assertEqual(len(before),2)
+        place = before[0]
+        reqid = uid()
+        request = {"profile_id":self.profile,
+                   "payload":{"location_id":place["location_id"]},
+                   "request_id":reqid,"expected_revision":place["revision"]}
+        archived = await self.api.dispatch(actor_user_id="alice",is_admin=False,
+                                           op="location_archive",request=request)
+        self.assertTrue(archived["archived"])
+        self.assertEqual(archived,await self.api.dispatch(
+            actor_user_id="alice",is_admin=False,op="location_archive",request=request))
+        self.assertEqual(len((await self.call("places_list"))["places"]),1)
+        all_places=(await self.call("places_list",{"include_archived":True}))["places"]
+        self.assertEqual(len(all_places),2)
+        self.assertEqual(sum(p["archived"] for p in all_places),1)
+        self.assertEqual(await self.db.async_execute(lambda c:
+            c.execute("SELECT count(*) FROM locations").fetchone()[0]),2)
+        request["request_id"]=uid()
+        restored=await self.api.dispatch(actor_user_id="alice",is_admin=False,
+                                         op="location_restore",request=request)
+        self.assertFalse(restored["archived"])
+        self.assertEqual(len((await self.call("places_list"))["places"]),2)
+
+    async def test_archive_disallowed_before_cutover(self):
+        await self.imported()
+        data=(await self.call("locations_list"))["locations"][0]
+        request={"profile_id":self.profile,
+                 "payload":{"location_id":data["location_id"]},
+                 "request_id":uid(),"expected_revision":data["revision"]}
+        with self.assertRaises(api_mod.ApiError) as exc:
+            await self.api.dispatch(actor_user_id="alice",is_admin=False,
+                                    op="location_archive",request=request)
+        self.assertEqual(exc.exception.code,"migration_pending")
+        self.assertEqual(await self.db.async_execute(lambda c:
+            c.execute("SELECT count(*) FROM archived_profile_links").fetchone()[0]),0)
+
     async def test_admin_and_confirmation_required_without_deletion(self):
         await self.imported()
         with self.assertRaises(final_mod.FinalizationError):
