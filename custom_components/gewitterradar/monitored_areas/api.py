@@ -282,8 +282,11 @@ class Api:
                 now=time.time_ns()//1000
                 for uid,d in choices.items():
                     candidate=candidates[uid]
-                    if candidate["status"]!="needs_action" and d["action"]!="skip":
-                        raise ApiError("migration_inactive_source")
+                    # Both active and completed Local-To-do places must be
+                    # imported. 'completed' becomes a profile-scoped SQLite
+                    # archive, never a silently discarded or active location.
+                    if candidate["status"] not in ("needs_action","completed"):
+                        raise ApiError("migration_source_invalid")
                     action=d["action"]
                     if action=="skip":
                         continue
@@ -299,11 +302,19 @@ class Api:
                         sql._insert(c,"profile_preferences",{"link_id":link_id})
                     else:
                         location_id=d["location_id"]
-                        _actor_link(c,location_id,actor_user_id,profile)
+                        link_id=_actor_link(c,location_id,actor_user_id,profile)
                         if action=="replace":
                             sql._update(c,"locations",location_id,d["expected_revision"],
                                 {"name":candidate["name"],"lat":candidate["lat"],
                                  "lon":candidate["lon"],"updated_at":now})
+                    # A link, not the shared location, owns archived state.
+                    # All changes remain in the idempotent SQLite transaction.
+                    if candidate["status"]=="completed":
+                        c.execute(
+                            "INSERT OR IGNORE INTO archived_profile_links(link_id,archived_at) VALUES(?,?)",
+                            (link_id,now))
+                    else:
+                        c.execute("DELETE FROM archived_profile_links WHERE link_id=?",(link_id,))
                     imported.append({"uid":uid,"location_id":location_id,"action":action})
                 return {"imported":imported,"profile_id":profile,
                         "source_digest":snapshot["source_digest"],
