@@ -111,6 +111,56 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(all(json.loads(row[0])["description"].startswith("GEWITTERRADAR_PLACE_V1")
                             for row in backups))
 
+    async def test_archived_and_active_legacy_places_survive_verified_cutover(self):
+        # The real V4.14.5 operator list has both saved and removed places.
+        # Neither must vanish or silently become an active monitored area.
+        self.items[1]["status"] = "completed"
+        preview = await self.call("migration_preview")
+        self.assertEqual(preview["valid"], 2)
+        self.assertEqual(preview["invalid"], 0)
+        self.assertEqual({x["status"] for x in preview["candidates"]},
+                         {"needs_action", "completed"})
+        await self.imported()
+        self.assertEqual(len(self.items), 2, "import must not remove Local To-do")
+        # A profile-level archive exists BEFORE any source deletion.
+        by_name = await self.db.async_execute(lambda c: c.execute(
+            "SELECT l.name,CASE WHEN a.link_id IS NULL THEN 0 ELSE 1 END "
+            "FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
+            "LEFT JOIN archived_profile_links a ON a.link_id=p.link_id "
+            "ORDER BY l.name").fetchall())
+        self.assertEqual(by_name, [("Alpha", 0), ("Beta", 1)])
+        approval = await self.approved()
+        self.assertEqual(approval["item_count"], 2)
+        self.assertEqual((await self.commit(approval))["mode"], "db_active")
+        self.assertEqual(len(self.items), 0)
+        places = (await self.call("places_list", {"include_archived": True}))["places"]
+        self.assertEqual(len(places), 2)
+        self.assertEqual({x["name"]: x["archived"] for x in places},
+                         {"Alpha": False, "Beta": True})
+
+    async def test_tampering_with_archived_link_blocks_source_deletion(self):
+        self.items[1]["status"] = "completed"
+        await self.imported()
+        # The finalized data must preserve the archived state exactly.
+        def corrupt(c):
+            c.execute("DELETE FROM archived_profile_links")
+        await self.db.async_execute(corrupt)
+        with self.assertRaises(final_mod.FinalizationError) as err:
+            await self.approved()
+        self.assertEqual(err.exception.code, "migration_unverified_import")
+        self.assertEqual(len(self.items), 2)
+        self.assertEqual(self.removed, [])
+
+    async def test_mixed_status_source_drift_blocks_finalization(self):
+        self.items[1]["status"] = "completed"
+        await self.imported()
+        approval = await self.approved()
+        self.items[1]["status"] = "needs_action"
+        with self.assertRaises(final_mod.FinalizationError) as err:
+            await self.commit(approval)
+        self.assertEqual(err.exception.code, "migration_source_changed")
+        self.assertEqual(self.removed, [])
+
     async def test_sqlite_archive_restore_profile_scope_and_idempotency(self):
         await self.imported()
         await self.commit(await self.approved())
