@@ -252,6 +252,8 @@ class Finalizer:
                 raise FinalizationError("confirmation_expired")
             records = await self._read_source(allow_empty=True)
             digest = _source_digest(records)
+            if digest != approval.source_digest or _full_digest(records) != approval.full_digest:
+                raise FinalizationError("migration_source_changed")
             # For a resumable, partially deleted saga the current digest differs.
             def begin(c):
                 existing = c.execute(

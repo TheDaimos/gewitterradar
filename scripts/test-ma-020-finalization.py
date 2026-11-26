@@ -284,6 +284,33 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
             await self.approved()
         self.assertEqual(self.removed,[])
 
+    async def test_resume_approval_invalidated_by_external_removal(self):
+        await self.imported()
+        self.fail_once = True
+        with self.assertRaises(final_mod.FinalizationError):
+            await self.commit(await self.approved())
+        self.api = Api(self.db,self.vault,fetch_legacy_items=self.source,
+                       remove_legacy_item=self.remove)
+        approval = await self.approved()
+        self.items[0]["due"] = "2026-12-31"
+        with self.assertRaises(final_mod.FinalizationError):
+            await self.commit(approval)
+        self.assertEqual(len(self.removed),1)
+        self.assertEqual(len(self.items),1)
+        self.assertEqual((await self.call("status"))["capabilities"]["saved_places_mode"],
+                         "migration_pending")
+
+    async def test_concurrent_confirmation_cannot_repeat_deletion(self):
+        import asyncio
+        await self.imported()
+        first, second = await self.approved(), await self.approved()
+        results = await asyncio.gather(self.commit(first),self.commit(second),
+                                       return_exceptions=True)
+        self.assertEqual(sum(isinstance(x,dict) and x.get("mode")=="db_active"
+                             for x in results),1)
+        self.assertEqual(len(self.removed),2)
+        self.assertEqual(len(set(self.removed)),2)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
