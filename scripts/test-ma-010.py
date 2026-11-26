@@ -131,7 +131,7 @@ class Tests(unittest.IsolatedAsyncioTestCase):
             with sqlite3.connect(backup) as c:
                 self.assertEqual(c.execute("PRAGMA integrity_check").fetchall(),[("ok",)])
                 self.assertEqual(c.execute("PRAGMA foreign_key_check").fetchall(),[])
-                self.assertEqual(c.execute("PRAGMA user_version").fetchone(),(4,))
+                self.assertEqual(c.execute("PRAGMA user_version").fetchone(),(9,))
                 self.assertEqual(c.execute("SELECT name,revision FROM locations").fetchone(),("changed",2))
         await asyncio.to_thread(verify)
 
