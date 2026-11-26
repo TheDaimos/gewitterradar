@@ -194,24 +194,37 @@ class Finalizer:
             backup = c.execute(
                 "SELECT source_sha,source_json FROM migration_source_backups "
                 "WHERE finalization_id=? AND item_uid=?", (saga_id,uid)).fetchone()
-            if backup is None or _hash(json.loads(backup[1])) != backup[0]:
+            if backup is None:
+                raise FinalizationError("migration_backup_incomplete")
+            try:
+                original = json.loads(backup[1])
+                if not isinstance(original, dict) or _hash(original) != backup[0]:
+                    raise ValueError("backup digest mismatch")
+                saved, reason = _parse(original)
+            except (ValueError, TypeError, KeyError) as exc:
+                raise FinalizationError("migration_backup_incomplete") from exc
+            if reason or saved is None or saved["uid"] != uid or saved["status"] != "needs_action":
+                raise FinalizationError("migration_backup_incomplete")
+            original_item = {"uid": uid, "summary": original.get("summary"),
+                             "description": original.get("description"), "status": original.get("status")}
+            if _item_digest(original_item) != digest:
                 raise FinalizationError("migration_backup_incomplete")
             if uid in records and _hash(records[uid]["raw"]) != backup[0]:
                 raise FinalizationError("migration_source_changed")
-            row = c.execute(
-                "SELECT l.location_id FROM locations l JOIN profile_links p "
+            # Check the ORIGINAL verified target for *every* item, including an
+            # item already removed from HA in a previous process. Its backup
+            # must never be treated as sufficient if the SQLite target moved.
+            target = c.execute(
+                "SELECT l.name,l.lat,l.lon FROM locations l JOIN profile_links p "
                 "ON p.location_id=l.location_id WHERE l.location_id=? "
                 "AND p.ha_user_id=(SELECT actor_user_id FROM migration_finalizations WHERE finalization_id=?) "
                 "AND p.vault_profile_id=(SELECT vault_profile_id FROM migration_finalizations WHERE finalization_id=?)",
                 (lid,saga_id,saga_id)).fetchone()
-            if row is None:
+            if (target is None or target[0] != saved["name"]
+                    or abs(target[1] - saved["lat"]) > 1e-9
+                    or abs(target[2] - saved["lon"]) > 1e-9):
                 raise FinalizationError("migration_target_changed")
             if uid in records:
-                item = records[uid]["record"]
-                loc = c.execute("SELECT name,lat,lon FROM locations WHERE location_id=?", (lid,)).fetchone()
-                if (loc is None or loc[0] != item["name"] or abs(loc[1]-item["lat"]) > 1e-9
-                        or abs(loc[2]-item["lon"]) > 1e-9):
-                    raise FinalizationError("migration_target_changed")
                 if _item_digest(records[uid]) != digest or state == "absence_verified":
                     raise FinalizationError("migration_source_changed")
             elif state == "pending":
