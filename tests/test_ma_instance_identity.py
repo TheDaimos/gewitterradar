@@ -48,6 +48,7 @@ class InstanceIdentityTests(unittest.TestCase):
         self.assertEqual(c.execute("SELECT location_origin FROM locations WHERE location_id=?", (lid,)).fetchone()[0], "gr_manual")
         self.assertEqual(c.execute("SELECT count(*) FROM source_instances").fetchone()[0], 0)
         self.assertEqual(c.execute("SELECT count(*) FROM location_source_refs").fetchone()[0], 0)
+        self.assertEqual(c.execute("SELECT count(*) FROM source_nodes").fetchone()[0], 0)
         schema.initialize_schema(c)
 
     def test_two_instances_same_entity_and_coordinates_are_distinct(self):
@@ -62,6 +63,11 @@ class InstanceIdentityTests(unittest.TestCase):
         for inst in instances:
             c.execute("INSERT INTO source_instances(instance_id,cluster_id,label) VALUES(?,?,?)",
                       (inst, cluster, "HA"))
+        nodes = [str(uuid4()), str(uuid4())]
+        for node, inst in zip(nodes, instances):
+            c.execute("INSERT INTO source_nodes(node_id,instance_id,label) VALUES(?,?,?)",
+                      (node, inst, "failover node"))
+        self.assertEqual(c.execute("SELECT count(*) FROM source_nodes").fetchone()[0], 2)
         for lid, inst in zip(lids, instances):
             c.execute("INSERT INTO location_source_refs(reference_id,location_id,instance_id,entity_id,physical_device_id) "
                       "VALUES(?,?,?,?,?)", (str(uuid4()), lid, inst, "device_tracker.phone", "user-confirmed-phone"))
@@ -74,6 +80,9 @@ class InstanceIdentityTests(unittest.TestCase):
         with self.assertRaises(sqlite3.IntegrityError):
             c.execute("INSERT INTO location_source_refs(reference_id,location_id,instance_id,entity_id) VALUES(?,?,?,?)",
                       (str(uuid4()), lids[0], str(uuid4()), "device_tracker.orphan"))
+        with self.assertRaises(sqlite3.IntegrityError):
+            c.execute("INSERT INTO source_nodes(node_id,instance_id,label) VALUES(?,?,?)",
+                      (str(uuid4()), str(uuid4()), "orphan node"))
         c.rollback()
         self.assertEqual(c.execute("PRAGMA foreign_key_check").fetchall(), [])
 
