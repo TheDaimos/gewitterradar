@@ -12,6 +12,7 @@ on:
       - 'frontend/modules/ui/settings-vault-view.js'
       - 'tests/test_ma_location_manager.mjs'
       - 'tests/test_ma_v4146_optin_contract.py'
+      - 'tests/test_ma_frontend_module_registration.py'
       - 'custom_components/gewitterradar/monitored_areas/api.py'
       - 'custom_components/gewitterradar/monitored_areas/finalization.py'
       - 'frontend/modules/monitored-areas/migration-wizard.js'
