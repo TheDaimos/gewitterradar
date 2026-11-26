@@ -24,7 +24,7 @@ class JournalSchemaTests(unittest.TestCase):
     def test_new_database_has_journal_and_no_rows(self):
         c = self.database()
         schema.initialize_schema(c)
-        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 8)
+        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 9)
         self.assertEqual(c.execute("SELECT count(*) FROM migration_finalizations").fetchone()[0], 0)
         self.assertEqual(c.execute("SELECT count(*) FROM migration_finalization_items").fetchone()[0], 0)
         self.assertEqual(c.execute("SELECT count(*) FROM migration_source_backups").fetchone()[0], 0)
@@ -41,7 +41,7 @@ class JournalSchemaTests(unittest.TestCase):
         c.execute("INSERT INTO request_receipts VALUES(?,?,?,?,?,?)",
                   ("alice", str(uuid4()), "migration_commit", "0" * 64, "{}", 1))
         schema.initialize_schema(c)
-        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 8)
+        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 9)
         self.assertEqual(c.execute("SELECT count(*) FROM request_receipts").fetchone()[0], 1)
         self.assertEqual(c.execute("PRAGMA foreign_key_check").fetchall(), [])
 
@@ -57,7 +57,7 @@ class JournalSchemaTests(unittest.TestCase):
         c.execute("INSERT INTO migration_finalizations VALUES(?,?,?,?,?,?,?,?,?)",
                   (fid,"alice","profile","todo.gewitterradar_orte","a"*64,1,"prepared",1,1))
         schema.initialize_schema(c)
-        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 8)
+        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 9)
         self.assertEqual(c.execute("SELECT finalization_id FROM migration_finalizations").fetchone()[0],fid)
         self.assertEqual(c.execute("PRAGMA foreign_key_check").fetchall(), [])
 
@@ -70,7 +70,7 @@ class JournalSchemaTests(unittest.TestCase):
             c.execute(statement)
         c.execute("PRAGMA user_version=6")
         schema.initialize_schema(c)
-        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 8)
+        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 9)
         self.assertEqual(c.execute("SELECT count(*) FROM archived_profile_links").fetchone()[0],0)
         self.assertEqual(c.execute("PRAGMA foreign_key_check").fetchall(), [])
 
