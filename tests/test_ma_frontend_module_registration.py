@@ -17,6 +17,7 @@ class MonitoredAreasFrontendRegistrationTests(unittest.TestCase):
     def test_mirrored_frontend_artifacts_match(self):
         for path in (
             "gewitterradar.js",
+            "panel.js",
             "module-manifest.js",
             "version.js",
             "assets/gewitterradar-runtime-manifest.json",
@@ -53,6 +54,10 @@ class MonitoredAreasFrontendRegistrationTests(unittest.TestCase):
         self.assertEqual(runtime["runtimeRevision"], "4143r1")
         self.assertIn('version:"4.14.3"', version)
         self.assertEqual(integration["version"], "0.25.189")
+        panel = (FRONTEND / "panel.js").read_text(encoding="utf-8")
+        const = (ROOT / "custom_components/gewitterradar/const.py").read_text(encoding="utf-8")
+        self.assertIn("version.js?v=4143r1", panel)
+        self.assertIn("/gewitterradar/panel.js?v=4143r1", const)
 
 
 if __name__ == "__main__":
