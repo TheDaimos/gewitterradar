@@ -5,7 +5,7 @@ import {cleanupReminderReady,initializeMonitoredAreas,CLEANUP_DISMISSED,LEGACY_L
 
 assert.equal(CLEANUP_DISMISSED,'gewitterradar-ma020-cleanup-dismissed');
 assert.equal(LEGACY_LIST,'todo.gewitterradar_orte');
-assert.equal(MODULE_META.version,'0.2.0');
+assert.equal(MODULE_META.version,'0.2.1');
 assert.equal(cleanupReminderReady({mode:'migration_pending',listPresent:true,dismissed:false}),false);
 assert.equal(cleanupReminderReady({mode:'db_active',listPresent:true,dismissed:false}),true);
 assert.equal(cleanupReminderReady({mode:'db_active',listPresent:true,dismissed:true}),false);
@@ -21,7 +21,7 @@ for (const path of [
 for (const path of ['frontend/module-manifest.js','dashboard/dist/module-manifest.js',
                     'custom_components/gewitterradar/frontend/module-manifest.js']) {
   const content=readFileSync(resolve(path),'utf8');
-  assert.match(content,/"id": "monitored-areas.lifecycle",\s*"version": "0.2.0"/);
+  assert.match(content,/"id": "monitored-areas.lifecycle",\s*"version": "0.2.1"/);
 }
 const ui=readFileSync(resolve('frontend/modules/ui/controls.js'),'utf8');
 for (const path of ['dashboard/dist/modules/ui/controls.js','custom_components/gewitterradar/frontend/modules/ui/controls.js'])
