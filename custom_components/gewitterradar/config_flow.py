@@ -8,10 +8,13 @@ from homeassistant.config_entries import ConfigEntry, ConfigFlowResult, OptionsF
 from homeassistant.core import callback
 
 from .const import CONF_SHOW_SIDEBAR_PANEL, DOMAIN, NAME
+from .monitored_areas.config import CONF_MONITORED_AREAS_ENABLED
 
 SIDEBAR_OPTIONS_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_SHOW_SIDEBAR_PANEL): bool,
+        # Admin-only integration opt-in; disabled by default, no migration on toggle.
+        vol.Optional(CONF_MONITORED_AREAS_ENABLED, default=False): bool,
     }
 )
 
@@ -50,6 +53,7 @@ class GewitterradarOptionsFlow(OptionsFlowWithReload):
             options = {
                 **self.config_entry.options,
                 CONF_SHOW_SIDEBAR_PANEL: user_input[CONF_SHOW_SIDEBAR_PANEL],
+                CONF_MONITORED_AREAS_ENABLED: user_input.get(CONF_MONITORED_AREAS_ENABLED, False),
             }
             return self.async_create_entry(data=options)
 
