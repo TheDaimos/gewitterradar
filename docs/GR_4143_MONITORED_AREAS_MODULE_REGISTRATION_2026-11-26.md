@@ -15,7 +15,7 @@ Das Backend existiert getrennt in `custom_components/gewitterradar/monitored_are
 
 1. `frontend/gewitterradar.js` und installierter Spiegel `custom_components/gewitterradar/frontend/gewitterradar.js`: MA-Index wird beim Modulbootstrap importiert und registriert. Die Karten-Runtime startet **weiterhin nur** bei `card._config?.monitored_areas_enabled === true`; ohne dieses Flag erfolgen weder MA-UI-Runtime-Start noch MA-WS-Requests durch diese Funktion.
 2. Das vorhandene Modul mit ID `monitored-areas.lifecycle` und Version `0.2.0` bleibt unverändert; kein zweites Modul und keine parallele Standortdatenbank.
-3. V4.14.3 DEV / HA 0.25.189 / `4143r1` / Modulset `E414-3A1`; beide Frontend-Spiegel, Release- und Runtime-Manifeste synchronisiert.
+3. V4.14.3 DEV / HA 0.25.189 / `4143r1` / Modulset `E414-3A1`; beide Frontend-Spiegel, Release- und Runtime-Manifeste synchronisiert. Der Panel-Loader (`panel.js` in beiden Spiegeln) und die HA-Registrierung (`const.py`) verwenden ebenfalls `4143r1` statt alter `4142r1`-Cache-URLs.
 4. Standardbibliotheks-Regression `tests/test_ma_frontend_module_registration.py` hinzugefügt. Separate öffentliche Push-CI `.github/workflows/ma-frontend-registration.yml` hinzugefügt, ohne andere Gates abzuschalten.
 
 ## Erwartete Betreiber-Diagnose nach Installation
@@ -32,4 +32,4 @@ Das Backend existiert getrennt in `custom_components/gewitterradar/monitored_are
 
 **Schutz:** Kein PROD-Eingriff; keine Änderungen an Eye, Legend Hub, Mond, WR, Niederschlag, Wind oder Synoptik. Keine ungefragte Aktivierung der MA-Backend-Runtime oder Local-To-do-Migration.
 
-**Commitfolge:** `a6d47a71` / `80cb3187` (Bootstraps), `f705e6b7` bis `dd2a2d9d` (Versions-/Manifestspiegel), `90692ebf` (Regression), `0eb673a3` (isolierte CI).
+**Commitfolge:** `a6d47a71` / `80cb3187` (Bootstraps), `f705e6b7` bis `dd2a2d9d` (Versions-/Manifestspiegel), `90692ebf` / `3a25dcea` (Regression), `0eb673a3` (isolierte CI), `3fa1ecda` / `86e0a4eb` / `4bcfe45c` (Panel-Cache-Revision).
