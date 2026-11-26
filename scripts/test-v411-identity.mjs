@@ -99,6 +99,13 @@ assert.equal(dra.productVersion,runtime.productVersion);
 assert.equal(dra.build,runtime.build);
 assert.equal(dra.runtimeRevision,runtime.runtimeRevision);
 assert.equal(dra.moduleSetId,runtime.moduleSetId);
-assert.equal(dra.deployment.channel,'deploy/dev');
-assert.match(dra.deployment.purpose,/WeatherRouter|OPERA|Visualisierung|Weather Engine|diagnostic|Project Hub|Legend Hub|Legenden|Seitenleiste|settings|Einstellungen|Synoptik|WPC|Fronten|Isobaren|Master Eye|locale catalog|Internationalisierung/i);
-console.log('PASS: current GR release identity synchronized across frontend, runtime and DRA provenance on deploy/dev.');
+const expectedChannel=runtime.productVersion.startsWith('4.14.')
+  ?'feature/v4.14-monitored-areas':'deploy/dev';
+assert.equal(dra.deployment.channel,expectedChannel);
+if(expectedChannel==='feature/v4.14-monitored-areas') {
+  assert.match(dra.deployment.purpose,/MA-020.*SQLite.*NOT FINAL/);
+  assert.match(dra.deployment.purpose,/no production installation/);
+} else {
+  assert.match(dra.deployment.purpose,/WeatherRouter|OPERA|Visualisierung|Weather Engine|diagnostic|Project Hub|Legend Hub|Legenden|Seitenleiste|settings|Einstellungen|Synoptik|WPC|Fronten|Isobaren|Master Eye|locale catalog|Internationalisierung/i);
+}
+console.log('PASS: current GR release identity synchronized across frontend, runtime and DRA provenance on '+expectedChannel+'.');
