@@ -32,10 +32,10 @@ class LocationOriginTests(unittest.TestCase):
         db.execute("PRAGMA foreign_keys=ON")
         return db
 
-    def test_new_database_is_v8(self):
+    def test_new_database_is_v9(self):
         db = self.connection()
         schema.initialize_schema(db)
-        self.assertEqual(db.execute("PRAGMA user_version").fetchone()[0], 8)
+        self.assertEqual(db.execute("PRAGMA user_version").fetchone()[0], 9)
         self.assertEqual(db.execute("SELECT COUNT(*) FROM pragma_table_info('locations') WHERE name='location_origin'").fetchone()[0], 1)
         schema.initialize_schema(db)  # idempotent and canonical
         db.close()
