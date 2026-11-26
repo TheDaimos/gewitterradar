@@ -28,7 +28,9 @@ for (const path of ['dashboard/dist/modules/ui/controls.js','custom_components/g
   assert.equal(readFileSync(resolve(path),'utf8'),ui,path+' mirror drift');
 assert.match(ui,/maPort\.listPlaces/);
 assert.match(ui,/maPort\.saveCandidate/);
-assert.match(ui,/MA_DB_SOFT_DELETE_NOT_YET_AVAILABLE/);
+assert.match(ui,/maPort\.archivePlace/);
+assert.match(ui,/maPort\.restorePlace/);
+assert.doesNotMatch(ui,/MA_DB_SOFT_DELETE_NOT_YET_AVAILABLE/);
 console.log('MA-020 optional startup reminder, location cutover and mirror contracts PASS');
 
 const wizard=readFileSync(resolve('frontend/modules/monitored-areas/migration-wizard.js'),'utf8');
