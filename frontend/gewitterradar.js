@@ -24,6 +24,7 @@ let installLocationRadiiMap, installStrikesWarnings, installClustersRecent, inst
 let installCompass, installHistoryChart, installWeatherRouter, installWeatherRadar, installWeatherLayerMenu, installWeatherDisplayMenu, installWeatherLegendOverlay, installWeatherWind, installWeatherTemperature, installUpdateWatch;
 let installWeatherSynoptic;
 let installVault;
+let initializeMonitoredAreas;
 let GEWITTERRADAR_MODULE_LOAD_ERROR = null;
 
 try {
@@ -63,6 +64,8 @@ try {
   const weatherWind = await gewitterradarImport('./modules/weather/wind-display.js','4142r1');
   const weatherTemperature = await gewitterradarImport('./modules/weather/temperature-display.js','4142r1');
   const weatherSynoptic = await gewitterradarImport('./modules/weather/synoptic-display.js','4142r1');
+  // Register the optional MA module for diagnostics, without enabling its runtime.
+  const monitoredAreas = await gewitterradarImport('./modules/monitored-areas/index.js');
 
   const {installSettingsVault, vaultModulesMatch} = await gewitterradarImport('./modules/ui/settings-vault-view.js','4142r1');
   installVault = (Card, deps) => installSettingsVault(Card, () =>
@@ -106,6 +109,7 @@ try {
   ({ installWeatherWind } = weatherWind);
   ({ installWeatherTemperature } = weatherTemperature);
   ({ installWeatherSynoptic } = weatherSynoptic);
+  ({ initializeMonitoredAreas } = monitoredAreas);
 } catch (error) {
   GEWITTERRADAR_MODULE_LOAD_ERROR = error instanceof Error ? error : new Error(String(error));
   console.error('[Gewitterradar] Modul-Ladefehler', GEWITTERRADAR_MODULE_LOAD_ERROR);
@@ -160,9 +164,8 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
     maSlots.set(card, slot);
     void (async () => {
       try {
-        const optional = await gewitterradarImport('./modules/monitored-areas/index.js');
         if (maSlots.get(card) !== slot) return;
-        slot.runtime = optional.initializeMonitoredAreas(card, true);
+        slot.runtime = initializeMonitoredAreas(card, true);
       } catch (error) {
         if (maSlots.get(card) === slot) maSlots.delete(card);
         console.warn('[Gewitterradar] Optional Monitored Areas startup failed', error);
