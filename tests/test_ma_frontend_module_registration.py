@@ -1,4 +1,4 @@
-"""V4.14.5 DEV: optional MA module must be discoverable without activation.
+"""V4.14.6 DEV: optional MA module must be discoverable without activation.
 
 Pure standard-library regression gate; no Home Assistant installation required.
 """
@@ -52,6 +52,11 @@ class MonitoredAreasFrontendRegistrationTests(unittest.TestCase):
         self.assertIn("openLocationManager(this,{", controls)
         self.assertIn("this._config?.monitored_areas_enabled === true", controls)
         self.assertIn("port?.mode !== 'db_active'", controls)
+        self.assertIn("mode===\'migration_pending\'", controls)
+        self.assertIn("v407MonitoredAreasPort()", controls)
+        self.assertIn("MA_PROFILE_CHANGED", controls)
+        self.assertIn("migrationButton.hidden", manager)
+        self.assertIn("migration-wizard.js?v=4146r1", controls)
         self.assertIn("this._map.flyTo([position.latitude,position.longitude]", controls)
         self.assertNotIn("callWS(", manager)
         self.assertNotIn("migration_commit", manager)
@@ -69,10 +74,10 @@ class MonitoredAreasFrontendRegistrationTests(unittest.TestCase):
         self.assertTrue(ma[0]["optional"])
         self.assertEqual(len(runtime["modules"]), 38)
         self.assertEqual(len({item["id"] for item in runtime["modules"]}), 38)
-        self.assertEqual(runtime["productVersion"], "4.14.5")
-        self.assertEqual(runtime["runtimeRevision"], "4145r1")
-        self.assertIn('version:"4.14.5"', version)
-        self.assertEqual(integration["version"], "0.25.191")
+        self.assertEqual(runtime["productVersion"], "4.14.6")
+        self.assertEqual(runtime["runtimeRevision"], "4146r1")
+        self.assertIn('version:"4.14.6"', version)
+        self.assertEqual(integration["version"], "0.25.192")
         # DRA checks this stronger BUILD_VERSION marker before integration/frontend labels.
         build = (ROOT / "custom_components/gewitterradar/build_info.py").read_text(encoding="utf-8")
         import re
@@ -82,10 +87,10 @@ class MonitoredAreasFrontendRegistrationTests(unittest.TestCase):
         self.assertIn(f'version:"{version_match.group(1)}"', version)
         panel = (FRONTEND / "panel.js").read_text(encoding="utf-8")
         const = (ROOT / "custom_components/gewitterradar/const.py").read_text(encoding="utf-8")
-        self.assertIn("version.js?v=4145r1", panel)
-        self.assertIn("/gewitterradar/panel.js?v=4145r1", const)
+        self.assertIn("version.js?v=4146r1", panel)
+        self.assertIn("/gewitterradar/panel.js?v=4146r1", const)
         vault = (FRONTEND / "modules/ui/settings-vault-view.js").read_text(encoding="utf-8")
-        self.assertIn("from '../../version.js?v=4145r1'", vault)
+        self.assertIn("from '../../version.js?v=4146r1'", vault)
         self.assertNotIn("version.js?v=4141r1", vault)
 
 
