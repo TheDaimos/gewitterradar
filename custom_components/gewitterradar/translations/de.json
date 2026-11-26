@@ -74,9 +74,10 @@
     "step": {
       "init": {
         "title": "Gewitterradar konfigurieren",
-        "description": "Steuert den direkten Zugriff auf Gewitterradar über die Home-Assistant-Seitenleiste.",
+        "description": "Seitenleiste und optionale SQLite-Standortverwaltung. Monitored Areas startet erst nach ausdrücklicher Aktivierung; Local To-do wird dadurch nicht migriert oder gelöscht.",
         "data": {
-          "show_sidebar_panel": "In Seitenleiste anzeigen"
+          "show_sidebar_panel": "In Seitenleiste anzeigen",
+          "monitored_areas_enabled": "Monitored Areas (SQLite) aktivieren · keine automatische Migration"
         }
       }
     }
