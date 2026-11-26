@@ -50,3 +50,28 @@ test("runtime mirror content stays byte-identical",()=>{
     assert.equal(readFileSync(new URL(base+name,import.meta.url),"utf8"),frontend);
   }
 });
+
+test("SQLite archive/restore and archived listing never touch legacy To-do",async()=>{
+  const seen=[];
+  const db={callWS:async req=>{
+    seen.push(req);
+    if(req.type.endsWith("/status"))return {capabilities:{saved_places_mode:"db_active"}};
+    if(req.type.endsWith("/places_list"))return {mode:"db_active",places:[{location_id:"id",archived:true}],next_cursor:null};
+    if(req.type.endsWith("/location_archive"))return {archived:true};
+    if(req.type.endsWith("/location_restore"))return {archived:false};
+    throw Error("INVALID_CALL");
+  }};
+  const protectedLegacy={listPlaces:()=>{throw Error("LEGACY_READ");},saveCandidate:()=>{throw Error("LEGACY_WRITE");}};
+  const port=createLocationPort({hass:db,profileId:"authorized-profile",legacy:protectedLegacy});
+  assert.equal(await port.reconcileMode(),"db_active");
+  const records=await port.listPlaces("",null,true);
+  assert.equal(records.places[0].archived,true);
+  assert.equal(seen.at(-1).request.payload.include_archived,true);
+  assert.deepEqual(await port.archivePlace("location-id",3,"request-a"),{archived:true});
+  assert.equal(seen.at(-1).type,"gewitterradar/monitored_areas/location_archive");
+  assert.equal(seen.at(-1).request.expected_revision,3);
+  assert.deepEqual(await port.restorePlace("location-id",3,"request-b"),{archived:false});
+  assert.equal(seen.at(-1).type,"gewitterradar/monitored_areas/location_restore");
+  await assert.rejects(port.archivePlace("location-id",0,"r"),/MA_INVALID_REQUEST/);
+  await assert.rejects(port.listPlaces("",null,"true"),/MA_PLACE_INVALID_REQUEST/);
+});
