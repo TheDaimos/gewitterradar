@@ -31,12 +31,12 @@ class Tests(unittest.TestCase):
         self.c.execute("INSERT INTO notification_targets(link_id,target_key) VALUES(?,?)",(self.link,"target"))
 
     def snapshot(self):
-        return {name:self.c.execute("SELECT * FROM "+name).fetchall() for name in ("locations","profile_links","profile_preferences","notification_targets")}
+        return {name:self.c.execute("SELECT "+(",".join(("location_id","name","lat","lon","revision","created_at","updated_at","monitor_enabled","paused","record_enabled","mode","record_radius_m","alarm_radius_linked","alarm_radius_m","entities_enabled")) if name=="locations" else "*")+" FROM "+name).fetchall() for name in ("locations","profile_links","profile_preferences","notification_targets")}
 
     def test_migration_preserves_rows(self):
         before=self.snapshot()
         schema.initialize_schema(self.c)
-        self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(4,))
+        self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(9,))
         self.assertEqual(self.snapshot(),before)
         self.assertEqual(self.c.execute("SELECT count(*) FROM tracker_refs").fetchone(),(0,))
         schema.initialize_schema(self.c)
