@@ -901,10 +901,6 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             remove.textContent = '×';
             remove.title = text.removeSaved;
             remove.setAttribute('aria-label',text.removeSaved + ': ' + labelText);
-            if(this._maSavedMode==='db_active'){
-              remove.disabled=true;
-              remove.title='Die neue Datenbankverwaltung unterstützt diese Funktion nach MA-022.';
-            }
             row.append(button,remove);
           }
           frag.appendChild(row);
@@ -1162,11 +1158,12 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           const places=[],seen=new Set();
           let cursor=null;
           for (let page=0;page<200;page++) {
-            const result=await maPort.listPlaces('',cursor);
+            const result=await maPort.listPlaces('',cursor,true);
             for(const place of result.places) {
               if(seen.has(place.location_id))throw new Error('MA_DUPLICATE_LOCATION');
               seen.add(place.location_id);
-              places.push({uid:place.location_id,summary:place.name,status:'needs_action',
+              places.push({uid:place.location_id,summary:place.name,
+                status:place.archived?'completed':'needs_action',
                 provider:'monitored_areas_sqlite',name:place.name,displayLabel:place.displayLabel||place.name,
                 latitude:place.latitude,longitude:place.longitude,revision:place.revision});
             }
@@ -1176,8 +1173,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           }
           if(cursor!==null)throw new Error('MA_LOCATION_LIST_TOO_LARGE');
           places.sort((a,b)=>a.summary.localeCompare(b.summary,undefined,{sensitivity:'base'}));
-          this._v407SavedPlaces=places;
-          this._v407RemovedPlaces=[];
+          this._v407SavedPlaces=places.filter(p=>p.status==='needs_action');
+          this._v407RemovedPlaces=places.filter(p=>p.status==='completed');
           this._v407SavedPlacesEntity='monitored_areas_sqlite';
           this._v407SavedPlacesMissing=false;
           return places;
@@ -1219,7 +1216,16 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         return this._v407SavedPlacesLoading;
       };
       const v407UpdateSavedPlaceStatus = async (place,status) => {
-        if((await v407MonitoredAreasPort())?.mode==='db_active') throw new Error('MA_DB_SOFT_DELETE_NOT_YET_AVAILABLE');
+        const maPort=await v407MonitoredAreasPort();
+        if(maPort?.mode==='db_active'){
+          const id=String(place?.uid||'');
+          const revision=place?.revision;
+          if(status==='completed') await maPort.archivePlace(id,revision,crypto.randomUUID());
+          else if(status==='needs_action') await maPort.restorePlace(id,revision,crypto.randomUUID());
+          else throw new Error('MA_UNSUPPORTED_SAVED_PLACE_STATUS');
+          await v407LoadSavedPlaces({force:true});
+          return true;
+        }
         const entityId = v407SavedTodoEntity();
         if (!entityId) throw new Error('V407_TODO_MISSING');
         const item = String(place?.uid || place?.summary || '').trim();
@@ -1238,6 +1244,12 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                                     && Math.abs(Number(place.longitude)-Number(candidate.longitude))<0.00001;
           const duplicate=this._v407SavedPlaces.find(sameCoordinates);
           if(duplicate)return {saved:false,duplicate:true,restored:false,place:duplicate};
+          const archived=this._v407RemovedPlaces.find(sameCoordinates);
+          if(archived){
+            await maPort.restorePlace(archived.uid,archived.revision,crypto.randomUUID());
+            const refreshed=await v407LoadSavedPlaces({force:true});
+            return {saved:false,duplicate:false,restored:true,place:refreshed.find(sameCoordinates)||null};
+          }
           await maPort.saveCandidate(candidate,crypto.randomUUID());
           const refreshed=await v407LoadSavedPlaces({force:true});
           return {saved:true,duplicate:false,restored:false,place:refreshed.find(sameCoordinates)||null};
