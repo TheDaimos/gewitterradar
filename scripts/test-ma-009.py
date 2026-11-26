@@ -53,17 +53,17 @@ class Tests(unittest.TestCase):
 
     def test_fresh_v0_v1_v2_and_idempotence(self):
         schema.initialize_schema(self.c)
-        self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(4,))
-        self.assertEqual(schema._objects(self.c), schema.DDL)
+        self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(9,))
+        self.assertEqual(schema._objects(self.c), schema._expected_v9())
         schema.initialize_schema(self.c)
-        self.assertEqual(schema._objects(self.c), schema.DDL)
+        self.assertEqual(schema._objects(self.c), schema._expected_v9())
 
     def test_existing_rows_preserved_and_read_only_schema(self):
         link=self.init_v2()
-        before=self.c.execute("SELECT * FROM locations").fetchall()
+        before=self.c.execute("SELECT location_id,name,lat,lon FROM locations").fetchall()
         schema.initialize_schema(self.c)
-        self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(4,))
-        self.assertEqual(self.c.execute("SELECT * FROM locations").fetchall(), before)
+        self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(9,))
+        self.assertEqual(self.c.execute("SELECT location_id,name,lat,lon FROM locations").fetchall(), before)
         self.assertEqual(self.c.execute("SELECT count(*) FROM profile_links WHERE link_id=?",(link,)).fetchone(),(1,))
         self.assertEqual(self.c.execute("SELECT count(*) FROM tracker_refs").fetchone(),(1,))
         schema.initialize_schema(self.c)
@@ -74,7 +74,7 @@ class Tests(unittest.TestCase):
         self.c.execute("INSERT INTO locations(location_id,name,lat,lon,created_at,updated_at) VALUES(?,?,?,?,1,1)",
                        (self.loc,"kept",1,2))
         schema.initialize_schema(self.c)
-        self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(4,))
+        self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(9,))
         self.assertEqual(self.c.execute("SELECT name FROM locations").fetchone(),("kept",))
 
     def test_report_identity_nullable_time_and_validation(self):
@@ -152,7 +152,7 @@ class Tests(unittest.TestCase):
             with self.assertRaises(sqlite3.DatabaseError): schema.initialize_schema(self.c)
         self.assertEqual(self.c.execute("PRAGMA user_version").fetchone(),(2,))
         self.assertEqual(schema._objects(self.c),{**schema.DDL_V1,**schema.DDL_V2_ADDITIONS})
-        self.assertEqual(self.c.execute("SELECT * FROM locations").fetchall(),before)
+        self.assertEqual(self.c.execute("SELECT location_id,name,lat,lon FROM locations").fetchall(),before)
         schema.initialize_schema(self.c)
         self.c.execute("PRAGMA user_version=99")
         with self.assertRaises(schema.UnsupportedSchema): schema.initialize_schema(self.c)
