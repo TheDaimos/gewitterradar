@@ -8,6 +8,10 @@ on:
       - 'frontend/modules/ui/settings-vault-view.js'
       - 'tests/test_ma_location_manager.mjs'
       - 'tests/test_ma_v4146_optin_contract.py'
+      - 'custom_components/gewitterradar/monitored_areas/api.py'
+      - 'custom_components/gewitterradar/monitored_areas/finalization.py'
+      - 'frontend/modules/monitored-areas/migration-wizard.js'
+      - 'scripts/test-ma-020-finalization.py'
 
 concurrency:
   group: ma-4146-build-${{ github.ref }}
@@ -57,6 +61,8 @@ jobs:
           node tests/test_ma_location_manager.mjs
           python -m unittest discover -s tests -p 'test_ma_frontend_module_registration.py' -v
           python -m unittest discover -s tests -p 'test_ma_v4146_optin_contract.py' -v
+          python scripts/test-ma-018.py
+          python scripts/test-ma-020-finalization.py
       - name: Ensure no protected source module changed by build
         run: |
           if ! git diff --quiet -- frontend/gewitterradar.js frontend/modules frontend/version.js frontend/module-manifest.js; then
