@@ -1701,14 +1701,22 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           let loaded = true;
           try { await v407LoadSavedPlaces({force:true}); }
           catch { loaded = false; mode = 'legacy'; }
+          const profileAtOpen = this._settingsVault?.profile?.id || null;
+          const userAtOpen = this._hass?.user?.id || null;
+          const sameProfile = () =>
+            this.isConnected && this._settingsVault?.profile?.id === profileAtOpen &&
+            this._hass?.user?.id === userAtOpen;
           const reload = async () => {
+            if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
             await v407LoadSavedPlaces({force:true});
+            if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
             const currentMode = this._maSavedMode === 'db_active' ? 'db_active' : mode;
             return {mode:currentMode,
               places:[...(this._v407SavedPlaces || [])],
               removed:[...(this._v407RemovedPlaces || [])]};
           };
           const change = async (operation,place,name) => {
+            if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
             if (operation === 'rename') {
               const port = await v407MonitoredAreasPort();
               if (port?.mode !== 'db_active') throw new Error('MA_PLACE_DB_NOT_ACTIVE');
