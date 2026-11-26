@@ -23,10 +23,12 @@ PREFIX = "gewitterradar/monitored_areas/"
 OPS = (
     "status", "locations_list", "places_list", "migration_preview", "migration_commit",
     "migration_finalize_preview", "migration_finalize_commit", "location_get", "location_create", "location_update",
+    "location_archive", "location_restore",
     "monitoring_update", "links_list", "links_share", "links_transfer", "links_remove",
     "links_remove_preview", "history_reset_preview", "history_reset_commit", "preferences_update",
 )
 MUTATIONS = {"migration_commit","location_create", "location_update", "monitoring_update",
+             "location_archive", "location_restore",
              "links_share", "links_transfer", "links_remove", "history_reset_commit", "preferences_update"}
 MA_API_REGISTERED = "gewitterradar_ma_api_registered"
 
@@ -325,11 +327,14 @@ class Api:
             # MA-016: DB is an opt-in read candidate source only. The legacy
             # Local-To-do store remains authoritative until MA-020 finalizes a
             # validated migration. Never silently substitute an empty DB list.
-            if not set(payload) <= {"query","cursor","limit"}:
+            if not set(payload) <= {"query","cursor","limit","include_archived"}:
                 raise ApiError("invalid_request")
             query=payload.get("query","")
             cursor_id=payload.get("cursor")
             limit=payload.get("limit",50)
+            include_archived=payload.get("include_archived",False)
+            if type(include_archived) is not bool:
+                raise ApiError("invalid_request")
             if (not isinstance(query,str) or len(query)>120 or
                 type(limit) is not int or not 1<=limit<=100):
                 raise ApiError("invalid_request")
@@ -344,18 +349,22 @@ class Api:
                     raise ApiError("invalid_cursor")
                 escaped=query.replace("!","!!").replace("%","!%").replace("_","!_")
                 rows=c.execute(
-                    "SELECT l.location_id,l.name,l.lat,l.lon,l.revision "
+                    "SELECT l.location_id,l.name,l.lat,l.lon,l.revision, "
+                    "CASE WHEN a.link_id IS NULL THEN 0 ELSE 1 END "
                     "FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
+                    "LEFT JOIN archived_profile_links a ON a.link_id=p.link_id "
                     "WHERE p.ha_user_id=? AND p.vault_profile_id=? "
+                    "AND (?=1 OR a.link_id IS NULL) "
                     "AND (?='' OR l.name LIKE ? ESCAPE '!' COLLATE NOCASE) "
                     "AND (? IS NULL OR l.location_id>?) "
                     "ORDER BY l.location_id LIMIT ?",
-                    (actor_user_id,profile,query,"%"+escaped+"%",cursor_id,cursor_id,limit+1)).fetchall()
+                    (actor_user_id,profile,int(include_archived),query,"%"+escaped+"%",cursor_id,cursor_id,limit+1)).fetchall()
                 more=len(rows)>limit
                 places=[{"location_id":lid,"name":name,"displayLabel":name,
                          "latitude":lat,"longitude":lon,"revision":revision,
+                         "archived":bool(archived),
                          "provider":"monitored_areas_sqlite"}
-                        for lid,name,lat,lon,revision in rows[:limit]]
+                        for lid,name,lat,lon,revision,archived in rows[:limit]]
                 return {"mode":active_mode,"places":places,
                         "next_cursor":places[-1]["location_id"] if more else None}
             return await self._repo._db.async_execute(read_places,kind="read")
@@ -438,6 +447,31 @@ class Api:
             async with self._protect._lock:
                 self._protect._pending_resets.pop(nonce,None)
             return result
+
+        if op in {"location_archive","location_restore"}:
+            if set(payload)!={"location_id"}:
+                raise ApiError("invalid_request")
+            location_id=_uuid(payload["location_id"])
+            expected=_revision(request)
+            # Profile-only, reversible soft deletion; leave shared location,
+            # sensor state and immutable observation history untouched.
+            def mutate_archive(c):
+                link_id=_actor_link(c,location_id,actor_user_id,profile)
+                current=c.execute("SELECT revision FROM locations WHERE location_id=?",
+                                  (location_id,)).fetchone()
+                if current is None or current[0]!=expected:
+                    raise ApiError("revision_conflict")
+                if op=="location_archive":
+                    c.execute("INSERT OR IGNORE INTO archived_profile_links(link_id,archived_at) VALUES(?,?)",
+                              (link_id,time.time_ns()//1000))
+                else:
+                    c.execute("DELETE FROM archived_profile_links WHERE link_id=?",(link_id,))
+                return {"location_id":location_id,"archived":op=="location_archive",
+                        "revision":current[0]}
+            if (await self._finalizer.mode(actor_user_id,profile)
+                    if self._finalizer is not None else "migration_pending")!="db_active":
+                raise ApiError("migration_pending")
+            return await self._write(actor_user_id,op,request,mutate_archive,is_admin=is_admin)
 
         if op=="location_create":
             if set(payload) != {"name","lat","lon"}:
