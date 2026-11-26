@@ -544,6 +544,7 @@ class Api:
                 sql._insert(c,"profile_links",dict(link_id=new_link,location_id=location_id,ha_user_id=target_user,vault_profile_id=target_profile))
                 sql._insert(c,"profile_preferences",dict(link_id=new_link))
                 if op=="links_transfer":
+                    c.execute("DELETE FROM archived_profile_links WHERE link_id=?",(old_link,))
                     c.execute("DELETE FROM notification_targets WHERE link_id=?",(old_link,))
                     c.execute("DELETE FROM profile_preferences WHERE link_id=?",(old_link,))
                     c.execute("DELETE FROM profile_links WHERE link_id=?",(old_link,))
@@ -579,6 +580,7 @@ class Api:
                         raise ApiError("last_link_confirmation_required")
                     if reports or c.execute("SELECT 1 FROM tracker_refs WHERE location_id=?",(location_id,)).fetchone():
                         raise ApiError("history_exists")
+                c.execute("DELETE FROM archived_profile_links WHERE link_id=?",(link_id,))
                 c.execute("DELETE FROM notification_targets WHERE link_id=?",(link_id,))
                 c.execute("DELETE FROM profile_preferences WHERE link_id=?",(link_id,))
                 c.execute("DELETE FROM profile_links WHERE link_id=?",(link_id,))
