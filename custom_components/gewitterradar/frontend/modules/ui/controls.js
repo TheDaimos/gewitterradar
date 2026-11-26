@@ -20,7 +20,7 @@ export const SETTINGS_MENU_TREE=Object.freeze([
 ].map(Object.freeze));
 export const MODULE_META=Object.freeze({
   "id": "ui.controls",
-  "version": "1.1.95",
+  "version": "1.1.96",
   "group": "Oberfläche",
   "function": "Bedienbindungen",
   "subfunctions": [
