@@ -203,7 +203,7 @@ class Api:
             "alarm_radius_m","target_user_id","target_profile_id","notification_mode",
             "push_enabled","critical_enabled","closure_enabled","quiet_minutes",
             "status_push","display_settings_json","confirmation_nonce",
-            "explicit_final","limit","query","cursor","preview_id","decisions","nonce"})
+            "explicit_final","limit","query","cursor","preview_id","decisions","nonce","include_archived"})
         if op in MUTATIONS:
             if not request.get("request_id"):
                 raise ApiError("invalid_request")
