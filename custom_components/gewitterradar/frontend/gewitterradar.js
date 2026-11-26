@@ -65,7 +65,9 @@ try {
   const weatherTemperature = await gewitterradarImport('./modules/weather/temperature-display.js','4145r1');
   const weatherSynoptic = await gewitterradarImport('./modules/weather/synoptic-display.js','4145r1');
   // Register the optional MA module for diagnostics, without enabling its runtime.
-  const monitoredAreas = await gewitterradarImport('./modules/monitored-areas/index.js');
+  let monitoredAreas = null;
+  try { monitoredAreas = await gewitterradarImport('./modules/monitored-areas/index.js'); }
+  catch (error) { console.warn('[GewitterRadar] Optional Monitored Areas registration unavailable',error); }
 
   const {installSettingsVault, vaultModulesMatch} = await gewitterradarImport('./modules/ui/settings-vault-view.js','4145r1');
   installVault = (Card, deps) => installSettingsVault(Card, () =>
@@ -109,7 +111,7 @@ try {
   ({ installWeatherWind } = weatherWind);
   ({ installWeatherTemperature } = weatherTemperature);
   ({ installWeatherSynoptic } = weatherSynoptic);
-  ({ initializeMonitoredAreas } = monitoredAreas);
+  ({ initializeMonitoredAreas } = monitoredAreas || {});
 } catch (error) {
   GEWITTERRADAR_MODULE_LOAD_ERROR = error instanceof Error ? error : new Error(String(error));
   console.error('[Gewitterradar] Modul-Ladefehler', GEWITTERRADAR_MODULE_LOAD_ERROR);
@@ -159,6 +161,7 @@ if (GEWITTERRADAR_MODULE_LOAD_ERROR) {
       stopMonitoredAreas(card);
       return;
     }
+    if (typeof initializeMonitoredAreas !== 'function') return;
     if (maSlots.has(card)) return;
     const slot = {runtime:null};
     maSlots.set(card, slot);
