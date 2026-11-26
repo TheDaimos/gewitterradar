@@ -1,10 +1,7 @@
-> **Entwicklung auf `deploy/dev`: V4.12.6 DEV / HA 0.25.167.** [Installierbarer DEV-Prerelease](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.6-dev). Legend Hub und dynamische Auren: [Prüfbericht](docs/GR_412_LEGEND_REPORT_2026-11-22.md). Die separat gesicherte [Aura-Referenz v4.12.3-dev](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.12.3-dev) und V4.11.03 FINAL bleiben geschützt. DEV ist keine neue FINAL- oder Betreiberfreigabe.
-
 **Originalentwicklung und ursprünglicher Urheber: Christian Köhler**
 
-> **V4.11 FINAL · Gemeinschaftslizenz Modell B.**
-> Aktueller stabiler Release: [v4.11](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.11).
-> Geprüfte Entwicklungsbasis **4.11.249**, native Integration **0.25.156**, WeatherRouter **1.0.2 FINAL**.
+> **V4.13 FINAL · Gemeinschaftslizenz Modell B.**
+> Aktueller stabiler Release: [v4.13](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.13).
 > Vorheriger Rückfallstand: [V4.10 FINAL Modell B](https://github.com/TheDaimos/gewitterradar/releases/tag/v4.10-model-b-20261109).
 > Frühere rechtmäßig gewährte GPL-Rechte bleiben bestehen; historische Fassungen werden nicht rückwirkend umlizenziert.
 > Der Entwicklungszweig `deploy/dev` bleibt für künftige Änderungen getrennt.
@@ -26,7 +23,7 @@
 
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Integration-41BDF5?logo=home-assistant&logoColor=white)
 ![HACS](https://img.shields.io/badge/HACS-Custom%20Integration-41BDF5)
-![Version](https://img.shields.io/badge/GewitterRadar-V4.11%20FINAL-c9a45b)
+![Version](https://img.shields.io/badge/GewitterRadar-V4.13%20FINAL-c9a45b)
 ![Languages](https://img.shields.io/badge/Sprachvarianten-19-c9a45b)
 ![License](https://img.shields.io/badge/Lizenz-Modell%20B-lightgrey)
 
@@ -37,8 +34,8 @@
 </div>
 
 > [!IMPORTANT]
-> **Für neue Installationen ist die native Gewitterradar-Integration der empfohlene Weg.**  
-> Sie stellt eigene Home-Assistant-Entitäten für die Einstellungen bereit und benötigt kein YAML-Helferpaket. Die separate Dashboard-/Package-Variante bleibt weiterhin vollständig unterstützt.
+> **GewitterRadar wird als native Home-Assistant-Integration installiert.**
+> Sie stellt eigene Entitäten bereit und benötigt kein YAML-Helferpaket. Die optionale Dashboard-Karte ist Bestandteil der Integration.
 
 <p align="center">
   <img
@@ -63,7 +60,7 @@
 </div>
 
 > [!NOTE]
-> Die folgenden Originalaufnahmen stammen aus **4.11.243 DEV / HA 0.25.150** (funktional und visuell abgenommener FINAL-Kandidat). **Der stabile Installationsstand dieses Repository-Zweigs bleibt 4.10 FINAL**. Zusätzliche PRO-Wetterebenen benötigen einen kompatibel eingerichteten WeatherRouter.
+> Die folgenden Originalaufnahmen stammen aus **4.11.243 DEV / HA 0.25.150** (funktional und visuell abgenommener FINAL-Kandidat). Zusätzliche PRO-Wetterebenen benötigen einen kompatibel eingerichteten WeatherRouter.
 
 GewitterRadar bewahrt seine bewährten Grundlagen: **weltweite Standortsuche**, Orte und Postleitzahlen, direkte Koordinaten, gespeicherte Referenzorte, Live-Blitze, Gewittercluster, Beobachtungs- und Gefahrenradien, Kompass und **120-Minuten-Verlauf**. PRO erweitert das Konzept um gemeinsam nutzbare Ebenen für Niederschlag, Wind einschließlich Snake Flow, Temperatur, Wolken und Synoptik mit Hoch-/Tiefdruckgebieten, Isobaren und Wetterfronten.
 
@@ -85,23 +82,6 @@ GewitterRadar bewahrt seine bewährten Grundlagen: **weltweite Standortsuche**, 
 ## Schnellnavigation
 
 [Installation](#installation) · [View einrichten](#view-einrichten) · [Blitzortung koppeln](#blitzortung-koppeln) · [Recorder schützen](#recorder-schützen) · [Bestehende Installationen](#bestehende-installationen) · [Fehlersuche](#fehlersuche) · [Dokumentation](#dokumentation)
-
----
-
-## Ein Produkt, zwei Auslieferungsformen
-
-Gewitterradar ist fachlich **ein gemeinsames Produkt**. Dieses Repository ist die kanonische Produkt- und Entwicklungsquelle.
-
-| Native Integration | Dashboard-/Lovelace-Variante |
-| --- | --- |
-| **Empfohlen für neue Installationen** | Für bestehende Dashboard-/Package-Installationen |
-| Installation über HACS als **Integration** | Installation über HACS als **Dashboard** |
-| eigene Home-Assistant-Entitäten für Einstellungen | Einstellungen über das Gewitterradar-Package |
-| kein YAML-Helferpaket notwendig | Package unter `/config/packages/` notwendig |
-| eigener Referenztracker `device_tracker.gewitterradar` | eigener Referenztracker `device_tracker.gewitterradar_dashboard` |
-| Dashboard-Karte aus derselben Installation | Dashboard-Karte aus dem abgeleiteten Repository |
-
-Gemeinsamer Frontend-Code wird nur einmal entwickelt und deterministisch für beide Auslieferungsformen erzeugt. Abweichungen bei Frontend, Assets, Hilfetexten oder Prüfsummen gelten als Fehler.
 
 ---
 
@@ -151,44 +131,9 @@ Eine frische native Installation benötigt **kein** historisches YAML-Helferpake
 
 ---
 
-## 2. Dashboard-/Lovelace-Auslieferung
-
-Für diese Variante wird das abgeleitete Repository verwendet:
-
-```text
-TheDaimos/gewitterradar-dashboard
-```
-
-1. Repository in HACS als benutzerdefiniertes Repository vom Typ **Dashboard** hinzufügen.
-2. Gewitterradar installieren bzw. aktualisieren.
-3. Prüfen, dass folgende Ressource als JavaScript-Modul geladen wird:
-
-```text
-/hacsfiles/gewitterradar-dashboard/gewitterradar.js
-```
-
-4. Das aktuelle Gewitterradar-Package aus dem HACS-Ordner nach `/config/packages/` kopieren.
-5. Home Assistant vollständig neu starten.
-6. Anschließend die Gewitterradar-View anlegen.
-
-HACS-Dashboard-Repositories können Konfigurationsdateien nicht direkt nach `/config/packages/` schreiben. Der Package-Schritt ist deshalb bewusst manuell.
-
-Falls Packages noch nicht eingebunden sind:
-
-```yaml
-homeassistant:
-  packages: !include_dir_named packages
-```
-
-Existiert bereits ein `homeassistant:`-Block, den Eintrag dort ergänzen. **Keinen zweiten Hauptschlüssel anlegen.**
-
-Historische und aktuelle Gewitterradar-Packages dürfen nicht parallel aktiv sein, wenn sie dieselben `lightning_detection_*`-Helfer definieren.
-
----
-
 # View einrichten
 
-Weder die native Integration noch der Dashboard-Download erzeugen automatisch eine Home-Assistant-View.
+GewitterRadar kann direkt über die Seitenleiste geöffnet werden. Eine eigene Dashboard-View ist optional.
 
 ## Minimal-Konfiguration
 
@@ -223,16 +168,8 @@ counter_entity: sensor.DEIN_LIGHTNING_COUNTER
 
 Für weltweite Standortwechsel sollte Blitzortung.org den jeweils passenden Gewitterradar-Tracker als **Location entity** verwenden.
 
-**Native Integration**
-
 ```text
 device_tracker.gewitterradar
-```
-
-**Dashboard-/Package-Variante**
-
-```text
-device_tracker.gewitterradar_dashboard
 ```
 
 Ablauf:
@@ -278,12 +215,6 @@ Es darf genau **eine** Gewitterradar-Ressource aktiv sein:
 /gewitterradar/gewitterradar.js
 ```
 
-**Dashboard/HACS**
-
-```text
-/hacsfiles/gewitterradar-dashboard/gewitterradar.js
-```
-
 Veraltete, parallele oder Test-Ressourcen entfernen bzw. deaktivieren. Nach einer Änderung den Browser vollständig neu laden; bei hartnäckigem Cache gegebenenfalls einen Hard-Reload durchführen.
 
 ---
@@ -292,12 +223,7 @@ Veraltete, parallele oder Test-Ressourcen entfernen bzw. deaktivieren. Nach eine
 
 Beim ersten nativen Setup können unterstützte gültige `lightning_detection_*`-Legacy-Werte einmalig übernommen werden. Bereits vorhandene native Werte haben Vorrang. Legacy-Helfer werden nicht gelöscht oder überschrieben.
 
-Bei älteren Dashboard-Installationen insbesondere prüfen:
-
-- nicht gleichzeitig alte und neue Gewitterradar-Repositories laden;
-- nur eine JavaScript-Ressource aktiv halten;
-- alte Packages deaktivieren, bevor das aktuelle Package aktiviert wird;
-- historische Registry-Objekte erst löschen, wenn sie sicher nicht mehr verwendet werden.
+Veraltete Ressourcen und nicht mehr benötigte Helfer erst nach Prüfung deaktivieren.
 
 Details: [docs/MIGRATION_AND_ROLLBACK.md](docs/MIGRATION_AND_ROLLBACK.md)
 
@@ -358,7 +284,6 @@ Danach Home Assistant vollständig neu starten, Gewitterradar über **Einstellun
 - der Gewitterradar-Tracker ändert bei einem Standortwechsel seine Koordinaten;
 - Blitzortung.org verwendet den passenden Tracker als Location Entity;
 - Hilfe-/Hinweisbereich und Recorder-Hinweis sind verfügbar;
-- bei Dashboard-/Package-Nutzung liegt nur das aktuelle Package aktiv unter `/config/packages/`.
 
 Bei der nativen Variante zusätzlich prüfen, dass die Integration nach einem Neustart geladen bleibt und ihre Einstellungen erhalten bleiben.
 
@@ -379,7 +304,7 @@ Bei der nativen Variante zusätzlich prüfen, dass die Integration nach einem Ne
 
 # Projektstand, Qualität und Schutz
 
-V4.10 FINAL bewahrt die geschützten Vorgängerstufen und die weiterhin geschützte V4.07.56-Diagnosebasis. Für Entwicklung und Produktpflege gibt es nur **ein Gewitterradar**; Integration und Dashboard müssen denselben Produktstand ausliefern.
+V4.10 FINAL bewahrt die geschützten Vorgängerstufen und die weiterhin geschützte V4.07.56-Diagnosebasis. Für Entwicklung und Produktpflege gibt es nur **ein GewitterRadar**: die native Integration.
 
 Besonders geschützt sind:
 
@@ -397,7 +322,7 @@ Verbindliche Dokumente:
 - [GOLDEN_MASTER_POLICY.md](docs/GOLDEN_MASTER_POLICY.md)
 - [RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md)
 
-Die Release-Linie wird unter anderem über Home-Assistant-Laufzeittests, Hassfest, HACS-Validierung, deterministisches Integration-/Dashboard-Staging, Locale-/Recorder-Prüfungen, Browserregressionen, Golden-/Geometrievertrag, Diagnosevertrag und Hi-Res-Retentionsvertrag abgesichert.
+Die Release-Linie wird unter anderem über Home-Assistant-Laufzeittests, Hassfest, HACS-Validierung, deterministisches Integrations-Staging, Locale-/Recorder-Prüfungen, Browserregressionen, Golden-/Geometrievertrag, Diagnosevertrag und Hi-Res-Retentionsvertrag abgesichert.
 
 Ein grüner Laufzeittest ersetzt keine HACS-/Hassfest-Prüfung; eine statische Packaging-Prüfung ersetzt keinen realen HACS-Installationstest.
 
@@ -418,7 +343,7 @@ Ein grüner Laufzeittest ersetzt keine HACS-/Hassfest-Prüfung; eine statische P
 
 # Lizenz und Branding
 
-Die aktuelle Modell-B-Lizenzedition von Gewitterradar V4.10 FINAL steht unter der [Gewitterradar-Gemeinschaftslizenz](LICENSE.md).
+Die aktuelle Modell-B-Lizenzedition von GewitterRadar steht unter der [Gewitterradar-Gemeinschaftslizenz](LICENSE.md).
 
 Copyright © 2026 **Christian Köhler / TheDaimos**. Originalentwicklung und ursprünglicher Urheber: **Christian Köhler**.
 
