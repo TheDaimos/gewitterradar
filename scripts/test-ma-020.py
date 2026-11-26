@@ -24,7 +24,7 @@ class JournalSchemaTests(unittest.TestCase):
     def test_new_database_has_journal_and_no_rows(self):
         c = self.database()
         schema.initialize_schema(c)
-        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 6)
+        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 7)
         self.assertEqual(c.execute("SELECT count(*) FROM migration_finalizations").fetchone()[0], 0)
         self.assertEqual(c.execute("SELECT count(*) FROM migration_finalization_items").fetchone()[0], 0)
         self.assertEqual(c.execute("SELECT count(*) FROM migration_source_backups").fetchone()[0], 0)
@@ -41,7 +41,7 @@ class JournalSchemaTests(unittest.TestCase):
         c.execute("INSERT INTO request_receipts VALUES(?,?,?,?,?,?)",
                   ("alice", str(uuid4()), "migration_commit", "0" * 64, "{}", 1))
         schema.initialize_schema(c)
-        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 6)
+        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 7)
         self.assertEqual(c.execute("SELECT count(*) FROM request_receipts").fetchone()[0], 1)
         self.assertEqual(c.execute("PRAGMA foreign_key_check").fetchall(), [])
 
@@ -57,8 +57,21 @@ class JournalSchemaTests(unittest.TestCase):
         c.execute("INSERT INTO migration_finalizations VALUES(?,?,?,?,?,?,?,?,?)",
                   (fid,"alice","profile","todo.gewitterradar_orte","a"*64,1,"prepared",1,1))
         schema.initialize_schema(c)
-        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 6)
+        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 7)
         self.assertEqual(c.execute("SELECT finalization_id FROM migration_finalizations").fetchone()[0],fid)
+        self.assertEqual(c.execute("PRAGMA foreign_key_check").fetchall(), [])
+
+    def test_upgrade_v6_retains_source_backup_objects(self):
+        c = self.database()
+        old = {**schema.DDL_V1, **schema.DDL_V2_ADDITIONS,
+               **schema.DDL_V3_ADDITIONS, **schema.DDL_V4_ADDITIONS,
+               **schema.DDL_V5_ADDITIONS, **schema.DDL_V6_ADDITIONS}
+        for statement in old.values():
+            c.execute(statement)
+        c.execute("PRAGMA user_version=6")
+        schema.initialize_schema(c)
+        self.assertEqual(c.execute("PRAGMA user_version").fetchone()[0], 7)
+        self.assertEqual(c.execute("SELECT count(*) FROM archived_profile_links").fetchone()[0],0)
         self.assertEqual(c.execute("PRAGMA foreign_key_check").fetchall(), [])
 
     def test_journal_rejects_missing_location_and_unverified_status(self):
