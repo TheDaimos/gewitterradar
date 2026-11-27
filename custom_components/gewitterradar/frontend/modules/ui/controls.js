@@ -1,6 +1,7 @@
 import {settingsStorage} from '../core/settings-vault.js?v=4134r1';
 import {createLocationPort} from '../monitored-areas/location-port.js?v=4141r1';
-import {openLocationManager} from '../monitored-areas/location-manager.js?v=41410r1';
+import {openLocationManager} from '../monitored-areas/location-manager.js?v=41411r1';
+import {migrationRequestUUID} from '../monitored-areas/migration-wizard.js?v=41411r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
@@ -1240,8 +1241,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         if(maPort?.mode==='db_active'){
           const id=String(place?.uid||'');
           const revision=place?.revision;
-          if(status==='completed') await maPort.archivePlace(id,revision,crypto.randomUUID());
-          else if(status==='needs_action') await maPort.restorePlace(id,revision,crypto.randomUUID());
+          if(status==='completed') await maPort.archivePlace(id,revision,migrationRequestUUID());
+          else if(status==='needs_action') await maPort.restorePlace(id,revision,migrationRequestUUID());
           else throw new Error('MA_UNSUPPORTED_SAVED_PLACE_STATUS');
           await v407LoadSavedPlaces({force:true});
           return true;
@@ -1266,11 +1267,11 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           if(duplicate)return {saved:false,duplicate:true,restored:false,place:duplicate};
           const archived=this._v407RemovedPlaces.find(sameCoordinates);
           if(archived){
-            await maPort.restorePlace(archived.uid,archived.revision,crypto.randomUUID());
+            await maPort.restorePlace(archived.uid,archived.revision,migrationRequestUUID());
             const refreshed=await v407LoadSavedPlaces({force:true});
             return {saved:false,duplicate:false,restored:true,place:refreshed.find(sameCoordinates)||null};
           }
-          await maPort.saveCandidate(candidate,crypto.randomUUID());
+          await maPort.saveCandidate(candidate,migrationRequestUUID());
           const refreshed=await v407LoadSavedPlaces({force:true});
           return {saved:true,duplicate:false,restored:false,place:refreshed.find(sameCoordinates)||null};
         }
@@ -1730,7 +1731,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             if (operation === 'rename') {
               const port = await v407MonitoredAreasPort();
               if (port?.mode !== 'db_active') throw new Error('MA_PLACE_DB_NOT_ACTIVE');
-              await port.renamePlace(place.uid,name,place.revision,crypto.randomUUID());
+              await port.renamePlace(place.uid,name,place.revision,migrationRequestUUID());
               await v407LoadSavedPlaces({force:true});
             } else if (operation === 'archive') await v407RemoveSavedPlace(place);
             else if (operation === 'restore') await v407RestoreSavedPlace(place);
@@ -1748,7 +1749,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
               const port=await v407MonitoredAreasPort();
               if (port?.mode!=='migration_pending') throw new Error('MA_MODE_CHANGED');
-              const module=await import('../monitored-areas/migration-wizard.js?v=41410r1');
+              const module=await import('../monitored-areas/migration-wizard.js?v=41411r1');
               if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
               await module.openMigrationWizard(this);
             } : undefined,
