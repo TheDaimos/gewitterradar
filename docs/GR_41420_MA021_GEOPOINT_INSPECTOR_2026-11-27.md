@@ -16,13 +16,13 @@ Der ursprüngliche Inspector befindet sich in `frontend/modules/weather/temperat
 
 1. `frontend/modules/weather/temperature-display.js`: neue Methode `_weatherTemperatureOpenGeoPointAt({latitude,longitude})`. Sie prüft WGS84-Koordinaten und vorhandene Map/Shadow, stellt die bestehenden Inspector-Adapter bereit, verwendet **denselben** Inspector-Aufruf wie der bisherige Kartentap und bestätigt nur dann `opened:true`, wenn das Originalpopup tatsächlich erscheint. Es wird **kein** `flyTo`, `setView`, `selectReference` oder Temperatur-Layer-Toggle ausgelöst.
 2. `frontend/modules/ui/controls.js`: übergibt `openGeoPoint` als separate Callback-Funktion an die vorhandene Standortverwaltung und prüft das aktive Benutzer-/Vault-Profil **vor und nach** der asynchronen Anfrage. Keine Datenmutation oder Tracker-Umschaltung.
-3. `frontend/modules/monitored-areas/location-manager.js`: neuer Premium-Button `GeoPoint Inspector öffnen` im vorhandenen Details-Aktionsbereich neben Koordinatenkopie und Kartenfokus. Der Button wird während der Anfrage gesperrt. **Erst nach positiver Inspector-Bestätigung** schließt sich das MA-Overlay, damit das bereits bestehende Popup auf der Karte sichtbar wird. Bei Fehler bleibt das Standortfenster stehen und zeigt eine ehrliche Fehlermeldung. DE/EN-Fallbacks.
+3. `frontend/modules/monitored-areas/location-manager.js`: neuer metallischer Premium-Button `GeoPoint Inspector öffnen` **direkt sichtbar in den Grunddaten oberhalb des zunächst geschlossenen Akkordeons**. Koordinatenkopie und Kartenfokus bleiben darunter im erweiterten Abschnitt. Der Button wird während der Anfrage gesperrt. **Erst nach positiver Inspector-Bestätigung** schließt sich das MA-Overlay, damit das bereits bestehende Popup auf der Karte sichtbar wird. Bei Fehler bleibt das Standortfenster stehen und zeigt eine ehrliche Fehlermeldung. DE/EN-Fallbacks.
 4. Bestehende 43 Local-To-do-/SQLite-Orte und MA-020-Finalisierung sind vollständig unberührt. Keine neuen Provider, keine DB-Schemaveränderung. Das Inspector-Popup wird bewusst **nicht** als zweiter MA-Dialog dupliziert.
 
 ## Regressionstests
 
-- `tests/test_ma021_geopoint_launch.mjs`: 22 Source-Assertions für den echten Inspector-Entry-Point, korrektes Koordinatenmapping, Schutz vor Kamera-/Tracker-Änderung, vorhandenen Provider, Modal-Schließreihenfolge und Fehlerrückmeldung.
-- Aus direkt aus GitHub gelesenen Quellcodes ausgeführter isolierter Check: **22/22 PASS**.
+- `tests/test_ma021_geopoint_launch.mjs`: 23 Source-Assertions für den echten Inspector-Entry-Point, korrektes Koordinatenmapping, Schutz vor Kamera-/Tracker-Änderung, vorhandenen Provider, Modal-Schließreihenfolge und Fehlerrückmeldung.
+- Aus direkt aus GitHub gelesenen Quellcodes ausgeführter isolierter Check: **23/23 PASS**.
 - ECMAScript-Syntaxchecks der drei geänderten Module: **3/3 PASS**.
 - Automatische öffentliche GR-Feature-Branch-CI `.github/workflows/ma-v41420-dev-build-sync.yml` führt zusätzlich MA-020-/MA-021-Regressionen, Frontend-Build und Installationsspiegel-/SHA-Sync aus; der bisherige V4.14.19-Buildtrigger ist historisch/manuell gestellt. Kein öffentlicher DEV-Release.
 
