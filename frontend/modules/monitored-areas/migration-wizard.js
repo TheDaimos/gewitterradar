@@ -220,7 +220,8 @@ export async function openMigrationWizard(owner) {
   const setBusy=value=>{
     busy=value;
     previewButton.disabled=value;
-    importButton.disabled=value||!preview||preview.invalid>0||!preview.valid;
+    importButton.disabled=value||!preview||preview.invalid>0||!preview.valid||
+      [...previewBox.querySelectorAll("select[data-uid]")].some(sel=>sel.value==="skip");
     suggestButton.disabled=value||!preview;
     finalizeButton.disabled=value;
     sqlPreviewButton.disabled=value;
@@ -240,6 +241,20 @@ export async function openMigrationWizard(owner) {
       return decision;
     });
   };
+  const updateChoiceProgress=()=>{
+    const selects=[...previewBox.querySelectorAll("select[data-uid]")];
+    const unresolved=selects.filter(select=>select.value==="skip").length;
+    importButton.disabled=busy||!preview||preview.invalid>0||
+      selects.length!==preview.valid||unresolved>0;
+    return unresolved;
+  };
+  previewBox.addEventListener("change",event=>{
+    if(!event.target.matches?.("select[data-uid]")||!preview)return;
+    const pending=updateChoiceProgress();
+    status(pending
+      ?`${pending} Standorte müssen noch zugeordnet werden. Die SQLite-Daten und die alte To-do-Liste bleiben unverändert.`
+      :"Alle Entscheidungen getroffen. Ein Import erfolgt erst nach Klick auf „Auswahl importieren“.");
+  });
   const loadPreview=async()=>{
     if(busy)return;
     setBusy(true);
@@ -286,7 +301,7 @@ export async function openMigrationWizard(owner) {
         node.append(label,sel);previewBox.append(node);todoEntries.push({el:node,name:candidate.name});
       }
       suggestButton.hidden=!(preview.safe_existing_suggestions>0);
-      renderFilter();
+      renderFilter();updateChoiceProgress();
       status(preview.invalid?"Import/Leerung gesperrt, bis alle ungültigen Einträge geklärt sind.":"Wähle die Behandlung jedes Standorts und bestätige den Import.");
     }catch(error){preview=null;fail(error);}
     finally{setBusy(false);}
@@ -305,7 +320,8 @@ export async function openMigrationWizard(owner) {
         select.value=desired;selected++;
       }
     }
-    status(`${selected} eindeutige Bestandsorte zur Übernahme vorgemerkt – noch kein Import durchgeführt. Prüfe übrige manuelle Zuordnungen vor „Auswahl importieren“.`);
+    const remaining=updateChoiceProgress();
+    status(`${selected} eindeutige Bestandsorte vorgemerkt (kein Import). ${remaining} weitere Standorte benötigen noch eine manuelle Entscheidung.`);
   });
   const importSelected=async()=>{
     if(busy||!preview||preview.invalid)return;
