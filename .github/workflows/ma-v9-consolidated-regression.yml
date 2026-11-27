@@ -11,6 +11,7 @@ on:
       - 'frontend/modules/monitored-areas/**'
       - 'docs/GR_4147_DEV_TEST_CANDIDATE_2026-11-26.md'
       - 'frontend/version.js'
+      - '.github/workflows/ma-v4148-dev-build-sync.yml'
       - 'frontend/assets.json'
       - 'dashboard/dist/**'
       - 'custom_components/gewitterradar/frontend/**'
@@ -92,14 +93,14 @@ jobs:
           node scripts/verify-current-frontend.mjs
           sha256sum -c SHA256SUMS_FRONTEND.txt --quiet
           python scripts/verify-deploy-relay-contract.py
-          grep -q 'BUILD_VERSION = "4.14.7"' custom_components/gewitterradar/build_info.py
+          grep -q 'BUILD_VERSION = "4.14.8"' custom_components/gewitterradar/build_info.py
       - name: Package exact verified commit
         run: |
-          python scripts/build-dev-packages.py "$RUNNER_TEMP/ma-v4147" --revision "$GITHUB_SHA"
-          (cd "$RUNNER_TEMP/ma-v4147" && sha256sum -c SHA256SUMS.txt)
+          python scripts/build-dev-packages.py "$RUNNER_TEMP/ma-v4148" --revision "$GITHUB_SHA"
+          (cd "$RUNNER_TEMP/ma-v4148" && sha256sum -c SHA256SUMS.txt)
       - uses: actions/upload-artifact@v4
         with:
-          name: GR-V4.14.7-DEV-verified-${{ github.sha }}
-          path: ${{ runner.temp }}/ma-v4147/
+          name: GR-V4.14.8-DEV-verified-${{ github.sha }}
+          path: ${{ runner.temp }}/ma-v4148/
           if-no-files-found: error
           retention-days: 30
