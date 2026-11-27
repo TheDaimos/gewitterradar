@@ -8,7 +8,7 @@ const temperature=readFileSync(new URL('frontend/modules/weather/temperature-dis
 assert.match(manager,/detailGeo:'GeoPoint Inspector öffnen'/);
 assert.match(manager,/detailGeo:'Open GeoPoint Inspector'/);
 assert.match(manager,/typeof openGeoPoint==='function'/);
-assert.match(manager,/content\\.append\\(shortcuts\\)/,'GeoPoint button must be visible above the collapsed details');
+assert.ok(manager.includes('content.append(shortcuts);'),'GeoPoint button must be visible above the collapsed details');
 assert.match(manager,/await openGeoPoint\(\{latitude:data\.latitude,longitude:data\.longitude\}\)/);
 assert.match(manager,/geoButton\.disabled=true/);
 const start=manager.indexOf("const shortcuts=node('div','', 'gr-ma-detail-shortcuts')");
