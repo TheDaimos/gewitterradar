@@ -1,0 +1,22 @@
+// Native panel recovery: safe, non-destructive document refresh and error UI.
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+const source=readFileSync(new URL('../frontend/panel.js',import.meta.url),'utf8');
+assert.match(source,/GewitterRadar konnte nicht geladen werden/);
+assert.match(source,/Frontend neu laden/);
+assert.match(source,/Cache deaktivieren/);
+assert.match(source,/details\.append\(summary,message\)/);
+assert.match(source,/window\.location\.replace\(recoveryReloadUrl\(window\.location\.href\)\)/);
+assert.doesNotMatch(source,/caches\.delete|localStorage\.clear|sessionStorage\.clear|indexedDB\.deleteDatabase/);
+const match=source.match(/export function recoveryReloadUrl\(href, nonce=Date\.now\(\)\) \{[\s\S]*?\n\}/);
+assert.ok(match,'recovery URL helper present');
+const fn=vm.runInNewContext(match[0].replace('export ','')+'\nrecoveryReloadUrl;', {URL});
+const input='https://ha.example:8123/lovelace/weather?keep=1#today';
+const result=new URL(fn(input,1729));
+assert.equal(result.origin,'https://ha.example:8123');
+assert.equal(result.pathname,'/lovelace/weather');
+assert.equal(result.searchParams.get('keep'),'1');
+assert.equal(result.searchParams.get('_gr_recovery'),'1729');
+assert.equal(result.hash,'#today');
+console.log('PASS native panel recovery preserves route, nonce and HA browser state');
