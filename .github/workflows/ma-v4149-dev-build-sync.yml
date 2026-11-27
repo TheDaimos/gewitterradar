@@ -1,13 +1,7 @@
 name: Build V4.14.9 MA opt-in and migration DEV mirrors
+# Superseded by V4.14.10; manually dispatched only.
 on:
-  push:
-    branches: [feature/v4.14-monitored-areas]
-    paths:
-      - '.github/workflows/ma-v4149-dev-build-sync.yml'
-      - 'frontend/version.js'
-      - 'frontend/panel.js'
-      - 'scripts/test-gr-panel-cache-recovery.mjs'
-      - 'tests/test_ma_frontend_module_registration.py'
+  workflow_dispatch:
 
 concurrency:
   group: ma-4149-build-${{ github.ref }}
