@@ -244,9 +244,17 @@ export async function openMigrationWizard(owner) {
     setBusy(true);
     try{
       proof=await call("migration_finalize_preview");
+      if(proof?.source_and_sqlite_verified!==true || proof?.requires_admin!==true ||
+         proof?.explicit_confirmation_required!==true ||
+         !Number.isInteger(proof.item_count) || proof.item_count<1 ||
+         !Number.isInteger(proof.active_count) || !Number.isInteger(proof.archived_count) ||
+         proof.active_count<0 || proof.archived_count<0 ||
+         proof.active_count+proof.archived_count!==proof.item_count ||
+         typeof proof.nonce!=="string" || !proof.nonce)
+        throw new Error("Unvollständige Sicherheitsprüfung – keine Freigabe zur Leerung");
       confirm.hidden=false;
       checkbox.checked=false;
-      status(`SQLite und Quelle verifiziert: ${proof.item_count} Einträge. Nur mit Administratorberechtigung und ausdrücklicher Bestätigung wird die alte Liste geleert; die Liste selbst bleibt bestehen.`);
+      status(`SQLite und Quelle verifiziert: ${proof.item_count} Einträge · aktiv: ${proof.active_count} · archiviert: ${proof.archived_count}. Die alte Liste bleibt bis zur ausdrücklichen Administratorbestätigung vollständig bestehen. Die Liste selbst wird nicht gelöscht.`);
     }catch(error){proof=null;confirm.hidden=true;fail(error);}finally{setBusy(false);}
   };
   const finalize=async()=>{
