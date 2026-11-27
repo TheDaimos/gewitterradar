@@ -3,6 +3,7 @@ import { registerModule } from "../core/registry.js?v=4141r1";
 import { openMigrationWizard } from "./migration-wizard.js?v=41412r1";
 export const MODULE_META=Object.freeze({"id":"monitored-areas.lifecycle","version":"0.2.1","group":"Monitored Areas","function":"Optional lifecycle","subfunctions":["Initialize","Teardown","Migration cleanup reminder"],"file":"modules/monitored-areas/index.js","optional":true});
 registerModule(MODULE_META);
+const MA_PREMIUM_CLOSE = new URL("../../assets/gewitterradar-about-close-premium.webp", import.meta.url).href;
 export const CLEANUP_DISMISSED = "gewitterradar-ma020-cleanup-dismissed";
 export const LEGACY_LIST = "todo.gewitterradar_orte";
 const active = new WeakMap();
@@ -79,10 +80,12 @@ export function initializeMonitoredAreas(owner, enabled = false) {
       .gr-ma-cleanup footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:16px}.gr-ma-cleanup label{display:flex;align-items:center;gap:8px;cursor:pointer}
       .gr-ma-cleanup input{width:18px;height:18px;accent-color:#d9ba7e}.gr-ma-cleanup button{border:1px solid #d2b078;border-radius:9px;padding:9px 18px;color:#ffecbd;background:linear-gradient(#37485a,#142331);cursor:pointer;font-weight:700}
       .gr-ma-cleanup button:focus-visible,.gr-ma-cleanup input:focus-visible{outline:2px solid #ffe8ae;outline-offset:3px}
-      .gr-ma-cleanup .ma-close{position:absolute;right:9px;top:8px;padding:5px 10px;border:0;background:none;font-size:20px}.gr-ma-cleanup [role=status]{color:#ffbeae;font-size:12px}
+      .gr-ma-cleanup .ma-close{position:absolute;right:9px;top:8px;display:grid;place-items:center;width:44px;height:44px;padding:4px;border:0;background:transparent;cursor:pointer}
+      .gr-ma-cleanup .ma-close img{display:block;width:36px;height:36px;object-fit:contain;filter:grayscale(1) brightness(1.4) contrast(.85);pointer-events:none}
+      .gr-ma-cleanup .ma-close:hover img{filter:grayscale(1) brightness(1.7) contrast(.9)}.gr-ma-cleanup [role=status]{color:#ffbeae;font-size:12px}
     </style>
     <dialog class="gr-ma-cleanup" aria-labelledby="gr-ma-cleanup-title">
-      <button type="button" class="ma-close" aria-label="${t.close}">×</button>
+      <button type="button" class="ma-close" aria-label="${t.close}"><img src="${MA_PREMIUM_CLOSE}" alt="" draggable="false"></button>
       <h2 id="gr-ma-cleanup-title">✓ ${t.title}</h2>
       <p>${t.text}</p><strong>${t.lead}</strong>
       <ol>${t.steps.map(s=>'<li>'+s+'</li>').join('')}</ol>
