@@ -8,6 +8,8 @@ on:
       - 'custom_components/gewitterradar/monitored_areas/blitzortung_inventory.py'
       - 'frontend/modules/monitored-areas/location-port.js'
       - 'frontend/modules/monitored-areas/location-manager.js'
+      - 'frontend/modules/monitored-areas/tracker-settings.js'
+      - 'frontend/modules/ui/skeleton.js'
       - 'frontend/modules/ui/controls.js'
       - 'tests/test_ma025_blitzortung_inventory.py'
       - 'tests/test_ma025_blitzortung_inventory.mjs'

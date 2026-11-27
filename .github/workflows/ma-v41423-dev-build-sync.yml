@@ -1,0 +1,193 @@
+name: Build V4.14.23 MA opt-in and migration DEV mirrors
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths:
+      - '.github/workflows/ma-v41423-dev-build-sync.yml'
+      - 'frontend/version.js'
+      - 'custom_components/gewitterradar/dra-deployment-provenance.json'
+      - 'frontend/modules/monitored-areas/migration-wizard.js'
+      - 'custom_components/gewitterradar/monitored_areas/migration.py'
+      - 'custom_components/gewitterradar/monitored_areas/api.py'
+      - 'scripts/test-ma-020-finalization.py'
+      - 'tests/test_ma_existing_reconcile.mjs'
+      - 'frontend/modules/monitored-areas/location-manager.js'
+      - 'frontend/modules/monitored-areas/tracker-settings.js'
+      - 'frontend/modules/ui/skeleton.js'
+      - 'tests/test_ma023_batch_location.mjs'
+      - 'tests/test_ma023_tracker_settings.mjs'
+      - 'frontend/modules/monitored-areas/location-port.js'
+      - 'frontend/modules/ui/controls.js'
+      - 'custom_components/gewitterradar/monitored_areas/blitzortung_inventory.py'
+      - 'custom_components/gewitterradar/monitored_areas/tracker_names.py'
+      - 'tests/test_ma023_tracker_name.mjs'
+      - 'tests/test_ma025_blitzortung_inventory.mjs'
+      - 'frontend/modules/monitored-areas/profile-sharing.js'
+      - 'scripts/build-frontend.mjs'
+      - 'tests/test_ma022_profile_sharing.mjs'
+      - 'tests/test_ma022_port.mjs'
+      - 'tests/test_ma_frontend_module_registration.py'
+      - 'scripts/test-ma-022-profiles.py'
+      - 'frontend/modules/weather/temperature-display.js'
+      - 'tests/test_ma021_geopoint_launch.mjs'
+      - 'frontend/modules/monitored-areas/location-port.js'
+      - 'tests/test_ma021_responsive_layout.mjs'
+      - 'tests/test_ma021_port_readonly.mjs'
+      - 'tests/test_ma021_havanna_detail.mjs'
+      - 'frontend/modules/monitored-areas/index.js'
+      - 'tests/test_ma_sticky_dialog_layout.mjs'
+      - 'tests/test_ma_tabbed_views.mjs'
+      - 'tests/test_ma_premium_chrome.mjs'
+      - 'tests/test_ma_sqlite_preview.mjs'
+      - 'frontend/modules/ui/controls.js'
+
+concurrency:
+  group: ma-41423-build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-ma-dev:
+    if: github.repository == 'TheDaimos/gewitterradar' && github.ref == 'refs/heads/feature/v4.14-monitored-areas'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Confirm exact authorized DEV identity and new module
+        run: |
+          grep -q 'version:"4.14.23"' frontend/version.js
+          grep -q 'BUILD_VERSION = "4.14.23"' custom_components/gewitterradar/build_info.py
+          test -f frontend/modules/monitored-areas/location-manager.js
+      - name: Reject stale previous-runtime imports
+        run: |
+          if grep -R -n 'v=41421r1' frontend --include='*.js'; then
+            echo "Stale V4.14.21 cache imports in V4.14.23 sources"
+            exit 1
+          fi
+      - name: Update runtime asset SHA and size from actual versioned source
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import {createHash} from 'node:crypto';
+          const path='frontend/assets.json';
+          const list=JSON.parse(fs.readFileSync(path,'utf8'));
+          const asset=list.find(x=>x.file==='assets/gewitterradar-runtime-manifest.json');
+          if(!asset)throw Error('Missing canonical runtime asset inventory entry');
+          const bytes=fs.readFileSync('frontend/'+asset.file);
+          asset.sha256=createHash('sha256').update(bytes).digest('hex');
+          asset.sizeBytes=bytes.length;
+          fs.writeFileSync(path,JSON.stringify(list,null,2)+'\n');
+          JS
+      - name: Build canonical frontend into both mirrors, dashboard and hashes
+        run: node scripts/build-frontend.mjs
+      - name: Validate MA-004 lifecycle, registration and MA-023 management
+        id: regression
+        continue-on-error: true
+        run: |
+          set -e -o pipefail
+          {
+            node --test scripts/test-ma-004.mjs
+            node tests/test_ma_location_manager.mjs
+          node tests/test_ma021_havanna_detail.mjs
+          node tests/test_ma021_responsive_layout.mjs
+          node tests/test_ma021_port_readonly.mjs
+          node tests/test_ma021_geopoint_launch.mjs
+          node tests/test_ma022_profile_sharing.mjs
+          node tests/test_ma022_port.mjs
+          node tests/test_ma023_batch_location.mjs
+          node tests/test_ma023_tracker_settings.mjs
+          python scripts/test-ma-022-profiles.py
+          node --check frontend/modules/monitored-areas/profile-sharing.js
+          node --check frontend/modules/weather/temperature-display.js
+          node --check frontend/modules/monitored-areas/location-port.js
+            python -m unittest discover -s tests -p 'test_ma_frontend_module_registration.py' -v
+            python -m unittest discover -s tests -p 'test_ma_v4146_optin_contract.py' -v
+            python scripts/test-ma-018.py
+            python scripts/test-ma-020-finalization.py
+            node scripts/test-ma-020-ui.mjs
+            node tests/test_ma_sqlite_preview.mjs
+            node tests/test_ma_sticky_dialog_layout.mjs
+            node tests/test_ma_tabbed_views.mjs
+            node tests/test_ma_premium_chrome.mjs
+            node tests/test_ma_existing_reconcile.mjs
+            node --check frontend/modules/monitored-areas/index.js
+            node --check frontend/modules/monitored-areas/migration-wizard.js
+            node --check frontend/modules/monitored-areas/location-manager.js
+            node scripts/test-gr-panel-cache-recovery.mjs
+            python -m unittest discover -s tests -p test_ma_location_origin.py
+            python -m unittest discover -s tests -p test_ma_instance_identity.py
+          } 2>&1 | tee /tmp/ma-v41423-regression.log
+      - name: Record failed MA regression diagnostics on isolated feature branch
+        if: steps.regression.outcome == 'failure'
+        run: |
+          {
+            echo '# MA V4.14.23 CI regression diagnostics'
+            echo
+            echo 'Branch: feature/v4.14-monitored-areas'
+            echo 'Workflow: ma-v41423-dev-build-sync.yml'
+            echo 'These are test results, not operator database data.'
+            echo
+            echo '~~~'
+            tail -n 140 /tmp/ma-v41423-regression.log
+            echo '~~~'
+          } > docs/MA_V41423_CI_DIAGNOSTICS.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/MA_V41423_CI_DIAGNOSTICS.md
+          git commit -m "test(MA-020): record V4.14.23 regression failure for correction"
+          git restore -- frontend/assets.json dashboard/dist custom_components/gewitterradar/frontend SHA256SUMS_FRONTEND.txt
+          git fetch origin feature/v4.14-monitored-areas
+          git rebase origin/feature/v4.14-monitored-areas
+          git push origin HEAD:feature/v4.14-monitored-areas
+      - name: Fail build after preserving diagnostic evidence
+        if: steps.regression.outcome == 'failure'
+        run: exit 1
+      - name: Ensure no protected source module changed by build
+        run: |
+          if ! git diff --quiet -- frontend/gewitterradar.js frontend/modules frontend/version.js frontend/module-manifest.js; then
+            echo "ERROR: canonical frontend source was modified by build"
+            exit 1
+          fi
+      - name: Record independently verified MA-022 regression success
+        if: steps.regression.outcome == 'success'
+        run: |
+          {
+            echo '# MA V4.14.23 strict regression PASS'
+            echo
+            echo "Workflow: ${GITHUB_WORKFLOW}"
+            echo "Run ID: ${GITHUB_RUN_ID}"
+            echo "Tested SHA: ${GITHUB_SHA}"
+            echo "Branch: ${GITHUB_REF_NAME}"
+            echo
+            echo 'Every MA-020, MA-021 and MA-022 command in the regression shell returned exit code 0; set -e -o pipefail prevents hidden failures.'
+            echo 'The canonical build and distribution mirrors are committed separately in this job.'
+          } > docs/MA_V41423_CI_PASS.md
+      - name: Commit only regenerated delivery files on isolated MA feature branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- frontend/assets.json dashboard/dist custom_components/gewitterradar/frontend SHA256SUMS_FRONTEND.txt docs/MA_V41423_CI_PASS.md
+          if git diff --cached --quiet; then
+            echo "Delivery files already synchronized"
+          else
+            git commit -m "build(gr): regenerate V4.14.23 SQLite opt-in and migration UI mirrors and SHA256"
+            # GitHub contents-api edits can land while Actions build is running.
+            # Rebase additive delivery-only commit; never force push.
+            for attempt in 1 2 3; do
+              git fetch origin feature/v4.14-monitored-areas
+              git rebase origin/feature/v4.14-monitored-areas
+              if git push origin HEAD:feature/v4.14-monitored-areas; then exit 0; fi
+              echo "Non-fast-forward delivery race, retry $attempt"
+            done
+            echo "Could not safely publish build mirrors"
+            exit 1
+          fi
