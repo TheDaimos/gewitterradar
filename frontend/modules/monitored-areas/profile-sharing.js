@@ -213,7 +213,19 @@ export function openProfileSharing(owner,{mode="legacy",places=[],listLinks,getP
     successes.push(p.uid);picked.delete(p.uid);
    }catch(e){failures.push((p.name||p.uid)+": "+message(e,t))}
   }
-  if(successes.length&&typeof refresh==="function"){try{await refresh()}catch{failures.push(t.conflict)}}
+  if(successes.length&&typeof refresh==="function"){
+   try{
+    const updated=await refresh();
+    if(!permitted()||!overlay.isConnected){closeOverlay();return}
+    if(updated?.mode!=="db_active"||!Array.isArray(updated.places)||
+       !Array.isArray(updated.removed))throw Error("MA_INVALID_REFRESH");
+    const fresh=[...updated.places,...updated.removed]
+      .filter(p=>allowedIds.has(p.uid));
+    const retained=new Set(fresh.map(p=>p.uid));
+    places=fresh;
+    for(const id of picked)if(!retained.has(id))picked.delete(id);
+   }catch{failures.push(t.conflict)}
+  }
   setStatus(successes.length+" "+t.success+" · "+failures.length+" "+t.failure+"\n"+
     (failures.length?t.partial+"\n"+failures.join("\n").slice(0,1000):t.done),failures.length>0);
   setBusy(false);render();
