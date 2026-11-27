@@ -19,7 +19,7 @@ assert.match(wizard,/data-remove disabled>Jetzt Einträge leeren/);
 assert.match(wizard,/!checkbox\.checked/);
 assert.match(wizard,/explicit_final:true/);
 assert.match(manager,/\.gr-ma-panel>\.gr-ma-list\{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain/);
-assert.match(manager,/\.gr-ma-panel \.gr-ma-close\{width:44px;height:44px;min-height:44px/);
+assert.match(manager,/\.gr-ma-panel \.gr-ma-close\{width:44px;height:44px;min-width:44px;min-height:44px/);
 assert.match(manager,/gewitterradar-about-close-premium\.webp/);
 assert.match(manager,/border:1px solid rgba\(201,160,80,\.34\)/);
 assert.doesNotMatch(manager,/grayscale\(1\)/);
