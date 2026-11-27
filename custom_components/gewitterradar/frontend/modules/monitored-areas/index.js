@@ -1,6 +1,6 @@
 // MA-020: optional, profile-owned cleanup reminder. Never acts on To-do data.
 import { registerModule } from "../core/registry.js?v=4141r1";
-import { openMigrationWizard } from "./migration-wizard.js?v=41416r1";
+import { openMigrationWizard } from "./migration-wizard.js?v=41417r1";
 export const MODULE_META=Object.freeze({"id":"monitored-areas.lifecycle","version":"0.2.1","group":"Monitored Areas","function":"Optional lifecycle","subfunctions":["Initialize","Teardown","Migration cleanup reminder"],"file":"modules/monitored-areas/index.js","optional":true});
 registerModule(MODULE_META);
 const MA_PREMIUM_CLOSE = new URL("../../assets/gewitterradar-about-close-premium.webp", import.meta.url).href;
@@ -85,7 +85,7 @@ export function initializeMonitoredAreas(owner, enabled = false) {
       .gr-ma-cleanup .ma-close img{display:block;width:34px;height:34px;object-fit:contain;pointer-events:none;transition:transform .16s ease,filter .16s ease}
       @media(hover:hover) and (pointer:fine){.gr-ma-cleanup .ma-close:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}.gr-ma-cleanup .ma-close:active img{transform:scale(.97);filter:brightness(.92)}.gr-ma-cleanup [role=status]{color:#ffbeae;font-size:12px}
 
-      /* V4.14.16: match the accepted GR release-history metallic frame. */
+      /* V4.14.17: match the accepted GR release-history metallic frame. */
       .gr-ma-cleanup{border:2px solid transparent;
         background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%) padding-box,
           linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995)) padding-box,
