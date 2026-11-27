@@ -462,6 +462,16 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
                 {"preview_id":preview["preview_id"],"decisions":decisions},
                 request_id=uid())
         self.assertEqual(len((await self.call("places_list",{"include_archived":True}))["places"]),1)
+        # Reuse+replace within one batch must also reject the aliased target.
+        mixed=[{"uid":preview["candidates"][0]["uid"],"action":"use_existing",
+                "location_id":target},
+               {"uid":preview["candidates"][1]["uid"],"action":"replace",
+                "location_id":target,"expected_revision":1}]
+        with self.assertRaisesRegex(api_mod.ApiError,"migration_duplicate_existing_target"):
+            await self.call("migration_commit",
+                {"preview_id":preview["preview_id"],"decisions":mixed},
+                request_id=uid())
+        self.assertEqual(len((await self.call("places_list",{"include_archived":True}))["places"]),1)
         self.assertEqual(len(self.items),2)
         self.assertEqual(self.removed,[])
 
