@@ -43,4 +43,15 @@ assert.match(wizard,/migration_commit/);
 assert.match(wizard,/migration_finalize_preview/);
 assert.match(wizard,/migration_finalize_commit/);
 assert.match(wizard,/explicit_final:true/);
-assert.match(wizard,/crypto\.randomUUID\(\)/);
+assert.match(wizard,/migrationRequestUUID\(\)/);
+assert.doesNotMatch(wizard,/Math\.random\(/);
+const {migrationRequestUUID}=await import('data:text/javascript;base64,'+Buffer.from(wizard).toString('base64'));
+const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const fakeCrypto={getRandomValues(bytes){for(let i=0;i<bytes.length;i++)bytes[i]=i;return bytes;}};
+const id=migrationRequestUUID(fakeCrypto);
+assert.match(id,uuid);
+assert.equal(id,'00010203-0405-4607-8809-0a0b0c0d0e0f');
+assert.notEqual(migrationRequestUUID({randomUUID:()=> 'from-native'}),'not-native');
+assert.equal(migrationRequestUUID({randomUUID:()=> 'from-native'}),'from-native');
+assert.throws(()=>migrationRequestUUID({}),/Sichere UUID-Erzeugung nicht verfügbar/);
+
