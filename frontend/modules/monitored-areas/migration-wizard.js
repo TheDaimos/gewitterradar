@@ -63,7 +63,8 @@ export async function openMigrationWizard(owner) {
     <p>Alle Standorte werden vor einer möglichen Leerung in SQLite geprüft. Die alte Liste bleibt bis zur gesonderten Administratorbestätigung bestehen.</p>
     <div class="preview"></div><div class="controls">
       <button type="button" data-preview>Vorschau aktualisieren</button>
-      <button type="button" data-import disabled>Auswahl importieren</button>\n      <button type="button" data-sql-preview>SQLite-Daten ansehen (nur lesen)</button>
+      <button type="button" data-import disabled>Auswahl importieren</button>
+      <button type="button" data-sql-preview>SQLite-Daten ansehen (nur lesen)</button>
       <button type="button" data-finalize>Finalisierung prüfen</button>
     </div><section class="sql-preview" hidden aria-label="SQLite-Kontrollansicht"></section><div class="confirm" hidden>
       <label><input type="checkbox"> Ich bestätige die dauerhafte Entfernung aller erfolgreich übernommenen Einträge aus der alten Local-To-do-Liste.</label>
@@ -76,7 +77,8 @@ export async function openMigrationWizard(owner) {
   const feedback=dialog.querySelector("[role=status]");
   const previewButton=dialog.querySelector("[data-preview]");
   const importButton=dialog.querySelector("[data-import]");
-  const finalizeButton=dialog.querySelector("[data-finalize]");\n  const sqlPreviewButton=dialog.querySelector("[data-sql-preview]"),sqlPreviewBox=dialog.querySelector(".sql-preview");
+  const finalizeButton=dialog.querySelector("[data-finalize]");
+  const sqlPreviewButton=dialog.querySelector("[data-sql-preview]"),sqlPreviewBox=dialog.querySelector(".sql-preview");
   const removeButton=dialog.querySelector("[data-remove]");
   const confirm=dialog.querySelector(".confirm"),checkbox=confirm.querySelector("input");
   let preview=null, proof=null, busy=false;
@@ -86,7 +88,8 @@ export async function openMigrationWizard(owner) {
     busy=value;
     previewButton.disabled=value;
     importButton.disabled=value||!preview||preview.invalid>0||!preview.valid;
-    finalizeButton.disabled=value;\n    sqlPreviewButton.disabled=value;
+    finalizeButton.disabled=value;
+    sqlPreviewButton.disabled=value;
     removeButton.disabled=value||!proof||!checkbox.checked;
   };
   const close=()=>{if(dialog.open)dialog.close();shell.remove();};
@@ -259,7 +262,8 @@ export async function openMigrationWizard(owner) {
   };
   previewButton.addEventListener("click",()=>{void loadPreview();});
   importButton.addEventListener("click",()=>{void importSelected();});
-  finalizeButton.addEventListener("click",()=>{void prepareFinalize();});\n  sqlPreviewButton.addEventListener("click",()=>{void openSqlPreview();});
+  finalizeButton.addEventListener("click",()=>{void prepareFinalize();});
+  sqlPreviewButton.addEventListener("click",()=>{void openSqlPreview();});
   removeButton.addEventListener("click",()=>{void finalize();});
   owner.shadow.append(shell);
   dialog.show();
