@@ -277,26 +277,23 @@ export async function openMigrationWizard(owner) {
       }else{
         compare.textContent="Die ursprüngliche To-do-Liste bleibt maßgeblich, bis die separate Finalisierung bestätigt wird.";
       }
-      const search=document.createElement("input");search.type="search";
-      search.placeholder="SQLite-Standorte filtern (z. B. burg)";
-      search.setAttribute("aria-label","SQLite-Standorte filtern");
-      const groups=[];
+      // One shared filter controls both independent views; SQL remains read-only.
       for(const [label,items] of [["Aktiv",summary.active],["Archiviert",summary.archived]]){
         const group=document.createElement("details");group.open=label==="Aktiv";
         const title=document.createElement("summary");
         title.textContent=`${label}: ${items.length}`;
         group.append(title);
         const area=document.createElement("div");
-        const entries=items.map(item=>{
+        items.forEach(item=>{
           const el=document.createElement("div");el.className="sql-row";
           const name=document.createElement("span");name.textContent=item.name;
           const coordinates=document.createElement("small");
           coordinates.textContent=`${item.latitude.toFixed(5)}, ${item.longitude.toFixed(5)} · ${item.location_origin||"unknown"} · Revision ${item.revision}`;
           el.append(name,coordinates);area.append(el);
-          const row={el,name:item.name};sqlEntries.push(row);return row;
+          sqlEntries.push({el,name:item.name});
         });
         if(!items.length){const empty=document.createElement("p");empty.textContent="Keine Standorte";area.append(empty);}
-        group.append(area);groups.push(entries);sqlPreviewBox.append(group);
+        group.append(area);sqlPreviewBox.append(group);
       }
       sqlPreviewBox.prepend(heading,count,compare);
       sqlLoaded=true;renderFilter();
