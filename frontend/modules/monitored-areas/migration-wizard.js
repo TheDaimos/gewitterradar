@@ -150,6 +150,8 @@ export async function openMigrationWizard(owner) {
     previewBox.hidden=kind!=="todo";sqlPreviewBox.hidden=kind!=="sql";
     todoPreviewButton.setAttribute("aria-pressed",String(kind==="todo"));
     sqlPreviewButton.setAttribute("aria-pressed",String(kind==="sql"));
+    previewButton.textContent=kind==="sql"?"SQL aktualisieren":"Vorschau aktualisieren";
+    importButton.hidden=kind!=="todo";finalizeButton.hidden=kind!=="todo";confirm.hidden=kind!=="todo"||!proof;
     currentLetter="";textFilter.value="";renderFilter();
   };
   textFilter.addEventListener("input",renderFilter);
@@ -335,7 +337,7 @@ export async function openMigrationWizard(owner) {
       await owner._openMigrationCleanupHelp?.();
     }catch(error){fail(error);}finally{setBusy(false);}
   };
-  previewButton.addEventListener("click",()=>{void loadPreview();});
+  previewButton.addEventListener("click",()=>{void (currentView==="sql"?openSqlPreview():loadPreview());});
   importButton.addEventListener("click",()=>{void importSelected();});
   finalizeButton.addEventListener("click",()=>{void prepareFinalize();});
   todoPreviewButton.addEventListener("click",()=>{if(!busy)switchView("todo");});
