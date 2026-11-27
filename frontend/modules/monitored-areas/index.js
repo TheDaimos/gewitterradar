@@ -1,6 +1,6 @@
 // MA-020: optional, profile-owned cleanup reminder. Never acts on To-do data.
 import { registerModule } from "../core/registry.js?v=4141r1";
-import { openMigrationWizard } from "./migration-wizard.js?v=41412r1";
+import { openMigrationWizard } from "./migration-wizard.js?v=41413r1";
 export const MODULE_META=Object.freeze({"id":"monitored-areas.lifecycle","version":"0.2.1","group":"Monitored Areas","function":"Optional lifecycle","subfunctions":["Initialize","Teardown","Migration cleanup reminder"],"file":"modules/monitored-areas/index.js","optional":true});
 registerModule(MODULE_META);
 const MA_PREMIUM_CLOSE = new URL("../../assets/gewitterradar-about-close-premium.webp", import.meta.url).href;
