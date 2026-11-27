@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/ma-v41421-dev-build-sync.yml'
       - 'frontend/version.js'
+      - 'custom_components/gewitterradar/dra-deployment-provenance.json'
       - 'frontend/modules/monitored-areas/migration-wizard.js'
       - 'custom_components/gewitterradar/monitored_areas/migration.py'
       - 'custom_components/gewitterradar/monitored_areas/api.py'
