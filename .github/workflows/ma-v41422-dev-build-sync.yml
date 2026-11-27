@@ -63,6 +63,12 @@ jobs:
           grep -q 'version:"4.14.22"' frontend/version.js
           grep -q 'BUILD_VERSION = "4.14.22"' custom_components/gewitterradar/build_info.py
           test -f frontend/modules/monitored-areas/location-manager.js
+      - name: Reject stale previous-runtime imports
+        run: |
+          if grep -R -n 'v=41421r1' frontend --include='*.js'; then
+            echo "Stale V4.14.21 cache imports in V4.14.22 sources"
+            exit 1
+          fi
       - name: Update runtime asset SHA and size from actual versioned source
         run: |
           node --input-type=module <<'JS'
