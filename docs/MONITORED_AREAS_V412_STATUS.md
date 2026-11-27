@@ -664,3 +664,11 @@ Geschützte Refs vor Dokumentation: main 37f1aca54cd505fd91a2b1b0014cd7c6c280b26
 - Zusätzlich tatsächlich ausgeführte Code-Mode-Vertragstests (ohne HA): Location-Modell fail-closed in `migration_pending`, UUID-Fixture, Hi-Res-Asset/Premium-Close, 44px-Headerlayout, Vault-Profilwechsel-Guard – 7 Checks PASS. **Kein VM109-Live-Test und keine produktive Local-To-do-Leerung.**
 - **Bereitstellungsgrenze:** Installierbarer Git-Stand auf dem Feature-Branch synchronisiert; ob DRA V2 genau diesen Branch als Updatequelle erfasst und ein Update anbietet, ist nicht verifiziert. `deploy/dev` verbleibt divergent und wird aus Sicherheitsgründen nicht automatisch überschrieben oder via riskantem 648-Commit-Merge befüllt. Öffentliche DEV-GitHub-Releases werden nicht erstellt.
 - **Status:** MA-020 IMPLEMENTED / DEV-REALTEST OFFEN; P03-Gate und Betreiberabnahme weiter offen. Ein erfolgreicher Quell-/SQLite-Readback und die autorisierte Finalisierung sind auf isolierter VM109-Testumgebung vor der endgültigen Freigabe zu prüfen. Alte Local-To-do-Liste nicht ungefragt verändern.
+
+
+## Iterationskorrektur 27.11.2026 – V4.14.13 DEV
+
+- **Korrektur:** V4.14.12 DEV war bereits vergeben. Die danach ergänzten MA-020-Hi-Res-/Vault-Sicherheitsänderungen sind eine neue Iteration und müssen **V4.14.13 DEV** tragen, ohne den bisherigen 4.14.12-Stand zu überschreiben.
+- Canonical identity: `frontend/version.js` = `4.14.13`, `V4.14.13 DEV`, `V4.14.13-DEV-2026-11-27`, `41413r1`, `E414-13A1`, Integration `0.25.199`. `custom_components/gewitterradar/build_info.py` = `4.14.13`; Integration `manifest.json` = `0.25.199`. Runtime-Asset, Card, Panel, Modulmanifest, Vault- und Standortsteuerung sowie versionsexakte Prüfungen synchron umgestellt.
+- Ein dedizierter GitHub-Actions-Build `ma-v41413-dev-build-sync.yml` baut/prüft die neue Iteration und publiziert die Delivery-Spiegel ausschließlich auf dem MA-Feature-Branch. Der alte V4.14.12-Build wurde auf manuellen historischen Aufruf gesetzt. Keine öffentlichen DEV-GitHub-Releases.
+- **Freigabestand:** Solange Quelle/`custom_components/gewitterradar/frontend`/`dashboard/dist` nicht byte-identisch und alle Tests/Build-Nachweise vorhanden sind, ist V4.14.13 ausdrücklich **nicht installierbar freigegeben**. DRA-Updateangebot oder VM109-Installation sind noch nicht bestätigt; bestehende 4.14.12-Lieferung bleibt unberührt.
