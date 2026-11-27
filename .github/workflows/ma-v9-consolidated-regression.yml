@@ -17,6 +17,7 @@ on:
       - 'frontend/panel.js'
       - 'scripts/test-gr-panel-cache-recovery.mjs'
       - 'docs/GR_4149_PANEL_CACHE_RECOVERY_2026-11-27.md'
+      - 'docs/GR_41410_MA020_SQLITE_READ_ONLY_PREVIEW_2026-11-27.md'
       - '.github/workflows/ma-v41410-dev-build-sync.yml'
       - 'frontend/assets.json'
       - 'dashboard/dist/**'
