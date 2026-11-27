@@ -1,7 +1,7 @@
 import {settingsStorage} from '../core/settings-vault.js?v=4134r1';
-import {createLocationPort} from '../monitored-areas/location-port.js?v=41420r1';
-import {openLocationManager} from '../monitored-areas/location-manager.js?v=41420r1';
-import {migrationRequestUUID} from '../monitored-areas/migration-wizard.js?v=41420r1';
+import {createLocationPort} from '../monitored-areas/location-port.js?v=41421r1';
+import {openLocationManager} from '../monitored-areas/location-manager.js?v=41421r1';
+import {migrationRequestUUID} from '../monitored-areas/migration-wizard.js?v=41421r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
@@ -1743,6 +1743,38 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             places:loaded ? [...(this._v407SavedPlaces || [])] : [],
             removed:loaded ? [...(this._v407RemovedPlaces || [])] : [],
             refresh:reload,
+            // MA-022: batch share/transfer UI can only open after the
+            // server-authoritative SQLite cutover and Vault-user revalidation.
+            openProfiles:loaded && mode==='db_active' ? async ({places,mode:profileMode,refreshManager,initialLocationIds=[]})=>{
+              if(!sameProfile()||profileMode!=='db_active')throw new Error('MA_PROFILE_CHANGED');
+              const ensurePort=async()=>{
+                if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+                const port=await v407MonitoredAreasPort();
+                if(port?.mode!=='db_active')throw new Error('MA_PLACE_DB_NOT_ACTIVE');
+                return port;
+              };
+              const guarded=async (operation,...args)=>{
+                const port=await ensurePort();
+                if(typeof port[operation]!=='function')throw new Error('MA_LINK_UNAVAILABLE');
+                const response=await port[operation](...args);
+                if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+                return response;
+              };
+              const module=await import('../monitored-areas/profile-sharing.js?v=41421r1');
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              return module.openProfileSharing(this,{
+                mode:profileMode,places,initialLocationIds,
+                verifyContext:()=>sameProfile()&&this._maSavedMode==='db_active',
+                makeRequestId:migrationRequestUUID,
+                listLinks:id=>guarded('listLinks',id),
+                getPreferences:id=>guarded('getPreferences',id),
+                updatePreferences:(id,patch,revision,requestId)=>
+                  guarded('updatePreferences',id,patch,revision,requestId),
+                shareLocation:(id,targetUser,targetProfile,revision,requestId,options)=>
+                  guarded('shareLocation',id,targetUser,targetProfile,revision,requestId,options),
+                refresh:refreshManager
+              });
+            } : undefined,
             // GeoPoint uses the existing weather inspector; never focus the map
             // or select a reference tracker as a side effect of this action.
             openGeoPoint:async position=>{
@@ -1771,7 +1803,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
               const port=await v407MonitoredAreasPort();
               if (port?.mode!=='migration_pending') throw new Error('MA_MODE_CHANGED');
-              const module=await import('../monitored-areas/migration-wizard.js?v=41420r1');
+              const module=await import('../monitored-areas/migration-wizard.js?v=41421r1');
               if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
               await module.openMigrationWizard(this);
             } : undefined,

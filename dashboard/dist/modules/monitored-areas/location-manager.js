@@ -54,6 +54,7 @@ const COPY={
   filter:'Standorte filtern',refresh:'Aktualisieren',close:'Schließen',active:'Gespeicherte Orte',
   archived:'Archivierte Orte',empty:'Keine passenden Standorte',details:'Details',back:'Zurück',
   focus:'Auf Karte zeigen',rename:'Umbenennen',archive:'Archivieren',restore:'Wiederherstellen',
+  profiles:'Profile & Freigaben',
   coordinates:'Koordinaten',revision:'Revision',detailHint:'Überwachungs- und Freigabeoptionen folgen in den nächsten MA-Modulen.',
   detailTitle:'Standortdetails',detailOrigin:'Herkunft',detailState:'Zustand',detailActive:'Aktiv',detailArchived:'Archiviert',detailCollapse:'Details ein-/ausklappen',detailMove:'Fenster verschieben',detailCopy:'Koordinaten kopieren',detailCopied:'Koordinaten kopiert',detailNoCopy:'Kopieren nicht verfügbar',detailGeo:'GeoPoint Inspector öffnen',detailGeoError:'GeoPoint Inspector nicht verfügbar – Wetterquelle und Karte prüfen.',detailMonitoring:'Überwachung',detailPaused:'Pausiert',detailRecording:'Aufzeichnung',detailRadius:'Aufzeichnungsradius',detailAlarmRadius:'Alarmradius',detailMode:'Erfassungsmodus',detailOn:'Ein',detailOff:'Aus',detailNoData:'Erweiterte Daten nicht verfügbar',
   renamePrompt:'Neuen Namen eingeben',archiveConfirm:'Standort archivieren? Er bleibt wiederherstellbar.',
@@ -67,6 +68,7 @@ const COPY={
   filter:'Filter locations',refresh:'Refresh',close:'Close',active:'Saved places',
   archived:'Archived places',empty:'No matching locations',details:'Details',back:'Back',
   focus:'Show on map',rename:'Rename',archive:'Archive',restore:'Restore',
+  profiles:'Profiles & sharing',
   coordinates:'Coordinates',revision:'Revision',detailHint:'Monitoring and sharing controls follow in the next MA modules.',
   detailTitle:'Location details',detailOrigin:'Origin',detailState:'Status',detailActive:'Active',detailArchived:'Archived',detailCollapse:'Expand/collapse details',detailMove:'Move window',detailCopy:'Copy coordinates',detailCopied:'Coordinates copied',detailNoCopy:'Copy unavailable',detailGeo:'Open GeoPoint Inspector',detailGeoError:'GeoPoint Inspector unavailable – check the weather source and map.',detailMonitoring:'Monitoring',detailPaused:'Paused',detailRecording:'Recording',detailRadius:'Recording radius',detailAlarmRadius:'Alert radius',detailMode:'Capture mode',detailOn:'On',detailOff:'Off',detailNoData:'Extended data unavailable',
   renamePrompt:'Enter new name',archiveConfirm:'Archive location? It can be restored.',
@@ -89,7 +91,7 @@ const GEOPOINT_BUTTON_STYLES=".gr-ma-detail-shortcuts{display:flex;flex-wrap:wra
 const RESPONSIVE_DETAIL_STYLES="\n/* MA-021 responsive Havanna extension: broad desktop and iPad landscape layouts. */\n.gr-ma-detail{width:min(920px,calc(100vw - 48px));min-width:0}\n.gr-ma-detail-head{padding:16px 16px 13px 22px;gap:14px}\n.gr-ma-detail-head strong{font-size:clamp(21px,2.4vw,27px);line-height:1.15}\n.gr-ma-detail-head-copy{min-width:0;display:flex;flex-direction:column;gap:4px}\n.gr-ma-detail-head-copy small{color:#d6b57d;font-size:12px;letter-spacing:.035em}\n.gr-ma-detail-state{align-self:flex-start;border:1px solid #a68a5780;border-radius:20px;padding:3px 10px;\n background:linear-gradient(180deg,#394a52,#14232c);color:#e9cf9b;font-size:12px;font-weight:650}\n.gr-ma-detail-details{padding:14px 22px 18px}\n.gr-ma-detail-intro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;\n margin-bottom:12px}\n.gr-ma-detail-plate{border:1px solid #9777498c;border-radius:13px;\n background:linear-gradient(160deg,#2c3f4b,#122330 72%,#14232d);\n box-shadow:inset 0 1px #fff3,0 6px 12px #0005;padding:12px 14px;min-width:0}\n.gr-ma-detail-plate small{display:block;color:#abc2d1;letter-spacing:.035em;font-size:11px}\n.gr-ma-detail-plate strong{display:block;color:#f5dcad;margin-top:3px;\n font-size:clamp(14px,1.7vw,18px);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}\n.gr-ma-detail-details details{border:1px solid #896d4388;border-radius:12px;\n background:linear-gradient(180deg,#122533,#091924);overflow:hidden}\n.gr-ma-detail-details summary{padding:12px 16px;min-height:44px;box-sizing:border-box;\n background:linear-gradient(180deg,#293641,#12212d);border-bottom:1px solid transparent}\n.gr-ma-detail-details details[open]>summary{border-bottom-color:#96774a77}\n.gr-ma-detail-grid-wrap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;padding:8px 14px}\n.gr-ma-detail-grid{grid-template-columns:110px minmax(0,1fr);align-content:start}\n.gr-ma-detail-actions{padding:4px 14px 14px;margin-top:4px}\n.gr-ma-detail-message{margin:0;padding:0 14px 12px}\n.gr-ma-detail-hint{margin:0;padding:0 14px 14px;color:#b8c8d2;font-size:12px}\n.gr-ma-detail-head:focus-visible,.gr-ma-detail-details summary:focus-visible{outline:2px solid #f5ce83;outline-offset:-3px}\n@media(min-width:680px) and (max-width:1179px){\n .gr-ma-detail{width:min(810px,calc(100vw - 32px))}\n .gr-ma-detail-head{padding-inline:19px}\n .gr-ma-detail-details{padding-inline:18px}\n .gr-ma-detail-grid-wrap{gap:0 10px}\n}\n@media(max-width:679px){\n .gr-ma-detail{width:calc(100vw - 20px)}\n .gr-ma-detail-head{padding:10px 10px 10px 14px}\n .gr-ma-detail-head strong{font-size:21px}\n .gr-ma-detail-details{padding:10px 12px 13px}\n .gr-ma-detail-intro{grid-template-columns:minmax(0,1fr);gap:8px}\n .gr-ma-detail-plate{padding:9px 11px}\n .gr-ma-detail-grid-wrap{grid-template-columns:minmax(0,1fr);padding:4px 10px}\n .gr-ma-detail-grid{grid-template-columns:95px minmax(0,1fr)}\n .gr-ma-detail-actions{padding-inline:10px}\n}\n@media(max-height:500px){\n .gr-ma-detail-head{padding-block:7px}\n .gr-ma-detail-details{padding-block:7px}\n .gr-ma-detail-intro{gap:6px;margin-bottom:6px}\n .gr-ma-detail-plate{padding-block:7px}\n}\n";
 const node=(tag,value,cls)=>{const x=document.createElement(tag);x.textContent=String(value??'');if(cls)x.className=cls;return x;};
 const button=(text,handler)=>{const x=node('button',text);x.type='button';x.addEventListener('click',handler);return x;};
-export function openLocationManager(owner,{enabled=false,mode='legacy',places=[],removed=[],refresh,readDetails,openGeoPoint,rename,archive,restore,focus,migrate}={}){
+export function openLocationManager(owner,{enabled=false,mode='legacy',places=[],removed=[],refresh,readDetails,openGeoPoint,openProfiles,rename,archive,restore,focus,migrate}={}){
   if(!owner?.shadow||typeof refresh!=='function')return null;
   const previous=owner.shadow.getElementById('gr-ma-location-manager');
   if(previous){previous.__dispose?.();previous.remove();}
@@ -107,6 +109,19 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
   const status=node('div','', 'gr-ma-status'),tools=node('div','', 'gr-ma-tools');
   const filter=document.createElement('input');filter.type='search';filter.placeholder=t.filter;filter.setAttribute('aria-label',t.filter);
   const reloadButton=button(t.refresh,()=>{void reload();});tools.append(filter,reloadButton);
+  const profileButton=button(t.profiles,async()=>{
+    if(state.busy||!state.enabled||state.mode!=='db_active'||typeof openProfiles!=='function')return;
+    profileButton.disabled=true;
+    try{
+      const current=planLocations(state);
+      await openProfiles({places:[...current.active,...current.archived],mode:current.mode,
+        refreshManager:reload});
+    }catch{notice(t.error,true);}
+    finally{if(root.isConnected)profileButton.disabled=false;}
+  });
+  profileButton.className='gr-ma-profile-action';
+  profileButton.disabled=mode!=='db_active'||typeof openProfiles!=='function';
+  tools.append(profileButton);
   const migrationButton=button(t.migration,async()=>{
     if(state.busy||!state.enabled||state.mode!=='migration_pending'||typeof migrate!=='function')return;
     state.busy=true;migrationButton.disabled=true;
@@ -133,6 +148,8 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     status.textContent=plan.mode==='db_active'?t.db:plan.mode==='migration_pending'?t.pending:
       enabled?t.legacy:t.off;
     migrationButton.hidden=!(plan.mode==='migration_pending'&&typeof migrate==='function');
+    profileButton.disabled=state.busy||plan.mode!=='db_active'||typeof openProfiles!=='function';
+    profileButton.title=profileButton.disabled?t.pending||t.legacyHint:t.profiles;
     if(!migrationButton.hidden&&!migrationButton.parentNode)tools.append(migrationButton);
     list.replaceChildren();
     const addGroup=(title,records)=>{
@@ -206,6 +223,18 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
       });
       geoButton.dataset.maGeopoint='true';
       shortcuts.append(geoButton);
+    }
+    if(state.enabled&&state.mode==='db_active'&&typeof openProfiles==='function'){
+      const profileAction=button(t.profiles,async()=>{
+        if(profileAction.disabled)return;
+        profileAction.disabled=true;
+        try{
+          await openProfiles({places:[place],mode:state.mode,
+            refreshManager:reload,initialLocationIds:[place.uid]});
+        }catch{message.textContent=t.error;}
+        finally{if(profileAction.isConnected)profileAction.disabled=false;}
+      });
+      shortcuts.append(profileAction);
     }
     content.append(shortcuts);
     const accordion=document.createElement('details'); // intentionally closed initially
