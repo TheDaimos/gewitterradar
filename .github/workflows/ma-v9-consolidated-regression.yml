@@ -10,6 +10,7 @@ on:
       - 'scripts/build-frontend.mjs'
       - 'frontend/modules/monitored-areas/**'
       - 'docs/GR_4147_DEV_TEST_CANDIDATE_2026-11-26.md'
+      - 'docs/GR_4148_MA_ANDROID_UUID_HOTFIX_2026-11-27.md'
       - 'frontend/version.js'
       - '.github/workflows/ma-v4148-dev-build-sync.yml'
       - 'frontend/assets.json'
