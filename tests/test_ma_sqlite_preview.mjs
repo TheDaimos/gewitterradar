@@ -33,4 +33,4 @@ assert.doesNotMatch(controls,/crypto\.randomUUID\(\)/,'SQLite writes must work o
 assert.equal((controls.match(/migrationRequestUUID\(\)/g)||[]).length,5);
 assert.match(source,/proof\?\.source_and_sqlite_verified!==true/);
 assert.match(source,/proof\.active_count\+proof\.archived_count!==proof\.item_count/);
-assert.match(source,/proof\.explicit_confirmation_required!==true/);
+assert.match(source,/proof\?\.explicit_confirmation_required!==true/);
