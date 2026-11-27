@@ -70,6 +70,7 @@ export function initializeMonitoredAreas(owner, enabled = false) {
   const show = () => {
     if (stopped || dialog?.open || !owner.shadow || !storageReady()) return;
     const t = COPY[/Deutsch|Boarisch|Platt|Sächs|Schwäb/i.test(owner._languageValue?.() || "Deutsch")?"de":"en"];
+    const MA_CLOSE_MATCH_SETTINGS = owner.shadow.getElementById("settings-close")?.querySelector("img")?.src || MA_PREMIUM_CLOSE;
     shadow = document.createElement("div");
     shadow.className="gr-ma-cleanup-wrapper";
     shadow.innerHTML = `<style>
@@ -85,7 +86,7 @@ export function initializeMonitoredAreas(owner, enabled = false) {
       @media(hover:hover) and (pointer:fine){.gr-ma-cleanup .ma-close:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}.gr-ma-cleanup .ma-close:active img{transform:scale(.97);filter:brightness(.92)}.gr-ma-cleanup [role=status]{color:#ffbeae;font-size:12px}
     </style>
     <dialog class="gr-ma-cleanup" aria-labelledby="gr-ma-cleanup-title">
-      <button type="button" class="ma-close" aria-label="${t.close}"><img src="${MA_PREMIUM_CLOSE}" alt="" draggable="false"></button>
+      <button type="button" class="ma-close" aria-label="${t.close}"><img src="${MA_CLOSE_MATCH_SETTINGS}" alt="" draggable="false"></button>
       <h2 id="gr-ma-cleanup-title">✓ ${t.title}</h2>
       <p>${t.text}</p><strong>${t.lead}</strong>
       <ol>${t.steps.map(s=>'<li>'+s+'</li>').join('')}</ol>

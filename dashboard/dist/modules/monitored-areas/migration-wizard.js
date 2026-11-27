@@ -45,7 +45,8 @@ export async function openMigrationWizard(owner) {
     if(owner._settingsVault?.profile?.id !== profileId) throw new Error("Vault-Profil gewechselt – Dialog erneut öffnen");
     return result;
   };
-  const MA_PREMIUM_CLOSE = maPremiumClose();
+  // Reuse the exact gold close artwork rendered by GewitterRadar settings.
+  const MA_PREMIUM_CLOSE = owner.shadow.getElementById("settings-close")?.querySelector("img")?.src || maPremiumClose();
   const shell = document.createElement("div");
   shell.innerHTML = `<style>
     .gr-ma-wizard{box-sizing:border-box;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;z-index:2147483601;width:min(660px,calc(100vw - 20px));height:min(820px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);overflow:hidden;padding:0;display:flex;flex-direction:column;border:1px solid rgba(201,160,80,.34);border-radius:22px;background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%),linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995));color:#e7ecf1;box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,235,184,.055),inset 0 1px rgba(255,244,213,.08),0 0 30px rgba(207,159,60,.065);font:14px/1.5 Segoe UI,Arial,sans-serif}
