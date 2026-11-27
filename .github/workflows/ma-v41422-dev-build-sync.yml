@@ -22,6 +22,7 @@ on:
       - 'scripts/build-frontend.mjs'
       - 'tests/test_ma022_profile_sharing.mjs'
       - 'tests/test_ma022_port.mjs'
+      - 'tests/test_ma_frontend_module_registration.py'
       - 'scripts/test-ma-022-profiles.py'
       - 'frontend/modules/weather/temperature-display.js'
       - 'tests/test_ma021_geopoint_launch.mjs'
