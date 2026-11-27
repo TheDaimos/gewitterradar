@@ -77,6 +77,7 @@ jobs:
       - name: Frontend source and MA module regressions
         run: |
           node --check frontend/modules/monitored-areas/index.js
+          node --check frontend/modules/monitored-areas/migration-wizard.js
           node tests/test_ma_location_manager.mjs
           node scripts/test-ma-016.mjs
           node scripts/test-ma-020-ui.mjs
