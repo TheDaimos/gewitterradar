@@ -77,14 +77,19 @@ class MigrationPreview:
 
         def read(c):
             rows=c.execute("""
-                SELECT l.location_id,l.name,l.lat,l.lon,l.revision
+                SELECT l.location_id,l.name,l.lat,l.lon,l.revision,
+                    CASE WHEN a.link_id IS NULL THEN 0 ELSE 1 END
                 FROM locations l JOIN profile_links p ON p.location_id=l.location_id
+                LEFT JOIN archived_profile_links a ON a.link_id=p.link_id
                 WHERE p.ha_user_id=? AND p.vault_profile_id=?
                 ORDER BY l.location_id
             """,(actor_user_id,profile_id)).fetchall()
-            return [dict(zip(("location_id","name","lat","lon","revision"),row)) for row in rows]
+            return [dict(zip(("location_id","name","lat","lon","revision","archived"),row)) for row in rows]
         existing=await self._repositories._db.async_execute(read,kind="read")
-        db_digest=_hash(existing)
+        # Keep the preview digest compatible with the transactional importer:
+        # only immutable identity/geometry/revision fields enter its current SQL hash.
+        db_digest=_hash([{k:p[k] for k in ("location_id","name","lat","lon","revision")}
+                         for p in existing])
         valid=[]
         rejected=[]
         seen={}
@@ -100,14 +105,40 @@ class MigrationPreview:
                  if p["name"].casefold()==record["name"].casefold() and p["location_id"] not in candidate_matches]
             same_source=seen.get(coordinate_key)
             seen.setdefault(coordinate_key,record["uid"])
+            exact_matches=[p["location_id"] for p in existing
+                if p["location_id"] in candidate_matches
+                and p["name"]==record["name"]
+                and bool(p["archived"])==(record["status"]=="completed")]
             valid.append({**record,"coordinate_matches":candidate_matches,
+                          "exact_matches":exact_matches,
                           "name_conflicts":collisions,
                           "source_coordinate_duplicate":same_source,
                           "decision_required":bool(candidate_matches or collisions or same_source)})
+        # A suggestion is safe only when source coordinates are unique, a single
+        # exact name/coordinate/archive match exists and no second To-do entry
+        # competes for that target. Suggestions are never a write authorization.
+        coordinate_counts={}
+        target_counts={}
+        for candidate in valid:
+            key=(round(candidate["lat"],5),round(candidate["lon"],5))
+            coordinate_counts[key]=coordinate_counts.get(key,0)+1
+            for location_id in candidate["exact_matches"]:
+                target_counts[location_id]=target_counts.get(location_id,0)+1
+        safe_count=0
+        for candidate in valid:
+            key=(round(candidate["lat"],5),round(candidate["lon"],5))
+            exact=candidate["exact_matches"]
+            suggested=(exact[0] if len(exact)==1
+                       and coordinate_counts[key]==1
+                       and target_counts[exact[0]]==1 else None)
+            candidate["suggested_existing_id"]=suggested
+            if suggested is not None:
+                safe_count+=1
         preview_id=_hash({"user":actor_user_id,"profile":profile_id,
                           "source":source_digest,"db":db_digest})
         return {"mode":"migration_pending","preview_id":preview_id,
                 "source_digest":source_digest,"db_digest":db_digest,
                 "candidates":valid,"rejected":rejected,
                 "total":len(items),"valid":len(valid),"invalid":len(rejected),
+                "safe_existing_suggestions":safe_count,
                 "write_performed":False}
