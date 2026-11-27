@@ -12,6 +12,7 @@ on:
       - 'tests/test_ma_existing_reconcile.mjs'
       - 'frontend/modules/monitored-areas/location-manager.js'
       - 'frontend/modules/monitored-areas/profile-sharing.js'
+      - 'scripts/build-frontend.mjs'
       - 'tests/test_ma022_profile_sharing.mjs'
       - 'tests/test_ma022_port.mjs'
       - 'scripts/test-ma-022-profiles.py'
