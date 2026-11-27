@@ -26,3 +26,11 @@ assert.ok(inspection.startsWith('const openSqlPreview'));
 assert.doesNotMatch(inspection,/migration_commit|migration_finalize_commit|location_update|todo\.remove_item|request_id/);
 assert.match(inspection,/textContent=item\.name/,'do not inject untrusted place names as HTML');
 console.log('PASS MA-020 SQLite preview: archived grouping, invalid rows, read-only paging, safe DOM');
+
+const controls=readFileSync(new URL('../frontend/modules/ui/controls.js',import.meta.url),'utf8');
+assert.match(controls,/import \{migrationRequestUUID\} from/);
+assert.doesNotMatch(controls,/crypto\.randomUUID\(\)/,'SQLite writes must work on HTTP/Android HA');
+assert.equal((controls.match(/migrationRequestUUID\(\)/g)||[]).length,5);
+assert.match(source,/proof\?\.source_and_sqlite_verified!==true/);
+assert.match(source,/proof\.active_count\+proof\.archived_count!==proof\.item_count/);
+assert.match(source,/proof\.explicit_confirmation_required!==true/);
