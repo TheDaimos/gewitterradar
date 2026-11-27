@@ -1,4 +1,18 @@
 // MA-020 migration workflow: explicit decisions and separate destructive confirmation.
+// A request UUID is required for server-side idempotency. Browsers in a non-secure
+// HA context may expose getRandomValues but not randomUUID; never use Math.random.
+export function migrationRequestUUID(cryptoSource=globalThis.crypto) {
+  if (typeof cryptoSource?.randomUUID === "function") return cryptoSource.randomUUID();
+  if (typeof cryptoSource?.getRandomValues !== "function") {
+    throw new Error("Sichere UUID-Erzeugung nicht verfügbar. Home Assistant über HTTPS oder eine vertrauenswürdige lokale Adresse öffnen.");
+  }
+  const bytes = new Uint8Array(16);
+  cryptoSource.getRandomValues(bytes);
+  bytes[6] = (bytes[6] & 0x0f) | 0x40; // RFC 4122 UUID version 4
+  bytes[8] = (bytes[8] & 0x3f) | 0x80; // RFC 4122 variant
+  const hex = [...bytes].map(byte => byte.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+}
 export async function openMigrationWizard(owner) {
   const hass = owner.hass || owner._hass || owner._vaultHass;
   const profileId = owner._settingsVault?.profile?.id;
@@ -115,7 +129,7 @@ export async function openMigrationWizard(owner) {
       if(decisions.length!==preview.valid)throw Error("Unvollständige Auswahl");
       if(decisions.some(x=>x.action==="skip"))throw Error("Übersprungene Orte verhindern den vollständigen Abschluss");
       const result=await call("migration_commit",
-        {preview_id:preview.preview_id,decisions},crypto.randomUUID());
+        {preview_id:preview.preview_id,decisions},migrationRequestUUID());
       status(`Import bestätigt: ${result.imported?.length||0} Standorte. Die alte Liste ist weiterhin vorhanden. Prüfe jetzt die Finalisierung.`);
       importButton.disabled=true;
       preview=null;
@@ -136,7 +150,7 @@ export async function openMigrationWizard(owner) {
     setBusy(true);
     try{
       const result=await call("migration_finalize_commit",
-        {nonce:proof.nonce,explicit_final:true},crypto.randomUUID());
+        {nonce:proof.nonce,explicit_final:true},migrationRequestUUID());
       if(result.mode!=="db_active")throw Error("db_active nicht bestätigt");
       status(`Erfolgreich abgeschlossen: ${result.items_removed} Einträge entfernt. Die Local-To-do-Liste bleibt erhalten.`);
       close();
