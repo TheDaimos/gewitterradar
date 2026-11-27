@@ -12,18 +12,18 @@ on:
       - 'docs/GR_4147_DEV_TEST_CANDIDATE_2026-11-26.md'
       - 'docs/GR_4148_MA_ANDROID_UUID_HOTFIX_2026-11-27.md'
       - 'frontend/version.js'
-      - '.github/workflows/ma-v41421-dev-build-sync.yml'
+      - '.github/workflows/ma-v41422-dev-build-sync.yml'
       - 'tests/test_ma_sticky_dialog_layout.mjs'
       - 'frontend/modules/monitored-areas/location-manager.js'
-      - '.github/workflows/ma-v41421-dev-build-sync.yml'
+      - '.github/workflows/ma-v41422-dev-build-sync.yml'
       - 'docs/GR_41411_MA020_FINALIZATION_GATE_2026-11-27.md'
       - 'tests/test_ma_sqlite_preview.mjs'
-      - '.github/workflows/ma-v41421-dev-build-sync.yml'
+      - '.github/workflows/ma-v41422-dev-build-sync.yml'
       - 'frontend/panel.js'
       - 'scripts/test-gr-panel-cache-recovery.mjs'
       - 'docs/GR_4149_PANEL_CACHE_RECOVERY_2026-11-27.md'
       - 'docs/GR_41410_MA020_SQLITE_READ_ONLY_PREVIEW_2026-11-27.md'
-      - '.github/workflows/ma-v41421-dev-build-sync.yml'
+      - '.github/workflows/ma-v41422-dev-build-sync.yml'
       - 'frontend/assets.json'
       - 'dashboard/dist/**'
       - 'custom_components/gewitterradar/frontend/**'
@@ -83,6 +83,10 @@ jobs:
           node --check frontend/modules/monitored-areas/migration-wizard.js
           node --check frontend/modules/monitored-areas/location-manager.js
           node tests/test_ma_location_manager.mjs
+          node tests/test_ma023_tracker_name.mjs
+          node tests/test_ma025_blitzortung_inventory.mjs
+          python -m unittest discover -s tests -p 'test_ma023_tracker_name.py' -v
+          python -m unittest discover -s tests -p 'test_ma025_blitzortung_inventory.py' -v
           node scripts/test-ma-016.mjs
           node scripts/test-ma-020-ui.mjs
           node tests/test_ma_sqlite_preview.mjs
@@ -111,14 +115,14 @@ jobs:
           node scripts/verify-current-frontend.mjs
           sha256sum -c SHA256SUMS_FRONTEND.txt --quiet
           python scripts/verify-deploy-relay-contract.py
-          grep -q 'BUILD_VERSION = "4.14.21"' custom_components/gewitterradar/build_info.py
+          grep -q 'BUILD_VERSION = "4.14.22"' custom_components/gewitterradar/build_info.py
       - name: Package exact verified commit
         run: |
-          python scripts/build-dev-packages.py "$RUNNER_TEMP/ma-v41421" --revision "$GITHUB_SHA"
-          (cd "$RUNNER_TEMP/ma-v41421" && sha256sum -c SHA256SUMS.txt)
+          python scripts/build-dev-packages.py "$RUNNER_TEMP/ma-v41422" --revision "$GITHUB_SHA"
+          (cd "$RUNNER_TEMP/ma-v41422" && sha256sum -c SHA256SUMS.txt)
       - uses: actions/upload-artifact@v4
         with:
-          name: GR-V4.14.21-DEV-verified-${{ github.sha }}
-          path: ${{ runner.temp }}/ma-v41421/
+          name: GR-V4.14.22-DEV-verified-${{ github.sha }}
+          path: ${{ runner.temp }}/ma-v41422/
           if-no-files-found: error
           retention-days: 30
