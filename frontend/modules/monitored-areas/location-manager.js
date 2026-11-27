@@ -224,6 +224,18 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
       geoButton.dataset.maGeopoint='true';
       shortcuts.append(geoButton);
     }
+    if(state.enabled&&state.mode==='db_active'&&typeof openProfiles==='function'){
+      const profileAction=button(t.profiles,async()=>{
+        if(profileAction.disabled)return;
+        profileAction.disabled=true;
+        try{
+          await openProfiles({places:[place],mode:state.mode,
+            refreshManager:reload,initialLocationIds:[place.uid]});
+        }catch{message.textContent=t.error;}
+        finally{if(profileAction.isConnected)profileAction.disabled=false;}
+      });
+      shortcuts.append(profileAction);
+    }
     content.append(shortcuts);
     const accordion=document.createElement('details'); // intentionally closed initially
     const summary=node('summary',t.detailTitle);summary.setAttribute('aria-label',t.detailCollapse);
