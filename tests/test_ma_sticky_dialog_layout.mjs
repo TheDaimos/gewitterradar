@@ -11,6 +11,7 @@ assert.match(wizard,/gewitterradar-about-close-premium\.webp/);
 assert.match(wizard,/border:1px solid rgba\(201,160,80,\.34\)/);
 assert.doesNotMatch(wizard,/grayscale\(1\)/);
 assert.match(wizard,/Vault-Profil gewechselt/);
+assert.match(wizard,/getElementById\("settings-close"\)\?\.querySelector\("img"\)\?\.src/);
 assert.match(wizard,/height:min\(820px,calc\(100dvh - 24px\)\);max-height:calc\(100dvh - 24px\);overflow:hidden/);
 assert.ok(wizard.indexOf('<header class="wizard-header">')<wizard.indexOf('<div class="wizard-content"'));
 assert.ok(wizard.indexOf('<div class="wizard-content"')<wizard.indexOf('<footer class="wizard-footer">'));
@@ -23,7 +24,7 @@ assert.match(manager,/\.gr-ma-panel \.gr-ma-close\{width:44px;height:44px;min-wi
 assert.match(manager,/gewitterradar-about-close-premium\.webp/);
 assert.match(manager,/border:1px solid rgba\(201,160,80,\.34\)/);
 assert.doesNotMatch(manager,/grayscale\(1\)/);
-assert.match(manager,/xImg\.src=maPremiumClose\(\)/);
+assert.match(manager,/getElementById\('settings-close'\)\?\.querySelector\('img'\)\?\.src/);
 assert.match(manager,/list\.className='gr-ma-list'/);
 assert.match(manager,/panel\.append\(header,status,tools,list,feedback\)/);
 assert.doesNotMatch(manager,/todo\.remove_item/);
@@ -31,4 +32,5 @@ const reminder=readFileSync(new URL('../frontend/modules/monitored-areas/index.j
 assert.match(reminder,/border:1px solid rgba\(201,160,80,\.34\)/);
 assert.doesNotMatch(reminder,/grayscale\(1\)/);
 assert.match(reminder,/gewitterradar-about-close-premium\.webp/);
+assert.match(reminder,/getElementById\("settings-close"\)\?\.querySelector\("img"\)\?\.src/);
 console.log('PASS MA fixed headers, scroll clipping, native Settings gold frame and close icon');
