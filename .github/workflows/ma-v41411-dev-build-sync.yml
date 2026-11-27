@@ -1,15 +1,7 @@
 name: Build V4.14.11 MA opt-in and migration DEV mirrors
+# Superseded by V4.14.12; historical workflow is manual only.
 on:
-  push:
-    branches: [feature/v4.14-monitored-areas]
-    paths:
-      - '.github/workflows/ma-v41411-dev-build-sync.yml'
-      - 'frontend/version.js'
-      - 'frontend/modules/monitored-areas/migration-wizard.js'
-      - 'frontend/modules/ui/controls.js'
-      - 'custom_components/gewitterradar/monitored_areas/finalization.py'
-      - 'scripts/test-ma-020-finalization.py'
-      - 'tests/test_ma_sqlite_preview.mjs'
+  workflow_dispatch:
 
 concurrency:
   group: ma-41411-build-${{ github.ref }}
