@@ -246,7 +246,8 @@ export async function openMigrationWizard(owner) {
       proof=await call("migration_finalize_preview");
       if(proof?.source_and_sqlite_verified!==true || proof?.requires_admin!==true ||
          proof?.explicit_confirmation_required!==true ||
-         !Number.isInteger(proof.item_count) || proof.item_count<1 ||
+         !Number.isInteger(proof.item_count) || proof.item_count<0 ||
+         (proof.item_count===0 && proof.resume!==true) ||
          !Number.isInteger(proof.active_count) || !Number.isInteger(proof.archived_count) ||
          proof.active_count<0 || proof.archived_count<0 ||
          proof.active_count+proof.archived_count!==proof.item_count ||
