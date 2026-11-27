@@ -1,26 +1,6 @@
-name: Build V4.14.19 MA opt-in and migration DEV mirrors
+name: Historical V4.14.19 MA DEV build (manual only)
 on:
-  push:
-    branches: [feature/v4.14-monitored-areas]
-    paths:
-      - '.github/workflows/ma-v41419-dev-build-sync.yml'
-      - 'frontend/version.js'
-      - 'frontend/modules/monitored-areas/migration-wizard.js'
-      - 'custom_components/gewitterradar/monitored_areas/migration.py'
-      - 'custom_components/gewitterradar/monitored_areas/api.py'
-      - 'scripts/test-ma-020-finalization.py'
-      - 'tests/test_ma_existing_reconcile.mjs'
-      - 'frontend/modules/monitored-areas/location-manager.js'
-      - 'frontend/modules/monitored-areas/location-port.js'
-      - 'tests/test_ma021_responsive_layout.mjs'
-      - 'tests/test_ma021_port_readonly.mjs'
-      - 'tests/test_ma021_havanna_detail.mjs'
-      - 'frontend/modules/monitored-areas/index.js'
-      - 'tests/test_ma_sticky_dialog_layout.mjs'
-      - 'tests/test_ma_tabbed_views.mjs'
-      - 'tests/test_ma_premium_chrome.mjs'
-      - 'tests/test_ma_sqlite_preview.mjs'
-      - 'frontend/modules/ui/controls.js'
+  workflow_dispatch:
 
 concurrency:
   group: ma-41419-build-${{ github.ref }}
