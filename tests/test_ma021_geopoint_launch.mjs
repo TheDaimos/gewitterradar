@@ -10,7 +10,7 @@ assert.match(manager,/detailGeo:'Open GeoPoint Inspector'/);
 assert.match(manager,/typeof openGeoPoint==='function'/);
 assert.match(manager,/content\\.append\\(shortcuts\\)/,'GeoPoint button must be visible above the collapsed details');
 assert.match(manager,/await openGeoPoint\(\{latitude:data\.latitude,longitude:data\.longitude\}\)/);
-assert.match(manager,/if\(buttonEl\)buttonEl\.disabled=true/);
+assert.match(manager,/geoButton\.disabled=true/);
 const start=manager.indexOf("const shortcuts=node('div','', 'gr-ma-detail-shortcuts')");
 const end=manager.indexOf("const accordion=document.createElement('details')",start);
 const action=manager.slice(start,end);
