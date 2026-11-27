@@ -77,7 +77,7 @@ const el=(tag,value,cls)=>{const n=document.createElement(tag);if(value!==null&&
 const button=(txt,fn)=>{const n=el("button",txt,"gr-ma022-button");n.type="button";n.addEventListener("click",fn);return n};
 const message=(err,t)=>{const code=String(err?.code||err?.message||err);return /profile_not_found|MA_INVALID_TARGET|target_is_source/.test(code)?t.profileError:/revision_conflict/.test(code)?t.conflict:t.failed+" ("+code.slice(0,90)+")"};
 export function openProfileSharing(owner,{mode="legacy",places=[],listLinks,getPreferences,
- shareLocation,updatePreferences,refresh,verifyContext,makeRequestId}={}){
+ shareLocation,updatePreferences,refresh,verifyContext,makeRequestId,initialLocationIds=[]}={}){
  if(!owner?.shadow||typeof verifyContext!=="function")return null;
  owner.shadow.getElementById("gr-ma022-overlay")?.__dispose?.();
  const t=/Deutsch|Boarisch|Platt|Sächs|Schwäb/i.test(owner._languageValue?.()||"Deutsch")?LANG.de:LANG.en;
@@ -97,7 +97,9 @@ export function openProfileSharing(owner,{mode="legacy",places=[],listLinks,getP
  filter.type="search";filter.placeholder=t.filter;filter.setAttribute("aria-label",t.filter);filterWrap.append(filter);
  const choiceBtns=el("div",null,"gr-ma022-row"),list=el("div",null,"gr-ma022-place-list");
  const count=el("p","0 "+t.selected,"gr-ma022-hint");
- const picked=new Set();let busy=false,pref=null,prefLocation=null,seq=0;
+ const allowedIds=new Set(ma022Choices(places).map(p=>p.uid));
+ const picked=new Set((Array.isArray(initialLocationIds)?initialLocationIds:[])
+   .filter(id=>allowedIds.has(id)));let busy=false,pref=null,prefLocation=null,seq=0;
  const setStatus=(s,error=false)=>{status.textContent=s;status.dataset.error=String(error)};
  const permitted=()=>mode==="db_active"&&verifyContext()===true;
  const all=button(t.selectVisible,()=>{for(const p of ma022Choices(places,filter.value))picked.add(p.uid);render()});
