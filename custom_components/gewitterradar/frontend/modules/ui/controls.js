@@ -1,7 +1,7 @@
 import {settingsStorage} from '../core/settings-vault.js?v=4134r1';
 import {createLocationPort} from '../monitored-areas/location-port.js?v=4141r1';
-import {openLocationManager} from '../monitored-areas/location-manager.js?v=41413r1';
-import {migrationRequestUUID} from '../monitored-areas/migration-wizard.js?v=41413r1';
+import {openLocationManager} from '../monitored-areas/location-manager.js?v=41414r1';
+import {migrationRequestUUID} from '../monitored-areas/migration-wizard.js?v=41414r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
@@ -1749,7 +1749,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
               const port=await v407MonitoredAreasPort();
               if (port?.mode!=='migration_pending') throw new Error('MA_MODE_CHANGED');
-              const module=await import('../monitored-areas/migration-wizard.js?v=41413r1');
+              const module=await import('../monitored-areas/migration-wizard.js?v=41414r1');
               if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
               await module.openMigrationWizard(this);
             } : undefined,

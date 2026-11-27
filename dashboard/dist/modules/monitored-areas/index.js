@@ -1,6 +1,6 @@
 // MA-020: optional, profile-owned cleanup reminder. Never acts on To-do data.
 import { registerModule } from "../core/registry.js?v=4141r1";
-import { openMigrationWizard } from "./migration-wizard.js?v=41413r1";
+import { openMigrationWizard } from "./migration-wizard.js?v=41414r1";
 export const MODULE_META=Object.freeze({"id":"monitored-areas.lifecycle","version":"0.2.1","group":"Monitored Areas","function":"Optional lifecycle","subfunctions":["Initialize","Teardown","Migration cleanup reminder"],"file":"modules/monitored-areas/index.js","optional":true});
 registerModule(MODULE_META);
 const MA_PREMIUM_CLOSE = new URL("../../assets/gewitterradar-about-close-premium.webp", import.meta.url).href;
@@ -73,16 +73,16 @@ export function initializeMonitoredAreas(owner, enabled = false) {
     shadow = document.createElement("div");
     shadow.className="gr-ma-cleanup-wrapper";
     shadow.innerHTML = `<style>
-      .gr-ma-cleanup{box-sizing:border-box;width:min(610px,calc(100vw - 24px));max-height:calc(100dvh - 28px);overflow:auto;position:fixed;inset:auto;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;padding:22px;border:2px solid #dbbd82;border-radius:17px;background:radial-gradient(ellipse at 20% 0%,#314b5d,#08151f 75%);color:#e6eaf0;font:14px/1.5 Segoe UI,Arial,sans-serif;box-shadow:0 18px 65px #000b,inset 0 0 0 1px #ffebbe55;z-index:2147483600}
+      .gr-ma-cleanup{box-sizing:border-box;width:min(610px,calc(100vw - 24px));max-height:calc(100dvh - 28px);overflow:auto;position:fixed;inset:auto;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;padding:22px;border:1px solid rgba(201,160,80,.34);border-radius:22px;background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%),linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995));color:#e6eaf0;font:14px/1.5 Segoe UI,Arial,sans-serif;box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,235,184,.055),inset 0 1px rgba(255,244,213,.08),0 0 30px rgba(207,159,60,.065);z-index:2147483600}
       .gr-ma-cleanup h2{font-size:22px;color:#f4dfad;margin:0 0 12px;line-height:1.2}.gr-ma-cleanup p{margin:8px 0 13px}
       .gr-ma-cleanup ol{padding-left:24px;margin:8px 0 14px}.gr-ma-cleanup li{padding:2px 0}
       .gr-ma-cleanup strong{color:#f4dfad}.gr-ma-cleanup .ma-note{padding:10px 12px;border:1px solid #9eb5c462;border-radius:9px;background:#142a396e}
       .gr-ma-cleanup footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:16px}.gr-ma-cleanup label{display:flex;align-items:center;gap:8px;cursor:pointer}
       .gr-ma-cleanup input{width:18px;height:18px;accent-color:#d9ba7e}.gr-ma-cleanup button{border:1px solid #d2b078;border-radius:9px;padding:9px 18px;color:#ffecbd;background:linear-gradient(#37485a,#142331);cursor:pointer;font-weight:700}
       .gr-ma-cleanup button:focus-visible,.gr-ma-cleanup input:focus-visible{outline:2px solid #ffe8ae;outline-offset:3px}
-      .gr-ma-cleanup .ma-close{position:absolute;right:9px;top:8px;display:grid;place-items:center;width:44px;height:44px;padding:4px;border:0;background:transparent;cursor:pointer}
-      .gr-ma-cleanup .ma-close img{display:block;width:36px;height:36px;object-fit:contain;filter:grayscale(1) brightness(1.4) contrast(.85);pointer-events:none}
-      .gr-ma-cleanup .ma-close:hover img{filter:grayscale(1) brightness(1.7) contrast(.9)}.gr-ma-cleanup [role=status]{color:#ffbeae;font-size:12px}
+      .gr-ma-cleanup .ma-close{position:absolute;right:9px;top:8px;display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;border-radius:8px;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;cursor:pointer}
+      .gr-ma-cleanup .ma-close img{display:block;width:34px;height:34px;object-fit:contain;pointer-events:none;transition:transform .16s ease,filter .16s ease}
+      @media(hover:hover) and (pointer:fine){.gr-ma-cleanup .ma-close:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}.gr-ma-cleanup .ma-close:active img{transform:scale(.97);filter:brightness(.92)}.gr-ma-cleanup [role=status]{color:#ffbeae;font-size:12px}
     </style>
     <dialog class="gr-ma-cleanup" aria-labelledby="gr-ma-cleanup-title">
       <button type="button" class="ma-close" aria-label="${t.close}"><img src="${MA_PREMIUM_CLOSE}" alt="" draggable="false"></button>
