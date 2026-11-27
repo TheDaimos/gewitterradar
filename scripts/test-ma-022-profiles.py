@@ -100,11 +100,11 @@ class Profiles(unittest.IsolatedAsyncioTestCase):
 
     async def test_denies_forged_target_and_own_preferences(self):
         location,link=await self.create()
-        with self.assertRaisesRegex((api_mod.ApiError,ValueError),"profile_not_found"):
+        with self.assertRaisesRegex((api_mod.ApiError,PermissionError),"profile_not_found"):
             await self.call("links_share",{"location_id":location,
                 "target_user_id":"bob","target_profile_id":uid()},
                 request_id=uid(),revision=1)
-        with self.assertRaisesRegex((api_mod.ApiError,ValueError),"profile_not_found"):
+        with self.assertRaisesRegex((api_mod.ApiError,PermissionError),"profile_not_found"):
             await self.call("links_share",{"location_id":location,
                 "target_user_id":"removed","target_profile_id":uid()},
                 request_id=uid(),revision=1)
