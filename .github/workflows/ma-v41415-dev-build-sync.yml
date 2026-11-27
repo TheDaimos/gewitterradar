@@ -10,6 +10,7 @@ on:
       - 'frontend/modules/monitored-areas/index.js'
       - 'tests/test_ma_sticky_dialog_layout.mjs'
       - 'tests/test_ma_tabbed_views.mjs'
+      - 'tests/test_ma_sqlite_preview.mjs'
       - 'frontend/modules/ui/controls.js'
 
 concurrency:
