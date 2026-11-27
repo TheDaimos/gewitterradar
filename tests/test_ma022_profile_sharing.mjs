@@ -19,6 +19,12 @@ assert.deepEqual(module.ma022Target(' alice ','0123456789abcdef0123456789abcdef'
 assert.throws(()=>module.ma022Target('bob','wrong'),/MA_INVALID_TARGET/);
 assert.throws(()=>module.ma022Target(' ','0123456789abcdef0123456789abcdef'),/MA_INVALID_TARGET/);
 assert.match(source,/mode==="db_active"&&verifyContext\(\)===true/);
+assert.match(source,/initialLocationIds=\[\]/);
+assert.match(source,/allowedIds\.has\(id\)/,'only existing owned place IDs may be preselected');
+assert.match(source,/owner\._settingsVault\?\.addEventListener\?\.\("change",onVaultChange\)/);
+assert.match(manager,/initialLocationIds:\[place\.uid\]/,'Havanna detail should preselect its own place');
+assert.match(controls,/mode:profileMode,places,initialLocationIds/);
+
 assert.match(source,/if\(!globalThis\.confirm\?\.\(action\)\)return/);
 assert.match(source,/await shareLocation\(p\.uid,target\.user,target\.profile,p\.revision,makeRequestId\(\),\{transfer\}\)/);
 assert.match(source,/for\(const p of chosen\)/,'batch decisions are explicit and sequential');
