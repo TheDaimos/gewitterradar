@@ -36,11 +36,22 @@ Ergänzt:
 
 ### 3. Tests
 
-- `tests/test_ma022_profile_sharing.mjs`: Multi-Selection-/Filtermodell, Zielvalidierung, Zustimmungs-/Fehler-/Datenschutzverträge, keine To-do-/Löschpfade. Aus aktuell gelesenen Repositorydateien isoliert ausgeführt: **25/25 PASS**.
+- `tests/test_ma022_profile_sharing.mjs`: Multi-Selection-/Filtermodell, Zielvalidierung, Zustimmungs-/Fehler-/Datenschutzverträge, keine To-do-/Löschpfade. Aus aktuell gelesenen Repositorydateien nach Abschluss isoliert ausgeführt: **34/34 PASS**.
 - `tests/test_ma022_port.mjs`: selbstständiger WebSocket-Porttest einschließlich `migration_pending`-Schreibsperre, Auth-Profil, UUID und erwarteter Revision. Aus aktuell gelesener Quelle isoliert ausgeführt: **23/23 PASS**.
 - `scripts/test-ma-022-profiles.py`: SQLite-Integrationstests mit echten Versionstabellen und drei simulierten HA-Benutzern: Share/Transfer, Cross-Profil-Vertraulichkeit, persönliche Preferences, Revisionsfehler, Zielprofilvalidierung, Request-Receipt-Idempotenz.
 - `scripts/test-ma-020-finalization.py`: Regression: bei noch nicht finalisierter SQLite-Datenmigration sind sämtliche MA-022-Mutationen serverseitig gesperrt; alte To-do-Liste bleibt unangetastet.
 - CI: `.github/workflows/ma-v41421-dev-build-sync.yml`, danach Quell-/Installationsspiegel-/SHA-Vergleich. Bisherige V4.14.20-Pipeline historisch auf `workflow_dispatch` gestellt.
+
+## Abschließende CI- und Distributionsprüfung
+
+- **Strict Regression PASS:** GitHub-Actions-Lauf **46048762763**, Commit `b4ffa2b0fc8d9655ec27d1af905c01681d92e334`. Der Workflow führt alle MA-020-, MA-021- und MA-022-JavaScript- und Python-Testbefehle mit `set -e -o pipefail` aus, sodass ein einzelner fehlgeschlagener Test den Lauf verhindert. Verifizierbarer automatisch erstellter Nachweis: [MA_V41421_CI_PASS.md](MA_V41421_CI_PASS.md). Kein Fehlerprotokoll erzeugt.
+- Der zunächst fehlende `profile-sharing.js`-Eintrag im kanonischen Source-Inventar von `scripts/build-frontend.mjs` wurde ergänzt. Danach hat der vollständige Frontend-Build beide HA-Installations-/Dashboard-Spiegel regeneriert.
+- **12 von 12** geprüfte repräsentative Frontend-Dateien haben identische Git-Blob-SHAs in `frontend/`, `custom_components/gewitterradar/frontend/` und `dashboard/dist/`. Darunter ist das neue `profile-sharing.js`, das Location-Port-Modul sowie das Location-Management und die MA-020-Oberfläche.
+- **10 SHA256SUMS-Einträge** für fünf MA-Module über zwei installierbare Spiegel; Produkt/Runtime/HA/DRA-Metadaten `4.14.21` / `41421r1` / `0.25.207` / `4.14.21` konsistent.
+- Nachgelagerte UI-Vertragsprobe **34/34 PASS**, Port-Vertragsprobe **23/23 PASS**. Alle Python-SQLite-Integrations- und Finalisierungsregressionen wurden durch den strikten Actions-Lauf erfolgreich abgeschlossen.
+- Korrekturen: Profilwechsel schließt die Freigabeoberfläche und entfernt Listener; Havanna erlaubt eine einmalige, gültige Profil-Orts-Vorauswahl; nach bestätigter Freigabe lädt der Dialog neue autoritative SQLite-Revisionen, entfernt übertragene Orte aus der aktuellen Auswahl und hält den Havanna-Auswahlscope begrenzt.
+
+**Grenze:** Ein erfolgreich synchronisierter DEV-Build bestätigt nicht automatisch, dass DRA das Update auf der Betreiber-VM109 bereits erkannt und installiert hat oder dass echte HA-Mehrbenutzerinteraktionen getestet wurden. Diese Tests stehen als T2 noch aus.
 
 ## Release-Identität und Abnahme
 
