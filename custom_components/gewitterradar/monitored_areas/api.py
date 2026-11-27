@@ -280,6 +280,7 @@ class Api:
                     raise ApiError("migration_preview_stale")
                 imported=[]
                 now=time.time_ns()//1000
+                reused_ids=set()
                 for uid,d in choices.items():
                     candidate=candidates[uid]
                     # Both active and completed Local-To-do places must be
@@ -303,6 +304,25 @@ class Api:
                     else:
                         location_id=d["location_id"]
                         link_id=_actor_link(c,location_id,actor_user_id,profile)
+                        if action=="use_existing":
+                            # Never permit a forged/ambiguous reassignment to a
+                            # different SQLite place. The selected place must
+                            # already match the original To-do name, coordinates
+                            # and profile-scoped archived state. Do not mutate it.
+                            if location_id in reused_ids:
+                                raise ApiError("migration_duplicate_existing_target")
+                            reused_ids.add(location_id)
+                            row=c.execute(
+                                "SELECT l.name,l.lat,l.lon,CASE WHEN a.link_id IS NULL THEN 0 ELSE 1 END "
+                                "FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
+                                "LEFT JOIN archived_profile_links a ON a.link_id=p.link_id "
+                                "WHERE p.link_id=? AND l.location_id=?",
+                                (link_id,location_id)).fetchone()
+                            if (row is None or row[0]!=candidate["name"]
+                                or abs(row[1]-candidate["lat"])>1e-9
+                                or abs(row[2]-candidate["lon"])>1e-9
+                                or bool(row[3])!=(candidate["status"]=="completed")):
+                                raise ApiError("migration_existing_mismatch")
                         if action=="replace":
                             sql._update(c,"locations",location_id,d["expected_revision"],
                                 {"name":candidate["name"],"lat":candidate["lat"],
