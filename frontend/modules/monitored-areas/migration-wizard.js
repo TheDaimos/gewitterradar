@@ -87,6 +87,63 @@ export async function openMigrationWizard(owner) {
     .gr-ma-wizard .sql-row:last-child{border-bottom:0}
     .gr-ma-wizard .sql-row small{display:block;color:#b9c9d5}
     .gr-ma-wizard .sql-preview .note{color:#b6c8d6;font-size:12px}
+
+    /* V4.14.16: real GR Release-History metallic frame, not the flat Settings color token. */
+    .gr-ma-wizard{
+      border:2px solid transparent;
+      background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%) padding-box,
+        linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995)) padding-box,
+        linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;
+      box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,236,181,.08),
+        inset 0 1px rgba(255,244,213,.10),0 0 12px rgba(215,164,67,.12);
+    }
+    /* Balanced left/right inset; the scrollbar must not allocate an extra right-hand gutter. */
+    .gr-ma-wizard .wizard-content{padding-inline:18px;scrollbar-gutter:auto;scrollbar-width:thin;scrollbar-color:#826b46 transparent}
+    .gr-ma-wizard .wizard-header{padding-left:18px;padding-right:62px}
+    .gr-ma-wizard .wizard-footer{padding-inline:18px}
+    .gr-ma-wizard .wizard-content::-webkit-scrollbar{width:6px}
+    .gr-ma-wizard .wizard-content::-webkit-scrollbar-thumb{background:#826b46;border-radius:20px}
+    .gr-ma-wizard .ma-view-tabs button,.gr-ma-wizard .ma-letter-bar button{
+      appearance:none;position:relative;
+      border:1px solid #73562d!important;border-radius:9px!important;
+      background:linear-gradient(180deg,#f5daa1 0%,#ad8544 4%,#463822 13%,#1d2831 27%,#172029 68%,#5f4b2c 92%,#e0bc79 100%)!important;
+      box-shadow:inset 0 1px 0 #f8e1ae99,inset 0 2px 6px #000b,
+        0 1px 0 #161c25,0 3px 8px #0007!important;
+      color:#f1d59e!important;text-shadow:0 1px 1px #05090d,0 0 5px #bd914355;
+      transition:filter .16s ease,box-shadow .16s ease;
+    }
+    .gr-ma-wizard .ma-view-tabs button{font-weight:750;letter-spacing:.025em}
+    .gr-ma-wizard .ma-letter-bar button{min-width:31px;min-height:32px;font-size:12px;
+      font-weight:850;font-family:Georgia,"Times New Roman",serif;
+      color:#f8e2b4!important;text-shadow:0 1px 0 #000,0 0 4px #d9ae6480;
+      padding:3px 8px!important}
+    .gr-ma-wizard .ma-view-tabs button[aria-pressed="true"],.gr-ma-wizard .ma-letter-bar button[aria-pressed="true"]{
+      border-color:#ffe4a0!important;
+      background:linear-gradient(180deg,#fff1bf 0%,#d1a256 9%,#75542d 22%,#392d21 55%,#89602e 88%,#fce5a2 100%)!important;
+      box-shadow:inset 0 1px 1px #fff3bf,inset 0 3px 8px #32200f,
+        0 0 0 1px #c4974b55,0 0 12px #c99d4e55!important;
+      color:#fff1c6!important;
+    }
+    @media(hover:hover) and (pointer:fine){.gr-ma-wizard .ma-view-tabs button:hover,.gr-ma-wizard .ma-letter-bar button:hover{filter:brightness(1.2) saturate(1.12)}}
+    .gr-ma-wizard .ma-view-tabs button:focus-visible,.gr-ma-wizard .ma-letter-bar button:focus-visible{outline:2px solid #ffe6af;outline-offset:2px}
+    .gr-ma-wizard .wizard-footer .controls button{
+      background:linear-gradient(180deg,#ddbb7b 0%,#635136 6%,#20323e 18%,#132531 79%,#5d482b 94%,#d6af6b 100%)!important;
+      border:1px solid #ab854b!important;box-shadow:inset 0 1px #ffebc077,0 3px 8px #0007!important;
+      color:#f7e7c7!important;text-shadow:0 1px 1px #000;
+    }
+    .gr-ma-wizard .entry select{border:1px solid #bb9457;background:linear-gradient(180deg,#2c4757,#193040);box-shadow:inset 0 1px #f7dfb522}
+    .gr-ma-wizard .sql-preview{margin-inline:0;border:1px solid #aa854e;
+      background:linear-gradient(180deg,#132937,#091a25);box-shadow:inset 0 1px #f7d99a22,0 3px 15px #0005}
+    .gr-ma-wizard .sql-preview details{border:1px solid #977445;
+      background:linear-gradient(180deg,#1d3240,#0e1e2b);box-shadow:inset 0 1px #f9d99a20}
+    .gr-ma-wizard .sql-preview summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .gr-ma-wizard .sql-preview summary::-webkit-details-marker{display:none}
+    .gr-ma-wizard .sql-preview summary::after{content:"";flex:none;width:12px;height:12px;
+      border-right:2px solid #d6b66e;border-bottom:2px solid #d6b66e;transform:rotate(45deg);
+      margin:-6px 6px 0 0;filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 3px #d8a74a66);
+      transition:transform .42s cubic-bezier(.22,1,.36,1),filter .28s ease}
+    .gr-ma-wizard .sql-preview details[open]>summary::after{transform:rotate(225deg);margin-top:7px;filter:brightness(1.14) drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 4px #d8a74a88)}
+    @media(max-width:540px){.gr-ma-wizard .wizard-content{padding-inline:12px}.gr-ma-wizard .wizard-header{padding-left:12px;padding-right:62px}.gr-ma-wizard .wizard-footer{padding-inline:12px}}
   </style><dialog class="gr-ma-wizard" aria-label="Standortübernahme">
     <header class="wizard-header">
       <button type="button" class="close" aria-label="Schließen"><img src="${MA_PREMIUM_CLOSE}" alt="" draggable="false"></button>
