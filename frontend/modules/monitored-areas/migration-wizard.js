@@ -1,6 +1,8 @@
 // MA-020 migration workflow: explicit decisions and separate destructive confirmation.
 // A request UUID is required for server-side idempotency. Browsers in a non-secure
 // HA context may expose getRandomValues but not randomUUID; never use Math.random.
+const MA_PREMIUM_CLOSE = new URL("../../assets/gewitterradar-about-close-premium.webp", import.meta.url).href;
+
 export function migrationRequestUUID(cryptoSource=globalThis.crypto) {
   if (typeof cryptoSource?.randomUUID === "function") return cryptoSource.randomUUID();
   if (typeof cryptoSource?.getRandomValues !== "function") {
@@ -33,10 +35,16 @@ export async function openMigrationWizard(owner) {
   const hass = owner.hass || owner._hass || owner._vaultHass;
   const profileId = owner._settingsVault?.profile?.id;
   if (!hass?.callWS || !profileId || !owner.shadow) return null;
-  const call = (op,payload={},requestId=null) => hass.callWS({
-    type:"gewitterradar/monitored_areas/"+op,schema:1,
-    request:{profile_id:profileId,payload,...(requestId?{request_id:requestId}:{})}
-  });
+  const call = async (op,payload={},requestId=null) => {
+    // Never render another profile’s results or commit after a Vault switch.
+    if(owner._settingsVault?.profile?.id !== profileId) throw new Error("Vault-Profil gewechselt – Dialog erneut öffnen");
+    const result = await hass.callWS({
+      type:"gewitterradar/monitored_areas/"+op,schema:1,
+      request:{profile_id:profileId,payload,...(requestId?{request_id:requestId}:{})}
+    });
+    if(owner._settingsVault?.profile?.id !== profileId) throw new Error("Vault-Profil gewechselt – Dialog erneut öffnen");
+    return result;
+  };
   const shell = document.createElement("div");
   shell.innerHTML = `<style>
     .gr-ma-wizard{box-sizing:border-box;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;z-index:2147483601;width:min(660px,calc(100vw - 20px));height:min(820px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);overflow:hidden;padding:0;display:flex;flex-direction:column;border:2px solid #d7b87b;border-radius:16px;background:linear-gradient(155deg,#263b4d,#0c1722 72%);color:#e7ecf1;box-shadow:0 15px 60px #000c;font:14px/1.5 Segoe UI,Arial,sans-serif}
@@ -47,12 +55,13 @@ export async function openMigrationWizard(owner) {
     .gr-ma-wizard .wizard-content{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:13px 18px;scrollbar-gutter:stable;contain:paint}
     .gr-ma-wizard .wizard-footer{flex:0 0 auto;position:relative;padding:11px 18px 14px;background:#152838;border-top:1px solid #8e744b;z-index:2}
     .gr-ma-wizard .wizard-footer [role=status]{max-height:5.5em;overflow-y:auto}
-    .gr-ma-wizard .close{position:absolute;right:13px;top:12px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;padding:0!important;color:#f5e1b5!important;background:radial-gradient(circle at 30% 25%,#54728b,#193041 69%)!important;border:2px solid #c9ab72!important;box-shadow:inset 0 1px 3px #ffffff55,0 2px 8px #0008;font-size:27px;font-weight:300;line-height:1}
-    .gr-ma-wizard .close:hover{filter:brightness(1.13)}
+    .gr-ma-wizard .close{position:absolute;right:13px;top:12px;width:44px;height:44px;display:grid;place-items:center;padding:4px!important;border:0!important;background:transparent!important;cursor:pointer;touch-action:manipulation}
+    .gr-ma-wizard .close img{display:block;width:36px;height:36px;object-fit:contain;filter:grayscale(1) brightness(1.4) contrast(.85);pointer-events:none}
+    .gr-ma-wizard .close:hover img{filter:grayscale(1) brightness(1.7) contrast(.9)}
     .gr-ma-wizard .close:focus-visible{outline:2px solid #fff0ba;outline-offset:3px}
     @media(max-width:540px){.gr-ma-wizard .wizard-header{padding:12px 63px 9px 13px}.gr-ma-wizard .wizard-content{padding:10px 12px}.gr-ma-wizard .wizard-footer{padding:8px 12px 11px}.gr-ma-wizard .close{right:11px;top:10px;width:40px;height:40px}}
     @media(max-height:520px){.gr-ma-wizard .wizard-footer [role=status]{max-height:2.8em}}
-    .gr-ma-wizard button,.gr-ma-wizard select{background:#233a4b;color:#f4e5c9;border:1px solid #b99b68;border-radius:7px;padding:9px}
+    .gr-ma-wizard button:not(.close),.gr-ma-wizard select{background:#233a4b;color:#f4e5c9;border:1px solid #b99b68;border-radius:7px;padding:9px}
     .gr-ma-wizard button:disabled{opacity:.4}.gr-ma-wizard .entry{padding:9px;margin:6px 0;border:1px solid #708ca066;border-radius:8px}
     .gr-ma-wizard .entry label{display:block;font-weight:600}.gr-ma-wizard .entry select{width:100%;margin-top:5px}
     .gr-ma-wizard .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:15px}
@@ -69,7 +78,7 @@ export async function openMigrationWizard(owner) {
     .gr-ma-wizard .sql-preview .note{color:#b6c8d6;font-size:12px}
   </style><dialog class="gr-ma-wizard" aria-label="Standortübernahme">
     <header class="wizard-header">
-      <button type="button" class="close" aria-label="Schließen">×</button>
+      <button type="button" class="close" aria-label="Schließen"><img src="${MA_PREMIUM_CLOSE}" alt="" draggable="false"></button>
       <h2>Standorte aus Local To-do übernehmen</h2>
       <p>Die alte Liste bleibt bis zur gesonderten Administratorbestätigung bestehen.</p>
     </header>
