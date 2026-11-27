@@ -73,7 +73,7 @@ export function createLocationPort({hass, profileId, legacy=defaultLegacy, focus
         if(!row||typeof row.entry_id!=="string"||typeof row.title!=="string"||
            !["trackers","counters","distances","other_sensors"].every(k=>
              Array.isArray(row[k])&&row[k].length<=200&&row[k].every(id=>
-               typeof id==="string"&&/^[a-z_]+\\.[a-z0-9_]+$/.test(id))))
+               typeof id==="string"&&/^[a-z_]+\.[a-z0-9_]+$/.test(id))))
           throw new Error("MA_BLITZORTUNG_INVALID_RESPONSE");
       }
       return result.locations;
@@ -86,7 +86,7 @@ export function createLocationPort({hass, profileId, legacy=defaultLegacy, focus
       const result=await request("tracker_name_check",{location_id:locationId,name});
       if(typeof result?.available!=="boolean")throw new Error("MA_TRACKER_INVALID_RESPONSE");
       if(result.available===true && (typeof result.entity_id!=="string"||
-          !/^device_tracker\\.[a-z0-9_]+$/.test(result.entity_id)))
+          !/^device_tracker\.[a-z0-9_]+$/.test(result.entity_id)))
         throw new Error("MA_TRACKER_INVALID_RESPONSE");
       return result;
     },
