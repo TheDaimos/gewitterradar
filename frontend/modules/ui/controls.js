@@ -1742,6 +1742,16 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             places:loaded ? [...(this._v407SavedPlaces || [])] : [],
             removed:loaded ? [...(this._v407RemovedPlaces || [])] : [],
             refresh:reload,
+            // MA-021: server-scoped metadata; only after verified db_active.
+            // Profile/user identity must still match when the read resolves.
+            readDetails:loaded && mode==='db_active' ? async place=>{
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              const port=await v407MonitoredAreasPort();
+              if(port?.mode!=='db_active')throw new Error('MA_PLACE_DB_NOT_ACTIVE');
+              const details=await port.getLocation(place.uid);
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              return details;
+            } : undefined,
             rename:loaded ? (place,name)=>change('rename',place,name) : undefined,
             archive:loaded ? place=>change('archive',place) : undefined,
             restore:loaded ? place=>change('restore',place) : undefined,
