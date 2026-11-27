@@ -726,3 +726,14 @@ Geschützte Refs vor Dokumentation: main 37f1aca54cd505fd91a2b1b0014cd7c6c280b26
 - **Gesonderte V4.15-To-do:** Die SettingsVault/SQLite-Gesamtzusammenführung ist unter [Unified Settings & Profiles](GR_V415_TODO_UNIFIED_SETTINGS_PROFILES.md) erfasst; kein vorgezogener Vault-Umbau in V4.14. [V4.14.21-Abnahmebericht](GR_41421_MA022_PROFILE_SHARING_2026-11-27.md).
 
 - **Abschließende T1-Bestätigung (GitHub Actions):** Nach Behebung eines fehlenden Support-Moduls in `scripts/build-frontend.mjs` und Aktivierung eines strikt abbrechenden Regressionsblocks (`set -e -o pipefail`) ist Lauf **46048762763** vollständig PASS; [CI-Nachweis](MA_V41421_CI_PASS.md). SHA-Readback **12/12** Frontend-Quelldateien und Spiegel byteidentisch, **10** MA-Hash-Einträge in zwei Installationsspiegeln, alle Versionen synchron. UI-Vertragsprobe **34/34 PASS**, Port **23/23 PASS**. MA-022 realer Mehrbenutzer-T2 weiterhin ausstehend und vor bestätigtem MA-020-Cutover bewusst gesperrt.
+
+
+## P04 – MA-023/025 V4.14.22 DEV source / DRA-branch candidate (27.11.2026)
+
+- **MA-023**: Tracking name candidate/registry/state/SQLite reservation check added as read-only, scoped `tracker_name_check`. Successful name yields copyable `device_tracker` Entity-ID; collision yields only `name_unavailable`; **no actual tracker creation**. Scoped by HA actor, Vault owner and finalized `db_active` location link. Python + Node checks performed on feature-branch CI.
+- **MA-025 – discovery subset only**: admin-only read-only Blitzortung integration and entity inventory with per-location authorization and dropdown diagnostics. Counter/distance classification is indicative, not a confirmed binding. **No persistent binding, no Blitzortung ConfigEntry modification and no monitoring activation.**
+- **Source implementation commits:** `aaf1b099` and `fe3741c9`, followed by WS compatibility and regex corrections. Dedicated contract CI runs `46078015528` (MA-023 success) and `46078015436` (MA-025 success) on `f100fd66`.
+- **DEV product identity:** GR `4.14.22`, runtime `41422r1`, module set `E414-22A1`, HA integration `0.25.208`, DRA build `4.14.22`. V4.14.22 source build run `46078342560` succeeded and generated delivery mirrors at commit `d9d58ff2`.
+- **T0/T1**: targeted Python/Node completed on source CI. **T2/T3 not performed** for P04; real HA VM109, multi-user tests, actual association, screenshots and provider connection remain open. No FINAL or automatic deployment to `deploy/dev`.
+- **Unchanged**: existing Local-To-do/SQLite finalization, all 43 migrated locations, WeatherRouter, reference tracker, protected map/weather modules, PROD VM101.
+- **next_task:** complete MA-022/P03 operator T2 and P03 gate, then MA-024 (actual HA tracker entity with ACL/ack) and complete MA-025 persistent per-location Blitzortung source/counter/distance assignments. MA-026/027 deferred until those contracts are tested.

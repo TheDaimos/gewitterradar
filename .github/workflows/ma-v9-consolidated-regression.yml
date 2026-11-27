@@ -29,6 +29,8 @@ on:
       - 'custom_components/gewitterradar/frontend/**'
       - 'SHA256SUMS_FRONTEND.txt'
       - 'custom_components/gewitterradar/dra-deployment-provenance.json'
+      - 'docs/MONITORED_AREAS_V412_STATUS.md'
+      - 'docs/GR_41422_P04_TRACKER_BLITZORTUNG_DEV_2026-11-27.md'
 permissions:
   contents: read
 jobs:
