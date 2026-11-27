@@ -6,6 +6,7 @@ const source=readFileSync(new URL('frontend/modules/monitored-areas/profile-shar
 const manager=readFileSync(new URL('frontend/modules/monitored-areas/location-manager.js',root),'utf8');
 const controls=readFileSync(new URL('frontend/modules/ui/controls.js',root),'utf8');
 const api=readFileSync(new URL('custom_components/gewitterradar/monitored_areas/api.py',root),'utf8');
+const builder=readFileSync(new URL('scripts/build-frontend.mjs',root),'utf8');
 const module=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 const a={uid:'6ab3f741-d65b-4ee2-83d9-4ad3cd11c0a9',name:'Havanna',revision:4};
 const b={uid:'2a1c8b3c-f3b7-4a81-b946-0d9c14bfb414',name:'Hamburg',revision:3};
@@ -38,6 +39,7 @@ assert.match(manager,/profileButton\.disabled=state\.busy\|\|plan\.mode!=='db_ac
 assert.match(controls,/port\?\.mode!=='db_active'/);
 assert.match(controls,/module\.openProfileSharing\(this,/);
 assert.match(controls,/verifyContext:\(\)=>sameProfile\(\)&&this\._maSavedMode==='db_active'/);
+assert.ok(builder.includes("'modules/monitored-areas/profile-sharing.js'"),'MA-022 must be included in canonical frontend inventory');
 assert.match(api,/"preferences_get"/);
 assert.match(api,/if op=="preferences_get":/);
 assert.match(api,/link_id=_actor_link\(c,location_id,actor_user_id,profile\)/);
