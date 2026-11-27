@@ -1,0 +1,51 @@
+// MA-022: typed HA WebSocket port enforces mode/ownership/revision and request IDs.
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const source=readFileSync(new URL('../frontend/modules/monitored-areas/location-port.js',import.meta.url),'utf8');
+const {createLocationPort}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const lid='6ab3f741-d65b-4ee2-83d9-4ad3cd11c0a9';
+const link='3cf44f63-eaf0-431a-b1a3-4f4a54b7eeea';
+const req='97ba8c7d-16ad-48b3-aae9-a70d1bdc6b28';
+const account='authenticated-ha-user';
+const profile='0123456789abcdef0123456789abcdef';
+let current='migration_pending';const sent=[];
+const hass={callWS:async x=>{
+ sent.push(x);
+ if(x.type.endsWith('/status'))return {capabilities:{saved_places_mode:current}};
+ if(x.type.endsWith('/links_list'))return {own_link_id:link,shared_link_count:2};
+ if(x.type.endsWith('/preferences_get'))return {preferences:{link_id:link,revision:1,quiet_minutes:15}};
+ if(x.type.endsWith('/preferences_update'))return {preferences:{link_id:link,revision:2,quiet_minutes:20}};
+ if(x.type.endsWith('/links_share'))return {link_id:link,location_revision:5};
+ if(x.type.endsWith('/links_transfer'))return {link_id:link,location_revision:5};
+ throw Error('unexpected command '+x.type);
+}};
+const nope=()=>{throw Error('legacy unavailable')};
+const port=createLocationPort({hass,profileId:'source-profile',legacy:{listPlaces:nope,saveCandidate:nope}});
+await port.reconcileMode();
+await assert.rejects(port.listLinks(lid),/MA_PLACE_DB_NOT_ACTIVE/);
+await assert.rejects(port.getPreferences(lid),/MA_PLACE_DB_NOT_ACTIVE/);
+await assert.rejects(port.shareLocation(lid,account,profile,4,req),/MA_PLACE_DB_NOT_ACTIVE/);
+assert.equal(sent.filter(x=>/links_list|preferences_get|links_share/.test(x.type)).length,0);
+current='db_active';await port.reconcileMode();
+const links=await port.listLinks(lid);assert.equal(links.shared_link_count,2);
+assert.equal((await port.getPreferences(lid)).revision,1);
+const result=await port.updatePreferences(link,{quiet_minutes:20},1,req);
+assert.equal(result.revision,2);
+const share=await port.shareLocation(lid,account,profile,4,req);
+assert.equal(share.location_revision,5);
+await port.shareLocation(lid,account,profile,4,req,{transfer:true});
+const commands=sent.filter(x=>!x.type.endsWith('/status'));
+assert.deepEqual(commands.map(x=>x.type.split('/').pop()),
+ ['links_list','preferences_get','preferences_update','links_share','links_transfer']);
+for(const x of commands){assert.equal(x.request.profile_id,'source-profile');}
+const mutation=commands.find(x=>x.type.endsWith('/links_share'));
+assert.deepEqual(mutation.request.payload,{location_id:lid,target_user_id:account,target_profile_id:profile});
+assert.equal(mutation.request.request_id,req);assert.equal(mutation.request.expected_revision,4);
+const prefs=commands.find(x=>x.type.endsWith('/preferences_update'));
+assert.equal(prefs.request.payload.link_id,link);
+await assert.rejects(port.shareLocation(lid,account,'bad',4,req),/MA_INVALID_TARGET/);
+await assert.rejects(port.shareLocation(lid,account,profile,0,req),/MA_INVALID_REQUEST/);
+await assert.rejects(port.shareLocation(lid,account,profile,4,'invalid'),/MA_INVALID_REQUEST/);
+await assert.rejects(port.updatePreferences(link,{unknown:true},1,req),/MA_INVALID_REQUEST/);
+await assert.rejects(port.getPreferences('not-uuid'),/MA_INVALID_REQUEST/);
+console.log('PASS MA-022 typed link/prefs commands, mode gate, explicit revisions, actor profile binding');
