@@ -203,6 +203,7 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
       widget.style.left=pos.x+'px';widget.style.top=pos.y+'px';
     };
     placeWindow();
+    accordion.addEventListener('toggle',placeWindow); // expansion must remain on-screen
     let drag=null;
     heading.addEventListener('pointerdown',event=>{
       if(event.target.closest('button')||event.button!==0)return;
@@ -222,7 +223,10 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     widget.addEventListener('keydown',event=>{if(event.key==='Escape'){event.stopPropagation();disposeDetail();widget.remove();detailWindow=null;}});
     widget.focus({preventScroll:true});
   };
-  const consume=next=>{if(!root.isConnected)return;state.places=next.places;state.removed=next.removed;state.mode=next.mode;notice('');render();};
+  const consume=next=>{if(!root.isConnected)return;
+    // Never leave stale details visible after a profile/mode/list reload.
+    if(detailWindow){disposeDetail();detailWindow.remove();detailWindow=null;}
+    state.places=next.places;state.removed=next.removed;state.mode=next.mode;notice('');render();};
   const mutate=async(kind,place)=>{
     if(state.busy)return;
     if(kind==='rename'&&state.mode!=='db_active')return;
