@@ -24,7 +24,7 @@ OPS = (
     "status", "locations_list", "places_list", "migration_preview", "migration_commit",
     "migration_finalize_preview", "migration_finalize_commit", "location_get", "location_create", "location_update",
     "location_archive", "location_restore",
-    "monitoring_update", "tracker_name_check", "links_list", "links_share", "links_transfer", "links_remove",
+    "monitoring_update", "tracker_name_check", "blitzortung_inventory", "links_list", "links_share", "links_transfer", "links_remove",
     "links_remove_preview", "history_reset_preview", "history_reset_commit", "preferences_get", "preferences_update",
 )
 MUTATIONS = {"migration_commit","location_create", "location_update", "monitoring_update",
@@ -743,6 +743,30 @@ def register_websocket_api(hass):
                     registry=er.async_get(hass)
                     taken=reserved or registry.async_get(entity_id) is not None or hass.states.get(entity_id) is not None
                     result=name_availability(entity_id,taken)
+                elif op=="blitzortung_inventory":
+                    # MA-025: observational inventory only. No ConfigEntry edits,
+                    # tracker creation, source subscription, or DB write.
+                    if not user.is_admin:
+                        raise ApiError("forbidden")
+                    req=msg["request"]
+                    if set(req)!={"profile_id","payload"} or not isinstance(req["payload"],dict):
+                        raise ApiError("invalid_request")
+                    if set(req["payload"])!={"location_id"}:
+                        raise ApiError("invalid_request")
+                    profile=req["profile_id"]
+                    await api._links.require_profile(user.id,profile)
+                    if api._finalizer is None or await api._finalizer.mode(user.id,profile)!="db_active":
+                        raise ApiError("migration_pending")
+                    location_id=_uuid(req["payload"]["location_id"])
+                    await api._repo._db.async_execute(
+                        lambda c:_actor_link(c,location_id,user.id,profile),kind="read")
+                    from homeassistant.helpers import entity_registry as er
+                    from .blitzortung_inventory import collect_inventory
+                    registry=er.async_get(hass)
+                    result=collect_inventory(
+                        hass.config_entries.async_entries(),
+                        lambda eid:er.async_entries_for_config_entry(registry,eid),
+                        hass.states.get)
                 else:
                     result=await api.dispatch(actor_user_id=user.id,is_admin=user.is_admin,
                                               op=op,request=msg["request"])

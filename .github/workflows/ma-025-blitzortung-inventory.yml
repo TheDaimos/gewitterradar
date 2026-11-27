@@ -1,0 +1,32 @@
+name: MA-025 Blitzortung read-only inventory
+on:
+  push:
+    branches: [feature/v4.14-monitored-areas]
+    paths:
+      - '.github/workflows/ma-025-blitzortung-inventory.yml'
+      - 'custom_components/gewitterradar/monitored_areas/api.py'
+      - 'custom_components/gewitterradar/monitored_areas/blitzortung_inventory.py'
+      - 'frontend/modules/monitored-areas/location-port.js'
+      - 'frontend/modules/monitored-areas/location-manager.js'
+      - 'frontend/modules/ui/controls.js'
+      - 'tests/test_ma025_blitzortung_inventory.py'
+      - 'tests/test_ma025_blitzortung_inventory.mjs'
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m unittest discover -s tests -p 'test_ma025_blitzortung_inventory.py' -v
+      - run: python -m py_compile custom_components/gewitterradar/monitored_areas/api.py custom_components/gewitterradar/monitored_areas/blitzortung_inventory.py
+      - run: node --check frontend/modules/monitored-areas/location-port.js
+      - run: node --check frontend/modules/monitored-areas/location-manager.js
+      - run: node --check frontend/modules/ui/controls.js
+      - run: node tests/test_ma025_blitzortung_inventory.mjs

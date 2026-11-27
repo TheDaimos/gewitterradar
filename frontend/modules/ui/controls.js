@@ -1796,6 +1796,14 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
               return details;
             } : undefined,
+            listBlitzortungInventory:loaded && mode==='db_active' ? async place=>{
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              const port=await v407MonitoredAreasPort();
+              if(port?.mode!=='db_active')throw new Error('MA_PLACE_DB_NOT_ACTIVE');
+              const sources=await port.listBlitzortungInventory(place.uid);
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              return sources;
+            } : undefined,
             checkTrackerName:loaded && mode==='db_active' ? async (place,name)=>{
               if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
               const port=await v407MonitoredAreasPort();

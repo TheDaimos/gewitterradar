@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const api=read('custom_components/gewitterradar/monitored_areas/api.py');
+const port=read('frontend/modules/monitored-areas/location-port.js');
+const manager=read('frontend/modules/monitored-areas/location-manager.js');
+const controls=read('frontend/modules/ui/controls.js');
+assert.match(api,/"blitzortung_inventory"/);
+assert.match(api,/if not user\.is_admin/);
+assert.match(api,/_actor_link\(c,location_id,user\.id,profile\)/);
+assert.match(port,/async listBlitzortungInventory\(locationId\)/);
+assert.match(port,/result\?\.read_only!==true/);
+assert.match(manager,/t\.blitzPreview/);
+assert.match(manager,/select\.addEventListener\('change',render\)/);
+assert.match(controls,/listBlitzortungInventory:loaded && mode==='db_active'/);
+assert.doesNotMatch(manager,/callService\(|callWS\(|innerHTML/);
+console.log('MA-025 read-only Blitzortung config/entity inventory contracts PASS');

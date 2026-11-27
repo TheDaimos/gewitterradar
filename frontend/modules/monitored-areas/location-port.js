@@ -63,6 +63,21 @@ export function createLocationPort({hass, profileId, legacy=defaultLegacy, focus
       if(!Array.isArray(result.places))throw new Error("MA_PLACE_INVALID_RESPONSE");
       return result;
     },
+    async listBlitzortungInventory(locationId){
+      // MA-025: admin/ACL-gated observational inventory. Never binds locations.
+      safeLocation(mode,locationId);
+      const result=await request("blitzortung_inventory",{location_id:locationId});
+      if(result?.read_only!==true||!Array.isArray(result?.locations)||
+         result.locations.length>100)throw new Error("MA_BLITZORTUNG_INVALID_RESPONSE");
+      for(const row of result.locations){
+        if(!row||typeof row.entry_id!=="string"||typeof row.title!=="string"||
+           !["trackers","counters","distances","other_sensors"].every(k=>
+             Array.isArray(row[k])&&row[k].length<=200&&row[k].every(id=>
+               typeof id==="string"&&/^[a-z_]+\\.[a-z0-9_]+$/.test(id))))
+          throw new Error("MA_BLITZORTUNG_INVALID_RESPONSE");
+      }
+      return result.locations;
+    },
     async checkTrackerName(locationId,name){
       // Read-only MA-023 validation; no automatic tracker creation or assignment.
       safeLocation(mode,locationId);
