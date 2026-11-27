@@ -25,7 +25,7 @@ OPS = (
     "migration_finalize_preview", "migration_finalize_commit", "location_get", "location_create", "location_update",
     "location_archive", "location_restore",
     "monitoring_update", "links_list", "links_share", "links_transfer", "links_remove",
-    "links_remove_preview", "history_reset_preview", "history_reset_commit", "preferences_update",
+    "links_remove_preview", "history_reset_preview", "history_reset_commit", "preferences_get", "preferences_update",
 )
 MUTATIONS = {"migration_commit","location_create", "location_update", "monitoring_update",
              "location_archive", "location_restore",
@@ -414,6 +414,19 @@ class Api:
                 count=c.execute("SELECT count(*) FROM profile_links WHERE location_id=?",(location_id,)).fetchone()[0]
                 return {"own_link_id":link_id,"shared_link_count":count}
             return await self._repo._db.async_execute(read,kind="read")
+        if op=="preferences_get":
+            if set(payload)!={"location_id"}:
+                raise ApiError("invalid_request")
+            location_id=_uuid(payload["location_id"])
+            def read_preferences(c):
+                # The authenticated actor and verified Vault profile are the
+                # only possible sources of link ownership. Never enumerate or
+                # return a second user's preferences or linked profile IDs.
+                link_id=_actor_link(c,location_id,actor_user_id,profile)
+                pref=sql._read(c,"profile_preferences",link_id)
+                if pref is None: raise ApiError("not_found")
+                return {"preferences":pref}
+            return await self._repo._db.async_execute(read_preferences,kind="read")
         if op=="links_remove_preview":
             location_id=_uuid(payload.get("location_id"))
             link_id=_uuid(payload.get("link_id"))
@@ -562,6 +575,8 @@ class Api:
             target_profile=payload.get("target_profile_id")
             if not isinstance(target_user,str) or not target_user:
                 raise ApiError("invalid_request")
+            if target_user==actor_user_id and target_profile==profile:
+                raise ApiError("target_is_source")
             # The client supplies an ID to look up, not an authorization claim.
             if self._target_active is None or await self._target_active(target_user) is not True:
                 raise ApiError("profile_not_found")
