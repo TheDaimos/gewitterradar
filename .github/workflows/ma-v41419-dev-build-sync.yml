@@ -13,6 +13,7 @@ on:
       - 'frontend/modules/monitored-areas/location-manager.js'
       - 'frontend/modules/monitored-areas/location-port.js'
       - 'tests/test_ma021_responsive_layout.mjs'
+      - 'tests/test_ma021_port_readonly.mjs'
       - 'tests/test_ma021_havanna_detail.mjs'
       - 'frontend/modules/monitored-areas/index.js'
       - 'tests/test_ma_sticky_dialog_layout.mjs'
@@ -73,6 +74,7 @@ jobs:
             node tests/test_ma_location_manager.mjs
           node tests/test_ma021_havanna_detail.mjs
           node tests/test_ma021_responsive_layout.mjs
+          node tests/test_ma021_port_readonly.mjs
           node --check frontend/modules/monitored-areas/location-port.js
             python -m unittest discover -s tests -p 'test_ma_frontend_module_registration.py' -v
             python -m unittest discover -s tests -p 'test_ma_v4146_optin_contract.py' -v
