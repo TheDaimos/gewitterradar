@@ -1743,6 +1743,17 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             places:loaded ? [...(this._v407SavedPlaces || [])] : [],
             removed:loaded ? [...(this._v407RemovedPlaces || [])] : [],
             refresh:reload,
+            // GeoPoint uses the existing weather inspector; never focus the map
+            // or select a reference tracker as a side effect of this action.
+            openGeoPoint:async position=>{
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              const open=this._weatherTemperatureOpenGeoPointAt;
+              if(typeof open!=='function')throw new Error('MA_GEOPOINT_UNAVAILABLE');
+              const result=await open.call(this,position);
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              if(result?.opened!==true)throw new Error('MA_GEOPOINT_UNAVAILABLE');
+              return result;
+            },
             // MA-021: server-scoped metadata; only after verified db_active.
             // Profile/user identity must still match when the read resolves.
             readDetails:loaded && mode==='db_active' ? async place=>{

@@ -86,6 +86,22 @@ export const installWeatherTemperature=defineModule(MODULE_META,(deps={})=>{inst
   });},
  _weatherTemperaturePointLines(){const s=this._weatherTemperatureState(),g=s.geoContext;if(!g)return [];return [g.latitude.toFixed(3)+'°, '+g.longitude.toFixed(3)+'°',g.selected_time||this._t('weather.temperature.noModelTime'),...g.requested_capabilities.map(k=>g.available_capabilities.includes(k)?k+': '+(k===TEMPERATURE_FIELD?temperatureText(g.values[k].value,s.config.unit,true,this._locale()):JSON.stringify(g.values[k])):k+': '+(g.availability[k]?.code||this._t('weather.layer.unavailable'))), ...Object.values(g.source_metadata).map(x=>x.attribution||x.provider_id||''),...Object.values(g.validity_metadata).map(x=>this._t('weather.legend.modelValidity',{run:x.model_run,valid:x.valid_at,until:x.valid_until}))];},
  _weatherTemperaturePointRender(){const s=this._weatherTemperatureState();if(!s.geoContext)return;const card=this.shadow.getElementById('map-card');let box=this.shadow.getElementById('weather-temperature-point');if(!box){box=document.createElement('div');box.id='weather-temperature-point';box.className='weather-wind-panel';box.style.cssText='right:12px;top:auto;bottom:24px;width:min(340px,calc(100% - 24px));z-index:2147483645';card.append(box);}box.replaceChildren();const title=document.createElement('strong');title.textContent='GeoPoint Inspector';box.append(title);for(const text of this._weatherTemperaturePointLines()){const p=document.createElement('p');p.textContent=text;box.append(p);}const close=document.createElement('button');close.type='button';close.textContent=this._t('about.close')==='about.close'?'Schließen':this._t('about.close');close.onclick=()=>box.hidden=true;box.append(close);},
+ async _weatherTemperatureOpenGeoPointAt({latitude,longitude}={}){
+  // MA-021 explicit, camera-neutral entry into the existing GeoPoint Inspector.
+  // Never toggle temperature visibility, change the reference tracker or fake
+  // unsupported air pressure/humidity data. The provider reports unavailable.
+  if(typeof latitude!=='number'||typeof longitude!=='number'||
+     !Number.isFinite(latitude)||!Number.isFinite(longitude)||
+     Math.abs(latitude)>90||Math.abs(longitude)>180)throw Error('MA_GEOPOINT_INVALID_COORDINATES');
+  if(!this._map||!this.shadow)throw Error('MA_GEOPOINT_MAP_NOT_READY');
+  this._resumeWeatherTemperature();
+  const state=this._weatherTemperatureState();
+  if(!state.map)throw Error('MA_GEOPOINT_NOT_READY');
+  await this._weatherTemperatureInspect({lat:latitude,lng:longitude});
+  const popup=this.shadow.getElementById('weather-temperature-point');
+  if(!popup||popup.hidden)throw Error('MA_GEOPOINT_NOT_READY');
+  return {opened:true,latitude,longitude};
+ },
  async _weatherTemperatureInspect(latlng){const s=this._weatherTemperatureState(),id=s.geoSequence=(s.geoSequence||0)+1;const context=await s.geo.query({latitude:latlng.lat,longitude:latlng.lng,selected_time:s.field?.valid_at||null,requested_capabilities:names});if(id!==s.geoSequence||!s.map)return;s.geoContext=context;this._weatherTemperatureRender();this._weatherTemperaturePointRender();this.shadow.getElementById('weather-temperature-point').hidden=false;},
  _weatherTemperatureTranslate(){const s=this.__weatherTemperature;if(!s)return;const language=this._languageValue()+'/'+this._locale();if(s.displayLanguage===language)return;s.displayLanguage=language;if(s.field)s.painter?.commit(s.field,{...s.config,locale:this._locale()});this._weatherTemperatureRender();updateTemperatureLegends(this);this._weatherTemperaturePointRender();},
  _weatherTemperatureDiagnostics(){const s=this._weatherTemperatureState(),f=s.field;return {schema:'gewitterradar.temperature.v1',config:{...s.config},status:s.status,error:s.error,requests:s.requests,cache:s.cache.summary(),renderer:s.metrics?{...s.metrics}:null,field:f?{id:f.id,provider:f.provenance.provider_id,model_run:f.model_run,valid_at:f.valid_at,valid_until:f.valid_until,native_resolution_degrees:f.native_resolution_degrees,delivered_resolution_degrees:[f.grid.longitudes[1]-f.grid.longitudes[0],f.grid.latitudes[1]-f.grid.latitudes[0]],temperature_range_kelvin:f.temperature_range_kelvin,advection:{status:f.advection.status,level:f.advection.level,unit:f.advection.unit,reason:f.advection.unavailable?.code}}:null,geopoint:s.geoContext};},
