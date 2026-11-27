@@ -1,11 +1,6 @@
 name: Build V4.14.5 MA location management DEV mirrors
 on:
-  push:
-    branches:
-      - feature/v4.14-monitored-areas
-    paths:
-      - '.github/workflows/ma-v4145-dev-build-sync.yml'
-      - 'frontend/modules/ui/settings-vault-view.js'
+  workflow_dispatch:
 
 concurrency:
   group: ma-4145-build-${{ github.ref }}
