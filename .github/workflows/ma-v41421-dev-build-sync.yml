@@ -75,7 +75,7 @@ jobs:
         id: regression
         continue-on-error: true
         run: |
-          set -o pipefail
+          set -e -o pipefail
           {
             node --test scripts/test-ma-004.mjs
             node tests/test_ma_location_manager.mjs
@@ -137,11 +137,25 @@ jobs:
             echo "ERROR: canonical frontend source was modified by build"
             exit 1
           fi
+      - name: Record independently verified MA-022 regression success
+        if: steps.regression.outcome == 'success'
+        run: |
+          {
+            echo '# MA V4.14.21 strict regression PASS'
+            echo
+            echo "Workflow: ${GITHUB_WORKFLOW}"
+            echo "Run ID: ${GITHUB_RUN_ID}"
+            echo "Tested SHA: ${GITHUB_SHA}"
+            echo "Branch: ${GITHUB_REF_NAME}"
+            echo
+            echo 'Every MA-020, MA-021 and MA-022 command in the regression shell returned exit code 0; set -e -o pipefail prevents hidden failures.'
+            echo 'The canonical build and distribution mirrors are committed separately in this job.'
+          } > docs/MA_V41421_CI_PASS.md
       - name: Commit only regenerated delivery files on isolated MA feature branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- frontend/assets.json dashboard/dist custom_components/gewitterradar/frontend SHA256SUMS_FRONTEND.txt
+          git add -A -- frontend/assets.json dashboard/dist custom_components/gewitterradar/frontend SHA256SUMS_FRONTEND.txt docs/MA_V41421_CI_PASS.md
           if git diff --cached --quiet; then
             echo "Delivery files already synchronized"
           else
