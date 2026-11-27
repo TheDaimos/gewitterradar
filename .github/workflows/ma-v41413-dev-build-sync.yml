@@ -1,14 +1,6 @@
-name: Build V4.14.13 MA opt-in and migration DEV mirrors
+name: Historical V4.14.13 MA DEV build (manual only)
 on:
-  push:
-    branches: [feature/v4.14-monitored-areas]
-    paths:
-      - '.github/workflows/ma-v41413-dev-build-sync.yml'
-      - 'frontend/version.js'
-      - 'frontend/modules/monitored-areas/migration-wizard.js'
-      - 'frontend/modules/monitored-areas/location-manager.js'
-      - 'frontend/modules/monitored-areas/index.js'
-      - 'tests/test_ma_sticky_dialog_layout.mjs'
+  workflow_dispatch:
 
 concurrency:
   group: ma-41413-build-${{ github.ref }}
