@@ -17,6 +17,19 @@ export function parseCoordinates(raw) {
   if(!match)throw new TypeError("MA_INVALID_COORDINATES");
   return {latitude:coordinate(Number(match[1]),-90,90),longitude:coordinate(Number(match[2]),-180,180)};
 }
+const uuidV4 = value => typeof value==="string" &&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(value);
+const ownProfile = value => typeof value==="string" && /^[0-9a-f]{32}$/.test(value);
+const safeLocation = (mode,locationId) => {
+  if(mode!=="db_active")throw new Error("MA_PLACE_DB_NOT_ACTIVE");
+  if(!uuidV4(locationId))throw new TypeError("MA_INVALID_REQUEST");
+  return locationId;
+};
+const safeMutation = (revision,requestId) => {
+  if(!Number.isInteger(revision)||revision<1||!uuidV4(requestId))
+    throw new TypeError("MA_INVALID_REQUEST");
+  return {expected_revision:revision,request_id:requestId};
+};
 const unavailable=()=>{throw new Error("MA_PLACE_MODE_NOT_READY");};
 const defaultLegacy=Object.freeze({listPlaces:unavailable,saveCandidate:unavailable});
 export function createLocationPort({hass, profileId, legacy=defaultLegacy, focusMap, selectReference, openDetails}={}) {
@@ -60,6 +73,47 @@ export function createLocationPort({hass, profileId, legacy=defaultLegacy, focus
       if(!response?.location||response.location.location_id!==locationId)
         throw new Error("MA_PLACE_INVALID_RESPONSE");
       return response.location;
+    },
+    async listLinks(locationId){
+      safeLocation(mode,locationId);
+      const result=await request("links_list",{location_id:locationId});
+      if(!uuidV4(result?.own_link_id)||!Number.isInteger(result?.shared_link_count)||
+         result.shared_link_count<1)throw new Error("MA_LINK_INVALID_RESPONSE");
+      return result;
+    },
+    async getPreferences(locationId){
+      safeLocation(mode,locationId);
+      const result=await request("preferences_get",{location_id:locationId});
+      const p=result?.preferences;
+      if(!p||!uuidV4(p.link_id)||!Number.isInteger(p.revision)||p.revision<1)
+        throw new Error("MA_PREFERENCES_INVALID_RESPONSE");
+      return p;
+    },
+    async updatePreferences(linkId,patch,revision,requestId){
+      if(mode!=="db_active")throw new Error("MA_PLACE_DB_NOT_ACTIVE");
+      if(!uuidV4(linkId)||!patch||typeof patch!=="object"||Array.isArray(patch))
+        throw new TypeError("MA_INVALID_REQUEST");
+      const allowed=new Set(["push_enabled","critical_enabled","notification_mode",
+        "closure_enabled","quiet_minutes","status_push","display_settings_json"]);
+      const keys=Object.keys(patch);
+      if(!keys.length||keys.some(k=>!allowed.has(k)))throw new TypeError("MA_INVALID_REQUEST");
+      const result=await request("preferences_update",{link_id:linkId,...patch},safeMutation(revision,requestId));
+      if(!result?.preferences||result.preferences.link_id!==linkId)
+        throw new Error("MA_PREFERENCES_INVALID_RESPONSE");
+      return result.preferences;
+    },
+    async shareLocation(locationId,targetUserId,targetProfileId,revision,requestId,{transfer=false}={}){
+      safeLocation(mode,locationId);
+      if(typeof targetUserId!=="string"||!targetUserId.trim()||targetUserId.length>128||
+         !ownProfile(targetProfileId)||typeof transfer!=="boolean")
+        throw new TypeError("MA_INVALID_TARGET");
+      const result=await request(transfer?"links_transfer":"links_share",{
+        location_id:locationId,target_user_id:targetUserId.trim(),
+        target_profile_id:targetProfileId
+      },safeMutation(revision,requestId));
+      if(!uuidV4(result?.link_id)||result.location_revision!==revision+1)
+        throw new Error("MA_LINK_INVALID_RESPONSE");
+      return result;
     },
     async previewDbPlaces(query="",cursor=null){
       if(mode!=="migration_pending"&&mode!=="db_active")throw new Error("MA_PLACE_MODE_NOT_READY");
