@@ -40,8 +40,9 @@ const COPY={
   dbHint:'Changes are only applied following Home Assistant confirmation.'}
 };
 const STYLES='.gr-ma-manager{position:fixed;inset:0;display:grid;place-items:center;z-index:2147483598;background:#02070bdc;padding:12px;box-sizing:border-box;backdrop-filter:blur(7px)}'+
-'.gr-ma-panel{box-sizing:border-box;width:min(760px,100%);max-height:calc(100dvh - 24px);overflow:auto;padding:17px;border-radius:20px;border:2px solid #c5a773;color:#e7eef6;background:radial-gradient(ellipse at 12% 0%,#345267,#111b29 68%);box-shadow:0 20px 70px #000b;font:14px/1.5 system-ui,sans-serif}'+
+'.gr-ma-panel{box-sizing:border-box;width:min(760px,100%);height:min(820px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);overflow:hidden;display:flex;flex-direction:column;padding:17px;border-radius:20px;border:2px solid #c5a773;color:#e7eef6;background:radial-gradient(ellipse at 12% 0%,#345267,#111b29 68%);box-shadow:0 20px 70px #000b;font:14px/1.5 system-ui,sans-serif}'+
 '.gr-ma-panel header,.gr-ma-tools,.gr-ma-row,.gr-ma-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.gr-ma-panel header,.gr-ma-row{justify-content:space-between}.gr-ma-panel h2{color:#f4dfb6;font:25px Georgia,serif;margin:0}.gr-ma-panel small{color:#b4cadb}'+
+'.gr-ma-panel>header,.gr-ma-panel>.gr-ma-tools,.gr-ma-panel>.gr-ma-status,.gr-ma-panel>.gr-ma-feedback{flex:0 0 auto}.gr-ma-panel>header{position:relative;z-index:2;padding-bottom:10px;border-bottom:1px solid #947748}.gr-ma-panel>.gr-ma-tools{margin:8px 0}.gr-ma-panel>.gr-ma-status{max-height:4.5em;overflow:auto}.gr-ma-panel>.gr-ma-list{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;contain:paint;scrollbar-gutter:stable;padding-right:3px}.gr-ma-panel>.gr-ma-feedback{max-height:4em;overflow:auto;border-top:1px solid #947748;padding-top:8px}.gr-ma-panel .gr-ma-close{width:42px;height:42px;min-height:42px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;border:2px solid #c9ab72;background:radial-gradient(circle at 30% 25%,#54728b,#193041 69%);color:#f5e1b5;box-shadow:inset 0 1px 3px #ffffff55,0 2px 8px #0008;font-size:26px;line-height:1;padding:0}.gr-ma-panel .gr-ma-close:hover{filter:brightness(1.13}'+
 '.gr-ma-panel button,.gr-ma-panel input{font:inherit;border:1px solid #91a8ba;border-radius:9px;background:#11283a;color:#eff4fa;padding:8px 11px;min-height:44px;box-sizing:border-box}.gr-ma-panel button{cursor:pointer}.gr-ma-panel button:disabled{opacity:.55}.gr-ma-panel button:focus-visible,.gr-ma-panel input:focus-visible{outline:2px solid #ffe6af;outline-offset:2px}'+
 '.gr-ma-tools{margin:12px 0}.gr-ma-tools input{flex:1;min-width:120px}.gr-ma-row{padding:10px;border:1px solid #647c936a;border-radius:12px;background:#101d2ad9;margin:6px 0}.gr-ma-row strong{display:block;overflow-wrap:anywhere}.gr-ma-row small{display:block}.gr-ma-group{margin:14px 0 6px;color:#edcf98}.gr-ma-status{margin:10px 0;padding:10px;border:1px solid #7895a260;border-radius:11px;background:#0b1c2b9c}.gr-ma-feedback{color:#cbd9e6;font-size:12px}.gr-ma-error{color:#ffb5a8}.gr-ma-panel p{overflow-wrap:anywhere}'+
 '@media(max-width:540px){.gr-ma-panel{padding:12px}.gr-ma-row{align-items:stretch;flex-direction:column}.gr-ma-actions{justify-content:start}}';
@@ -58,7 +59,7 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
   panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',t.title);
   const close=()=>root.remove(),header=document.createElement('header'),heading=document.createElement('div');
   heading.append(node('h2',t.title),node('small',t.subtitle));
-  const x=button('×',close);x.setAttribute('aria-label',t.close);header.append(heading,x);
+  const x=button('×',close);x.className='gr-ma-close';x.setAttribute('aria-label',t.close);header.append(heading,x);
   const status=node('div','', 'gr-ma-status'),tools=node('div','', 'gr-ma-tools');
   const filter=document.createElement('input');filter.type='search';filter.placeholder=t.filter;filter.setAttribute('aria-label',t.filter);
   const reloadButton=button(t.refresh,()=>{void reload();});tools.append(filter,reloadButton);
@@ -71,7 +72,8 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     } catch {notice(t.error,true);state.busy=false;migrationButton.disabled=false;}
   });
   migrationButton.hidden=true;
-  const list=document.createElement('div'),feedback=node('p','', 'gr-ma-feedback');
+  const list=document.createElement('div');list.className='gr-ma-list';list.setAttribute('role','region');list.setAttribute('aria-label',t.active);list.tabIndex=0;
+  const feedback=node('p','', 'gr-ma-feedback');
   feedback.setAttribute('role','status');panel.append(header,status,tools,list,feedback);root.append(style,panel);
   const fullscreen=owner.shadow.getElementById('map-fullscreen-dialog');
   const host=fullscreen?.open ? fullscreen : owner.shadow;
