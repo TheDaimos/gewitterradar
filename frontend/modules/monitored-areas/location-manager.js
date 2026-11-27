@@ -16,6 +16,15 @@ export const planLocations=({enabled=false,mode='legacy',places=[],removed=[]}={
 };
 // MA-021: pure responsive positioning and read-only location descriptor.
 // No persistence: panel position is scoped to the current manager instance.
+// MA-021: responsive device profiles are a pure layout decision.
+export function detailLayoutProfile({width=360,height=640}={}){
+  width=Number.isFinite(width)?Math.max(1,width):360;
+  height=Number.isFinite(height)?Math.max(1,height):640;
+  if(width<680)return Object.freeze({mode:'mobile',width:Math.max(1,width-20),columns:1});
+  if(width<1180)return Object.freeze({mode:'tablet',width:Math.min(810,width-32),columns:2});
+  return Object.freeze({mode:'desktop',width:Math.min(920,width-48),columns:2});
+}
+const detailPlacementCache=new WeakMap();
 export function clampDetailPosition(position,{width,height,panelWidth,panelHeight,margin=10}={}){
   const finite=(v,fallback)=>Number.isFinite(v)?v:fallback;
   width=Math.max(1,finite(width,360));height=Math.max(1,finite(height,640));
@@ -76,6 +85,7 @@ const STYLES='.gr-ma-manager{position:fixed;inset:0;display:grid;place-items:cen
 '@media(max-width:540px){.gr-ma-panel{padding:12px}.gr-ma-row{align-items:stretch;flex-direction:column}.gr-ma-actions{justify-content:start}}'+
 "\n/* MA V4.14.16: embossed GR metal frame, settings-grade chevrons, symmetric content. */\n.gr-ma-panel{border:2px solid transparent;\n background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%) padding-box,\n linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995)) padding-box,\n linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;\n box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,236,181,.08),inset 0 1px rgba(255,244,213,.10),0 0 12px rgba(215,164,67,.12)}\n.gr-ma-panel>.gr-ma-list{scrollbar-gutter:auto;padding-inline:0;scrollbar-width:thin;scrollbar-color:#826b46 transparent}\n.gr-ma-panel>.gr-ma-list::-webkit-scrollbar{width:6px}\n.gr-ma-panel>.gr-ma-list::-webkit-scrollbar-thumb{background:#826b46;border-radius:20px}\n.gr-ma-panel .gr-ma-accordion{border:1px solid #997749;border-radius:11px;\n background:linear-gradient(180deg,#152838,#0b1722);\n box-shadow:inset 0 1px #ffdf9924,0 3px 8px #0005}\n.gr-ma-panel .gr-ma-accordion>summary{color:#f5dc9c;\n background:linear-gradient(180deg,#2b3540 0%,#152634 15%,#0d1d2b 82%,#4a3c2a 100%);\n border-bottom:1px solid transparent;text-shadow:0 1px 2px #000a}\n.gr-ma-panel .gr-ma-accordion[open]>summary{border-bottom-color:#b08a4d66}\n.gr-ma-panel .gr-ma-accordion>summary::after{width:13px;height:13px;margin:-6px 10px 0 0;\n border-right:2px solid #d6b66e;border-bottom:2px solid #d6b66e;\n filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 3px #d8a74a66);\n transition:transform .42s cubic-bezier(.22,1,.36,1),filter .28s ease}\n.gr-ma-panel .gr-ma-accordion[open]>summary::after{margin-top:7px;\n filter:brightness(1.14) drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 4px #d8a74a88)}\n.gr-ma-panel .gr-ma-row{border:1px solid #86724f99;background:linear-gradient(130deg,#142837,#091923);\n box-shadow:inset 0 1px #e6ca8b21,0 2px 6px #0004}\n.gr-ma-panel .gr-ma-actions button,.gr-ma-panel .gr-ma-tools button{\n border:1px solid #aa854d;background:linear-gradient(180deg,#d2b078 0%,#5a472d 7%,#213441 18%,#132431 80%,#574326 94%,#d1a96a 100%);\n color:#f7e6bf;box-shadow:inset 0 1px #fbe4b17a,0 2px 7px #0007;text-shadow:0 1px 1px #000}\n.gr-ma-panel button:hover:not(:disabled){filter:brightness(1.10)}\n.gr-ma-panel .gr-ma-status{border-color:#9c7d4d80;background:linear-gradient(180deg,#122633,#0a1a25)}\n";
 const DETAIL_STYLES="\n/* MA-021 Havanna detail: separate draggable, viewport-clamped read-only window. */\n.gr-ma-detail{position:fixed;z-index:2147483605;width:min(430px,calc(100vw - 20px));\n max-height:calc(100dvh - 20px);overflow:hidden;display:flex;flex-direction:column;\n box-sizing:border-box;border:2px solid transparent;border-radius:20px;\n background:linear-gradient(180deg,#111e2b,#07121b) padding-box,\n linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;\n box-shadow:0 28px 75px #000d,inset 0 1px #fff3,0 0 16px #b0843f33;\n color:#f2e8d2;font:14px/1.5 system-ui,sans-serif}\n.gr-ma-detail-head{display:flex;align-items:center;justify-content:space-between;gap:8px;\n padding:13px 13px 10px 15px;cursor:grab;touch-action:none;user-select:none;\n background:linear-gradient(180deg,#222c37,#111c29);border-bottom:1px solid #b18b5488}\n.gr-ma-detail-head:active{cursor:grabbing}\n.gr-ma-detail-head strong{font:21px Georgia,serif;color:#f5dcad;overflow-wrap:anywhere}\n.gr-ma-detail-head .gr-ma-detail-x{width:44px;height:44px;min-width:44px;min-height:44px;\n padding:0!important;display:grid;place-items:center;cursor:pointer;background:transparent!important;\n border:0!important;box-shadow:none!important}\n.gr-ma-detail-x img{width:34px;height:34px;object-fit:contain;pointer-events:none}\n.gr-ma-detail-details{overflow-y:auto;min-height:0;overscroll-behavior:contain;\n padding:12px 15px 16px;scrollbar-width:thin;scrollbar-color:#826b46 transparent}\n.gr-ma-detail-details summary{cursor:pointer;list-style:none;padding:10px 5px;\n display:flex;align-items:center;justify-content:space-between;color:#efcf90;font-weight:700}\n.gr-ma-detail-details summary::-webkit-details-marker{display:none}\n.gr-ma-detail-details summary::after{content:\"\";width:13px;height:13px;flex-shrink:0;\n margin:-6px 9px 0 0;border-right:2px solid #d6b66e;border-bottom:2px solid #d6b66e;\n transform:rotate(45deg);filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 3px #d8a74a66);\n transition:transform .35s ease}\n.gr-ma-detail-details details[open]>summary::after{transform:rotate(225deg);margin-top:7px}\n.gr-ma-detail-grid{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;\n padding:8px 2px;border-top:1px solid #b18b5444;overflow-wrap:anywhere}\n.gr-ma-detail-grid small{color:#abc2d1}.gr-ma-detail-grid span{font-variant-numeric:tabular-nums}\n.gr-ma-detail-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}\n.gr-ma-detail-actions button{min-height:42px;border:1px solid #b38b51;border-radius:10px;\n background:linear-gradient(180deg,#6e532f,#162e3e 22%,#0f2330 83%,#83663b);\n box-shadow:inset 0 1px #ffe2a34d,0 2px 6px #0008;color:#f7e6bf;padding:8px 12px}\n.gr-ma-detail-message{color:#e8c788;min-height:1em;font-size:12px}\n@media(max-width:540px){.gr-ma-detail{width:calc(100vw - 20px)}\n .gr-ma-detail-grid{grid-template-columns:95px minmax(0,1fr)}}\n";
+const RESPONSIVE_DETAIL_STYLES="\n/* MA-021 responsive Havanna extension: broad desktop and iPad landscape layouts. */\n.gr-ma-detail{width:min(920px,calc(100vw - 48px));min-width:0}\n.gr-ma-detail-head{padding:16px 16px 13px 22px;gap:14px}\n.gr-ma-detail-head strong{font-size:clamp(21px,2.4vw,27px);line-height:1.15}\n.gr-ma-detail-head-copy{min-width:0;display:flex;flex-direction:column;gap:4px}\n.gr-ma-detail-head-copy small{color:#d6b57d;font-size:12px;letter-spacing:.035em}\n.gr-ma-detail-state{align-self:flex-start;border:1px solid #a68a5780;border-radius:20px;padding:3px 10px;\n background:linear-gradient(180deg,#394a52,#14232c);color:#e9cf9b;font-size:12px;font-weight:650}\n.gr-ma-detail-details{padding:14px 22px 18px}\n.gr-ma-detail-intro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;\n margin-bottom:12px}\n.gr-ma-detail-plate{border:1px solid #9777498c;border-radius:13px;\n background:linear-gradient(160deg,#2c3f4b,#122330 72%,#14232d);\n box-shadow:inset 0 1px #fff3,0 6px 12px #0005;padding:12px 14px;min-width:0}\n.gr-ma-detail-plate small{display:block;color:#abc2d1;letter-spacing:.035em;font-size:11px}\n.gr-ma-detail-plate strong{display:block;color:#f5dcad;margin-top:3px;\n font-size:clamp(14px,1.7vw,18px);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}\n.gr-ma-detail-details details{border:1px solid #896d4388;border-radius:12px;\n background:linear-gradient(180deg,#122533,#091924);overflow:hidden}\n.gr-ma-detail-details summary{padding:12px 16px;min-height:44px;box-sizing:border-box;\n background:linear-gradient(180deg,#293641,#12212d);border-bottom:1px solid transparent}\n.gr-ma-detail-details details[open]>summary{border-bottom-color:#96774a77}\n.gr-ma-detail-grid-wrap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;padding:8px 14px}\n.gr-ma-detail-grid{grid-template-columns:110px minmax(0,1fr);align-content:start}\n.gr-ma-detail-actions{padding:4px 14px 14px;margin-top:4px}\n.gr-ma-detail-message{margin:0;padding:0 14px 12px}\n.gr-ma-detail-hint{margin:0;padding:0 14px 14px;color:#b8c8d2;font-size:12px}\n.gr-ma-detail-head:focus-visible,.gr-ma-detail-details summary:focus-visible{outline:2px solid #f5ce83;outline-offset:-3px}\n@media(min-width:680px) and (max-width:1179px){\n .gr-ma-detail{width:min(810px,calc(100vw - 32px))}\n .gr-ma-detail-head{padding-inline:19px}\n .gr-ma-detail-details{padding-inline:18px}\n .gr-ma-detail-grid-wrap{gap:0 10px}\n}\n@media(max-width:679px){\n .gr-ma-detail{width:calc(100vw - 20px)}\n .gr-ma-detail-head{padding:10px 10px 10px 14px}\n .gr-ma-detail-head strong{font-size:21px}\n .gr-ma-detail-details{padding:10px 12px 13px}\n .gr-ma-detail-intro{grid-template-columns:minmax(0,1fr);gap:8px}\n .gr-ma-detail-plate{padding:9px 11px}\n .gr-ma-detail-grid-wrap{grid-template-columns:minmax(0,1fr);padding:4px 10px}\n .gr-ma-detail-grid{grid-template-columns:95px minmax(0,1fr)}\n .gr-ma-detail-actions{padding-inline:10px}\n}\n@media(max-height:500px){\n .gr-ma-detail-head{padding-block:7px}\n .gr-ma-detail-details{padding-block:7px}\n .gr-ma-detail-intro{gap:6px;margin-bottom:6px}\n .gr-ma-detail-plate{padding-block:7px}\n}\n";
 const node=(tag,value,cls)=>{const x=document.createElement(tag);x.textContent=String(value??'');if(cls)x.className=cls;return x;};
 const button=(text,handler)=>{const x=node('button',text);x.type='button';x.addEventListener('click',handler);return x;};
 export function openLocationManager(owner,{enabled=false,mode='legacy',places=[],removed=[],refresh,rename,archive,restore,focus,migrate}={}){
@@ -157,22 +167,35 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     widget.setAttribute('role','dialog');widget.setAttribute('aria-modal','false');
     widget.setAttribute('aria-label',t.detailTitle+': '+data.name);
     widget.tabIndex=-1;
-    const stylesheet=document.createElement('style');stylesheet.textContent=DETAIL_STYLES;
+    const stylesheet=document.createElement('style');stylesheet.textContent=DETAIL_STYLES+RESPONSIVE_DETAIL_STYLES;
     const heading=document.createElement('div');heading.className='gr-ma-detail-head';
     heading.setAttribute('aria-label',t.detailMove);
+    const headCopy=node('div','', 'gr-ma-detail-head-copy');
     const caption=node('strong',data.name||t.detailTitle);
+    headCopy.append(caption,node('small',t.subtitle));
+    const stateBadge=node('span',data.archived?t.detailArchived:t.detailActive,'gr-ma-detail-state');
+    headCopy.append(stateBadge);
     const exit=button('',()=>{disposeDetail();widget.remove();detailWindow=null;});
     exit.className='gr-ma-detail-x';exit.setAttribute('aria-label',t.close);
     const icon=document.createElement('img');
     icon.src=owner.shadow.getElementById('settings-close')?.querySelector('img')?.src||maPremiumClose();
-    icon.alt='';icon.draggable=false;exit.append(icon);heading.append(caption,exit);
+    icon.alt='';icon.draggable=false;exit.append(icon);heading.append(headCopy,exit);
+    heading.tabIndex=0;heading.setAttribute('role','toolbar');
     const content=document.createElement('div');content.className='gr-ma-detail-details';
+    const intro=node('div','', 'gr-ma-detail-intro');
+    const plate=(title,value)=>{const box=node('div','', 'gr-ma-detail-plate');
+      box.append(node('small',title),node('strong',value));intro.append(box);};
+    plate(t.coordinates,data.latitude.toFixed(5)+'°, '+data.longitude.toFixed(5)+'°');
+    plate(t.detailState,data.archived?t.detailArchived:t.detailActive);
+    content.append(intro);
     const accordion=document.createElement('details'); // intentionally closed initially
     const summary=node('summary',t.detailTitle);summary.setAttribute('aria-label',t.detailCollapse);
     accordion.append(summary);
+    const gridWrap=node('div','', 'gr-ma-detail-grid-wrap');
+    accordion.append(gridWrap);
     const add=(label,value)=>{
       const line=node('div','', 'gr-ma-detail-grid');
-      line.append(node('small',label),node('span',value));accordion.append(line);
+      line.append(node('small',label),node('span',value));gridWrap.append(line);
     };
     add(t.coordinates,data.latitude.toFixed(6)+', '+data.longitude.toFixed(6));
     add(t.detailState,data.archived?t.detailArchived:t.detailActive);
@@ -190,17 +213,29 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     if(typeof focus==='function')actions.append(button(t.focus,()=>{
       focus({latitude:data.latitude,longitude:data.longitude});
     }));
-    accordion.append(actions,node('p',t.detailHint));
+    accordion.append(actions,node('p',t.detailHint,'gr-ma-detail-hint'));
     const message=node('p','', 'gr-ma-detail-message');
     content.append(accordion,message);widget.append(stylesheet,heading,content);
     root.append(widget);detailWindow=widget;
-    let pos={x:(globalThis.innerWidth||360)-Math.min(430,(globalThis.innerWidth||360)-20)-12,
-             y:Math.max(10,Math.round(((globalThis.innerHeight||640)-430)/2))};
+    const profileId=String(owner._settingsVault?.profile?.id||'legacy');
+    const placeId=String(place.uid||data.name);
+    const positionKey=profileId+'|'+placeId;
+    let positions=detailPlacementCache.get(owner);
+    if(!positions){positions=new Map();detailPlacementCache.set(owner,positions);}
+    const viewportWidth=globalThis.visualViewport?.width||globalThis.innerWidth||360;
+    const viewportHeight=globalThis.visualViewport?.height||globalThis.innerHeight||640;
+    const layout=detailLayoutProfile({width:viewportWidth,height:viewportHeight});
+    let pos=positions.get(positionKey)||{
+      x:Math.round((viewportWidth-layout.width)/2),
+      y:Math.max(10,Math.round((viewportHeight-Math.min(500,viewportHeight-20))/2))};
     const placeWindow=()=>{
-      const viewport={width:globalThis.innerWidth||360,height:globalThis.innerHeight||640,
-                      panelWidth:widget.offsetWidth||430,panelHeight:widget.offsetHeight||400};
+      const viewport={width:globalThis.visualViewport?.width||globalThis.innerWidth||360,
+                      height:globalThis.visualViewport?.height||globalThis.innerHeight||640,
+                      panelWidth:widget.offsetWidth||layout.width,
+                      panelHeight:widget.offsetHeight||400};
       pos=clampDetailPosition(pos,viewport);
       widget.style.left=pos.x+'px';widget.style.top=pos.y+'px';
+      positions.set(positionKey,{...pos});
     };
     placeWindow();
     accordion.addEventListener('toggle',placeWindow); // expansion must remain on-screen
@@ -211,15 +246,23 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
       heading.setPointerCapture?.(event.pointerId);
       event.preventDefault();
     });
+    heading.addEventListener('keydown',event=>{
+      if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;
+      const offsets={ArrowLeft:[-16,0],ArrowRight:[16,0],ArrowUp:[0,-16],ArrowDown:[0,16]};
+      const [dx,dy]=offsets[event.key];pos={x:pos.x+dx,y:pos.y+dy};placeWindow();
+      event.preventDefault();event.stopPropagation();
+    });
     heading.addEventListener('pointermove',event=>{
       if(!drag)return;
       pos={x:drag.origin.x+event.clientX-drag.x,y:drag.origin.y+event.clientY-drag.y};
       placeWindow();
     });
     for(const ev of ['pointerup','pointercancel'])heading.addEventListener(ev,()=>{drag=null;});
-    const onResize=()=>{if(widget.isConnected)placeWindow();else globalThis.removeEventListener?.('resize',onResize);};
+    const onResize=()=>{if(widget.isConnected)placeWindow();else disposeDetail();};
     globalThis.addEventListener?.('resize',onResize);
-    disposeDetail=()=>{globalThis.removeEventListener?.('resize',onResize);};
+    globalThis.visualViewport?.addEventListener?.('resize',onResize);
+    disposeDetail=()=>{globalThis.removeEventListener?.('resize',onResize);
+      globalThis.visualViewport?.removeEventListener?.('resize',onResize);};
     widget.addEventListener('keydown',event=>{if(event.key==='Escape'){event.stopPropagation();disposeDetail();widget.remove();detailWindow=null;}});
     widget.focus({preventScroll:true});
   };
