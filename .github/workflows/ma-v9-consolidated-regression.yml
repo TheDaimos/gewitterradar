@@ -12,10 +12,12 @@ on:
       - 'docs/GR_4147_DEV_TEST_CANDIDATE_2026-11-26.md'
       - 'docs/GR_4148_MA_ANDROID_UUID_HOTFIX_2026-11-27.md'
       - 'frontend/version.js'
+      - 'tests/test_ma_sqlite_preview.mjs'
+      - '.github/workflows/ma-v41410-dev-build-sync.yml'
       - 'frontend/panel.js'
       - 'scripts/test-gr-panel-cache-recovery.mjs'
       - 'docs/GR_4149_PANEL_CACHE_RECOVERY_2026-11-27.md'
-      - '.github/workflows/ma-v4149-dev-build-sync.yml'
+      - '.github/workflows/ma-v41410-dev-build-sync.yml'
       - 'frontend/assets.json'
       - 'dashboard/dist/**'
       - 'custom_components/gewitterradar/frontend/**'
@@ -75,6 +77,7 @@ jobs:
           node tests/test_ma_location_manager.mjs
           node scripts/test-ma-016.mjs
           node scripts/test-ma-020-ui.mjs
+          node tests/test_ma_sqlite_preview.mjs
           node scripts/test-gr-panel-cache-recovery.mjs
           node scripts/test-frontend-build.mjs
           node scripts/test-gr-panel-cache-recovery.mjs
@@ -99,14 +102,14 @@ jobs:
           node scripts/verify-current-frontend.mjs
           sha256sum -c SHA256SUMS_FRONTEND.txt --quiet
           python scripts/verify-deploy-relay-contract.py
-          grep -q 'BUILD_VERSION = "4.14.9"' custom_components/gewitterradar/build_info.py
+          grep -q 'BUILD_VERSION = "4.14.10"' custom_components/gewitterradar/build_info.py
       - name: Package exact verified commit
         run: |
-          python scripts/build-dev-packages.py "$RUNNER_TEMP/ma-v4149" --revision "$GITHUB_SHA"
-          (cd "$RUNNER_TEMP/ma-v4149" && sha256sum -c SHA256SUMS.txt)
+          python scripts/build-dev-packages.py "$RUNNER_TEMP/ma-v41410" --revision "$GITHUB_SHA"
+          (cd "$RUNNER_TEMP/ma-v41410" && sha256sum -c SHA256SUMS.txt)
       - uses: actions/upload-artifact@v4
         with:
-          name: GR-V4.14.9-DEV-verified-${{ github.sha }}
-          path: ${{ runner.temp }}/ma-v4149/
+          name: GR-V4.14.10-DEV-verified-${{ github.sha }}
+          path: ${{ runner.temp }}/ma-v41410/
           if-no-files-found: error
           retention-days: 30
