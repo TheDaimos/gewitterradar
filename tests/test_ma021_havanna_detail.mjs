@@ -23,6 +23,8 @@ assert.match(file,/className='gr-ma-detail'/);
 assert.match(file,/setPointerCapture\?\./);
 assert.match(file,/addEventListener\('pointermove'/);
 assert.match(file,/addEventListener\?\.\('resize'/);
+assert.match(file,/accordion\.addEventListener\('toggle',placeWindow\)/);
+assert.match(file,/if\(detailWindow\)\{disposeDetail\(\);detailWindow\.remove\(\);detailWindow=null;\}/);
 assert.match(file,/aria-modal','false'/);
 assert.match(file,/getElementById\('settings-close'\)\?\.querySelector\('img'\)\?\.src/);
 assert.match(file,/\.clipboard\.writeText/);
