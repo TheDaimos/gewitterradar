@@ -1,0 +1,32 @@
+// MA-021: Havanna-like read-only details and viewport geometry.
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const root=new URL('../',import.meta.url);
+const file=readFileSync(new URL('frontend/modules/monitored-areas/location-manager.js',root),'utf8');
+const mirror=readFileSync(new URL('custom_components/gewitterradar/frontend/modules/monitored-areas/location-manager.js',root),'utf8');
+assert.equal(file,mirror,'installed source mirror drift');
+const detail=await import('data:text/javascript;base64,'+Buffer.from(file).toString('base64'));
+const place={uid:'havana',name:'Havanna',latitude:23.1136,longitude:-82.3666,revision:7,provider:'monitored_areas_sqlite'};
+const model=detail.detailLocation(place);
+assert.deepEqual(model,{name:'Havanna',latitude:23.1136,longitude:-82.3666,archived:false,revision:7,origin:'monitored_areas_sqlite'});
+assert.equal(Object.isFrozen(model),true);
+assert.equal(detail.detailLocation({...place,archived:true}).archived,true);
+for(const row of [{...place,latitude:NaN},{...place,longitude:190},{...place,latitude:-91}])
+  assert.throws(()=>detail.detailLocation(row),/MA_INVALID_COORDINATES/);
+assert.deepEqual(detail.clampDetailPosition({x:-300,y:900},{width:800,height:600,panelWidth:400,panelHeight:300}),{x:10,y:290});
+assert.deepEqual(detail.clampDetailPosition({x:900,y:-22},{width:800,height:600,panelWidth:400,panelHeight:300}),{x:390,y:10});
+const narrow=detail.clampDetailPosition({x:999,y:999},{width:320,height:480,panelWidth:300,panelHeight:460});
+assert.ok(narrow.x>=0&&narrow.x<=20&&narrow.y>=0&&narrow.y<=20);
+assert.match(file,/document\.createElement\('details'\); \/\/ intentionally closed initially/);
+assert.doesNotMatch(file,/accordion\.open=true/);
+assert.match(file,/className='gr-ma-detail'/);
+assert.match(file,/setPointerCapture\?\./);
+assert.match(file,/addEventListener\('pointermove'/);
+assert.match(file,/addEventListener\?\.\('resize'/);
+assert.match(file,/aria-modal','false'/);
+assert.match(file,/getElementById\('settings-close'\)\?\.querySelector\('img'\)\?\.src/);
+assert.match(file,/\.clipboard\.writeText/);
+assert.match(file,/const data=detailLocation\(place\),host=owner\.shadow/);
+assert.doesNotMatch(file,/localStorage|todo\.remove_item|migration_commit|callWS\(|callService\(/);
+assert.doesNotMatch(file,/innerHTML/,'no untrusted place markup');
+console.log('PASS MA-021 Havanna detail read-only geometry, drag and safety');
