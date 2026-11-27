@@ -110,7 +110,7 @@ export async function openMigrationWizard(owner) {
     if(busy)return;
     setBusy(true);
     try{
-      proof=null;confirm.hidden=true;
+      proof=null;confirm.hidden=true;sqlPreviewBox.hidden=true;sqlPreviewBox.replaceChildren();
       preview=await call("migration_preview");
       previewBox.replaceChildren();
       const summary=document.createElement("p");
@@ -158,6 +158,7 @@ export async function openMigrationWizard(owner) {
       if(decisions.some(x=>x.action==="skip"))throw Error("Übersprungene Orte verhindern den vollständigen Abschluss");
       const result=await call("migration_commit",
         {preview_id:preview.preview_id,decisions},migrationRequestUUID());
+      sqlPreviewBox.hidden=true;sqlPreviewBox.replaceChildren();
       status(`Import bestätigt: ${result.imported?.length||0} Standorte. Die alte Liste ist weiterhin vorhanden. Prüfe jetzt die Finalisierung.`);
       importButton.disabled=true;
       preview=null;
