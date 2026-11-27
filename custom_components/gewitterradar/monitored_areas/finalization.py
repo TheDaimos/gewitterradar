@@ -177,9 +177,15 @@ class Finalizer:
                                               time.monotonic() + TTL_SECONDS)
             self._approvals = {k:v for k,v in self._approvals.items()
                                if v.deadline > time.monotonic()}
+            archived_count = sum(x["record"]["status"] == "completed" for x in records.values())
             return {"nonce":token, "expires_in_seconds":TTL_SECONDS,
                     "source_entity_id":self._source_entity,
-                    "item_count":len(records), "resume":resume,
+                    "item_count":len(records),
+                    "active_count":len(records)-archived_count,
+                    "archived_count":archived_count,
+                    "source_and_sqlite_verified":True,
+                    "legacy_list_preserved_until_commit":True,
+                    "resume":resume,
                     "requires_admin":True, "explicit_confirmation_required":True}
 
     def _reconcile(self, c, saga_id, records, *, mutate):
