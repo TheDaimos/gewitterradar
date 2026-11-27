@@ -1,6 +1,6 @@
 // MA-020: optional, profile-owned cleanup reminder. Never acts on To-do data.
 import { registerModule } from "../core/registry.js?v=4141r1";
-import { openMigrationWizard } from "./migration-wizard.js?v=41415r1";
+import { openMigrationWizard } from "./migration-wizard.js?v=41416r1";
 export const MODULE_META=Object.freeze({"id":"monitored-areas.lifecycle","version":"0.2.1","group":"Monitored Areas","function":"Optional lifecycle","subfunctions":["Initialize","Teardown","Migration cleanup reminder"],"file":"modules/monitored-areas/index.js","optional":true});
 registerModule(MODULE_META);
 const MA_PREMIUM_CLOSE = new URL("../../assets/gewitterradar-about-close-premium.webp", import.meta.url).href;
@@ -84,6 +84,18 @@ export function initializeMonitoredAreas(owner, enabled = false) {
       .gr-ma-cleanup .ma-close{position:absolute;right:9px;top:8px;display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;border-radius:8px;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;cursor:pointer}
       .gr-ma-cleanup .ma-close img{display:block;width:34px;height:34px;object-fit:contain;pointer-events:none;transition:transform .16s ease,filter .16s ease}
       @media(hover:hover) and (pointer:fine){.gr-ma-cleanup .ma-close:hover img{filter:brightness(1.12) drop-shadow(0 0 2px #dba34c70)}}.gr-ma-cleanup .ma-close:active img{transform:scale(.97);filter:brightness(.92)}.gr-ma-cleanup [role=status]{color:#ffbeae;font-size:12px}
+
+      /* V4.14.16: match the accepted GR release-history metallic frame. */
+      .gr-ma-cleanup{border:2px solid transparent;
+        background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%) padding-box,
+          linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995)) padding-box,
+          linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;
+        box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,236,181,.08),
+          inset 0 1px rgba(255,244,213,.10),0 0 12px rgba(215,164,67,.12);
+        scrollbar-width:thin;scrollbar-color:#826b46 transparent}
+      .gr-ma-cleanup footer button:not(.ma-close){border:1px solid #aa854d;
+        background:linear-gradient(180deg,#d2b078 0%,#5a472d 7%,#213441 18%,#132431 80%,#574326 94%,#d1a96a 100%);
+        box-shadow:inset 0 1px #fbe4b17a,0 2px 7px #0007;color:#f7e6bf;text-shadow:0 1px 1px #000}
     </style>
     <dialog class="gr-ma-cleanup" aria-labelledby="gr-ma-cleanup-title">
       <button type="button" class="ma-close" aria-label="${t.close}"><img src="${MA_CLOSE_MATCH_SETTINGS}" alt="" draggable="false"></button>
