@@ -165,6 +165,7 @@ export async function openMigrationWizard(owner) {
     <footer class="wizard-footer">
       <div class="controls">
         <button type="button" data-preview>Vorschau aktualisieren</button>
+        <button type="button" data-suggest hidden>Eindeutige Bestandsorte zuordnen</button>
         <button type="button" data-import disabled>Auswahl importieren</button>
         <button type="button" data-finalize>Finalisierung prüfen</button>
       </div>
@@ -180,6 +181,7 @@ export async function openMigrationWizard(owner) {
   const feedback=dialog.querySelector("[role=status]");
   const previewButton=dialog.querySelector("[data-preview]");
   const importButton=dialog.querySelector("[data-import]");
+  const suggestButton=dialog.querySelector("[data-suggest]");
   const finalizeButton=dialog.querySelector("[data-finalize]");
   const sqlPreviewButton=dialog.querySelector("[data-sql-preview]"),todoPreviewButton=dialog.querySelector("[data-todo-preview]"),sqlPreviewBox=dialog.querySelector(".sql-preview");
   const textFilter=dialog.querySelector(".ma-location-filter"),letterBar=dialog.querySelector(".ma-letter-bar");
@@ -208,7 +210,8 @@ export async function openMigrationWizard(owner) {
     todoPreviewButton.setAttribute("aria-pressed",String(kind==="todo"));
     sqlPreviewButton.setAttribute("aria-pressed",String(kind==="sql"));
     previewButton.textContent=kind==="sql"?"SQL aktualisieren":"Vorschau aktualisieren";
-    importButton.hidden=kind!=="todo";finalizeButton.hidden=kind!=="todo";confirm.hidden=kind!=="todo"||!proof;
+    importButton.hidden=kind!=="todo";suggestButton.hidden=kind!=="todo"||!preview?.safe_existing_suggestions;
+    finalizeButton.hidden=kind!=="todo";confirm.hidden=kind!=="todo"||!proof;
     currentLetter="";textFilter.value="";renderFilter();
   };
   textFilter.addEventListener("input",renderFilter);
@@ -218,6 +221,7 @@ export async function openMigrationWizard(owner) {
     busy=value;
     previewButton.disabled=value;
     importButton.disabled=value||!preview||preview.invalid>0||!preview.valid;
+    suggestButton.disabled=value||!preview;
     finalizeButton.disabled=value;
     sqlPreviewButton.disabled=value;
     removeButton.disabled=value||!proof||!checkbox.checked;
@@ -243,10 +247,14 @@ export async function openMigrationWizard(owner) {
       proof=null;confirm.hidden=true;sqlLoaded=false;sqlEntries.length=0;sqlPreviewBox.replaceChildren();
       preview=await call("migration_preview");
       previewBox.replaceChildren();todoEntries.length=0;
+      suggestButton.hidden=true;
       const summary=document.createElement("p");
       const archivedCount=(preview.candidates||[]).filter(x=>x.status==="completed").length;
       summary.textContent=`Quelle: ${preview.total} Einträge · gültig: ${preview.valid} · davon archiviert: ${archivedCount} · nicht importierbar: ${preview.invalid}`;
       previewBox.append(summary);
+      const audit=document.createElement("p");audit.className="note";
+      audit.textContent=`Bestandsabgleich: ${preview.safe_existing_suggestions||0} eindeutige Übereinstimmungen von ${preview.valid} Standorten. Doppelte Koordinaten und abweichender Archivstatus bleiben zur manuellen Prüfung offen.`;
+      previewBox.append(audit);
       if(preview.invalid){
         const warning=document.createElement("p");
         warning.className="warning";
@@ -265,9 +273,11 @@ export async function openMigrationWizard(owner) {
         const hasConflict=!!(candidate.source_coordinate_duplicate||candidate.name_conflicts?.length||candidate.coordinate_matches?.length);
         option(hasConflict?"Manuell prüfen – vorerst überspringen":"Neuen Ort importieren",hasConflict?"skip":"create");
         if(hasConflict)option("Neuen Ort trotzdem importieren","create");
-        for(const id of candidate.coordinate_matches||[]){
-          if(byId.has(id))option("Bestehenden Ort übernehmen: "+byId.get(id).name,"use_existing|"+id);
+        for(const id of candidate.exact_matches||[]){
+          if(byId.has(id))option("Bestehenden Ort übernehmen: "+byId.get(id).name+" · "+id.slice(0,8),"use_existing|"+id);
         }
+        // No "use_existing" choice for divergent names, coordinates or
+        // archived states; such places require explicit manual remediation.
         for(const id of candidate.name_conflicts||[]){
           const location=byId.get(id);
           if(location)option("Ort ersetzen: "+location.name,"replace|"+id+"|"+location.revision);
@@ -275,11 +285,28 @@ export async function openMigrationWizard(owner) {
         if(!hasConflict)option("Überspringen (verhindert abschließende Leerung)","skip");
         node.append(label,sel);previewBox.append(node);todoEntries.push({el:node,name:candidate.name});
       }
+      suggestButton.hidden=!(preview.safe_existing_suggestions>0);
       renderFilter();
       status(preview.invalid?"Import/Leerung gesperrt, bis alle ungültigen Einträge geklärt sind.":"Wähle die Behandlung jedes Standorts und bestätige den Import.");
     }catch(error){preview=null;fail(error);}
     finally{setBusy(false);}
   };
+  suggestButton.addEventListener("click",()=>{
+    if(busy||!preview)return;
+    const matches=new Map(preview.candidates
+      .filter(x=>typeof x.suggested_existing_id==="string"&&x.suggested_existing_id)
+      .map(x=>[x.uid,x.suggested_existing_id]));
+    let selected=0;
+    for(const select of previewBox.querySelectorAll("select[data-uid]")){
+      const id=matches.get(select.dataset.uid);
+      if(!id)continue;
+      const desired="use_existing|"+id;
+      if([...select.options].some(option=>option.value===desired)){
+        select.value=desired;selected++;
+      }
+    }
+    status(`${selected} eindeutige Bestandsorte zur Übernahme vorgemerkt – noch kein Import durchgeführt. Prüfe übrige manuelle Zuordnungen vor „Auswahl importieren“.`);
+  });
   const importSelected=async()=>{
     if(busy||!preview||preview.invalid)return;
     setBusy(true);
@@ -291,7 +318,7 @@ export async function openMigrationWizard(owner) {
         {preview_id:preview.preview_id,decisions},migrationRequestUUID());
       sqlLoaded=false;sqlEntries.length=0;sqlPreviewBox.replaceChildren();
       status(`Import bestätigt: ${result.imported?.length||0} Standorte. Die alte Liste ist weiterhin vorhanden. Prüfe jetzt die Finalisierung.`);
-      importButton.disabled=true;
+      importButton.disabled=true;suggestButton.hidden=true;
       preview=null;
     }catch(error){fail(error);}finally{setBusy(false);}
   };
