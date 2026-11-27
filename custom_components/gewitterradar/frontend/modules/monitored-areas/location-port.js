@@ -63,6 +63,18 @@ export function createLocationPort({hass, profileId, legacy=defaultLegacy, focus
       if(!Array.isArray(result.places))throw new Error("MA_PLACE_INVALID_RESPONSE");
       return result;
     },
+    async checkTrackerName(locationId,name){
+      // Read-only MA-023 validation; no automatic tracker creation or assignment.
+      safeLocation(mode,locationId);
+      if(typeof name!=="string"||!name.trim()||name.length>120)
+        throw new TypeError("MA_TRACKER_INVALID_NAME");
+      const result=await request("tracker_name_check",{location_id:locationId,name});
+      if(typeof result?.available!=="boolean")throw new Error("MA_TRACKER_INVALID_RESPONSE");
+      if(result.available===true && (typeof result.entity_id!=="string"||
+          !/^device_tracker\\.[a-z0-9_]+$/.test(result.entity_id)))
+        throw new Error("MA_TRACKER_INVALID_RESPONSE");
+      return result;
+    },
     async getLocation(locationId){
       // Read-only, authenticated, profile-scoped HA command. Never use a
       // migration-pending SQLite row as authoritative location information.
