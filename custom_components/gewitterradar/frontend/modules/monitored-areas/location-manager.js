@@ -14,6 +14,30 @@ export const planLocations=({enabled=false,mode='legacy',places=[],removed=[]}={
   return {mode:authority,canRename:authority==='db_active',
     active:items.filter(x=>!x.archived),archived:items.filter(x=>x.archived)};
 };
+// MA-021: pure responsive positioning and read-only location descriptor.
+// No persistence: panel position is scoped to the current manager instance.
+export function clampDetailPosition(position,{width,height,panelWidth,panelHeight,margin=10}={}){
+  const finite=(v,fallback)=>Number.isFinite(v)?v:fallback;
+  width=Math.max(1,finite(width,360));height=Math.max(1,finite(height,640));
+  panelWidth=Math.max(1,finite(panelWidth,Math.min(width,420)));
+  panelHeight=Math.max(1,finite(panelHeight,Math.min(height,400)));
+  margin=Math.max(0,finite(margin,10));
+  const minX=Math.min(margin,Math.max(0,width-panelWidth));
+  const minY=Math.min(margin,Math.max(0,height-panelHeight));
+  const maxX=Math.max(minX,width-panelWidth-margin);
+  const maxY=Math.max(minY,height-panelHeight-margin);
+  return {x:Math.min(maxX,Math.max(minX,finite(position?.x,minX))),
+          y:Math.min(maxY,Math.max(minY,finite(position?.y,minY)))};
+}
+export function detailLocation(place){
+  const latitude=Number(place?.latitude),longitude=Number(place?.longitude);
+  if(!Number.isFinite(latitude)||!Number.isFinite(longitude)||
+     Math.abs(latitude)>90||Math.abs(longitude)>180)throw new TypeError('MA_INVALID_COORDINATES');
+  return Object.freeze({name:String(place?.name||place?.summary||''),
+    latitude,longitude,archived:place?.archived===true,
+    revision:Number.isInteger(place?.revision)?place.revision:null,
+    origin:String(place?.location_origin||place?.provider||'unknown')});
+}
 const COPY={
  de:{title:'Standorte verwalten',subtitle:'Monitored Areas · V4.14',db:'SQLite-Verwaltung aktiv',
   pending:'Migration ausstehend · Local To-do bleibt maßgeblich',
@@ -21,7 +45,8 @@ const COPY={
   filter:'Standorte filtern',refresh:'Aktualisieren',close:'Schließen',active:'Gespeicherte Orte',
   archived:'Archivierte Orte',empty:'Keine passenden Standorte',details:'Details',back:'Zurück',
   focus:'Auf Karte zeigen',rename:'Umbenennen',archive:'Archivieren',restore:'Wiederherstellen',
-  coordinates:'Koordinaten',revision:'Revision',detailHint:'Überwachung und Havanna-Details folgen in einem weiteren Entwicklungsschritt.',
+  coordinates:'Koordinaten',revision:'Revision',detailHint:'Überwachungs- und Freigabeoptionen folgen in den nächsten MA-Modulen.',
+  detailTitle:'Standortdetails',detailOrigin:'Herkunft',detailState:'Zustand',detailActive:'Aktiv',detailArchived:'Archiviert',detailCollapse:'Details ein-/ausklappen',detailMove:'Fenster verschieben',detailCopy:'Koordinaten kopieren',detailCopied:'Koordinaten kopiert',detailNoCopy:'Kopieren nicht verfügbar',
   renamePrompt:'Neuen Namen eingeben',archiveConfirm:'Standort archivieren? Er bleibt wiederherstellbar.',
   error:'Aktion nicht abgeschlossen',busy:'Bitte warten …',migration:'SQLite-Übernahme prüfen',
   setupHint:'Aktiviere Monitored Areas unter Einstellungen → Geräte & Dienste → GewitterRadar → Konfigurieren. Deine Local-To-do-Liste bleibt bis zur gesonderten Bestätigung unverändert.',
@@ -33,7 +58,8 @@ const COPY={
   filter:'Filter locations',refresh:'Refresh',close:'Close',active:'Saved places',
   archived:'Archived places',empty:'No matching locations',details:'Details',back:'Back',
   focus:'Show on map',rename:'Rename',archive:'Archive',restore:'Restore',
-  coordinates:'Coordinates',revision:'Revision',detailHint:'Monitoring and Havanna details will follow in a later development step.',
+  coordinates:'Coordinates',revision:'Revision',detailHint:'Monitoring and sharing controls follow in the next MA modules.',
+  detailTitle:'Location details',detailOrigin:'Origin',detailState:'Status',detailActive:'Active',detailArchived:'Archived',detailCollapse:'Expand/collapse details',detailMove:'Move window',detailCopy:'Copy coordinates',detailCopied:'Coordinates copied',detailNoCopy:'Copy unavailable',
   renamePrompt:'Enter new name',archiveConfirm:'Archive location? It can be restored.',
   error:'Action not completed',busy:'Please wait …',migration:'Review SQLite migration',
   setupHint:'Enable Monitored Areas in Settings → Devices & services → GewitterRadar → Configure. Local To-do remains unchanged until separately confirmed.',
@@ -49,6 +75,7 @@ const STYLES='.gr-ma-manager{position:fixed;inset:0;display:grid;place-items:cen
 '.gr-ma-tools{margin:12px 0}.gr-ma-tools input{flex:1;min-width:120px}.gr-ma-row{padding:10px;border:1px solid #647c936a;border-radius:12px;background:#101d2ad9;margin:6px 0}.gr-ma-row strong{display:block;overflow-wrap:anywhere}.gr-ma-row small{display:block}.gr-ma-group{margin:14px 0 6px;color:#edcf98}.gr-ma-status{margin:10px 0;padding:10px;border:1px solid #7895a260;border-radius:11px;background:#0b1c2b9c}.gr-ma-feedback{color:#cbd9e6;font-size:12px}.gr-ma-error{color:#ffb5a8}.gr-ma-panel p{overflow-wrap:anywhere}'+
 '@media(max-width:540px){.gr-ma-panel{padding:12px}.gr-ma-row{align-items:stretch;flex-direction:column}.gr-ma-actions{justify-content:start}}'+
 "\n/* MA V4.14.16: embossed GR metal frame, settings-grade chevrons, symmetric content. */\n.gr-ma-panel{border:2px solid transparent;\n background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%) padding-box,\n linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995)) padding-box,\n linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;\n box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,236,181,.08),inset 0 1px rgba(255,244,213,.10),0 0 12px rgba(215,164,67,.12)}\n.gr-ma-panel>.gr-ma-list{scrollbar-gutter:auto;padding-inline:0;scrollbar-width:thin;scrollbar-color:#826b46 transparent}\n.gr-ma-panel>.gr-ma-list::-webkit-scrollbar{width:6px}\n.gr-ma-panel>.gr-ma-list::-webkit-scrollbar-thumb{background:#826b46;border-radius:20px}\n.gr-ma-panel .gr-ma-accordion{border:1px solid #997749;border-radius:11px;\n background:linear-gradient(180deg,#152838,#0b1722);\n box-shadow:inset 0 1px #ffdf9924,0 3px 8px #0005}\n.gr-ma-panel .gr-ma-accordion>summary{color:#f5dc9c;\n background:linear-gradient(180deg,#2b3540 0%,#152634 15%,#0d1d2b 82%,#4a3c2a 100%);\n border-bottom:1px solid transparent;text-shadow:0 1px 2px #000a}\n.gr-ma-panel .gr-ma-accordion[open]>summary{border-bottom-color:#b08a4d66}\n.gr-ma-panel .gr-ma-accordion>summary::after{width:13px;height:13px;margin:-6px 10px 0 0;\n border-right:2px solid #d6b66e;border-bottom:2px solid #d6b66e;\n filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 3px #d8a74a66);\n transition:transform .42s cubic-bezier(.22,1,.36,1),filter .28s ease}\n.gr-ma-panel .gr-ma-accordion[open]>summary::after{margin-top:7px;\n filter:brightness(1.14) drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 4px #d8a74a88)}\n.gr-ma-panel .gr-ma-row{border:1px solid #86724f99;background:linear-gradient(130deg,#142837,#091923);\n box-shadow:inset 0 1px #e6ca8b21,0 2px 6px #0004}\n.gr-ma-panel .gr-ma-actions button,.gr-ma-panel .gr-ma-tools button{\n border:1px solid #aa854d;background:linear-gradient(180deg,#d2b078 0%,#5a472d 7%,#213441 18%,#132431 80%,#574326 94%,#d1a96a 100%);\n color:#f7e6bf;box-shadow:inset 0 1px #fbe4b17a,0 2px 7px #0007;text-shadow:0 1px 1px #000}\n.gr-ma-panel button:hover:not(:disabled){filter:brightness(1.10)}\n.gr-ma-panel .gr-ma-status{border-color:#9c7d4d80;background:linear-gradient(180deg,#122633,#0a1a25)}\n";
+const DETAIL_STYLES="\n/* MA-021 Havanna detail: separate draggable, viewport-clamped read-only window. */\n.gr-ma-detail{position:fixed;z-index:2147483605;width:min(430px,calc(100vw - 20px));\n max-height:calc(100dvh - 20px);overflow:hidden;display:flex;flex-direction:column;\n box-sizing:border-box;border:2px solid transparent;border-radius:20px;\n background:linear-gradient(180deg,#111e2b,#07121b) padding-box,\n linear-gradient(145deg,#e3c17d,#80602d 16%,#f9e3ad 29%,#735024 45%,#ba9144 57%,#ffe5a0 74%,#614723 86%,#cba35c) border-box;\n box-shadow:0 28px 75px #000d,inset 0 1px #fff3,0 0 16px #b0843f33;\n color:#f2e8d2;font:14px/1.5 system-ui,sans-serif}\n.gr-ma-detail-head{display:flex;align-items:center;justify-content:space-between;gap:8px;\n padding:13px 13px 10px 15px;cursor:grab;touch-action:none;user-select:none;\n background:linear-gradient(180deg,#222c37,#111c29);border-bottom:1px solid #b18b5488}\n.gr-ma-detail-head:active{cursor:grabbing}\n.gr-ma-detail-head strong{font:21px Georgia,serif;color:#f5dcad;overflow-wrap:anywhere}\n.gr-ma-detail-head .gr-ma-detail-x{width:44px;height:44px;min-width:44px;min-height:44px;\n padding:0!important;display:grid;place-items:center;cursor:pointer;background:transparent!important;\n border:0!important;box-shadow:none!important}\n.gr-ma-detail-x img{width:34px;height:34px;object-fit:contain;pointer-events:none}\n.gr-ma-detail-details{overflow-y:auto;min-height:0;overscroll-behavior:contain;\n padding:12px 15px 16px;scrollbar-width:thin;scrollbar-color:#826b46 transparent}\n.gr-ma-detail-details summary{cursor:pointer;list-style:none;padding:10px 5px;\n display:flex;align-items:center;justify-content:space-between;color:#efcf90;font-weight:700}\n.gr-ma-detail-details summary::-webkit-details-marker{display:none}\n.gr-ma-detail-details summary::after{content:\"\";width:13px;height:13px;flex-shrink:0;\n margin:-6px 9px 0 0;border-right:2px solid #d6b66e;border-bottom:2px solid #d6b66e;\n transform:rotate(45deg);filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 3px #d8a74a66);\n transition:transform .35s ease}\n.gr-ma-detail-details details[open]>summary::after{transform:rotate(225deg);margin-top:7px}\n.gr-ma-detail-grid{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;\n padding:8px 2px;border-top:1px solid #b18b5444;overflow-wrap:anywhere}\n.gr-ma-detail-grid small{color:#abc2d1}.gr-ma-detail-grid span{font-variant-numeric:tabular-nums}\n.gr-ma-detail-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}\n.gr-ma-detail-actions button{min-height:42px;border:1px solid #b38b51;border-radius:10px;\n background:linear-gradient(180deg,#6e532f,#162e3e 22%,#0f2330 83%,#83663b);\n box-shadow:inset 0 1px #ffe2a34d,0 2px 6px #0008;color:#f7e6bf;padding:8px 12px}\n.gr-ma-detail-message{color:#e8c788;min-height:1em;font-size:12px}\n@media(max-width:540px){.gr-ma-detail{width:calc(100vw - 20px)}\n .gr-ma-detail-grid{grid-template-columns:95px minmax(0,1fr)}}\n";
 const node=(tag,value,cls)=>{const x=document.createElement(tag);x.textContent=String(value??'');if(cls)x.className=cls;return x;};
 const button=(text,handler)=>{const x=node('button',text);x.type='button';x.addEventListener('click',handler);return x;};
 export function openLocationManager(owner,{enabled=false,mode='legacy',places=[],removed=[],refresh,rename,archive,restore,focus,migrate}={}){
@@ -60,7 +87,8 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
   const style=document.createElement('style');style.textContent=STYLES;
   const panel=document.createElement('section');panel.className='gr-ma-panel';
   panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',t.title);
-  const close=()=>root.remove(),header=document.createElement('header'),heading=document.createElement('div');
+  let detailWindow=null;
+  const close=()=>{detailWindow?.remove();detailWindow=null;root.remove();},header=document.createElement('header'),heading=document.createElement('div');
   heading.append(node('h2',t.title),node('small',t.subtitle));
   const x=button('',close);x.className='gr-ma-close';x.setAttribute('aria-label',t.close);const xImg=document.createElement('img');xImg.src=owner.shadow.getElementById('settings-close')?.querySelector('img')?.src || maPremiumClose();xImg.alt='';xImg.draggable=false;x.append(xImg);header.append(heading,x);
   const status=node('div','', 'gr-ma-status'),tools=node('div','', 'gr-ma-tools');
@@ -123,14 +151,75 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     if(!feedback.textContent)notice(!state.enabled?t.setupHint:plan.canRename?t.dbHint:t.legacyHint);
   };
   const showDetails=place=>{
-    list.replaceChildren();tools.hidden=true;
-    list.append(node('h3',place.name||place.summary));
-    list.append(node('p',t.coordinates+': '+place.latitude.toFixed(6)+', '+place.longitude.toFixed(6)));
-    if(Number.isInteger(place.revision))list.append(node('p',t.revision+': '+place.revision));
-    list.append(node('p',t.detailHint));
-    list.append(button(t.back,()=>{tools.hidden=false;render();}));
-    if(typeof focus==='function')
-      list.append(button(t.focus,()=>{focus({latitude:place.latitude,longitude:place.longitude});close();}));
+    if(detailWindow){detailWindow.remove();detailWindow=null;}
+    const data=detailLocation(place),host=owner.shadow;
+    const widget=document.createElement('section');widget.className='gr-ma-detail';
+    widget.setAttribute('role','dialog');widget.setAttribute('aria-modal','false');
+    widget.setAttribute('aria-label',t.detailTitle+': '+data.name);
+    widget.tabIndex=-1;
+    const stylesheet=document.createElement('style');stylesheet.textContent=DETAIL_STYLES;
+    const heading=document.createElement('div');heading.className='gr-ma-detail-head';
+    heading.setAttribute('aria-label',t.detailMove);
+    const caption=node('strong',data.name||t.detailTitle);
+    const exit=button('',()=>{widget.remove();detailWindow=null;});
+    exit.className='gr-ma-detail-x';exit.setAttribute('aria-label',t.close);
+    const icon=document.createElement('img');
+    icon.src=owner.shadow.getElementById('settings-close')?.querySelector('img')?.src||maPremiumClose();
+    icon.alt='';icon.draggable=false;exit.append(icon);heading.append(caption,exit);
+    const content=document.createElement('div');content.className='gr-ma-detail-details';
+    const accordion=document.createElement('details'); // intentionally closed initially
+    const summary=node('summary',t.detailTitle);summary.setAttribute('aria-label',t.detailCollapse);
+    accordion.append(summary);
+    const add=(label,value)=>{
+      const line=node('div','', 'gr-ma-detail-grid');
+      line.append(node('small',label),node('span',value));accordion.append(line);
+    };
+    add(t.coordinates,data.latitude.toFixed(6)+', '+data.longitude.toFixed(6));
+    add(t.detailState,data.archived?t.detailArchived:t.detailActive);
+    add(t.detailOrigin,data.origin);
+    if(data.revision!==null)add(t.revision,data.revision);
+    const actions=node('div','', 'gr-ma-detail-actions');
+    const copy=button(t.detailCopy,async()=>{
+      try{
+        if(!globalThis.navigator?.clipboard?.writeText)throw Error('clipboard_unavailable');
+        await globalThis.navigator.clipboard.writeText(data.latitude.toFixed(6)+', '+data.longitude.toFixed(6));
+        message.textContent=t.detailCopied;
+      }catch{message.textContent=t.detailNoCopy;}
+    });
+    actions.append(copy);
+    if(typeof focus==='function')actions.append(button(t.focus,()=>{
+      focus({latitude:data.latitude,longitude:data.longitude});
+    }));
+    accordion.append(actions,node('p',t.detailHint));
+    const message=node('p','', 'gr-ma-detail-message');
+    content.append(accordion,message);widget.append(stylesheet,heading,content);
+    root.append(widget);detailWindow=widget;
+    let pos={x:(globalThis.innerWidth||360)-Math.min(430,(globalThis.innerWidth||360)-20)-12,
+             y:Math.max(10,Math.round(((globalThis.innerHeight||640)-430)/2))};
+    const placeWindow=()=>{
+      const viewport={width:globalThis.innerWidth||360,height:globalThis.innerHeight||640,
+                      panelWidth:widget.offsetWidth||430,panelHeight:widget.offsetHeight||400};
+      pos=clampDetailPosition(pos,viewport);
+      widget.style.left=pos.x+'px';widget.style.top=pos.y+'px';
+    };
+    placeWindow();
+    let drag=null;
+    heading.addEventListener('pointerdown',event=>{
+      if(event.target.closest('button')||event.button!==0)return;
+      drag={x:event.clientX,y:event.clientY,origin:pos};
+      heading.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
+    });
+    heading.addEventListener('pointermove',event=>{
+      if(!drag)return;
+      pos={x:drag.origin.x+event.clientX-drag.x,y:drag.origin.y+event.clientY-drag.y};
+      placeWindow();
+    });
+    for(const ev of ['pointerup','pointercancel'])heading.addEventListener(ev,()=>{drag=null;});
+    const onResize=()=>{if(widget.isConnected)placeWindow();else globalThis.removeEventListener?.('resize',onResize);};
+    globalThis.addEventListener?.('resize',onResize);
+    widget.addEventListener('keydown',event=>{if(event.key==='Escape'){event.stopPropagation();widget.remove();detailWindow=null;}});
+    widget.focus({preventScroll:true});
   };
   const consume=next=>{if(!root.isConnected)return;state.places=next.places;state.removed=next.removed;state.mode=next.mode;notice('');render();};
   const mutate=async(kind,place)=>{
