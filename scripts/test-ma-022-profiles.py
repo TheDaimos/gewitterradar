@@ -85,7 +85,7 @@ class Profiles(unittest.IsolatedAsyncioTestCase):
         b=(await self.call("preferences_get",{"location_id":location},actor="bob"))["preferences"]
         self.assertEqual(b["push_enabled"],0,"Personal settings must not leak on sharing")
         self.assertEqual(b["quiet_minutes"],15)
-        with self.assertRaisesRegex(api_mod.ApiError,"revision_conflict"):
+        with self.assertRaisesRegex(api_mod.sql.RevisionConflict,"revision_conflict"):
             await self.call("links_transfer",{"location_id":location,
                 "target_user_id":"carol","target_profile_id":self.carol_profile},
                 revision=1,request_id=uid())
