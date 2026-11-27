@@ -9,6 +9,7 @@ on:
       - 'custom_components/gewitterradar/monitored_areas/migration.py'
       - 'custom_components/gewitterradar/monitored_areas/api.py'
       - 'scripts/test-ma-020-finalization.py'
+      - 'tests/test_ma_existing_reconcile.mjs'
       - 'frontend/modules/monitored-areas/location-manager.js'
       - 'frontend/modules/monitored-areas/index.js'
       - 'tests/test_ma_sticky_dialog_layout.mjs'
@@ -72,6 +73,7 @@ jobs:
           node tests/test_ma_sticky_dialog_layout.mjs
           node tests/test_ma_tabbed_views.mjs
           node tests/test_ma_premium_chrome.mjs
+          node tests/test_ma_existing_reconcile.mjs
           node --check frontend/modules/monitored-areas/index.js
           node --check frontend/modules/monitored-areas/migration-wizard.js
           node --check frontend/modules/monitored-areas/location-manager.js
