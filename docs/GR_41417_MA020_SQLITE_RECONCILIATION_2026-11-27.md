@@ -60,8 +60,8 @@ In `scripts/test-ma-020-finalization.py`:
 - **Runtime:** `41417r1`, **Modulset:** `E414-17A1`, **HA-Integration:** `0.25.203`, **DRA-Build:** `4.14.17`.
 - Ausschließlich der isolierte Feature-Branch. Keine öffentliche DEV-Veröffentlichung, keine Änderungen an PROD VM101 oder WeatherRouter.
 - Build/Regression: `.github/workflows/ma-v41417-dev-build-sync.yml` führt den bestehenden MA-020-Saga-Test einschließlich neuer Fälle, die UI-, SQLite-, Modulregistrierungs- und MA-Regressionstests sowie den regulären Frontend-Build aus und aktualisiert nach Erfolg die beiden Paketspiegel und SHA256-Dateien.
-- Verifiziert vor finalem Build-Readback: ECMAScript-UI- und Python-Testquellen wurden direkt im Repository geprüft; der neue JS-Reuse-Vertrag wurde mit den echten Repo-Inhalten isoliert ausgeführt (**21/21 PASS**). Keine Live-Daten wurden verändert.
-- Nachtrag: Der CI-Delivery-Commit muss mit GitHub-SHA-Abgleich und den Testresultaten bestätigt werden; eine bloße Versionsnummer gilt nicht als ausreichender Nachweis.
+- Verifiziert vor finalem Build-Readback: ECMAScript-UI- und Python-Testquellen wurden direkt im Repository geprüft; der neue JS-Reuse-Vertrag wurde mit den echten Repo-Inhalten isoliert ausgeführt (**25/25 PASS**). Keine Live-Daten wurden verändert.
+- **Nachtrag nach CI:** Der Buildlauf hat die installierbaren Frontend-Spiegel tatsächlich regeneriert. GitHub-Readback ergab **10/10 identische Git-Blob-SHAs** über die kanonische Quelle sowie beide Mirrors (Version, Loader, Panel, Runtime- und Modulmanifest, drei MA-Module, UI-Controls und Vault-Anbindung). `SHA256SUMS_FRONTEND.txt` enthält sechs SHA-Einträge für die drei MA-Module in den beiden Delivery-Mirrors. Das bestätigt den erfolgreichen Durchlauf des GitHub-Actions-Jobs einschließlich der in der Workflow-Datei vorgeschalteten Regressionstests. Eine spezifische Workflow-Run-ID konnte nicht ausgelesen werden. Die neuerlich erweiterte Prüfung auf gemischte Reuse/Replace-Kollision und die Frontend-Restentscheidungslogik sind im gleichen isolierten DEV-Branch enthalten und die resultierenden Module gespiegelt.
 
 ## Betreiberprüfung auf DEV VM109 — vor jeder Finalisierung
 
@@ -72,3 +72,10 @@ In `scripts/test-ma-020-finalization.py`:
 5. **Für die erste Betreiberabnahme weder `Auswahl importieren` noch `Finalisierung prüfen` oder `Jetzt Einträge leeren` klicken.** Erst nach dokumentierter Quell-/Ziel-UID-Prüfung gesondert ausdrücklich freigeben. Falls das bereits existierende Import-Receipt ausreicht, wird ein zweiter Commit unnötig.
 
 **Status:** MA-020 bleibt IN_PROGRESS bis bestätigtem VM109-Test, vollständiger Zuordnung aller relevanten Quell-UIDs und bewusster Betreiberfreigabe. Danach MA-021/MA-022 in der zuvor beschlossenen Reihenfolge.
+
+## Entwickler-Nachweise nach dem letzten Commit
+
+- `V4.14.17 DEV` / `41417r1` / Modulset `E414-17A1` / Integration `0.25.203` / DRA `BUILD_VERSION = 4.14.17` stimmen zwischen Runtime-, Backend- und Installationsmetadaten überein.
+- 10/10 abgeglichene repräsentative Frontend-Dateien in `frontend`, `custom_components/gewitterradar/frontend` und `dashboard/dist`: SHA-Identität bestätigt.
+- Backend-Regressionen enthalten inzwischen auch einen Test, der zwei To-do-UIDs daran hindert, denselben SQLite-Ort über eine Mischung aus `use_existing` und `replace` zu verwenden. Die Transaktionsgrenze verhindert unvollständige Änderungen bei fehlgeschlagenen Entscheidungen.
+- **Nicht behauptet:** Erkennung von V4.14.17 durch DRA auf DEV VM109, Installation, Sichtprüfung, produktiver Live-Abgleich oder endgültige Bereinigung der Local-To-do-Liste. Diese Prüfungen benötigen separate Betreiberaktionen.
