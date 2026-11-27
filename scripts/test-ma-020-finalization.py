@@ -395,5 +395,102 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(set(self.removed)),2)
 
 
+    async def test_preexisting_sqlite_places_offer_safe_reuse_without_writes(self):
+        # Simulates 43 already populated SQLite places without finalization.
+        # Suggestions are read-only and the operator explicitly confirms reuse.
+        await self.imported()
+        before = (await self.call("places_list", {"include_archived": True}))["places"]
+        preview = await self.call("migration_preview")
+        self.assertEqual(preview["safe_existing_suggestions"], 2)
+        self.assertEqual(preview["invalid"], 0)
+        self.assertTrue(all(x["suggested_existing_id"] for x in preview["candidates"]))
+        self.assertEqual(len(self.items), 2)
+        self.assertEqual(self.removed, [])
+        decisions = [{"uid":x["uid"],"action":"use_existing",
+                      "location_id":x["suggested_existing_id"]}
+                     for x in preview["candidates"]]
+        result = await self.call("migration_commit",
+            {"preview_id":preview["preview_id"],"decisions":decisions},
+            request_id=uid())
+        self.assertTrue(all(x["action"]=="use_existing" for x in result["imported"]))
+        after = (await self.call("places_list", {"include_archived": True}))["places"]
+        self.assertEqual(before, after, "adopting existing places must not create duplicates")
+        self.assertEqual(len(self.items), 2, "staging must never remove To-do")
+        # A proof can now be generated without any source deletion.
+        proof = await self.approved()
+        self.assertEqual(proof["item_count"], 2)
+        self.assertTrue(proof["source_and_sqlite_verified"])
+        self.assertEqual(self.removed, [])
+
+    async def test_archived_flag_mismatch_is_not_suggested_or_reused(self):
+        await self.imported()
+        self.items[1]["status"] = "completed"
+        preview = await self.call("migration_preview")
+        by_name = {x["name"]:x for x in preview["candidates"]}
+        self.assertIsNotNone(by_name["Alpha"]["suggested_existing_id"])
+        self.assertIsNone(by_name["Beta"]["suggested_existing_id"])
+        self.assertEqual(by_name["Beta"]["exact_matches"], [])
+        original = (await self.call("places_list", {"include_archived": True}))["places"]
+        ids = {x["name"]:x["location_id"] for x in original}
+        decisions = [{"uid":x["uid"],"action":"use_existing",
+                      "location_id":ids[x["name"]]}
+                     for x in preview["candidates"]]
+        with self.assertRaisesRegex(api_mod.ApiError, "migration_existing_mismatch"):
+            await self.call("migration_commit",
+                {"preview_id":preview["preview_id"],"decisions":decisions},
+                request_id=uid())
+        self.assertEqual((await self.call("places_list", {"include_archived": True}))["places"],original)
+        self.assertEqual(self.removed,[])
+
+    async def test_reuse_cannot_alias_two_source_entries_to_same_sqlite_location(self):
+        self.items = [item("Alpha",52,9), item("Alpha",52,9)]
+        # First import only one target by creating a controlled SQLite record,
+        # without altering or removing either legacy To-do item.
+        create_preview = await self.call("migration_preview")
+        result = await self.call("migration_commit",
+            {"preview_id":create_preview["preview_id"],"decisions":[
+                {"uid":self.items[0]["uid"],"action":"create"},
+                {"uid":self.items[1]["uid"],"action":"skip"}]},
+            request_id=uid())
+        target = result["imported"][0]["location_id"]
+        preview = await self.call("migration_preview")
+        self.assertEqual(preview["safe_existing_suggestions"],0)
+        decisions = [{"uid":x["uid"],"action":"use_existing","location_id":target}
+                     for x in preview["candidates"]]
+        with self.assertRaisesRegex(api_mod.ApiError,"migration_duplicate_existing_target"):
+            await self.call("migration_commit",
+                {"preview_id":preview["preview_id"],"decisions":decisions},
+                request_id=uid())
+        self.assertEqual(len((await self.call("places_list",{"include_archived":True}))["places"]),1)
+        self.assertEqual(len(self.items),2)
+        self.assertEqual(self.removed,[])
+
+    async def test_unrelated_location_cannot_be_forged_as_existing_match(self):
+        await self.imported()
+        preview = await self.call("migration_preview")
+        candidates = sorted(preview["candidates"],key=lambda x:x["name"])
+        wrong = [{"uid":candidates[0]["uid"],"action":"use_existing",
+                  "location_id":candidates[1]["suggested_existing_id"]},
+                 {"uid":candidates[1]["uid"],"action":"use_existing",
+                  "location_id":candidates[0]["suggested_existing_id"]}]
+        with self.assertRaisesRegex(api_mod.ApiError,"migration_existing_mismatch"):
+            await self.call("migration_commit",
+                {"preview_id":preview["preview_id"],"decisions":wrong},
+                request_id=uid())
+        self.assertEqual(self.removed,[])
+
+    async def test_duplicate_archived_places_never_get_unattended_suggestion(self):
+        self.items = [item("afrika",34.17331,3.28326) for _ in range(3)]
+        for row in self.items:
+            row["status"] = "completed"
+        await self.imported()
+        preview = await self.call("migration_preview")
+        self.assertEqual(preview["safe_existing_suggestions"],0)
+        self.assertTrue(all(x["suggested_existing_id"] is None for x in preview["candidates"]))
+        self.assertTrue(all(len(x["exact_matches"])==3 for x in preview["candidates"]))
+        self.assertEqual(len(self.items),3)
+        self.assertEqual(self.removed,[])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
