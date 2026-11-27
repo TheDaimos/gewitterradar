@@ -737,3 +737,14 @@ Geschützte Refs vor Dokumentation: main 37f1aca54cd505fd91a2b1b0014cd7c6c280b26
 - **T0/T1**: targeted Python/Node completed on source CI. **T2/T3 not performed** for P04; real HA VM109, multi-user tests, actual association, screenshots and provider connection remain open. No FINAL or automatic deployment to `deploy/dev`.
 - **Unchanged**: existing Local-To-do/SQLite finalization, all 43 migrated locations, WeatherRouter, reference tracker, protected map/weather modules, PROD VM101.
 - **next_task:** complete MA-022/P03 operator T2 and P03 gate, then MA-024 (actual HA tracker entity with ACL/ack) and complete MA-025 persistent per-location Blitzortung source/counter/distance assignments. MA-026/027 deferred until those contracts are tested.
+
+
+## V4.14.23 – P04 Tracker-Zuordnung unter Wetter-Engine und Standortverwaltung
+
+**Stand: 28.11.2026 · technischer DEV-Kandidat, keine Betreiberabnahme.**
+- Geänderter Code: `frontend/modules/ui/skeleton.js`, `frontend/modules/ui/controls.js`, `frontend/modules/monitored-areas/location-manager.js`, neues optionales `tracker-settings.js`; Runtime-Manifest, Build-/DRA-Identität und Tests entsprechend V4.14.23.
+- Betreiberentscheidung: Tracker-/Blitzortung-Konfiguration **nur** unter **Einstellungen → Wetter-Engine → Blitzortung.org**; keine Tracker-Bedienung mehr im Standortdetailfenster. Bestehende reine API-Inventur/-Namensprüfung wird mit HA-Admin-/Vault-/`db_active`-Schutz wiederverwendet.
+- Standortverwaltung: Sortierung, Mehrfachauswahl, sichtbare Auswahl, Auswahlaufhebung und getrennte Sammel-Archivierung/Wiederherstellung mit expliziter Bestätigung, sequenziellen autorisierten Requests, Fail-stop und Server-Readback. Keine neue Datenbank- oder Migrationssemantik.
+- Neue Node-Verträge: `tests/test_ma023_batch_location.mjs`, `tests/test_ma023_tracker_settings.mjs`; bestehende MA-023-/MA-025-Verträge an neues Settings-Modul angepasst. T0/T1 im regenerierenden Build-Workflow [46081608224](https://github.com/TheDaimos/gewitterradar/actions/runs/46081608224) `completed/success` für Quell-SHA `6c1250f8`; generierter Frontend-Spiegel-Commit `be191145`.
+- **Noch offen**: Gesamt-CI/MA-V9 auf finalem SHA, echte DEV VM109-Installation mit Profilwechsel, 43 SQLite-Orten, Android-/iPad-Tests; MA-024 Trackererzeugung, vollständige MA-025-Zuordnung und MA-026/027; **MA-P03-T2** gesondert prüfen.
+- Nicht geändert: WeatherRouter, PROD VM101, Blitzortung-ConfigEntries, bestehender Referenztracker, Local-To-do-Migrationsdatenbank und MA-020-Finalisierung. Kein öffentlicher DEV-Release, kein FINAL. `next_task=MA-P03 real DEV verification / MA-024`.
