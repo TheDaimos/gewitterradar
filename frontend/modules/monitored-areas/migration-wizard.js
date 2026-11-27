@@ -174,7 +174,7 @@ export async function openMigrationWizard(owner) {
     sqlPreviewBox.append(progress);
     try{
       // The WebSocket endpoint verifies the current Vault profile on every page.
-      // No action/nonce/request_id; migration_pending remains authoritative.
+      // Read only: no mutation or idempotency key; migration_pending remains authoritative.
       const rows=[],ids=new Set();
       let cursor=null;
       for(let page=0;page<20;page++){
