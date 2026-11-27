@@ -502,5 +502,29 @@ class FinalizationContracts(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.removed,[])
 
 
+    async def test_ma022_profile_mutations_blocked_before_sqlite_cutover(self):
+        await self.imported()
+        location_id, link_id = await self.db.async_execute(lambda c:
+            c.execute("SELECT l.location_id,p.link_id FROM locations l "
+                      "JOIN profile_links p ON p.location_id=l.location_id "
+                      "LIMIT 1").fetchone(),kind="read")
+        with self.assertRaisesRegex(api_mod.ApiError,"migration_pending"):
+            await self.call("links_share",{"location_id":location_id,
+                "target_user_id":"another-user","target_profile_id":uid()},
+                request_id=uid())
+        with self.assertRaisesRegex(api_mod.ApiError,"migration_pending"):
+            await self.call("links_transfer",{"location_id":location_id,
+                "target_user_id":"another-user","target_profile_id":uid()},
+                request_id=uid())
+        with self.assertRaisesRegex(api_mod.ApiError,"migration_pending"):
+            await self.call("preferences_update",{"link_id":link_id,
+                "quiet_minutes":20},request_id=uid())
+        self.assertEqual(len(self.items),2)
+        self.assertEqual(self.removed,[])
+        count=await self.db.async_execute(lambda c:
+            c.execute("SELECT count(*) FROM profile_links").fetchone()[0],kind="read")
+        self.assertEqual(count,2)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
