@@ -304,14 +304,16 @@ class Api:
                     else:
                         location_id=d["location_id"]
                         link_id=_actor_link(c,location_id,actor_user_id,profile)
+                        # One To-do UID must never alias the same SQLite target
+                        # as another UID, including mixed reuse/replace choices.
+                        if location_id in reused_ids:
+                            raise ApiError("migration_duplicate_existing_target")
+                        reused_ids.add(location_id)
                         if action=="use_existing":
                             # Never permit a forged/ambiguous reassignment to a
                             # different SQLite place. The selected place must
                             # already match the original To-do name, coordinates
                             # and profile-scoped archived state. Do not mutate it.
-                            if location_id in reused_ids:
-                                raise ApiError("migration_duplicate_existing_target")
-                            reused_ids.add(location_id)
                             row=c.execute(
                                 "SELECT l.name,l.lat,l.lon,CASE WHEN a.link_id IS NULL THEN 0 ELSE 1 END "
                                 "FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
