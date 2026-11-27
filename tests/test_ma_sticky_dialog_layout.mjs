@@ -6,7 +6,6 @@ assert.match(wizard,/class="wizard-header"/);
 assert.match(wizard,/class="wizard-content" tabindex="0"/);
 assert.match(wizard,/class="wizard-footer"/);
 assert.match(wizard,/\.wizard-content\{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain/);
-assert.match(wizard,/\.gr-ma-wizard\.close\{position:absolute;/);
 assert.match(wizard,/\.gr-ma-wizard \.close\{position:absolute;[^}]*border-radius:50%/);
 assert.match(wizard,/height:min\(820px,calc\(100dvh - 24px\)\);max-height:calc\(100dvh - 24px\);overflow:hidden/);
 assert.ok(wizard.indexOf('<header class="wizard-header">')<wizard.indexOf('<div class="wizard-content"'));
