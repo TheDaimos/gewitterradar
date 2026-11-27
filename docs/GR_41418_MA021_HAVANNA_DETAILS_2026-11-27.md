@@ -46,4 +46,12 @@ Diese Punkte bleiben offen und werden nicht als bereits abgeschlossen ausgegeben
 4. Schließen per goldenen X und Esc testen und das Fenster mehrfach nacheinander öffnen. Die Standortliste bleibt erreichbar; Änderungen an SQLite oder Local To-do dürfen nicht ausgelöst werden.
 5. Für den ersten Test weiterhin **keinen Import und keine Finalisierung** durchführen.
 
+## Build-Nachprüfung (tatsächlicher GitHub-Readback)
+
+- GitHub Actions hat den kanonischen Frontend-Build ausgeführt und einen Delivery-only-Commit mit dem finalen Detailfenstercode gepusht. Die Build-Pipeline umfasst den MA-021-Test, den bisherigen MA-020-Saga-Test und die Modul-/Cache-Regressionen.
+- **10/10** geprüfte Frontend-Dateipfade mit identischem Blob-SHA in `frontend/`, `custom_components/gewitterradar/frontend/` und `dashboard/dist/`: Version, Loader, Panel, Runtime-/Modulmanifest, drei MA-Module, UI-Controls und Vault-Anbindung.
+- Das eigens aus der GitHub-Quelle ausgelesene `tests/test_ma021_havanna_detail.mjs` wurde zusätzlich als isolierte Modell-/Vertragsprobe ausgeführt: **25/25 PASS**, einschließlich identischer installierter Modulspiegel, Viewport-Clamp, geschlossenem Akkordeon, schreibgeschütztem Standortschema und Cleanup-Verträgen.
+- Die Versionsmetadaten stimmen überein: Frontend `4.14.18`, Runtime `41418r1`, Backend `0.25.204`, DRA-`BUILD_VERSION = "4.14.18"`. Sechs MA-Modul-Hash-Einträge sind in `SHA256SUMS_FRONTEND.txt` vorhanden.
+- Eine eindeutige GitHub-Actions-Run-ID konnte über den verfügbaren Connector nicht ausgelesen werden. Daraus wird keine separate Live-HA- oder DRA-Installationsbestätigung abgeleitet.
+
 **T2/DEV-/DRA-Abnahme:** noch nicht bestätigt. Kein PROD- oder öffentliches FINAL-Release.
