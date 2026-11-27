@@ -1745,7 +1745,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             refresh:reload,
             // MA-022: batch share/transfer UI can only open after the
             // server-authoritative SQLite cutover and Vault-user revalidation.
-            openProfiles:loaded && mode==='db_active' ? async ({places,mode:profileMode,refreshManager})=>{
+            openProfiles:loaded && mode==='db_active' ? async ({places,mode:profileMode,refreshManager,initialLocationIds=[]})=>{
               if(!sameProfile()||profileMode!=='db_active')throw new Error('MA_PROFILE_CHANGED');
               const ensurePort=async()=>{
                 if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
@@ -1763,7 +1763,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               const module=await import('../monitored-areas/profile-sharing.js?v=41421r1');
               if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
               return module.openProfileSharing(this,{
-                mode:profileMode,places,
+                mode:profileMode,places,initialLocationIds,
                 verifyContext:()=>sameProfile()&&this._maSavedMode==='db_active',
                 makeRequestId:migrationRequestUUID,
                 listLinks:id=>guarded('listLinks',id),
