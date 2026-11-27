@@ -87,8 +87,8 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
   const style=document.createElement('style');style.textContent=STYLES;
   const panel=document.createElement('section');panel.className='gr-ma-panel';
   panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',t.title);
-  let detailWindow=null;
-  const close=()=>{detailWindow?.remove();detailWindow=null;root.remove();},header=document.createElement('header'),heading=document.createElement('div');
+  let detailWindow=null,disposeDetail=()=>{};
+  const close=()=>{disposeDetail();detailWindow?.remove();detailWindow=null;root.remove();},header=document.createElement('header'),heading=document.createElement('div');
   heading.append(node('h2',t.title),node('small',t.subtitle));
   const x=button('',close);x.className='gr-ma-close';x.setAttribute('aria-label',t.close);const xImg=document.createElement('img');xImg.src=owner.shadow.getElementById('settings-close')?.querySelector('img')?.src || maPremiumClose();xImg.alt='';xImg.draggable=false;x.append(xImg);header.append(heading,x);
   const status=node('div','', 'gr-ma-status'),tools=node('div','', 'gr-ma-tools');
@@ -151,8 +151,8 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     if(!feedback.textContent)notice(!state.enabled?t.setupHint:plan.canRename?t.dbHint:t.legacyHint);
   };
   const showDetails=place=>{
-    if(detailWindow){detailWindow.remove();detailWindow=null;}
-    const data=detailLocation(place),host=owner.shadow;
+    if(detailWindow){disposeDetail();detailWindow.remove();detailWindow=null;}
+    const data=detailLocation(place);
     const widget=document.createElement('section');widget.className='gr-ma-detail';
     widget.setAttribute('role','dialog');widget.setAttribute('aria-modal','false');
     widget.setAttribute('aria-label',t.detailTitle+': '+data.name);
@@ -161,7 +161,7 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     const heading=document.createElement('div');heading.className='gr-ma-detail-head';
     heading.setAttribute('aria-label',t.detailMove);
     const caption=node('strong',data.name||t.detailTitle);
-    const exit=button('',()=>{widget.remove();detailWindow=null;});
+    const exit=button('',()=>{disposeDetail();widget.remove();detailWindow=null;});
     exit.className='gr-ma-detail-x';exit.setAttribute('aria-label',t.close);
     const icon=document.createElement('img');
     icon.src=owner.shadow.getElementById('settings-close')?.querySelector('img')?.src||maPremiumClose();
@@ -218,7 +218,8 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     for(const ev of ['pointerup','pointercancel'])heading.addEventListener(ev,()=>{drag=null;});
     const onResize=()=>{if(widget.isConnected)placeWindow();else globalThis.removeEventListener?.('resize',onResize);};
     globalThis.addEventListener?.('resize',onResize);
-    widget.addEventListener('keydown',event=>{if(event.key==='Escape'){event.stopPropagation();widget.remove();detailWindow=null;}});
+    disposeDetail=()=>{globalThis.removeEventListener?.('resize',onResize);};
+    widget.addEventListener('keydown',event=>{if(event.key==='Escape'){event.stopPropagation();disposeDetail();widget.remove();detailWindow=null;}});
     widget.focus({preventScroll:true});
   };
   const consume=next=>{if(!root.isConnected)return;state.places=next.places;state.removed=next.removed;state.mode=next.mode;notice('');render();};
