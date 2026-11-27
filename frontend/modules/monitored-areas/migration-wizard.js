@@ -1,7 +1,7 @@
 // MA-020 migration workflow: explicit decisions and separate destructive confirmation.
 // A request UUID is required for server-side idempotency. Browsers in a non-secure
 // HA context may expose getRandomValues but not randomUUID; never use Math.random.
-const MA_PREMIUM_CLOSE = new URL("../../assets/gewitterradar-about-close-premium.webp", import.meta.url).href;
+const maPremiumClose = () => new URL("../../assets/gewitterradar-about-close-premium.webp", import.meta.url).href;
 
 export function migrationRequestUUID(cryptoSource=globalThis.crypto) {
   if (typeof cryptoSource?.randomUUID === "function") return cryptoSource.randomUUID();
@@ -45,6 +45,7 @@ export async function openMigrationWizard(owner) {
     if(owner._settingsVault?.profile?.id !== profileId) throw new Error("Vault-Profil gewechselt – Dialog erneut öffnen");
     return result;
   };
+  const MA_PREMIUM_CLOSE = maPremiumClose();
   const shell = document.createElement("div");
   shell.innerHTML = `<style>
     .gr-ma-wizard{box-sizing:border-box;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;z-index:2147483601;width:min(660px,calc(100vw - 20px));height:min(820px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);overflow:hidden;padding:0;display:flex;flex-direction:column;border:2px solid #d7b87b;border-radius:16px;background:linear-gradient(155deg,#263b4d,#0c1722 72%);color:#e7ecf1;box-shadow:0 15px 60px #000c;font:14px/1.5 Segoe UI,Arial,sans-serif}
