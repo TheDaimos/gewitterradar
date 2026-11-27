@@ -79,13 +79,13 @@ const message=(err,t)=>{const code=String(err?.code||err?.message||err);return /
 export function openProfileSharing(owner,{mode="legacy",places=[],listLinks,getPreferences,
  shareLocation,updatePreferences,refresh,verifyContext,makeRequestId}={}){
  if(!owner?.shadow||typeof verifyContext!=="function")return null;
- owner.shadow.getElementById("gr-ma022-overlay")?.remove();
+ owner.shadow.getElementById("gr-ma022-overlay")?.__dispose?.();
  const t=/Deutsch|Boarisch|Platt|Sächs|Schwäb/i.test(owner._languageValue?.()||"Deutsch")?LANG.de:LANG.en;
  const overlay=el("div",null,"gr-ma022-overlay");overlay.id="gr-ma022-overlay";
  const panel=el("section",null,"gr-ma022-panel");panel.setAttribute("role","dialog");panel.setAttribute("aria-modal","true");panel.setAttribute("aria-label",t.title);
  const head=el("header",null,"gr-ma022-head"),headCopy=el("div");
  headCopy.append(el("strong",t.title),el("small",t.subtitle));
- const exit=button("",()=>overlay.remove());exit.className="gr-ma022-close";exit.setAttribute("aria-label",t.close);
+ const exit=button("",()=>closeOverlay());exit.className="gr-ma022-close";exit.setAttribute("aria-label",t.close);
  const img=el("img");img.alt="";img.draggable=false;
  img.src=owner.shadow.getElementById("settings-close")?.querySelector("img")?.src||new URL("../../assets/gewitterradar-about-close-premium.webp",import.meta.url).href;
  exit.append(img);head.append(headCopy,exit);
@@ -205,7 +205,7 @@ export function openProfileSharing(owner,{mode="legacy",places=[],listLinks,getP
   if(!globalThis.confirm?.(action))return;
   setBusy(true);setStatus(t.busy);const successes=[],failures=[];
   for(const p of chosen){
-   if(!permitted()||!overlay.isConnected){failures.push("MA_PROFILE_CHANGED");break}
+   if(!permitted()||!overlay.isConnected){closeOverlay();return}
    try{await shareLocation(p.uid,target.user,target.profile,p.revision,makeRequestId(),{transfer});
     if(!permitted())throw Error("MA_PROFILE_CHANGED");
     successes.push(p.uid);picked.delete(p.uid);
@@ -217,8 +217,15 @@ export function openProfileSharing(owner,{mode="legacy",places=[],listLinks,getP
   setBusy(false);render();
  }
  filter.addEventListener("input",render);
- overlay.addEventListener("click",event=>{if(event.target===overlay&&!busy)overlay.remove()});
- overlay.addEventListener("keydown",event=>{if(event.key==="Escape"&&!busy){event.stopPropagation();overlay.remove()}});
+ overlay.addEventListener("click",event=>{if(event.target===overlay&&!busy)closeOverlay()});
+ overlay.addEventListener("keydown",event=>{if(event.key==="Escape"&&!busy){event.stopPropagation();closeOverlay()}});
+ const onVaultChange=()=>{if(!verifyContext())closeOverlay()};
+ function closeOverlay(){
+  owner._settingsVault?.removeEventListener?.("change",onVaultChange);
+  overlay.remove();
+ }
+ overlay.__dispose=closeOverlay;
+ owner._settingsVault?.addEventListener?.("change",onVaultChange);
  syncOwnProfiles();render();if(mode!=="db_active")setStatus(t.pending,true);
  filter.focus({preventScroll:true});return overlay;
 }
