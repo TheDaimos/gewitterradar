@@ -26,7 +26,7 @@ assert.match(source,/picked\.delete\(p\.uid\)/,'successful entries are not retri
 assert.match(source,/failures\.push/,'partial failures are surfaced');
 assert.match(source,/await getPreferences\(place\.uid\)/);
 assert.match(source,/await updatePreferences\(link,patch,revision,makeRequestId\(\)\)/);
-assert.match(source,/setStatus\(t\.disclaimer/); // Must not claim notifications are already running
+assert.match(source,/prefsContent\.append\(el\("p",t\.disclaimer\)\)/); // No claim that notifications run
 assert.match(manager,/openProfiles:?\b|typeof openProfiles/);
 assert.match(manager,/profileButton\.disabled=state\.busy\|\|plan\.mode!=='db_active'/);
 assert.match(controls,/port\?\.mode!=='db_active'/);
