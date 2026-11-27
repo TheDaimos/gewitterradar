@@ -16,11 +16,12 @@ for(const input of [null,{},[place('a'),place('a')],[{...place('a'),latitude:NaN
   [{...place('a'),archived:'false'}],[{...place('a'),name:{}}]])
   assert.throws(()=>summarizeSqlitePreview(input),/MA_SQLITE_PREVIEW_INVALID/);
 assert.match(source,/data-sql-preview/);
-assert.match(source,/SQLite-Daten ansehen \(nur lesen\)/);
+assert.match(source,/SQL-Daten \(lesend\)/);
 assert.match(source,/call\("places_list",\{limit:100,include_archived:true/);
 assert.match(source,/\["migration_pending","db_active"\]/);
 assert.match(source,/if\(cursor\)throw new Error/);
-assert.match(source,/sqlPreviewBox\.hidden=true;sqlPreviewBox\.replaceChildren/);
+assert.match(source,/sqlPreviewBox\.hidden=kind!=="sql"/);
+assert.match(source,/sqlLoaded=false;sqlEntries\.length=0/);
 const inspection=source.slice(source.indexOf('const openSqlPreview=async()=>'),source.indexOf('const prepareFinalize=async()=>'));
 assert.ok(inspection.startsWith('const openSqlPreview'));
 assert.doesNotMatch(inspection,/migration_commit|migration_finalize_commit|location_update|todo\.remove_item|request_id/);
