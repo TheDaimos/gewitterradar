@@ -54,6 +54,15 @@ export async function openMigrationWizard(owner) {
     .gr-ma-wizard .wizard-header{flex:0 0 auto;position:relative;padding:16px 70px 12px 18px;background:linear-gradient(180deg,rgba(17,23,32,.995),rgba(17,23,32,.94));border-bottom:1px solid rgba(255,255,255,.07);z-index:2}
     .gr-ma-wizard .wizard-header h2{margin-bottom:7px}
     .gr-ma-wizard .wizard-header p{margin:0;font-size:12px;color:#c5d5e0}
+    .gr-ma-wizard .ma-view-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:12px}
+    .gr-ma-wizard .ma-view-tabs button{min-height:40px;padding:8px 10px!important;border:1px solid rgba(201,160,80,.34)!important;border-radius:10px;background:#101b28!important;color:#dce7ef!important;font-weight:650}
+    .gr-ma-wizard .ma-view-tabs button[aria-pressed="true"]{border-color:#e1b965!important;background:linear-gradient(130deg,#443723,#172734)!important;color:#ffdf91!important;box-shadow:inset 0 1px #fff2}
+    .gr-ma-wizard .ma-filter-controls{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+    .gr-ma-wizard .ma-filter-controls input{box-sizing:border-box;width:100%;min-height:34px;padding:6px 9px;border:1px solid #6f8796;border-radius:8px;background:#101f2a;color:#fff}
+    .gr-ma-wizard .ma-letter-bar{display:flex;flex-wrap:wrap;gap:4px;max-height:76px;overflow-y:auto;overscroll-behavior:contain}
+    .gr-ma-wizard .ma-letter-bar button{min-width:30px;min-height:30px;padding:3px 7px!important;border-radius:7px!important;font-size:12px}
+    .gr-ma-wizard .ma-letter-bar button[aria-pressed="true"]{background:#524126!important;border-color:#e4ba65!important;color:#ffe7aa!important}
+    .gr-ma-wizard .preview[hidden],.gr-ma-wizard .sql-preview[hidden]{display:none!important}
     .gr-ma-wizard .wizard-content{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:13px 18px;scrollbar-gutter:stable;contain:paint}
     .gr-ma-wizard .wizard-footer{flex:0 0 auto;position:relative;padding:11px 18px 14px;background:linear-gradient(180deg,rgba(17,23,32,.96),rgba(10,16,24,.99));border-top:1px solid rgba(201,160,80,.22);z-index:2}
     .gr-ma-wizard .wizard-footer [role=status]{max-height:5.5em;overflow-y:auto}
@@ -83,6 +92,14 @@ export async function openMigrationWizard(owner) {
       <button type="button" class="close" aria-label="Schließen"><img src="${MA_PREMIUM_CLOSE}" alt="" draggable="false"></button>
       <h2>Standorte aus Local To-do übernehmen</h2>
       <p>Die alte Liste bleibt bis zur gesonderten Administratorbestätigung bestehen.</p>
+      <nav class="ma-view-tabs" aria-label="Standortdatenquelle">
+        <button type="button" data-todo-preview aria-pressed="true">Local To-do</button>
+        <button type="button" data-sql-preview aria-pressed="false">SQL-Daten (lesend)</button>
+      </nav>
+      <div class="ma-filter-controls">
+        <input type="search" class="ma-location-filter" placeholder="Standorte suchen …" aria-label="Standorte in der aktuellen Ansicht suchen">
+        <div class="ma-letter-bar" role="group" aria-label="Anfangsbuchstaben"></div>
+      </div>
     </header>
     <div class="wizard-content" tabindex="0" role="region" aria-label="Standortliste und SQLite-Kontrollansicht">
       <div class="preview"></div>
@@ -92,7 +109,6 @@ export async function openMigrationWizard(owner) {
       <div class="controls">
         <button type="button" data-preview>Vorschau aktualisieren</button>
         <button type="button" data-import disabled>Auswahl importieren</button>
-        <button type="button" data-sql-preview>SQLite-Daten ansehen (nur lesen)</button>
         <button type="button" data-finalize>Finalisierung prüfen</button>
       </div>
       <div class="confirm" hidden>
@@ -108,10 +124,35 @@ export async function openMigrationWizard(owner) {
   const previewButton=dialog.querySelector("[data-preview]");
   const importButton=dialog.querySelector("[data-import]");
   const finalizeButton=dialog.querySelector("[data-finalize]");
-  const sqlPreviewButton=dialog.querySelector("[data-sql-preview]"),sqlPreviewBox=dialog.querySelector(".sql-preview");
+  const sqlPreviewButton=dialog.querySelector("[data-sql-preview]"),todoPreviewButton=dialog.querySelector("[data-todo-preview]"),sqlPreviewBox=dialog.querySelector(".sql-preview");
+  const textFilter=dialog.querySelector(".ma-location-filter"),letterBar=dialog.querySelector(".ma-letter-bar");
   const removeButton=dialog.querySelector("[data-remove]");
   const confirm=dialog.querySelector(".confirm"),checkbox=confirm.querySelector("input");
   let preview=null, proof=null, busy=false;
+  let currentView="todo",currentLetter="",sqlLoaded=false;
+  const todoEntries=[],sqlEntries=[];
+  const initial=name=>String(name||"").trim().charAt(0).toLocaleUpperCase();
+  const renderFilter=()=>{
+    const entries=currentView==="todo"?todoEntries:sqlEntries;
+    const available=[...new Set(entries.map(x=>initial(x.name)).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+    if(currentLetter&&!available.includes(currentLetter))currentLetter="";
+    letterBar.replaceChildren();
+    for(const letter of ["",...available]){
+      const button=document.createElement("button");button.type="button";button.textContent=letter||"Alle";
+      button.setAttribute("aria-pressed",String(letter===currentLetter));
+      button.addEventListener("click",()=>{currentLetter=letter;renderFilter();});letterBar.append(button);
+    }
+    const term=textFilter.value.trim().toLocaleLowerCase();
+    for(const item of entries)item.el.hidden=!!(currentLetter&&initial(item.name)!==currentLetter)||!item.name.toLocaleLowerCase().includes(term);
+  };
+  const switchView=kind=>{
+    currentView=kind;
+    previewBox.hidden=kind!=="todo";sqlPreviewBox.hidden=kind!=="sql";
+    todoPreviewButton.setAttribute("aria-pressed",String(kind==="todo"));
+    sqlPreviewButton.setAttribute("aria-pressed",String(kind==="sql"));
+    currentLetter="";textFilter.value="";renderFilter();
+  };
+  textFilter.addEventListener("input",renderFilter);
   const status=(value,error=false)=>{feedback.textContent=value;feedback.className=error?"warning":"";};
   const fail=error=>status("Aktion nicht abgeschlossen: "+(error?.code||error?.message||"Unbekannter Fehler"),true);
   const setBusy=value=>{
@@ -140,9 +181,9 @@ export async function openMigrationWizard(owner) {
     if(busy)return;
     setBusy(true);
     try{
-      proof=null;confirm.hidden=true;sqlPreviewBox.hidden=true;sqlPreviewBox.replaceChildren();
+      proof=null;confirm.hidden=true;sqlLoaded=false;sqlEntries.length=0;sqlPreviewBox.replaceChildren();
       preview=await call("migration_preview");
-      previewBox.replaceChildren();
+      previewBox.replaceChildren();todoEntries.length=0;
       const summary=document.createElement("p");
       const archivedCount=(preview.candidates||[]).filter(x=>x.status==="completed").length;
       summary.textContent=`Quelle: ${preview.total} Einträge · gültig: ${preview.valid} · davon archiviert: ${archivedCount} · nicht importierbar: ${preview.invalid}`;
@@ -173,8 +214,9 @@ export async function openMigrationWizard(owner) {
           if(location)option("Ort ersetzen: "+location.name,"replace|"+id+"|"+location.revision);
         }
         if(!hasConflict)option("Überspringen (verhindert abschließende Leerung)","skip");
-        node.append(label,sel);previewBox.append(node);
+        node.append(label,sel);previewBox.append(node);todoEntries.push({el:node,name:candidate.name});
       }
+      renderFilter();
       status(preview.invalid?"Import/Leerung gesperrt, bis alle ungültigen Einträge geklärt sind.":"Wähle die Behandlung jedes Standorts und bestätige den Import.");
     }catch(error){preview=null;fail(error);}
     finally{setBusy(false);}
@@ -188,7 +230,7 @@ export async function openMigrationWizard(owner) {
       if(decisions.some(x=>x.action==="skip"))throw Error("Übersprungene Orte verhindern den vollständigen Abschluss");
       const result=await call("migration_commit",
         {preview_id:preview.preview_id,decisions},migrationRequestUUID());
-      sqlPreviewBox.hidden=true;sqlPreviewBox.replaceChildren();
+      sqlLoaded=false;sqlEntries.length=0;sqlPreviewBox.replaceChildren();
       status(`Import bestätigt: ${result.imported?.length||0} Standorte. Die alte Liste ist weiterhin vorhanden. Prüfe jetzt die Finalisierung.`);
       importButton.disabled=true;
       preview=null;
@@ -197,8 +239,8 @@ export async function openMigrationWizard(owner) {
   const openSqlPreview=async()=>{
     if(busy)return;
     setBusy(true);
-    sqlPreviewBox.hidden=false;
-    sqlPreviewBox.replaceChildren();
+    sqlLoaded=false;
+    sqlEntries.length=0;sqlPreviewBox.replaceChildren();
     const progress=document.createElement("p");
     progress.textContent="Lese SQLite-Daten …";
     sqlPreviewBox.append(progress);
@@ -251,17 +293,13 @@ export async function openMigrationWizard(owner) {
           const coordinates=document.createElement("small");
           coordinates.textContent=`${item.latitude.toFixed(5)}, ${item.longitude.toFixed(5)} · ${item.location_origin||"unknown"} · Revision ${item.revision}`;
           el.append(name,coordinates);area.append(el);
-          return {el,searchText:item.name.toLocaleLowerCase()};
+          const row={el,name:item.name};sqlEntries.push(row);return row;
         });
         if(!items.length){const empty=document.createElement("p");empty.textContent="Keine Standorte";area.append(empty);}
         group.append(area);groups.push(entries);sqlPreviewBox.append(group);
       }
-      search.addEventListener("input",()=>{
-        const term=search.value.trim().toLocaleLowerCase();
-        for(const entries of groups)for(const {el,searchText} of entries)
-          el.hidden=!searchText.includes(term);
-      });
-      sqlPreviewBox.prepend(heading,count,compare,search);
+      sqlPreviewBox.prepend(heading,count,compare);
+      sqlLoaded=true;renderFilter();
     }catch(error){
       sqlPreviewBox.replaceChildren();
       const warning=document.createElement("p");warning.className="warning";
@@ -303,10 +341,12 @@ export async function openMigrationWizard(owner) {
   previewButton.addEventListener("click",()=>{void loadPreview();});
   importButton.addEventListener("click",()=>{void importSelected();});
   finalizeButton.addEventListener("click",()=>{void prepareFinalize();});
-  sqlPreviewButton.addEventListener("click",()=>{void openSqlPreview();});
+  todoPreviewButton.addEventListener("click",()=>{if(!busy)switchView("todo");});
+  sqlPreviewButton.addEventListener("click",()=>{if(busy)return;switchView("sql");if(!sqlLoaded)void openSqlPreview();});
   removeButton.addEventListener("click",()=>{void finalize();});
   owner.shadow.append(shell);
   dialog.show();
+  switchView("todo");
   void loadPreview();
   return dialog;
 }
