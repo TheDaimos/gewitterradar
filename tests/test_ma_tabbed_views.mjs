@@ -1,0 +1,32 @@
+// V4.14.15: additive UI contracts, no write APIs exercised.
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const root=new URL('../',import.meta.url);
+const wizard=readFileSync(new URL('frontend/modules/monitored-areas/migration-wizard.js',root),'utf8');
+const manager=readFileSync(new URL('frontend/modules/monitored-areas/location-manager.js',root),'utf8');
+const controls=readFileSync(new URL('frontend/modules/ui/controls.js',root),'utf8');
+assert.match(wizard,/data-todo-preview aria-pressed="true"/);
+assert.match(wizard,/data-sql-preview aria-pressed="false">SQL-Daten \(lesend\)/);
+assert.match(wizard,/class="ma-location-filter"/);
+assert.match(wizard,/class="ma-letter-bar"/);
+assert.match(wizard,/new Set\(entries\.map\(x=>initial\(x\.name\)\)/);
+assert.match(wizard,/currentView==="todo"\?todoEntries:sqlEntries/);
+assert.match(wizard,/previewBox\.hidden=kind!=="todo"/);
+assert.match(wizard,/sqlPreviewBox\.hidden=kind!=="sql"/);
+assert.match(wizard,/importButton\.hidden=kind!=="todo"/);
+assert.match(wizard,/currentView==="sql"\?openSqlPreview\(\):loadPreview\(\)/);
+assert.match(wizard,/sqlLoaded=true;renderFilter\(\)/);
+assert.match(wizard,/return options\.map\(sel=>/); // all selections survive filtering
+assert.match(wizard,/if\(decisions\.some\(x=>x\.action==="skip"\)\)/);
+assert.match(wizard,/migration_finalize_preview/);
+assert.match(wizard,/explicit_final:true/);
+assert.doesNotMatch(wizard,/todo\.remove_item/);
+assert.match(manager,/className='gr-ma-accordion'/);
+assert.match(manager,/const expanded=\{active:true,archived:false\}/);
+assert.match(manager,/section\.open=expanded\[key\]/);
+assert.match(manager,/section\.append\(content\);list\.append\(section\)/);
+const searchAt=controls.indexOf('frag.appendChild(search);');
+const manageAt=controls.indexOf('frag.appendChild(maManage);');
+const savedDivider=controls.indexOf('frag.appendChild(dividerBeforeSaved);');
+assert.ok(searchAt>=0 && manageAt>searchAt && savedDivider>manageAt,'manager follows place search before saved locations');
+console.log('PASS MA tabbed To-do/SQL read-only views, shared alphabet, collapsible location groups and placement');
