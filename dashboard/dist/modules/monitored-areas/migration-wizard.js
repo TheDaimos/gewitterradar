@@ -39,9 +39,19 @@ export async function openMigrationWizard(owner) {
   });
   const shell = document.createElement("div");
   shell.innerHTML = `<style>
-    .gr-ma-wizard{box-sizing:border-box;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;z-index:2147483601;width:min(660px,calc(100vw - 20px));max-height:calc(100dvh - 24px);overflow:auto;padding:20px;border:2px solid #d7b87b;border-radius:16px;background:linear-gradient(155deg,#263b4d,#0c1722 72%);color:#e7ecf1;box-shadow:0 15px 60px #000c;font:14px/1.5 Segoe UI,Arial,sans-serif}
+    .gr-ma-wizard{box-sizing:border-box;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;z-index:2147483601;width:min(660px,calc(100vw - 20px));height:min(820px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);overflow:hidden;padding:0;display:flex;flex-direction:column;border:2px solid #d7b87b;border-radius:16px;background:linear-gradient(155deg,#263b4d,#0c1722 72%);color:#e7ecf1;box-shadow:0 15px 60px #000c;font:14px/1.5 Segoe UI,Arial,sans-serif}
     .gr-ma-wizard h2{margin:0 35px 12px 0;color:#f3dfb1;font-size:21px}.gr-ma-wizard p{margin:8px 0}
-    .gr-ma-wizard .close{position:absolute;right:8px;top:7px;font-size:24px;background:none;border:0}
+    .gr-ma-wizard .wizard-header{flex:0 0 auto;position:relative;padding:16px 70px 12px 18px;background:linear-gradient(130deg,#29465b,#152637);border-bottom:1px solid #8e744b;z-index:2}
+    .gr-ma-wizard .wizard-header h2{margin-bottom:7px}
+    .gr-ma-wizard .wizard-header p{margin:0;font-size:12px;color:#c5d5e0}
+    .gr-ma-wizard .wizard-content{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:13px 18px;scrollbar-gutter:stable;contain:paint}
+    .gr-ma-wizard .wizard-footer{flex:0 0 auto;position:relative;padding:11px 18px 14px;background:#152838;border-top:1px solid #8e744b;z-index:2}
+    .gr-ma-wizard .wizard-footer [role=status]{max-height:5.5em;overflow-y:auto}
+    .gr-ma-wizard .close{position:absolute;right:13px;top:12px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;padding:0!important;color:#f5e1b5!important;background:radial-gradient(circle at 30% 25%,#54728b,#193041 69%)!important;border:2px solid #c9ab72!important;box-shadow:inset 0 1px 3px #ffffff55,0 2px 8px #0008;font-size:27px;font-weight:300;line-height:1}
+    .gr-ma-wizard .close:hover{filter:brightness(1.13)}
+    .gr-ma-wizard .close:focus-visible{outline:2px solid #fff0ba;outline-offset:3px}
+    @media(max-width:540px){.gr-ma-wizard .wizard-header{padding:12px 63px 9px 13px}.gr-ma-wizard .wizard-content{padding:10px 12px}.gr-ma-wizard .wizard-footer{padding:8px 12px 11px}.gr-ma-wizard .close{right:11px;top:10px;width:40px;height:40px}}
+    @media(max-height:520px){.gr-ma-wizard .wizard-footer [role=status]{max-height:2.8em}}
     .gr-ma-wizard button,.gr-ma-wizard select{background:#233a4b;color:#f4e5c9;border:1px solid #b99b68;border-radius:7px;padding:9px}
     .gr-ma-wizard button:disabled{opacity:.4}.gr-ma-wizard .entry{padding:9px;margin:6px 0;border:1px solid #708ca066;border-radius:8px}
     .gr-ma-wizard .entry label{display:block;font-weight:600}.gr-ma-wizard .entry select{width:100%;margin-top:5px}
@@ -58,19 +68,28 @@ export async function openMigrationWizard(owner) {
     .gr-ma-wizard .sql-row small{display:block;color:#b9c9d5}
     .gr-ma-wizard .sql-preview .note{color:#b6c8d6;font-size:12px}
   </style><dialog class="gr-ma-wizard" aria-label="Standortübernahme">
-    <button type="button" class="close" aria-label="Schließen">×</button>
-    <h2>Standorte aus Local To-do übernehmen</h2>
-    <p>Alle Standorte werden vor einer möglichen Leerung in SQLite geprüft. Die alte Liste bleibt bis zur gesonderten Administratorbestätigung bestehen.</p>
-    <div class="preview"></div><div class="controls">
-      <button type="button" data-preview>Vorschau aktualisieren</button>
-      <button type="button" data-import disabled>Auswahl importieren</button>
-      <button type="button" data-sql-preview>SQLite-Daten ansehen (nur lesen)</button>
-      <button type="button" data-finalize>Finalisierung prüfen</button>
-    </div><section class="sql-preview" hidden aria-label="SQLite-Kontrollansicht"></section><div class="confirm" hidden>
-      <label><input type="checkbox"> Ich bestätige die dauerhafte Entfernung aller erfolgreich übernommenen Einträge aus der alten Local-To-do-Liste.</label>
-      <button type="button" data-remove disabled>Jetzt Einträge leeren</button>
+    <header class="wizard-header">
+      <button type="button" class="close" aria-label="Schließen">×</button>
+      <h2>Standorte aus Local To-do übernehmen</h2>
+      <p>Die alte Liste bleibt bis zur gesonderten Administratorbestätigung bestehen.</p>
+    </header>
+    <div class="wizard-content" tabindex="0" role="region" aria-label="Standortliste und SQLite-Kontrollansicht">
+      <div class="preview"></div>
+      <section class="sql-preview" hidden aria-label="SQLite-Kontrollansicht"></section>
     </div>
-    <p role="status" aria-live="polite"></p>
+    <footer class="wizard-footer">
+      <div class="controls">
+        <button type="button" data-preview>Vorschau aktualisieren</button>
+        <button type="button" data-import disabled>Auswahl importieren</button>
+        <button type="button" data-sql-preview>SQLite-Daten ansehen (nur lesen)</button>
+        <button type="button" data-finalize>Finalisierung prüfen</button>
+      </div>
+      <div class="confirm" hidden>
+        <label><input type="checkbox"> Ich bestätige die dauerhafte Entfernung aller erfolgreich übernommenen Einträge aus der alten Local-To-do-Liste.</label>
+        <button type="button" data-remove disabled>Jetzt Einträge leeren</button>
+      </div>
+      <p role="status" aria-live="polite"></p>
+    </footer>
   </dialog>`;
   const dialog = shell.querySelector("dialog");
   const previewBox=dialog.querySelector(".preview");
