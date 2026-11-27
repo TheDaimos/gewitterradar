@@ -1186,7 +1186,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               places.push({uid:place.location_id,summary:place.name,
                 status:place.archived?'completed':'needs_action',
                 provider:'monitored_areas_sqlite',name:place.name,displayLabel:place.displayLabel||place.name,
-                latitude:place.latitude,longitude:place.longitude,revision:place.revision});
+                latitude:place.latitude,longitude:place.longitude,revision:place.revision,
+                location_origin:place.location_origin});
             }
             if(!result.next_cursor) {cursor=null;break;}
             if(result.next_cursor===cursor)throw new Error('MA_INVALID_CURSOR');
