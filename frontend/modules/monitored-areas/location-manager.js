@@ -91,14 +91,16 @@ const button=(text,handler)=>{const x=node('button',text);x.type='button';x.addE
 export function openLocationManager(owner,{enabled=false,mode='legacy',places=[],removed=[],refresh,readDetails,rename,archive,restore,focus,migrate}={}){
   if(!owner?.shadow||typeof refresh!=='function')return null;
   const previous=owner.shadow.getElementById('gr-ma-location-manager');
-  if(previous){previous.remove();}
+  if(previous){previous.__dispose?.();previous.remove();}
   const t=/Deutsch|Boarisch|Platt|Sächs|Schwäb/i.test(owner._languageValue?.()||'Deutsch')?COPY.de:COPY.en;
   const root=document.createElement('div');root.id='gr-ma-location-manager';root.className='gr-ma-manager';
   const style=document.createElement('style');style.textContent=STYLES;
   const panel=document.createElement('section');panel.className='gr-ma-panel';
   panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',t.title);
   let detailWindow=null,disposeDetail=()=>{};
-  const close=()=>{disposeDetail();detailWindow?.remove();detailWindow=null;root.remove();},header=document.createElement('header'),heading=document.createElement('div');
+  const close=()=>{disposeDetail();detailWindow?.remove();detailWindow=null;root.remove();};
+  root.__dispose=close;
+  const header=document.createElement('header'),heading=document.createElement('div');
   heading.append(node('h2',t.title),node('small',t.subtitle));
   const x=button('',close);x.className='gr-ma-close';x.setAttribute('aria-label',t.close);const xImg=document.createElement('img');xImg.src=owner.shadow.getElementById('settings-close')?.querySelector('img')?.src || maPremiumClose();xImg.alt='';xImg.draggable=false;x.append(xImg);header.append(heading,x);
   const status=node('div','', 'gr-ma-status'),tools=node('div','', 'gr-ma-tools');
