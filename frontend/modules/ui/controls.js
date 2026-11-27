@@ -844,6 +844,13 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         search.innerHTML = '<span class="location-search-icon" aria-hidden="true">🔎</span><span></span>';
         search.querySelector('span:last-child').textContent = text.searchAction;
         frag.appendChild(search);
+        // MA-023: discoverable management; no implicit Local-To-do cutover.
+        const maManage = document.createElement('button');
+        maManage.type = 'button';
+        maManage.className = 'location-search-action gr-ma-manage-action';
+        maManage.textContent = /Deutsch|Boarisch|Platt|Sächs|Schwäb/i.test(this._languageValue?.() || 'Deutsch')
+          ? 'Standorte verwalten · V4.14' : 'Manage locations · V4.14';
+        frag.appendChild(maManage);
 
         const dividerBeforeSaved = document.createElement('div');
         dividerBeforeSaved.className = 'location-section-divider';
@@ -918,13 +925,6 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           appendHeader(text.removedPlaces);
           removedPlaces.forEach((place) => appendSavedRow(place,{removed:true}));
         }
-        // MA-023: discoverable management; no implicit Local-To-do cutover.
-        const maManage = document.createElement('button');
-        maManage.type = 'button';
-        maManage.className = 'location-search-action gr-ma-manage-action';
-        maManage.textContent = /Deutsch|Boarisch|Platt|Sächs|Schwäb/i.test(this._languageValue?.() || 'Deutsch')
-          ? 'Standorte verwalten · V4.14' : 'Manage locations · V4.14';
-        frag.appendChild(maManage);
         const wasOpen=locationDropdown.classList.contains('open');
         const previousScroll=wasOpen ? locationDropdown.scrollTop : 0;
         locationDropdown.replaceChildren(frag);
