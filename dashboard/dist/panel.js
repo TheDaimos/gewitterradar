@@ -2,6 +2,15 @@ import {APPLICATION_RELEASE} from "./version.js?v=4148r1";
 const PANEL_TAG="gewitterradar-panel";
 const CARD_TAG="gewitterradar-card";
 
+/** A browser cannot clear its HTTP cache from page JavaScript. This refreshes
+ * the top-level HA document with a unique URL and keeps its current route. */
+export function recoveryReloadUrl(href, nonce=Date.now()) {
+  const url = new URL(href);
+  url.searchParams.set("_gr_recovery", String(nonce));
+  return url.href;
+}
+
+
 async function ensureGewitterradarCard(){
   if(!customElements.get(CARD_TAG)){
     // Never reuse the unversioned cached card module after a native panel update.
@@ -28,6 +37,35 @@ class GewitterradarPanel extends HTMLElement{
     const main=document.createElement("main");main.setAttribute("aria-label","Gewitterradar");this.shadowRoot.append(style,main);
   }
   _ensureCard(){this._ensureShell();if(this._card)return;const card=document.createElement(CARD_TAG);card.setConfig({type:"custom:gewitterradar-card",settings_vault_id:"native-panel"});if(this._hass)card.hass=this._hass;this.shadowRoot.querySelector("main").replaceChildren(card);this._card=card}
-  _showError(error){this._ensureShell();const box=document.createElement("div");box.className="panel-error";box.textContent="Gewitterradar konnte nicht geladen werden. Bitte Home Assistant vollständig neu laden.";box.title=error instanceof Error?error.message:String(error);this.shadowRoot.querySelector("main").replaceChildren(box)}
+  _showError(error){
+    this._ensureShell();
+    const box=document.createElement("div");
+    box.className="panel-error";
+    const title=document.createElement("strong");
+    title.textContent="GewitterRadar konnte nicht geladen werden.";
+    const explanation=document.createElement("p");
+    explanation.textContent="Möglicherweise sind ältere Frontend-Dateien im Browser zwischengespeichert.";
+    const reload=document.createElement("button");
+    reload.type="button";
+    reload.textContent="Frontend neu laden";
+    reload.style.cssText="display:block;margin:12px 0;padding:10px 14px;cursor:pointer;border:1px solid #d5b77f;border-radius:8px;background:#243a49;color:#f5e1b5;font:inherit";
+    const help=document.createElement("p");
+    help.style.cssText="font-size:12px;opacity:.85";
+    help.textContent="Falls das nicht hilft: Chrome → F12 → Netzwerk → „Cache deaktivieren“ und die Seite neu laden. Browser-HTTP-Caches lassen sich aus einer Webseite nicht vollständig löschen.";
+    const details=document.createElement("details");
+    const summary=document.createElement("summary");
+    summary.textContent="Technische Fehlermeldung";
+    const message=document.createElement("pre");
+    message.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px";
+    message.textContent=error instanceof Error?error.message:String(error);
+    details.append(summary,message);
+    reload.addEventListener("click",()=>{
+      reload.disabled=true;
+      try{window.location.replace(recoveryReloadUrl(window.location.href));}
+      catch(_error){reload.disabled=false;help.textContent="Neuladen fehlgeschlagen. Bitte Chrome → F12 → Netzwerk → „Cache deaktivieren“ verwenden.";}
+    });
+    box.append(title,explanation,reload,help,details);
+    this.shadowRoot.querySelector("main").replaceChildren(box);
+  }
 }
 if(!customElements.get(PANEL_TAG))customElements.define(PANEL_TAG,GewitterradarPanel);
