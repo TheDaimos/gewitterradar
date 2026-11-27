@@ -108,6 +108,8 @@ class MigrationPreview:
             exact_matches=[p["location_id"] for p in existing
                 if p["location_id"] in candidate_matches
                 and p["name"]==record["name"]
+                and abs(p["lat"]-record["lat"])<=1e-9
+                and abs(p["lon"]-record["lon"])<=1e-9
                 and bool(p["archived"])==(record["status"]=="completed")]
             valid.append({**record,"coordinate_matches":candidate_matches,
                           "exact_matches":exact_matches,
