@@ -745,7 +745,7 @@ def register_websocket_api(hass):
                     result=name_availability(entity_id,taken)
                 else:
                     result=await api.dispatch(actor_user_id=user.id,is_admin=user.is_admin,
-                                              op=op,request=req)
+                                              op=op,request=msg["request"])
             except Exception as exc:
                 code=_stable_code(exc)
                 connection.send_error(msg["id"],code,code)
