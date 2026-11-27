@@ -81,6 +81,7 @@ jobs:
         run: |
           node --check frontend/modules/monitored-areas/index.js
           node --check frontend/modules/monitored-areas/migration-wizard.js
+          node --check frontend/modules/monitored-areas/location-manager.js
           node tests/test_ma_location_manager.mjs
           node scripts/test-ma-016.mjs
           node scripts/test-ma-020-ui.mjs
