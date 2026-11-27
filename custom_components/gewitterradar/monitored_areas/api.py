@@ -556,6 +556,12 @@ class Api:
                 return {"location":sql._update(c,"locations",location_id,expected,patch)}
             return await self._write(actor_user_id,op,request,mutate,is_admin=is_admin)
 
+        # MA-022: profile-link writes must not race the MA-020 cutover.
+        # The public UI also gates on db_active, but backend authority is final.
+        if op in {"links_share","links_transfer","preferences_update"} and self._finalizer is not None:
+            if await self._finalizer.mode(actor_user_id,profile)!="db_active":
+                raise ApiError("migration_pending")
+
         if op=="preferences_update":
             link_id=_uuid(payload.get("link_id"))
             expected=_revision(request)
