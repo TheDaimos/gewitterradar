@@ -1,5 +1,5 @@
 // MA-023: additive profile-aware place manager. No automatic migration or tracker mutation.
-const MA_PREMIUM_CLOSE = new URL("../../assets/gewitterradar-about-close-premium.webp", import.meta.url).href;
+const maPremiumClose = () => new URL("../../assets/gewitterradar-about-close-premium.webp", import.meta.url).href;
 export const planLocations=({enabled=false,mode='legacy',places=[],removed=[]}={})=>{
   const authority=enabled&&mode==='db_active'?'db_active':enabled&&mode==='migration_pending'?'migration_pending':'legacy';
   const seen=new Set(),items=[];
@@ -60,7 +60,7 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
   panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',t.title);
   const close=()=>root.remove(),header=document.createElement('header'),heading=document.createElement('div');
   heading.append(node('h2',t.title),node('small',t.subtitle));
-  const x=button('',close);x.className='gr-ma-close';x.setAttribute('aria-label',t.close);const xImg=document.createElement('img');xImg.src=MA_PREMIUM_CLOSE;xImg.alt='';xImg.draggable=false;x.append(xImg);header.append(heading,x);
+  const x=button('',close);x.className='gr-ma-close';x.setAttribute('aria-label',t.close);const xImg=document.createElement('img');xImg.src=maPremiumClose();xImg.alt='';xImg.draggable=false;x.append(xImg);header.append(heading,x);
   const status=node('div','', 'gr-ma-status'),tools=node('div','', 'gr-ma-tools');
   const filter=document.createElement('input');filter.type='search';filter.placeholder=t.filter;filter.setAttribute('aria-label',t.filter);
   const reloadButton=button(t.refresh,()=>{void reload();});tools.append(filter,reloadButton);
