@@ -94,5 +94,14 @@ jobs:
             echo "Delivery files already synchronized"
           else
             git commit -m "build(gr): regenerate V4.14.8 SQLite opt-in and migration UI mirrors and SHA256"
-            git push origin HEAD:feature/v4.14-monitored-areas
+            # GitHub contents-api edits can land while Actions build is running.
+            # Rebase additive delivery-only commit; never force push.
+            for attempt in 1 2 3; do
+              git fetch origin feature/v4.14-monitored-areas
+              git rebase origin/feature/v4.14-monitored-areas
+              if git push origin HEAD:feature/v4.14-monitored-areas; then exit 0; fi
+              echo "Non-fast-forward delivery race, retry $attempt"
+            done
+            echo "Could not safely publish build mirrors"
+            exit 1
           fi
