@@ -1,7 +1,7 @@
 # GewitterRadar V4.14.16 DEV — MA Premium-Chrome und symmetrisches Dialoglayout
 
 Datum: 27. November 2026 · Branch `feature/v4.14-monitored-areas`
-Status: Quell-Implementierung fertig; Build-Mirrors/CI separat zu prüfen; Sichtabnahme auf DEV VM109 offen.
+Status: Quell-Implementierung und Frontend-Build-Spiegel synchron; Sichtabnahme auf DEV VM109 sowie DRA-Bereitstellung offen.
 
 ## Betreiberbefund
 
@@ -27,3 +27,11 @@ Die Realtests zu V4.14.15 bestätigten die lokale Teilstringsuche, die alphabeti
 Nach DEV-Installation bitte insbesondere die **Außenkanten in den Ecken**, Button-Tiefe/Hover/aktive Zustände, die Schriftprägung der Buchstabenfilter, die Chevrons in beiden Fenstern und die bündige rechte Kante von Suchfeld/Tabliste/Scrollinhalt prüfen. Bei SQLite bleibt die Ansicht nur lesend; keine Finalisierung oder To-do-Leerung für diesen reinen Sichttest.
 
 **MA-020 weiterhin offen.** Bestehende 43 Orte (39 aktiv, vier archiviert) dürfen durch diese Iteration nicht verändert werden.
+
+## Nachträgliche Build-Verifikation
+
+- Build-Workflow `.github/workflows/ma-v41416-dev-build-sync.yml` führte die referenzierten MA-Tests und den kanonischen Frontend-Build aus; nach automatischem Delivery-Commit sind der Quellstand und beide Mirrors in den geprüften Pfaden synchron. Eine individuelle CI-Run-ID konnte nicht ausgelesen werden.
+- GitHub-Readback nach Actions-Commit: **10 von 10** Versions-, Loader-, Panel-, Runtime-Manifest-, Modulmanifest-, MA- und Vault-Dateipfaden haben in `frontend/`, `custom_components/gewitterradar/frontend/` und `dashboard/dist/` jeweils identische Git-Blob-SHA-Werte.
+- `SHA256SUMS_FRONTEND.txt`: sechs Hash-Einträge für die drei MA-Module über zwei Delivery-Mirrors. Versionsidentität abgeglichen: Produkt **4.14.16**, Revision **41416r1**, Integration **0.25.202**, DRA-Build **4.14.16**.
+- MA-Premium-UI-Vertrag mit tatsächlich gelesenen Repository-Dateien ausgeführt: **25/25 PASS**; drei geänderte Module zusätzlich durch ECMAScript-Parser: **3/3 PASS**.
+- **Nicht** getestet in dieser Sitzung: GUI-Rendering auf HA DEV VM109, DRA-Versionsanzeige oder Installation, vollständige Datenmigration, FINAL-Abnahme.
