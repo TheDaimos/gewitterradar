@@ -99,7 +99,7 @@ export async function openMigrationWizard(owner) {
     }
     /* Balanced left/right inset; the scrollbar must not allocate an extra right-hand gutter. */
     .gr-ma-wizard .wizard-content{padding-inline:18px;scrollbar-gutter:auto;scrollbar-width:thin;scrollbar-color:#826b46 transparent}
-    .gr-ma-wizard .wizard-header{padding-left:18px;padding-right:62px}
+    .gr-ma-wizard .wizard-header{padding-inline:18px}.gr-ma-wizard .wizard-header h2,.gr-ma-wizard .wizard-header>p{margin-right:44px}
     .gr-ma-wizard .wizard-footer{padding-inline:18px}
     .gr-ma-wizard .wizard-content::-webkit-scrollbar{width:6px}
     .gr-ma-wizard .wizard-content::-webkit-scrollbar-thumb{background:#826b46;border-radius:20px}
@@ -143,7 +143,7 @@ export async function openMigrationWizard(owner) {
       margin:-6px 6px 0 0;filter:drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 3px #d8a74a66);
       transition:transform .42s cubic-bezier(.22,1,.36,1),filter .28s ease}
     .gr-ma-wizard .sql-preview details[open]>summary::after{transform:rotate(225deg);margin-top:7px;filter:brightness(1.14) drop-shadow(0 1px .5px #4c301c) drop-shadow(0 0 4px #d8a74a88)}
-    @media(max-width:540px){.gr-ma-wizard .wizard-content{padding-inline:12px}.gr-ma-wizard .wizard-header{padding-left:12px;padding-right:62px}.gr-ma-wizard .wizard-footer{padding-inline:12px}}
+    @media(max-width:540px){.gr-ma-wizard .wizard-content{padding-inline:12px}.gr-ma-wizard .wizard-header{padding-inline:12px}.gr-ma-wizard .wizard-footer{padding-inline:12px}}
   </style><dialog class="gr-ma-wizard" aria-label="Standortübernahme">
     <header class="wizard-header">
       <button type="button" class="close" aria-label="Schließen"><img src="${MA_PREMIUM_CLOSE}" alt="" draggable="false"></button>
