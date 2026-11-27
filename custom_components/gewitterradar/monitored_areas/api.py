@@ -24,7 +24,7 @@ OPS = (
     "status", "locations_list", "places_list", "migration_preview", "migration_commit",
     "migration_finalize_preview", "migration_finalize_commit", "location_get", "location_create", "location_update",
     "location_archive", "location_restore",
-    "monitoring_update", "links_list", "links_share", "links_transfer", "links_remove",
+    "monitoring_update", "tracker_name_check", "links_list", "links_share", "links_transfer", "links_remove",
     "links_remove_preview", "history_reset_preview", "history_reset_commit", "preferences_get", "preferences_update",
 )
 MUTATIONS = {"migration_commit","location_create", "location_update", "monitoring_update",
@@ -717,8 +717,35 @@ def register_websocket_api(hass):
                 api=ma.api if getattr(ma,"api",None) is not None else None
                 if api is None:
                     raise ApiError("not_ready")
-                result=await api.dispatch(actor_user_id=user.id,is_admin=user.is_admin,
-                                          op=op,request=msg["request"])
+                if op=="tracker_name_check":
+                    # MA-023: read-only, scoped tracker name availability check.
+                    # Never create entities or mutate someone else's HA registry.
+                    from homeassistant.helpers import entity_registry as er
+                    from homeassistant.util import slugify
+                    from .tracker_names import tracker_candidate, name_availability
+                    req=msg["request"]
+                    if set(req)!={"profile_id","payload"} or not isinstance(req["payload"],dict):
+                        raise ApiError("invalid_request")
+                    profile=req["profile_id"]
+                    await api._links.require_profile(user.id,profile)
+                    if api._finalizer is None or await api._finalizer.mode(user.id,profile)!="db_active":
+                        raise ApiError("migration_pending")
+                    data=req["payload"]
+                    if set(data)!={"location_id","name"}:
+                        raise ApiError("invalid_request")
+                    location_id=_uuid(data["location_id"])
+                    entity_id,slug=tracker_candidate(data["name"],slugify)
+                    def check(c):
+                        _actor_link(c,location_id,user.id,profile)
+                        return c.execute("SELECT 1 FROM tracker_refs WHERE stable_slug=? OR actual_entity_id=? LIMIT 1",
+                                         (slug,entity_id)).fetchone() is not None
+                    reserved=await api._repo._db.async_execute(check,kind="read")
+                    registry=er.async_get(hass)
+                    taken=reserved or registry.async_get(entity_id) is not None or hass.states.get(entity_id) is not None
+                    result=name_availability(entity_id,taken)
+                else:
+                    result=await api.dispatch(actor_user_id=user.id,is_admin=user.is_admin,
+                                              op=op,request=req)
             except Exception as exc:
                 code=_stable_code(exc)
                 connection.send_error(msg["id"],code,code)

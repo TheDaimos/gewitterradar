@@ -1,0 +1,22 @@
+// MA-023: source-level contracts for the read-only authenticated name check.
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const api=read('custom_components/gewitterradar/monitored_areas/api.py');
+const port=read('frontend/modules/monitored-areas/location-port.js');
+const manager=read('frontend/modules/monitored-areas/location-manager.js');
+const controls=read('frontend/modules/ui/controls.js');
+assert.match(api,/"tracker_name_check"/);
+assert.match(api,/await api\._links\.require_profile\(user\.id,profile\)/);
+assert.match(api,/_actor_link\(c,location_id,user\.id,profile\)/);
+assert.match(api,/registry\.async_get\(entity_id\)/);
+assert.match(api,/hass\.states\.get\(entity_id\)/);
+assert.match(api,/SELECT 1 FROM tracker_refs WHERE stable_slug=/);
+assert.match(port,/async checkTrackerName\(locationId,name\)/);
+assert.match(port,/safeLocation\(mode,locationId\)/);
+assert.match(manager,/trackerCopy\.disabled=true/);
+assert.match(manager,/trackerInput\.addEventListener\('input'/);
+assert.match(controls,/checkTrackerName:loaded && mode==='db_active'/);
+assert.doesNotMatch(manager,/callWS\(|callService\(/);
+assert.doesNotMatch(manager,/innerHTML/);
+console.log('MA-023 tracker-name scoped read-only contract PASS');
