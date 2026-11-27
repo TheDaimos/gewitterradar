@@ -1796,22 +1796,6 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
               return details;
             } : undefined,
-            listBlitzortungInventory:loaded && mode==='db_active' ? async place=>{
-              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
-              const port=await v407MonitoredAreasPort();
-              if(port?.mode!=='db_active')throw new Error('MA_PLACE_DB_NOT_ACTIVE');
-              const sources=await port.listBlitzortungInventory(place.uid);
-              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
-              return sources;
-            } : undefined,
-            checkTrackerName:loaded && mode==='db_active' ? async (place,name)=>{
-              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
-              const port=await v407MonitoredAreasPort();
-              if(port?.mode!=='db_active')throw new Error('MA_PLACE_DB_NOT_ACTIVE');
-              const result=await port.checkTrackerName(place.uid,name);
-              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
-              return result;
-            } : undefined,
             rename:loaded ? (place,name)=>change('rename',place,name) : undefined,
             archive:loaded ? place=>change('archive',place) : undefined,
             restore:loaded ? place=>change('restore',place) : undefined,
@@ -1928,6 +1912,33 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         closeClusterResolutionDropdown(false);
       };
       document.addEventListener('pointerdown',this._v40823ClusterResolutionOutsidePointerHandler,true);
+
+      // P04: Tracker/Blitzortung belongs to Weather Engine, NOT location details.
+      const blitzSetup= this.shadow.getElementById('weather-engine-blitz-setup');
+      blitzSetup?.addEventListener('click',async()=>{
+        if(blitzSetup.disabled)return;
+        blitzSetup.disabled=true;
+        const actor=this._hass?.user?.id,profile=this._settingsVault?.profile?.id;
+        const same=()=>this.isConnected&&this._hass?.user?.id===actor&&
+          this._settingsVault?.profile?.id===profile&&this._hass?.user?.is_admin===true;
+        try{
+          if(!same())throw Error('MA_ADMIN_REQUIRED');
+          const port=await v407MonitoredAreasPort();
+          if(!same()||port?.mode!=='db_active')throw Error('MA_PLACE_DB_NOT_ACTIVE');
+          await v407LoadSavedPlaces({force:true});
+          if(!same())throw Error('MA_PROFILE_CHANGED');
+          const entries=[...(this._v407SavedPlaces||[])];
+          const module=await import('../monitored-areas/tracker-settings.js?v=41423r1');
+          if(!same())throw Error('MA_PROFILE_CHANGED');
+          module.openTrackerSettings(this,{
+            locations:entries,
+            verifyContext:()=>same()&&port.mode==='db_active',
+            checkName:(locationId,name)=>port.checkTrackerName(locationId,name),
+            inventory:locationId=>port.listBlitzortungInventory(locationId)
+          });
+        }catch(error){console.warn('[GewitterRadar MA] Blitzortung-Einrichtung nicht verfügbar.');}
+        finally{if(this.isConnected)blitzSetup.disabled=false;}
+      });
 
       // V3.519 – Einstellungs-Popup öffnen/schließen.
       const openSettings = () => {

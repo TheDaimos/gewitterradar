@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const manager=read('frontend/modules/monitored-areas/location-manager.js');
+const controls=read('frontend/modules/ui/controls.js');
+const skeleton=read('frontend/modules/ui/skeleton.js');
+const setup=read('frontend/modules/monitored-areas/tracker-settings.js');
+assert.match(skeleton,/weather-engine-blitz-setup/);
+assert.match(controls,/blitzSetup\?\.addEventListener\('click'/);
+assert.match(controls,/this\._hass\?\.user\?\.is_admin===true/);
+assert.match(controls,/port\?\.mode!=='db_active'/);
+assert.match(setup,/export function openTrackerSettings/);
+assert.match(setup,/verifyContext\(\)/);
+assert.match(setup,/port|tracker|Blitzortung/);
+assert.doesNotMatch(manager,/trackerCopy|listBlitzortungInventory|checkTrackerName|gr-ma-tracker-name/);
+assert.doesNotMatch(setup,/callWS\(|callService\(|innerHTML|localStorage/);
+console.log('PASS P04 Tracker setup relocated to weather-engine and guarded');

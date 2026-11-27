@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const source=readFileSync(new URL('../frontend/modules/monitored-areas/location-manager.js',import.meta.url),'utf8');
+// DOM-only code stays inert when loaded; ensure a real export can be imported.
+const module=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+const a={uid:'a',name:'Zürich',latitude:47,longitude:8,revision:1};
+const b={uid:'b',name:'Berlin',latitude:52,longitude:13,revision:2};
+const c={uid:'c',name:'Hamburg',latitude:53,longitude:10,revision:1};
+assert.deepEqual(module.sortedLocations([a,b,c]).map(p=>p.uid),['b','c','a']);
+assert.deepEqual(module.sortedLocations([a,b,c],'name_desc').map(p=>p.uid),['a','c','b']);
+assert.deepEqual(module.sortedLocations([a,{...b,updated_at:200},{...c,updated_at:100}],'recent').map(p=>p.uid),['b','c','a']);
+const plan={mode:'db_active',active:[a,b],archived:[c],selected:['b','c','outside']};
+assert.deepEqual(module.batchLocationPlan({...plan,operation:'archive'}).map(x=>x.uid),['b']);
+assert.deepEqual(module.batchLocationPlan({...plan,operation:'restore'}).map(x=>x.uid),['c']);
+assert.deepEqual(module.batchLocationPlan({...plan,mode:'migration_pending'}),[]);
+assert.deepEqual(module.batchLocationPlan({...plan,active:[{...a,revision:null}],selected:['a']}),[]);
+assert.match(source,/window\.confirm\(candidates\.length/);
+assert.match(source,/for\(const location of candidates\)/);
+assert.match(source,/catch\{stopped=true;break;\}/);
+assert.match(source,/selected\.clear\(\)/);
+console.log('PASS MA-023 bulk selection, sorting, db mode and safe stop');

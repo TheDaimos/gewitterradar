@@ -7368,6 +7368,7 @@ export const installSkeleton=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                       <span class="gr-weather-subtitle">Bestehende Blitzüberwachung · unabhängig von WeatherRouter</span>
                     </div>
                     <span id="weather-engine-blitz-status" class="gr-weather-source-status">Bestehende Quelle</span>
+                    <button class="settings-language-button settings-control gr-weather-action" id="weather-engine-blitz-setup" type="button">Tracker &amp; Blitzortung einrichten</button>
                   </div>
                   <div class="settings-row gr-weather-row gr-weather-router-row">
                     <div class="settings-row-label gr-weather-caption">
