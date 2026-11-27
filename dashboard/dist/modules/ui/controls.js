@@ -1,7 +1,7 @@
 import {settingsStorage} from '../core/settings-vault.js?v=4134r1';
-import {createLocationPort} from '../monitored-areas/location-port.js?v=4141r1';
-import {openLocationManager} from '../monitored-areas/location-manager.js?v=41418r1';
-import {migrationRequestUUID} from '../monitored-areas/migration-wizard.js?v=41418r1';
+import {createLocationPort} from '../monitored-areas/location-port.js?v=41419r1';
+import {openLocationManager} from '../monitored-areas/location-manager.js?v=41419r1';
+import {migrationRequestUUID} from '../monitored-areas/migration-wizard.js?v=41419r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
@@ -1186,7 +1186,8 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               places.push({uid:place.location_id,summary:place.name,
                 status:place.archived?'completed':'needs_action',
                 provider:'monitored_areas_sqlite',name:place.name,displayLabel:place.displayLabel||place.name,
-                latitude:place.latitude,longitude:place.longitude,revision:place.revision});
+                latitude:place.latitude,longitude:place.longitude,revision:place.revision,
+                location_origin:place.location_origin});
             }
             if(!result.next_cursor) {cursor=null;break;}
             if(result.next_cursor===cursor)throw new Error('MA_INVALID_CURSOR');
@@ -1742,6 +1743,16 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             places:loaded ? [...(this._v407SavedPlaces || [])] : [],
             removed:loaded ? [...(this._v407RemovedPlaces || [])] : [],
             refresh:reload,
+            // MA-021: server-scoped metadata; only after verified db_active.
+            // Profile/user identity must still match when the read resolves.
+            readDetails:loaded && mode==='db_active' ? async place=>{
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              const port=await v407MonitoredAreasPort();
+              if(port?.mode!=='db_active')throw new Error('MA_PLACE_DB_NOT_ACTIVE');
+              const details=await port.getLocation(place.uid);
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              return details;
+            } : undefined,
             rename:loaded ? (place,name)=>change('rename',place,name) : undefined,
             archive:loaded ? place=>change('archive',place) : undefined,
             restore:loaded ? place=>change('restore',place) : undefined,
@@ -1749,7 +1760,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
               const port=await v407MonitoredAreasPort();
               if (port?.mode!=='migration_pending') throw new Error('MA_MODE_CHANGED');
-              const module=await import('../monitored-areas/migration-wizard.js?v=41418r1');
+              const module=await import('../monitored-areas/migration-wizard.js?v=41419r1');
               if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
               await module.openMigrationWizard(this);
             } : undefined,

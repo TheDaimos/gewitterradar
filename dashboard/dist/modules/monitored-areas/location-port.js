@@ -50,6 +50,17 @@ export function createLocationPort({hass, profileId, legacy=defaultLegacy, focus
       if(!Array.isArray(result.places))throw new Error("MA_PLACE_INVALID_RESPONSE");
       return result;
     },
+    async getLocation(locationId){
+      // Read-only, authenticated, profile-scoped HA command. Never use a
+      // migration-pending SQLite row as authoritative location information.
+      if(mode!=="db_active")throw new Error("MA_PLACE_DB_NOT_ACTIVE");
+      if(typeof locationId!=="string"||! /^[0-9a-f]{8}-[0-9a-f-]{27,}$/.test(locationId))
+        throw new TypeError("MA_INVALID_REQUEST");
+      const response=await request("location_get",{location_id:locationId});
+      if(!response?.location||response.location.location_id!==locationId)
+        throw new Error("MA_PLACE_INVALID_RESPONSE");
+      return response.location;
+    },
     async previewDbPlaces(query="",cursor=null){
       if(mode!=="migration_pending"&&mode!=="db_active")throw new Error("MA_PLACE_MODE_NOT_READY");
       return request("places_list",{query,cursor,limit:50});
