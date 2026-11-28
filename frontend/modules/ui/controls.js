@@ -1796,6 +1796,16 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
               return details;
             } : undefined,
+            createPlace:loaded && mode==='db_active' ? async candidate=>{
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              const port=await v407MonitoredAreasPort();
+              if(port?.mode!=='db_active')throw new Error('MA_PLACE_DB_NOT_ACTIVE');
+              const result=await port.saveCandidate(candidate,migrationRequestUUID());
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              await v407LoadSavedPlaces({force:true});
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              return result;
+            } : undefined,
             rename:loaded ? (place,name)=>change('rename',place,name) : undefined,
             archive:loaded ? place=>change('archive',place) : undefined,
             restore:loaded ? place=>change('restore',place) : undefined,
