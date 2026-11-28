@@ -254,8 +254,10 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
       onMap:place=>{
         if(typeof focus==='function'){focus({latitude:place.latitude,longitude:place.longitude});close();}
       },
-      onGeoPoint:typeof openGeoPoint==='function'?place=>openGeoPoint({
-        latitude:place.latitude,longitude:place.longitude}):undefined
+      onGeoPoint:typeof openGeoPoint==='function'?async place=>{
+        await openGeoPoint({latitude:place.latitude,longitude:place.longitude});
+        close();
+      }:undefined
     });
   };
   const openCreator=async()=>{
