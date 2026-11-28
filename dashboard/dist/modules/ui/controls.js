@@ -1,7 +1,7 @@
 import {settingsStorage} from '../core/settings-vault.js?v=4134r1';
-import {createLocationPort} from '../monitored-areas/location-port.js?v=41425r1';
-import {openLocationManager} from '../monitored-areas/location-manager.js?v=41425r1';
-import {migrationRequestUUID} from '../monitored-areas/migration-wizard.js?v=41425r1';
+import {createLocationPort} from '../monitored-areas/location-port.js?v=41426r1';
+import {openLocationManager} from '../monitored-areas/location-manager.js?v=41426r1';
+import {migrationRequestUUID} from '../monitored-areas/migration-wizard.js?v=41426r1';
 import { defineModule } from "../core/runtime.js?v=41132r1";
 // One menu tree drives both presentations. Existing controls remain single DOM instances.
 export const SETTINGS_MENU_TREE=Object.freeze([
@@ -1761,7 +1761,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
                 return response;
               };
-              const module=await import('../monitored-areas/profile-sharing.js?v=41425r1');
+              const module=await import('../monitored-areas/profile-sharing.js?v=41426r1');
               if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
               return module.openProfileSharing(this,{
                 mode:profileMode,places,initialLocationIds,
@@ -1785,6 +1785,16 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               const result=await open.call(this,position);
               if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
               if(result?.opened!==true)throw new Error('MA_GEOPOINT_UNAVAILABLE');
+              // Weather Engine renders inside map-card; that element can be
+              // occluded by an MA dialog or its fullscreen host on mobile.
+              // Present those *real* provider results in the MA window layer.
+              const inspector=this.shadow.getElementById('weather-temperature-point');
+              const popup=await import('../monitored-areas/geopoint-window.js?v=41426r1');
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              const dialog=popup.openGeoPointWindow(this,{
+                source:inspector,verifyContext:sameProfile
+              });
+              if(!dialog)throw new Error('MA_GEOPOINT_WINDOW_UNAVAILABLE');
               return result;
             },
             // MA-021: server-scoped metadata; only after verified db_active.
@@ -1812,7 +1822,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
               const port=await v407MonitoredAreasPort();
               if (port?.mode!=='migration_pending') throw new Error('MA_MODE_CHANGED');
-              const module=await import('../monitored-areas/migration-wizard.js?v=41425r1');
+              const module=await import('../monitored-areas/migration-wizard.js?v=41426r1');
               if (!sameProfile()) throw new Error('MA_PROFILE_CHANGED');
               await module.openMigrationWizard(this);
             } : undefined,
@@ -1937,7 +1947,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
           await v407LoadSavedPlaces({force:true});
           if(!same())throw Error('MA_PROFILE_CHANGED');
           const entries=[...(this._v407SavedPlaces||[])];
-          const module=await import('../monitored-areas/tracker-settings.js?v=41425r1');
+          const module=await import('../monitored-areas/tracker-settings.js?v=41426r1');
           if(!same())throw Error('MA_PROFILE_CHANGED');
           module.openTrackerSettings(this,{
             locations:entries,
