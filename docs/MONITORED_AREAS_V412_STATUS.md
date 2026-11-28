@@ -759,3 +759,12 @@ Geschützte Refs vor Dokumentation: main 37f1aca54cd505fd91a2b1b0014cd7c6c280b26
 - **Sicherheit:** Abbruch bei Profil-/HA-User-Wechsel, kein automatisches Zusammenführen, keine lokalen Browserdaten als Berechtigungsquelle, keine Änderung an MA-020, bestehenden SQLite-Orten, Blitzortung-ConfigEntries, PROD oder WeatherRouter.
 - **Tests:** reine Projektions-, Überlappungs-, Such-, Erstellungs- und Backend-/Frontend-Wiring-Verträge. Initiale alte UUID-Anzahlerwartung im MA-020-Test auf zusätzliche explizite Create-Operation angepasst. Voller V4.14.24-Build [46091878667](https://github.com/TheDaimos/gewitterradar/actions/runs/46091878667) nach erfolgreicher Regression mit Spiegel-/Hash-Neugenerierung `fee192466c507687b39229dac450853d40e42252`.
 - **Wichtig:** Die nachfolgenden MA-V9-/HA-/Shared-Frontend-Gates müssen **auf dem fertigen Build-Commit** grün werden. VM109 T2, Android-/iPad-Überprüfung, echte Blitzortung-Zuordnung, Trackererzeugung und Monitoring weiterhin ausstehend; ausdrücklich keine FINAL- oder PROD-Freigabe.
+
+
+## V4.14.25 – Smartphone-Korrektur und verifizierte DEV-Spiegel
+
+- **28.11.2026:** Betreiberkorrekturen für „Standortverwaltung“ und „GeoPoint“ sowie kompakte Checkboxen, zweispaltige Aktionen und den mobil vollständig lesbaren Aufzeichnungsradius umgesetzt.
+- Versionsidentität und DRA-Provenienz: `4.14.25`, HA `0.25.211`, Runtime `41425r1`, ModuleSet `E414-25A1`.
+- Nach Anpassung zweier veralteter Textvertragstests (`tests/test_ma021_geopoint_launch.mjs`, `tests/test_ma_frontend_module_registration.py`) hat der DEV-Build [46141517066](https://github.com/TheDaimos/gewitterradar/actions/runs/46141517066) erfolgreich beide Frontend-Spiegel und Prüfsummen aus dem gültigen Quellstand neu erstellt: `5e653a1f54b752a0d4d20d9f4a19a0ac650abe28`.
+- Die konsolidierte Paket-/Regressionsteststrecke muss auf dem finalen Mirror-Commit erneut grün werden. Dieser dokumentierende Commit löst diesen Gate-Durchlauf aus.
+- **Nicht ausgeführt:** DRA-Installation auf DEV VM109, Android/iPad/Desktop-T2-Abnahme; kein öffentlicher DEV-Release und kein PROD-Eingriff. Alle SQLite-Standorte bleiben unangetastet.
