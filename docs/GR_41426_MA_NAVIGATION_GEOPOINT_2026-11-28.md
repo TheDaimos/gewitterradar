@@ -17,3 +17,10 @@ Neue Version `4.14.26`, Runtime `41426r1`, ModuleSet `E414-26A1`, HA Integration
 
 ## Noch offen
 DRA-Installation ausschließlich auf DEV VM109 nach Snapshot/Branch-/Vorschaukontrolle. Betreiber T2: GeoPoint mit/ohne aktive Wetterprovider, Standortdetails → GeoPoint → Zurück und Sichtfenster → GeoPoint → Zurück auf Android; anschließend iPad/Desktop. Bestehende 43 SQLite-Orte, PROD VM101 und WeatherRouter bleiben unberührt.
+
+## Betreiberkorrektur 28.11.2026 nach Android-T2
+- V4.14.26-Screenshots: GeoPoint-Inspector-Chevron funktioniert und bleibt unverändert.
+- Im Standort-Sichtfenster war die vorhandene Navigation auf Android nicht sichtbar: Back-Zeile direkt zwischen fixiertem Header und Toolbar mit erzwungenem transparentem Inline-Flex, 44 px Touchfläche und ohne Button-Chrome.
+- Im Standortdetail war Zurück als vollbreiter grauer Button sichtbar: eigener flexibler Navigationsstreifen mit linkem Gold-Chevron und Status-Badge rechts daneben. Der Status wurde aus dem Titelkopf in diesen Streifen versetzt; keine Veränderung an Daten/SQLite.
+- Änderungen synchronisiert in `frontend/`, `custom_components/gewitterradar/frontend/` und `dashboard/dist/`; Regressionstest `tests/test_ma026_navigation_geopoint.mjs` entsprechend ergänzt.
+- Reiner Quellcode-Fix auf dem Feature-Branch; **keine Behauptung über DRA-Bereitstellung oder installierten DEV-Build** ohne gesonderte Build-Verifikation.
