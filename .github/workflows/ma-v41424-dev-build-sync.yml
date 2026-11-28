@@ -17,6 +17,7 @@ on:
       - 'tests/test_ma024_location_overview.mjs'
       - 'tests/test_ma024_location_create.mjs'
       - 'tests/test_ma024_location_wiring.mjs'
+      - 'tests/test_ma_sqlite_preview.mjs'
       - 'docs/GR_41424_MA023_LOCATION_OVERVIEW_CREATE_2026-11-28.md'
       - 'frontend/modules/monitored-areas/tracker-settings.js'
       - 'frontend/modules/ui/skeleton.js'
