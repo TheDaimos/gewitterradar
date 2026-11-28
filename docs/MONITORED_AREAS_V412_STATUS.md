@@ -768,3 +768,14 @@ Geschützte Refs vor Dokumentation: main 37f1aca54cd505fd91a2b1b0014cd7c6c280b26
 - Nach Anpassung zweier veralteter Textvertragstests (`tests/test_ma021_geopoint_launch.mjs`, `tests/test_ma_frontend_module_registration.py`) hat der DEV-Build [46141517066](https://github.com/TheDaimos/gewitterradar/actions/runs/46141517066) erfolgreich beide Frontend-Spiegel und Prüfsummen aus dem gültigen Quellstand neu erstellt: `5e653a1f54b752a0d4d20d9f4a19a0ac650abe28`.
 - Die konsolidierte Paket-/Regressionsteststrecke muss auf dem finalen Mirror-Commit erneut grün werden. Dieser dokumentierende Commit löst diesen Gate-Durchlauf aus.
 - **Nicht ausgeführt:** DRA-Installation auf DEV VM109, Android/iPad/Desktop-T2-Abnahme; kein öffentlicher DEV-Release und kein PROD-Eingriff. Alle SQLite-Standorte bleiben unangetastet.
+
+
+## V4.14.26 – Standort-Zurücknavigation und sichtbares GeoPoint-Fenster
+
+**28.11.2026 · DEV, keine Betreiberabnahme.**
+- Android-Befund V4.14.25: hochwertige Chevron-Zurücknavigation analog Abschnitt „Effekte & Animationen“ fehlt; GeoPoint in Standortdetails öffnet keinen sichtbaren Dialog.
+- Realisiert: transparenter (nicht als Button dekorierter) goldener Chevron-„Zurück“-Control mit 44px Klickfläche in Standortverwaltung, Standortdetail, Standort-Sichtfenster und SQLite-Neuanlage; Detail-Zurück liegt außerhalb des Scrollbereiches.
+- GeoPoint: bestehender Weather-Engine-Inspector und Provider-Abfrage werden **unverändert** verwendet; Ergebnisse aus dessen vorhandenem DOM-`weather-temperature-point` werden nach erfolgreichem ACK in neuem, vorn liegendem Premium-Dialog `geopoint-window.js` gespiegelt. Keine erfundenen Daten, keine neue Wetterquelle, keine Referenztracker-Verschiebung oder SQLite-Aktion. Zurück führt zum zuvor offenen MA-Fenster.
+- Tests: `tests/test_ma026_navigation_geopoint.mjs`, aktualisierte `test_ma021_geopoint_launch.mjs` und `test_ma_sticky_dialog_layout.mjs`; neue Modul-Datei in Build-Inventar, Identität GR `4.14.26`, HA `0.25.212`, Runtime `41426r1`, ModuleSet `E414-26A1`, DRA `4.14.26`.
+- Vollständiger Frontend-Delivery-Build [46166324330](https://github.com/TheDaimos/gewitterradar/actions/runs/46166324330) **PASS**, automatische DRA-/Frontend-Spiegelregenerierung auf `686acea5650fd8f6b3ec21227d16472086c5747d`.
+- Gesamt-Regression/MA-V9 muss auf dem aktuellen Quell-/Build-SHA grün werden. VM109, Android-T2, iPad und Desktop später. Keine FINAL-/PROD-/WeatherRouter-Mutation.
