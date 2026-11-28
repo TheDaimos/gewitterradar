@@ -1785,6 +1785,16 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               const result=await open.call(this,position);
               if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
               if(result?.opened!==true)throw new Error('MA_GEOPOINT_UNAVAILABLE');
+              // Weather Engine renders inside map-card; that element can be
+              // occluded by an MA dialog or its fullscreen host on mobile.
+              // Present those *real* provider results in the MA window layer.
+              const inspector=this.shadow.getElementById('weather-temperature-point');
+              const popup=await import('../monitored-areas/geopoint-window.js?v=41426r1');
+              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
+              const dialog=popup.openGeoPointWindow(this,{
+                source:inspector,verifyContext:sameProfile
+              });
+              if(!dialog)throw new Error('MA_GEOPOINT_WINDOW_UNAVAILABLE');
               return result;
             },
             // MA-021: server-scoped metadata; only after verified db_active.
