@@ -9,6 +9,8 @@ on:
       - 'frontend/modules/monitored-areas/location-port.js'
       - 'frontend/modules/monitored-areas/location-manager.js'
       - 'frontend/modules/monitored-areas/tracker-settings.js'
+      - 'frontend/modules/monitored-areas/location-overview.js'
+      - 'frontend/modules/monitored-areas/location-create.js'
       - 'frontend/modules/ui/skeleton.js'
       - 'frontend/modules/ui/controls.js'
       - 'tests/test_ma025_blitzortung_inventory.py'
