@@ -1,6 +1,7 @@
 """V4.14.27 DEV: optional MA module must be discoverable without activation.
 
 Pure standard-library regression gate; no Home Assistant installation required.
+Verifies the synchronized DEV delivery mirrors after the V4.14.27 build.
 """
 from __future__ import annotations
 
