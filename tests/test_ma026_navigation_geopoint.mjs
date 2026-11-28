@@ -27,7 +27,7 @@ for(const source of [overview,create]){
 assert.match(overview,/#gr-ma-location-overview \.ma-back\{flex:0 0 auto;display:inline-flex!important/);
 assert.match(overview,/panel\.append\(header,back,toolbar,main,footer\)/);
 assert.match(controls,/await open\.call\(this,position\)/);
-assert.match(controls,/geopoint-window\.js\?v=41426r1/);
+assert.match(controls,/geopoint-window\.js\?v=41427r1/);
 assert.match(controls,/popup\.openGeoPointWindow\(this/);
 assert.match(weather,/this\._weatherTemperaturePointRender\(\)/);
 assert.match(portal,/readGeoPointSnapshot\(source\)/);
