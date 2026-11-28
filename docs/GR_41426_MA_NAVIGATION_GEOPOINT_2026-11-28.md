@@ -27,3 +27,6 @@ DRA-Installation ausschließlich auf DEV VM109 nach Snapshot/Branch-/Vorschaukon
 
 ## Build-Gate-Korrektur
 Der bestehende Sticky-Dialog-Regressionstest prüfte noch die alte DOM-Reihenfolge `heading, detailBack, content`. Nach der Betreiberkorrektur gilt `heading, navigation, content` mit Chevron und Status nebeneinander; der Test wurde entsprechend aktualisiert. Der versionsgebundene Build-Workflow wird über diese Dokuänderung erneut ausgelöst. Auslieferung erst nach grünem Gate.
+
+## V4.14.27 DEV – DRA-Kandidat für Navigationskorrektur
+Auf Basis der nachgebesserten Android-Navigation wird ein eigenständiger neuer Kandidat aufgebaut: `4.14.27` / `V4.14.27 DEV` / `V4.14.27-DEV-2026-11-28`, Runtime `41427r1`, ModuleSet `E414-27A1`, native HA-Integration `0.25.213`. Cache-Revisionen wurden für das native Panel, das Karten-Frontend und das Standortverwaltungsmodul aktualisiert. Der vorhandene DRA-Vertrag bleibt unverändert: **Branch `feature/v4.14-monitored-areas` explizit wählen**, keine Promotion nach `deploy/dev`, kein öffentliches DEV-Release, kein Tag. Installation ausschließlich auf DEV VM109 nach Snapshot und positiv geprüften CI-Gates auf dem exakten Liefer-SHA. Die bereits funktionierende GeoPoint-Rücknavigation und SQLite-Daten werden nicht verändert.
