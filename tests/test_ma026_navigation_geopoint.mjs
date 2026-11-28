@@ -12,7 +12,10 @@ const portal=get('frontend/modules/monitored-areas/geopoint-window.js');
 const mod=await import('data:text/javascript;base64,'+Buffer.from(portal).toString('base64'));
 assert.match(manager,/managerBack=backNavigation\(t\.back,close\)/);
 assert.match(manager,/detailBack=backNavigation\(t\.back/);
-assert.match(manager,/widget\.append\(stylesheet,heading,detailBack,content\)/);
+assert.match(manager,/navigation\.append\(detailBack,stateBadge\)/);
+assert.match(manager,/widget\.append\(stylesheet,heading,navigation,content\)/);
+assert.match(manager,/\.gr-ma-detail-nav \.gr-ma-nav-back\{/);
+assert.match(manager,/\.gr-ma-panel>\.gr-ma-nav-back\{/);
 assert.match(manager,/gr-ma-nav-back-chevron/);
 assert.match(manager,/border:0!important;box-shadow:none!important;background:transparent!important/);
 for(const source of [overview,create]){
@@ -21,6 +24,8 @@ for(const source of [overview,create]){
   assert.match(source,/chevron/);
   assert.match(source,/background:transparent!important;border:0!important/);
 }
+assert.match(overview,/#gr-ma-location-overview \.ma-back\{flex:0 0 auto;display:inline-flex!important/);
+assert.match(overview,/panel\.append\(header,back,toolbar,main,footer\)/);
 assert.match(controls,/await open\.call\(this,position\)/);
 assert.match(controls,/geopoint-window\.js\?v=41426r1/);
 assert.match(controls,/popup\.openGeoPointWindow\(this/);
