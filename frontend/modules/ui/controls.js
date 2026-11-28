@@ -849,7 +849,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
         maManage.type = 'button';
         maManage.className = 'location-search-action gr-ma-manage-action';
         maManage.textContent = /Deutsch|Boarisch|Platt|Sächs|Schwäb/i.test(this._languageValue?.() || 'Deutsch')
-          ? 'Standorte verwalten · V4.14' : 'Manage locations · V4.14';
+          ? 'Standortverwaltung' : 'Manage locations · V4.14';
         frag.appendChild(maManage);
 
         const dividerBeforeSaved = document.createElement('div');

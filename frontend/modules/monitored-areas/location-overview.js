@@ -35,14 +35,14 @@ export function openLocationOverview(owner,{places=[],onDetails,onMap,onGeoPoint
   const t=german?{
     title:'Standort-Sichtfenster',subtitle:'Geografische Übersicht · schematische Projektion (keine Straßenkarte)',
     active:'Aktiv',archived:'Archiviert',all:'Alle',filter:'Standort suchen',close:'Schließen',
-    map:'Auf Hauptkarte',inspector:'GeoPoint Inspector',details:'Details',locations:'Standorte',
+    map:'Auf Hauptkarte',inspector:'GeoPoint',details:'Details',locations:'Standorte',
     doubles:'Mehrere Einträge an gleichen Koordinaten',empty:'Keine passenden Standorte',
     unselected:'Standort auswählen',origin:'Herkunft',coords:'Koordinaten',noMap:'Standortkarte nicht verfügbar',
     noGeo:'GeoPoint nicht verfügbar',readOnly:'Nur Übersicht – keine Standort- oder Tracker-Änderung'
   }:{
     title:'Location overview',subtitle:'Geographic overview · schematic projection (not a street map)',
     active:'Active',archived:'Archived',all:'All',filter:'Search locations',close:'Close',
-    map:'Show on main map',inspector:'GeoPoint Inspector',details:'Details',locations:'Locations',
+    map:'Show on main map',inspector:'GeoPoint',details:'Details',locations:'Locations',
     doubles:'Multiple records at the same coordinates',empty:'No matching locations',
     unselected:'Select a location',origin:'Origin',coords:'Coordinates',noMap:'Map unavailable',
     noGeo:'GeoPoint unavailable',readOnly:'Read-only overview – no location or tracker edits'
