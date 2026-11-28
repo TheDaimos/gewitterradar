@@ -316,7 +316,7 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
       box.append(node('small',title),node('strong',value));intro.append(box);};
     plate(t.coordinates,data.latitude.toFixed(5)+'°, '+data.longitude.toFixed(5)+'°');
     plate(t.detailState,data.archived?t.detailArchived:t.detailActive);
-    content.append(detailBack,intro);
+    content.append(intro);
     const shortcuts=node('div','', 'gr-ma-detail-shortcuts');
     if(typeof openGeoPoint==='function'){
       const geoButton=button(t.detailGeo,async()=>{
@@ -389,7 +389,7 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     }));
     accordion.append(actions,node('p',t.detailHint,'gr-ma-detail-hint'));
     const message=node('p','', 'gr-ma-detail-message');
-    content.append(accordion,message);widget.append(stylesheet,heading,content);
+    content.append(accordion,message);widget.append(stylesheet,heading,detailBack,content);
     root.append(widget);detailWindow=widget;
     const profileId=String(owner._settingsVault?.profile?.id||'legacy');
     const placeId=String(place.uid||data.name);
