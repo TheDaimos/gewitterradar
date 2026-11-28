@@ -1,52 +1,6 @@
 name: Build V4.14.24 MA opt-in and migration DEV mirrors
 on:
-  push:
-    branches: [feature/v4.14-monitored-areas]
-    paths:
-      - '.github/workflows/ma-v41424-dev-build-sync.yml'
-      - 'frontend/version.js'
-      - 'custom_components/gewitterradar/dra-deployment-provenance.json'
-      - 'frontend/modules/monitored-areas/migration-wizard.js'
-      - 'custom_components/gewitterradar/monitored_areas/migration.py'
-      - 'custom_components/gewitterradar/monitored_areas/api.py'
-      - 'scripts/test-ma-020-finalization.py'
-      - 'tests/test_ma_existing_reconcile.mjs'
-      - 'frontend/modules/monitored-areas/location-manager.js'
-      - 'frontend/modules/monitored-areas/location-overview.js'
-      - 'frontend/modules/monitored-areas/location-create.js'
-      - 'tests/test_ma024_location_overview.mjs'
-      - 'tests/test_ma024_location_create.mjs'
-      - 'tests/test_ma024_location_wiring.mjs'
-      - 'tests/test_ma_sqlite_preview.mjs'
-      - 'docs/GR_41424_MA023_LOCATION_OVERVIEW_CREATE_2026-11-28.md'
-      - 'frontend/modules/monitored-areas/tracker-settings.js'
-      - 'frontend/modules/ui/skeleton.js'
-      - 'tests/test_ma023_batch_location.mjs'
-      - 'tests/test_ma023_tracker_settings.mjs'
-      - 'frontend/modules/monitored-areas/location-port.js'
-      - 'frontend/modules/ui/controls.js'
-      - 'custom_components/gewitterradar/monitored_areas/blitzortung_inventory.py'
-      - 'custom_components/gewitterradar/monitored_areas/tracker_names.py'
-      - 'tests/test_ma023_tracker_name.mjs'
-      - 'tests/test_ma025_blitzortung_inventory.mjs'
-      - 'frontend/modules/monitored-areas/profile-sharing.js'
-      - 'scripts/build-frontend.mjs'
-      - 'tests/test_ma022_profile_sharing.mjs'
-      - 'tests/test_ma022_port.mjs'
-      - 'tests/test_ma_frontend_module_registration.py'
-      - 'scripts/test-ma-022-profiles.py'
-      - 'frontend/modules/weather/temperature-display.js'
-      - 'tests/test_ma021_geopoint_launch.mjs'
-      - 'frontend/modules/monitored-areas/location-port.js'
-      - 'tests/test_ma021_responsive_layout.mjs'
-      - 'tests/test_ma021_port_readonly.mjs'
-      - 'tests/test_ma021_havanna_detail.mjs'
-      - 'frontend/modules/monitored-areas/index.js'
-      - 'tests/test_ma_sticky_dialog_layout.mjs'
-      - 'tests/test_ma_tabbed_views.mjs'
-      - 'tests/test_ma_premium_chrome.mjs'
-      - 'tests/test_ma_sqlite_preview.mjs'
-      - 'frontend/modules/ui/controls.js'
+  workflow_dispatch:
 
 concurrency:
   group: ma-41424-build-${{ github.ref }}
