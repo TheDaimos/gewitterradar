@@ -1,9 +1,9 @@
 {
   "schema": "gewitterradar.dra-deployment-provenance.v1",
-  "productVersion": "4.14.25",
-  "build": "V4.14.25-DEV-2026-11-27",
-  "runtimeRevision": "41425r1",
-  "moduleSetId": "E414-25A1",
+  "productVersion": "4.14.26",
+  "build": "V4.14.26-DEV-2026-11-27",
+  "runtimeRevision": "41426r1",
+  "moduleSetId": "E414-26A1",
   "baselineFeatureHead": "3f5f31964c92cee764a7c1e7e218fd4119654e21",
   "parity": {
     "generator": "scripts/generate-medallion-arrow-fit-matrix.cjs",
