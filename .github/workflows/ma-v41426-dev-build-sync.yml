@@ -1,4 +1,4 @@
-name: Build V4.14.26 MA opt-in and migration DEV mirrors
+name: Build V4.14.27 MA opt-in and migration DEV mirrors
 on:
   push:
     branches: [feature/v4.14-monitored-areas]
@@ -76,13 +76,13 @@ jobs:
           python-version: '3.13'
       - name: Confirm exact authorized DEV identity and new module
         run: |
-          grep -q 'version:"4.14.26"' frontend/version.js
-          grep -q 'BUILD_VERSION = "4.14.26"' custom_components/gewitterradar/build_info.py
+          grep -q 'version:"4.14.27"' frontend/version.js
+          grep -q 'BUILD_VERSION = "4.14.27"' custom_components/gewitterradar/build_info.py
           test -f frontend/modules/monitored-areas/location-manager.js
       - name: Reject stale previous-runtime imports
         run: |
           if grep -R -n 'v=41421r1' frontend --include='*.js'; then
-            echo "Stale V4.14.21 cache imports in V4.14.26 sources"
+            echo "Stale V4.14.21 cache imports in V4.14.27 sources"
             exit 1
           fi
       - name: Update runtime asset SHA and size from actual versioned source
@@ -150,7 +150,7 @@ jobs:
         if: steps.regression.outcome == 'failure'
         run: |
           {
-            echo '# MA V4.14.26 CI regression diagnostics'
+            echo '# MA V4.14.27 CI regression diagnostics'
             echo
             echo 'Branch: feature/v4.14-monitored-areas'
             echo 'Workflow: ma-v41426-dev-build-sync.yml'
@@ -163,7 +163,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/MA_V41426_CI_DIAGNOSTICS.md
-          git commit -m "test(MA-020): record V4.14.26 regression failure for correction"
+          git commit -m "test(MA-020): record V4.14.27 regression failure for correction"
           git restore -- frontend/assets.json dashboard/dist custom_components/gewitterradar/frontend SHA256SUMS_FRONTEND.txt
           git fetch origin feature/v4.14-monitored-areas
           git rebase origin/feature/v4.14-monitored-areas
@@ -181,7 +181,7 @@ jobs:
         if: steps.regression.outcome == 'success'
         run: |
           {
-            echo '# MA V4.14.26 strict regression PASS'
+            echo '# MA V4.14.27 strict regression PASS'
             echo
             echo "Workflow: ${GITHUB_WORKFLOW}"
             echo "Run ID: ${GITHUB_RUN_ID}"
@@ -199,7 +199,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "Delivery files already synchronized"
           else
-            git commit -m "build(gr): regenerate V4.14.26 SQLite opt-in and migration UI mirrors and SHA256"
+            git commit -m "build(gr): regenerate V4.14.27 SQLite opt-in and migration UI mirrors and SHA256"
             # GitHub contents-api edits can land while Actions build is running.
             # Rebase additive delivery-only commit; never force push.
             for attempt in 1 2 3; do
