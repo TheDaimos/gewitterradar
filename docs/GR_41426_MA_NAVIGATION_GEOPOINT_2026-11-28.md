@@ -24,3 +24,6 @@ DRA-Installation ausschließlich auf DEV VM109 nach Snapshot/Branch-/Vorschaukon
 - Im Standortdetail war Zurück als vollbreiter grauer Button sichtbar: eigener flexibler Navigationsstreifen mit linkem Gold-Chevron und Status-Badge rechts daneben. Der Status wurde aus dem Titelkopf in diesen Streifen versetzt; keine Veränderung an Daten/SQLite.
 - Änderungen synchronisiert in `frontend/`, `custom_components/gewitterradar/frontend/` und `dashboard/dist/`; Regressionstest `tests/test_ma026_navigation_geopoint.mjs` entsprechend ergänzt.
 - Reiner Quellcode-Fix auf dem Feature-Branch; **keine Behauptung über DRA-Bereitstellung oder installierten DEV-Build** ohne gesonderte Build-Verifikation.
+
+## Build-Gate-Korrektur
+Der bestehende Sticky-Dialog-Regressionstest prüfte noch die alte DOM-Reihenfolge `heading, detailBack, content`. Nach der Betreiberkorrektur gilt `heading, navigation, content` mit Chevron und Status nebeneinander; der Test wurde entsprechend aktualisiert. Der versionsgebundene Build-Workflow wird über diese Dokuänderung erneut ausgelöst. Auslieferung erst nach grünem Gate.
