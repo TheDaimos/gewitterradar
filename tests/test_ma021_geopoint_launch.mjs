@@ -15,7 +15,8 @@ const start=manager.indexOf("const shortcuts=node('div','', 'gr-ma-detail-shortc
 const end=manager.indexOf("const accordion=document.createElement('details')",start);
 const action=manager.slice(start,end);
 assert.ok(start>0&&end>start,'button must exist');
-assert.ok(action.indexOf('await openGeoPoint')<action.indexOf('close();'),'close only after provider ACK');
+assert.ok(action.includes('await openGeoPoint'),'launch existing inspector');
+assert.doesNotMatch(action,/\bclose\(\)/,'keep location details visible for Back navigation');
 assert.match(action,/catch\{message\.textContent=t\.detailGeoError;\}/);
 assert.doesNotMatch(action,/focus\(|flyTo\(|setLocation\(|selectReference/);
 assert.match(controls,/openGeoPoint:async position=>/);
