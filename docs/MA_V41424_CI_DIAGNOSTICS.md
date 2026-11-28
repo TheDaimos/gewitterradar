@@ -5,139 +5,142 @@ Workflow: ma-v41424-dev-build-sync.yml
 These are test results, not operator database data.
 
 ~~~
-TAP version 13
-# Subtest: default OFF / invalid flags: no runtime start, no owner writes or listeners
-ok 1 - default OFF / invalid flags: no runtime start, no owner writes or listeners
-  ---
-  duration_ms: 22.274246
-  type: 'test'
-  ...
-# Subtest: ON: one runtime start, idempotent teardown and restart
-ok 2 - ON: one runtime start, idempotent teardown and restart
-  ---
-  duration_ms: 7.200263
-  type: 'test'
-  ...
-# Subtest: disconnect and OFF terminate active runtime, no restart
-ok 3 - disconnect and OFF terminate active runtime, no restart
-  ---
-  duration_ms: 0.98574
-  type: 'test'
-  ...
-# Subtest: optional initialization and teardown failures remain isolated
-ok 4 - optional initialization and teardown failures remain isolated
-  ---
-  duration_ms: 1.068505
-  type: 'test'
-  ...
-# Subtest: regular optional registration and exact inventory/mirror hashes
-ok 5 - regular optional registration and exact inventory/mirror hashes
-  ---
-  duration_ms: 11.72498
-  type: 'test'
-  ...
-1..5
-# tests 5
-# suites 0
-# pass 5
-# fail 0
-# cancelled 0
-# skipped 0
-# todo 0
-# duration_ms 112.024576
-PASS MA-023 model, mode gate, no implicit migration, UI integration and mirror
-PASS MA-021 Havanna detail read-only geometry, drag and safety
-PASS MA-021 Desktop/iPad portrait+landscape/mobile layout, session positioning and read-only profile guard
-PASS MA-021 profile-scoped SQLite detail read gate, no pending access and no mutation receipt
-PASS MA-021 existing GeoPoint launch, correct coordinates, explicit success, no tracker shift
-PASS MA-022 role-scoped batch UI, migration gate, explicit share and own preferences
-PASS MA-022 typed link/prefs commands, mode gate, explicit revisions, actor profile binding
-PASS MA-023 bulk selection, sorting, db mode and safe stop
-PASS P04 Tracker setup relocated to weather-engine and guarded
-PASS MA-024 overview projection, filter, overlaps, privacy and read-only
-PASS MA-024 manual SQLite create scoped consent and duplicate preview
-PASS MA-024 overview/create wiring, timestamps and visible-only selection
-test_denies_forged_target_and_own_preferences (__main__.Profiles.test_denies_forged_target_and_own_preferences) ... ok
-test_receipt_replay_share_and_conflict (__main__.Profiles.test_receipt_replay_share_and_conflict) ... ok
-test_share_and_transfer_isolated_profiles (__main__.Profiles.test_share_and_transfer_isolated_profiles) ... ok
+  "  filter:'Standorte filtern',sort:'Sortieren',sortName:'Name A–Z',sortReverse:'Name Z–A',sortRecent:'Zuletzt geändert',select:'Auswählen',selected:'ausgewählt',selectAll:'Sichtbare auswählen',clearSelection:'Auswahl aufheben',archiveSelected:'Ausgewählte archivieren',restoreSelected:'Ausgewählte wiederherstellen',batchConfirm:'ausgewählte Standorte bearbeiten? Nur bestätigte Änderungen werden gespeichert.',batchDone:'Standorte erfolgreich bearbeitet',batchPartial:'Sammelaktion gestoppt; übrige Standorte unverändert',refresh:'Aktualisieren',close:'Schließen',active:'Gespeicherte Orte',\n" +
+  "  archived:'Archivierte Orte',empty:'Keine passenden Standorte',details:'Details',back:'Zurück',\n" +
+  "  focus:'Auf Karte zeigen',rename:'Umbenennen',archive:'Archivieren',restore:'Wiederherstellen',\n" +
+  "  profiles:'Profile & Freigaben',overview:'Sichtfenster',createNew:'Neuer Standort',overviewHint:'Standorte geografisch ansehen',\n" +
+  "  coordinates:'Koordinaten',revision:'Revision',detailHint:'Überwachungs- und Freigabeoptionen folgen in den nächsten MA-Modulen.',\n" +
+  "  detailTitle:'Standortdetails',detailOrigin:'Herkunft',detailState:'Zustand',detailActive:'Aktiv',detailArchived:'Archiviert',detailCollapse:'Details ein-/ausklappen',detailMove:'Fenster verschieben',detailCopy:'Koordinaten kopieren',detailCopied:'Koordinaten kopiert',detailNoCopy:'Kopieren nicht verfügbar',detailGeo:'GeoPoint',detailGeoError:'GeoPoint Inspector nicht verfügbar – Wetterquelle und Karte prüfen.',detailMonitoring:'Überwachung',detailPaused:'Pausiert',detailRecording:'Aufzeichnung',detailRadius:'Aufzeichnungsradius',detailAlarmRadius:'Alarmradius',detailMode:'Erfassungsmodus',detailOn:'Ein',detailOff:'Aus',detailNoData:'Erweiterte Daten nicht verfügbar',\n" +
+  "  renamePrompt:'Neuen Namen eingeben',archiveConfirm:'Standort archivieren? Er bleibt wiederherstellbar.',\n" +
+  "  error:'Aktion nicht abgeschlossen',busy:'Bitte warten …',migration:'SQLite-Übernahme prüfen',\n" +
+  "  setupHint:'Aktiviere Monitored Areas unter Einstellungen → Geräte & Dienste → GewitterRadar → Konfigurieren. Deine Local-To-do-Liste bleibt bis zur gesonderten Bestätigung unverändert.',\n" +
+  "  legacyHint:'Die alte Local-To-do-Liste bleibt maßgeblich. Eine Migration wird nicht automatisch gestartet.',\n" +
+  "  dbHint:'Änderungen werden nur nach Bestätigung durch Home Assistant übernommen.'},\n" +
+  " en:{title:'Manage locations',subtitle:'Monitored Areas · V4.14',db:'SQLite management active',\n" +
+  "  pending:'Migration pending · Local To-do remains authoritative',\n" +
+  "  legacy:'Local To-do · existing place management',off:'Monitored Areas disabled · existing places untouched',\n" +
+  "  filter:'Filter locations',sort:'Sort',sortName:'Name A–Z',sortReverse:'Name Z–A',sortRecent:'Recently modified',select:'Select',selected:'selected',selectAll:'Select visible',clearSelection:'Clear selection',archiveSelected:'Archive selected',restoreSelected:'Restore selected',batchConfirm:'selected locations? Only acknowledged changes are saved.',batchDone:'locations updated successfully',batchPartial:'Batch stopped; remaining locations unchanged',refresh:'Refresh',close:'Close',active:'Saved places',\n" +
+  "  archived:'Archived places',empty:'No matching locations',details:'Details',back:'Back',\n" +
+  "  focus:'Show on map',rename:'Rename',archive:'Archive',restore:'Restore',\n" +
+  "  profiles:'Profiles & sharing',overview:'Overview',createNew:'New location',overviewHint:'View locations geographically',\n" +
+  "  coordinates:'Coordinates',revision:'Revision',detailHint:'Monitoring and sharing controls follow in the next MA modules.',\n" +
+  "  detailTitle:'Location details',detailOrigin:'Origin',detailState:'Status',detailActive:'Active',detailArchived:'Archived',detailCollapse:'Expand/collapse details',detailMove:'Move window',detailCopy:'Copy coordinates',detailCopied:'Coordinates copied',detailNoCopy:'Copy unavailable',detailGeo:'GeoPoint',detailGeoError:'GeoPoint Inspector unavailable – check the weather source and map.',detailMonitoring:'Monitoring',detailPaused:'Paused',detailRecording:'Recording',detailRadius:'Recording radius',detailAlarmRadius:'Alert radius',detailMode:'Capture mode',detailOn:'On',detailOff:'Off',detailNoData:'Extended data unavailable',\n" +
+  "  renamePrompt:'Enter new name',archiveConfirm:'Archive location? It can be restored.',\n" +
+  "  error:'Action not completed',busy:'Please wait …',migration:'Review SQLite migration',\n" +
+  "  setupHint:'Enable Monitored Areas in Settings → Devices & services → GewitterRadar → Configure. Local To-do remains unchanged until separately confirmed.',\n" +
+  "  legacyHint:'Local To-do remains authoritative. No migration starts automatically.',\n" +
+  "  dbHint:'Changes are only applied following Home Assistant confirmation.'}\n" +
+  '};\n' +
+  "const STYLES='.gr-ma-manager{position:fixed;inset:0;display:grid;place-items:center;z-index:2147483598;background:#02070bdc;padding:12px;box-sizing:border-box;backdrop-filter:blur(7px)}'+\n" +
+  "'.gr-ma-panel{box-sizing:border-box;width:min(760px,100%);height:min(820px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);overflow:hidden;display:flex;flex-direction:column;padding:17px;border-radius:22px;border:1px solid rgba(201,160,80,.34);color:#e7eef6;background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%),linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995));box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,235,184,.055),inset 0 1px rgba(255,244,213,.08),0 0 30px rgba(207,159,60,.065);font:14px/1.5 system-ui,sans-serif}'+\n" +
+  "'.gr-ma-panel header,.gr-ma-tools,.gr-ma-row,.gr-ma-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.gr-ma-panel header,.gr-ma-row{justify-content:space-be"... 38069 more characters
 
-----------------------------------------------------------------------
-Ran 3 tests in 0.094s
-
-OK
-test_location_manager_is_discoverable_but_opt_in_writes_are_guarded (test_ma_frontend_module_registration.MonitoredAreasFrontendRegistrationTests.test_location_manager_is_discoverable_but_opt_in_writes_are_guarded) ... ok
-test_manifest_versions_and_module_identity (test_ma_frontend_module_registration.MonitoredAreasFrontendRegistrationTests.test_manifest_versions_and_module_identity) ... ok
-test_mirrored_frontend_artifacts_match (test_ma_frontend_module_registration.MonitoredAreasFrontendRegistrationTests.test_mirrored_frontend_artifacts_match) ... ok
-test_optional_registration_does_not_activate_ha_runtime (test_ma_frontend_module_registration.MonitoredAreasFrontendRegistrationTests.test_optional_registration_does_not_activate_ha_runtime) ... ok
-
-----------------------------------------------------------------------
-Ran 4 tests in 0.005s
-
-OK
-test_feature_flag_rejects_non_boolean_truthy (test_ma_v4146_optin_contract.MAOptInContracts.test_feature_flag_rejects_non_boolean_truthy) ... ok
-test_legacy_is_authority_until_server_verified_cutover (test_ma_v4146_optin_contract.MAOptInContracts.test_legacy_is_authority_until_server_verified_cutover) ... ok
-test_native_integration_options_require_explicit_checkbox (test_ma_v4146_optin_contract.MAOptInContracts.test_native_integration_options_require_explicit_checkbox) ... ok
-test_no_implicit_migration_or_direct_todo_delete_in_manager (test_ma_v4146_optin_contract.MAOptInContracts.test_no_implicit_migration_or_direct_todo_delete_in_manager) ... ok
-
-----------------------------------------------------------------------
-Ran 4 tests in 0.007s
-
-OK
-test_foreign_profile_cannot_read_preview (__main__.Tests.test_foreign_profile_cannot_read_preview) ... ok
-test_no_source_fails_closed_not_empty_import (__main__.Tests.test_no_source_fails_closed_not_empty_import) ... ok
-test_preview_is_read_only_and_flags_source_duplicates (__main__.Tests.test_preview_is_read_only_and_flags_source_duplicates) ... ok
-test_source_or_db_changes_invalidate_fingerprint (__main__.Tests.test_source_or_db_changes_invalidate_fingerprint) ... ok
-
-----------------------------------------------------------------------
-Ran 4 tests in 0.070s
-
-OK
-test_admin_and_confirmation_required_without_deletion (__main__.FinalizationContracts.test_admin_and_confirmation_required_without_deletion) ... ok
-test_archive_disallowed_before_cutover (__main__.FinalizationContracts.test_archive_disallowed_before_cutover) ... ok
-test_archive_isolated_to_profile_link (__main__.FinalizationContracts.test_archive_isolated_to_profile_link) ... ok
-test_archived_and_active_legacy_places_survive_verified_cutover (__main__.FinalizationContracts.test_archived_and_active_legacy_places_survive_verified_cutover) ... ok
-test_archived_flag_mismatch_is_not_suggested_or_reused (__main__.FinalizationContracts.test_archived_flag_mismatch_is_not_suggested_or_reused) ... ok
-test_complete_cutover_requires_verified_absence (__main__.FinalizationContracts.test_complete_cutover_requires_verified_absence) ... ok
-test_concurrent_confirmation_cannot_repeat_deletion (__main__.FinalizationContracts.test_concurrent_confirmation_cannot_repeat_deletion) ... ok
-test_duplicate_archived_places_never_get_unattended_suggestion (__main__.FinalizationContracts.test_duplicate_archived_places_never_get_unattended_suggestion) ... ok
-test_ma022_profile_mutations_blocked_before_sqlite_cutover (__main__.FinalizationContracts.test_ma022_profile_mutations_blocked_before_sqlite_cutover) ... ok
-test_metadata_change_after_approval_cannot_delete (__main__.FinalizationContracts.test_metadata_change_after_approval_cannot_delete) ... ok
-test_mixed_status_source_drift_blocks_finalization (__main__.FinalizationContracts.test_mixed_status_source_drift_blocks_finalization) ... ok
-test_no_import_no_deletion_and_no_db_active (__main__.FinalizationContracts.test_no_import_no_deletion_and_no_db_active) ... ok
-test_partial_delete_recoverable_after_new_api_instance (__main__.FinalizationContracts.test_partial_delete_recoverable_after_new_api_instance) ... ok
-test_preexisting_sqlite_places_offer_safe_reuse_without_writes (__main__.FinalizationContracts.test_preexisting_sqlite_places_offer_safe_reuse_without_writes) ... ok
-test_removed_item_backup_tampering_blocks_resume (__main__.FinalizationContracts.test_removed_item_backup_tampering_blocks_resume) ... ok
-test_removed_item_target_changed_after_restart_blocks_resume (__main__.FinalizationContracts.test_removed_item_target_changed_after_restart_blocks_resume) ... ok
-test_resume_approval_invalidated_by_external_removal (__main__.FinalizationContracts.test_resume_approval_invalidated_by_external_removal) ... ok
-test_reuse_cannot_alias_two_source_entries_to_same_sqlite_location (__main__.FinalizationContracts.test_reuse_cannot_alias_two_source_entries_to_same_sqlite_location) ... ok
-test_skipped_item_and_changed_source_are_blocked (__main__.FinalizationContracts.test_skipped_item_and_changed_source_are_blocked) ... ok
-test_source_uid_summary_collision_fail_closed (__main__.FinalizationContracts.test_source_uid_summary_collision_fail_closed) ... ok
-test_sqlite_archive_restore_profile_scope_and_idempotency (__main__.FinalizationContracts.test_sqlite_archive_restore_profile_scope_and_idempotency) ... ok
-test_stale_source_after_approval_cannot_delete (__main__.FinalizationContracts.test_stale_source_after_approval_cannot_delete) ... ok
-test_tampering_with_archived_link_blocks_source_deletion (__main__.FinalizationContracts.test_tampering_with_archived_link_blocks_source_deletion) ... ok
-test_three_archived_same_name_coordinates_preserve_distinct_uids (__main__.FinalizationContracts.test_three_archived_same_name_coordinates_preserve_distinct_uids) ... ok
-test_unrelated_location_cannot_be_forged_as_existing_match (__main__.FinalizationContracts.test_unrelated_location_cannot_be_forged_as_existing_match) ... ok
-
-----------------------------------------------------------------------
-Ran 25 tests in 0.564s
-
-OK
-MA-020 optional startup reminder, location cutover and mirror contracts PASS
-PASS MA-020 SQLite preview: archived grouping, invalid rows, read-only paging, safe DOM
-node:internal/modules/run_main:123
-    triggerUncaughtException(
-    ^
-
-AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-
-6 !== 5
-
-    at file:///home/runner/work/gewitterradar/gewitterradar/tests/test_ma_sqlite_preview.mjs:34:8 {
+    at file:///home/runner/work/gewitterradar/gewitterradar/tests/test_ma021_geopoint_launch.mjs:8:8
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5) {
   generatedMessage: true,
   code: 'ERR_ASSERTION',
-  actual: 6,
-  expected: 5,
-  operator: 'strictEqual',
+  actual: '// MA-023: additive profile-aware place manager. No automatic migration or tracker mutation.\n' +
+    'const maPremiumClose = () => new URL("../../assets/gewitterradar-about-close-premium.webp", import.meta.url).href;\n' +
+    "export const planLocations=({enabled=false,mode='legacy',places=[],removed=[]}={})=>{\n" +
+    "  const authority=enabled&&mode==='db_active'?'db_active':enabled&&mode==='migration_pending'?'migration_pending':'legacy';\n" +
+    '  const seen=new Set(),items=[];\n' +
+    '  for(const [records,archived] of [[places,false],[removed,true]]){\n' +
+    '    for(const place of records||[]){\n' +
+    "      const uid=String(place?.uid||''),latitude=Number(place?.latitude),longitude=Number(place?.longitude);\n" +
+    '      if(!uid||seen.has(uid)||!Number.isFinite(latitude)||!Number.isFinite(longitude)||\n' +
+    '        Math.abs(latitude)>90||Math.abs(longitude)>180)continue;\n' +
+    '      seen.add(uid);items.push({...place,uid,latitude,longitude,archived});\n' +
+    '    }\n' +
+    '  }\n' +
+    "  return {mode:authority,canRename:authority==='db_active',\n" +
+    '    active:items.filter(x=>!x.archived),archived:items.filter(x=>x.archived)};\n' +
+    '};\n' +
+    "export function sortedLocations(records=[],sort='name'){\n" +
+    "  const items=[...records], byName=(a,b)=>String(a.name||a.summary||'').localeCompare(String(b.name||b.summary||''),undefined,{sensitivity:'base',numeric:true})||\n" +
+    "    String(a.uid||'').localeCompare(String(b.uid||''));\n" +
+    "  if(sort==='recent')items.sort((a,b)=>(Number(b.updated_at)||0)-(Number(a.updated_at)||0)||byName(a,b));\n" +
+    "  else if(sort==='name_desc')items.sort((a,b)=>-byName(a,b));\n" +
+    '  else items.sort(byName);\n' +
+    '  return items;\n' +
+    '}\n' +
+    "export function batchLocationPlan({mode='legacy',active=[],archived=[],selected=[],operation='archive'}={}){\n" +
+    "  if(mode!=='db_active'||!['archive','restore'].includes(operation))return [];\n" +
+    "  const selectedIds=new Set(selected.filter(id=>typeof id==='string'));\n" +
+    "  const source=operation==='archive'?active:archived;\n" +
+    '  // No implicit mass action on filtered or hidden rows: selection only.\n' +
+    "  return source.filter(item=>selectedIds.has(item.uid)&&typeof item.uid==='string'&&\n" +
+    '    Number.isInteger(item.revision)&&item.revision>=1).map(item=>({...item}));\n' +
+    '}\n' +
+    '// MA-021: pure responsive positioning and read-only location descriptor.\n' +
+    '// No persistence: panel position is scoped to the current manager instance.\n' +
+    '// MA-021: responsive device profiles are a pure layout decision.\n' +
+    'export function detailLayoutProfile({width=360,height=640}={}){\n' +
+    '  width=Number.isFinite(width)?Math.max(1,width):360;\n' +
+    '  height=Number.isFinite(height)?Math.max(1,height):640;\n' +
+    "  if(width<680)return Object.freeze({mode:'mobile',width:Math.max(1,width-20),columns:1});\n" +
+    "  if(width<1180)return Object.freeze({mode:'tablet',width:Math.min(810,width-32),columns:2});\n" +
+    "  return Object.freeze({mode:'desktop',width:Math.min(920,width-48),columns:2});\n" +
+    '}\n' +
+    'const detailPlacementCache=new WeakMap();\n' +
+    'export function clampDetailPosition(position,{width,height,panelWidth,panelHeight,margin=10}={}){\n' +
+    '  const finite=(v,fallback)=>Number.isFinite(v)?v:fallback;\n' +
+    '  width=Math.max(1,finite(width,360));height=Math.max(1,finite(height,640));\n' +
+    '  panelWidth=Math.max(1,finite(panelWidth,Math.min(width,420)));\n' +
+    '  panelHeight=Math.max(1,finite(panelHeight,Math.min(height,400)));\n' +
+    '  margin=Math.max(0,finite(margin,10));\n' +
+    '  const minX=Math.min(margin,Math.max(0,width-panelWidth));\n' +
+    '  const minY=Math.min(margin,Math.max(0,height-panelHeight));\n' +
+    '  const maxX=Math.max(minX,width-panelWidth-margin);\n' +
+    '  const maxY=Math.max(minY,height-panelHeight-margin);\n' +
+    '  return {x:Math.min(maxX,Math.max(minX,finite(position?.x,minX))),\n' +
+    '          y:Math.min(maxY,Math.max(minY,finite(position?.y,minY)))};\n' +
+    '}\n' +
+    'export function detailLocation(place){\n' +
+    '  const latitude=Number(place?.latitude),longitude=Number(place?.longitude);\n' +
+    '  if(!Number.isFinite(latitude)||!Number.isFinite(longitude)||\n' +
+    "     Math.abs(latitude)>90||Math.abs(longitude)>180)throw new TypeError('MA_INVALID_COORDINATES');\n" +
+    "  return Object.freeze({name:String(place?.name||place?.summary||''),\n" +
+    '    latitude,longitude,archived:place?.archived===true,\n' +
+    '    revision:Number.isInteger(place?.revision)?place.revision:null,\n' +
+    "    origin:String(place?.location_origin||place?.provider||'unknown')});\n" +
+    '}\n' +
+    'const COPY={\n' +
+    " de:{title:'Standortverwaltung',subtitle:'Monitored Areas · V4.14',db:'SQLite-Verwaltung aktiv',\n" +
+    "  pending:'Migration ausstehend · Local To-do bleibt maßgeblich',\n" +
+    "  legacy:'Local To-do · bisherige Standortverwaltung',off:'Monitored Areas deaktiviert · alte Orte bleiben unverändert',\n" +
+    "  filter:'Standorte filtern',sort:'Sortieren',sortName:'Name A–Z',sortReverse:'Name Z–A',sortRecent:'Zuletzt geändert',select:'Auswählen',selected:'ausgewählt',selectAll:'Sichtbare auswählen',clearSelection:'Auswahl aufheben',archiveSelected:'Ausgewählte archivieren',restoreSelected:'Ausgewählte wiederherstellen',batchConfirm:'ausgewählte Standorte bearbeiten? Nur bestätigte Änderungen werden gespeichert.',batchDone:'Standorte erfolgreich bearbeitet',batchPartial:'Sammelaktion gestoppt; übrige Standorte unverändert',refresh:'Aktualisieren',close:'Schließen',active:'Gespeicherte Orte',\n" +
+    "  archived:'Archivierte Orte',empty:'Keine passenden Standorte',details:'Details',back:'Zurück',\n" +
+    "  focus:'Auf Karte zeigen',rename:'Umbenennen',archive:'Archivieren',restore:'Wiederherstellen',\n" +
+    "  profiles:'Profile & Freigaben',overview:'Sichtfenster',createNew:'Neuer Standort',overviewHint:'Standorte geografisch ansehen',\n" +
+    "  coordinates:'Koordinaten',revision:'Revision',detailHint:'Überwachungs- und Freigabeoptionen folgen in den nächsten MA-Modulen.',\n" +
+    "  detailTitle:'Standortdetails',detailOrigin:'Herkunft',detailState:'Zustand',detailActive:'Aktiv',detailArchived:'Archiviert',detailCollapse:'Details ein-/ausklappen',detailMove:'Fenster verschieben',detailCopy:'Koordinaten kopieren',detailCopied:'Koordinaten kopiert',detailNoCopy:'Kopieren nicht verfügbar',detailGeo:'GeoPoint',detailGeoError:'GeoPoint Inspector nicht verfügbar – Wetterquelle und Karte prüfen.',detailMonitoring:'Überwachung',detailPaused:'Pausiert',detailRecording:'Aufzeichnung',detailRadius:'Aufzeichnungsradius',detailAlarmRadius:'Alarmradius',detailMode:'Erfassungsmodus',detailOn:'Ein',detailOff:'Aus',detailNoData:'Erweiterte Daten nicht verfügbar',\n" +
+    "  renamePrompt:'Neuen Namen eingeben',archiveConfirm:'Standort archivieren? Er bleibt wiederherstellbar.',\n" +
+    "  error:'Aktion nicht abgeschlossen',busy:'Bitte warten …',migration:'SQLite-Übernahme prüfen',\n" +
+    "  setupHint:'Aktiviere Monitored Areas unter Einstellungen → Geräte & Dienste → GewitterRadar → Konfigurieren. Deine Local-To-do-Liste bleibt bis zur gesonderten Bestätigung unverändert.',\n" +
+    "  legacyHint:'Die alte Local-To-do-Liste bleibt maßgeblich. Eine Migration wird nicht automatisch gestartet.',\n" +
+    "  dbHint:'Änderungen werden nur nach Bestätigung durch Home Assistant übernommen.'},\n" +
+    " en:{title:'Manage locations',subtitle:'Monitored Areas · V4.14',db:'SQLite management active',\n" +
+    "  pending:'Migration pending · Local To-do remains authoritative',\n" +
+    "  legacy:'Local To-do · existing place management',off:'Monitored Areas disabled · existing places untouched',\n" +
+    "  filter:'Filter locations',sort:'Sort',sortName:'Name A–Z',sortReverse:'Name Z–A',sortRecent:'Recently modified',select:'Select',selected:'selected',selectAll:'Select visible',clearSelection:'Clear selection',archiveSelected:'Archive selected',restoreSelected:'Restore selected',batchConfirm:'selected locations? Only acknowledged changes are saved.',batchDone:'locations updated successfully',batchPartial:'Batch stopped; remaining locations unchanged',refresh:'Refresh',close:'Close',active:'Saved places',\n" +
+    "  archived:'Archived places',empty:'No matching locations',details:'Details',back:'Back',\n" +
+    "  focus:'Show on map',rename:'Rename',archive:'Archive',restore:'Restore',\n" +
+    "  profiles:'Profiles & sharing',overview:'Overview',createNew:'New location',overviewHint:'View locations geographically',\n" +
+    "  coordinates:'Coordinates',revision:'Revision',detailHint:'Monitoring and sharing controls follow in the next MA modules.',\n" +
+    "  detailTitle:'Location details',detailOrigin:'Origin',detailState:'Status',detailActive:'Active',detailArchived:'Archived',detailCollapse:'Expand/collapse details',detailMove:'Move window',detailCopy:'Copy coordinates',detailCopied:'Coordinates copied',detailNoCopy:'Copy unavailable',detailGeo:'GeoPoint',detailGeoError:'GeoPoint Inspector unavailable – check the weather source and map.',detailMonitoring:'Monitoring',detailPaused:'Paused',detailRecording:'Recording',detailRadius:'Recording radius',detailAlarmRadius:'Alert radius',detailMode:'Capture mode',detailOn:'On',detailOff:'Off',detailNoData:'Extended data unavailable',\n" +
+    "  renamePrompt:'Enter new name',archiveConfirm:'Archive location? It can be restored.',\n" +
+    "  error:'Action not completed',busy:'Please wait …',migration:'Review SQLite migration',\n" +
+    "  setupHint:'Enable Monitored Areas in Settings → Devices & services → GewitterRadar → Configure. Local To-do remains unchanged until separately confirmed.',\n" +
+    "  legacyHint:'Local To-do remains authoritative. No migration starts automatically.',\n" +
+    "  dbHint:'Changes are only applied following Home Assistant confirmation.'}\n" +
+    '};\n' +
+    "const STYLES='.gr-ma-manager{position:fixed;inset:0;display:grid;place-items:center;z-index:2147483598;background:#02070bdc;padding:12px;box-sizing:border-box;backdrop-filter:blur(7px)}'+\n" +
+    "'.gr-ma-panel{box-sizing:border-box;width:min(760px,100%);height:min(820px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);overflow:hidden;display:flex;flex-direction:column;padding:17px;border-radius:22px;border:1px solid rgba(201,160,80,.34);color:#e7eef6;background:radial-gradient(circle at 15% 0%,rgba(230,184,85,.09),transparent 34%),linear-gradient(180deg,rgba(20,28,38,.99),rgba(7,12,18,.995));box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,235,184,.055),inset 0 1px rgba(255,244,213,.08),0 0 30px rgba(207,159,60,.065);font:14px/1.5 system-ui,sans-serif}'+\n" +
+    "'.gr-ma-panel header,.gr-ma-tools,.gr-ma-row,.gr-ma-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.gr-ma-panel header,.gr-ma-row{justify-content:space-be"... 38069 more characters,
+  expected: /detailGeo:'GeoPoint Inspector öffnen'/,
+  operator: 'match',
   diff: 'simple'
 }
 
