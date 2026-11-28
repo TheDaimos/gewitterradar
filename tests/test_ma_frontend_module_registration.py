@@ -47,7 +47,7 @@ class MonitoredAreasFrontendRegistrationTests(unittest.TestCase):
         manager = (FRONTEND / "modules/monitored-areas/location-manager.js").read_text(encoding="utf-8")
         controls = (FRONTEND / "modules/ui/controls.js").read_text(encoding="utf-8")
         self.assertIn("export function openLocationManager(", manager)
-        self.assertIn("Standorte verwalten", manager)
+        self.assertIn("Standortverwaltung", manager)
         self.assertIn("gr-ma-manage-action", controls)
         self.assertIn("openLocationManager(this,{", controls)
         self.assertIn("this._config?.monitored_areas_enabled === true", controls)
