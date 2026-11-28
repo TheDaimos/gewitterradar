@@ -31,7 +31,7 @@ console.log('PASS MA-020 SQLite preview: archived grouping, invalid rows, read-o
 const controls=readFileSync(new URL('../frontend/modules/ui/controls.js',import.meta.url),'utf8');
 assert.match(controls,/import \{migrationRequestUUID\} from/);
 assert.doesNotMatch(controls,/crypto\.randomUUID\(\)/,'SQLite writes must work on HTTP/Android HA');
-assert.equal((controls.match(/migrationRequestUUID\(\)/g)||[]).length,5);
+assert.equal((controls.match(/migrationRequestUUID\(\)/g)||[]).length,6, 'UUID used for the additional explicit SQLite location-create action');
 assert.match(source,/proof\?\.source_and_sqlite_verified!==true/);
 assert.match(source,/proof\.active_count\+proof\.archived_count!==proof\.item_count/);
 assert.match(source,/proof\?\.explicit_confirmation_required!==true/);
