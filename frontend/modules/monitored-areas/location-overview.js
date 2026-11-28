@@ -57,6 +57,7 @@ export function openLocationOverview(owner,{places=[],onDetails,onMap,onGeoPoint
 #gr-ma-location-overview button,#gr-ma-location-overview select,#gr-ma-location-overview input{font:inherit;min-height:42px;border:1px solid #a48a56;border-radius:9px;background:#142b39;color:#f4e3bf;padding:8px;box-sizing:border-box}
 #gr-ma-location-overview button{cursor:pointer}#gr-ma-location-overview button:disabled{opacity:.45}
 #gr-ma-location-overview button:focus-visible,#gr-ma-location-overview input:focus-visible,#gr-ma-location-overview select:focus-visible{outline:2px solid #ffe4a0;outline-offset:2px}
+#gr-ma-location-overview .close-premium{width:44px;min-width:44px;border:0!important;background:transparent!important;padding:0!important;display:grid;place-items:center}#gr-ma-location-overview .close-premium img{width:34px;height:34px;object-fit:contain;pointer-events:none}
 #gr-ma-location-overview .toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:12px 0;align-items:center;flex:0 0 auto}
 #gr-ma-location-overview .toolbar input{flex:1;min-width:135px}#gr-ma-location-overview .main{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(260px,1fr);gap:12px;flex:1 1 auto;min-height:0}
 #gr-ma-location-overview .plot{position:relative;min-height:200px;background:radial-gradient(ellipse at 50% 40%,#1d3b4c,#071721 80%);border:1px solid #9a794d;border-radius:14px;overflow:hidden}
@@ -74,7 +75,10 @@ export function openLocationOverview(owner,{places=[],onDetails,onMap,onGeoPoint
 @media(max-width:700px){#gr-ma-location-overview .main{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(180px,1fr) minmax(175px,1fr)}#gr-ma-location-overview .sidebar{min-height:0}#gr-ma-location-overview .results{min-height:70px}#gr-ma-location-overview .details{padding:7px}}
 `;
   const panel=node('section');panel.className='panel';panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',t.title);
-  const header=node('header'),heading=node('div'),exit=button(t.close,()=>root.remove());
+  const header=node('header'),heading=node('div'),exit=button('',()=>root.remove());
+  exit.setAttribute('aria-label',t.close);exit.className='close-premium';
+  const closeIcon=node('img');closeIcon.src=owner.shadow.getElementById('settings-close')?.querySelector('img')?.src||new URL('../../assets/gewitterradar-about-close-premium.webp',import.meta.url).href;
+  closeIcon.alt='';closeIcon.draggable=false;exit.append(closeIcon);
   heading.append(node('strong',t.title),node('small',t.subtitle));header.append(heading,exit);
   const toolbar=node('div');toolbar.className='toolbar';
   const filter=node('input');filter.type='search';filter.placeholder=t.filter;filter.setAttribute('aria-label',t.filter);

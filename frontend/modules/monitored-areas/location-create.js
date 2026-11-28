@@ -32,12 +32,16 @@ export function openLocationCreate(owner,{places=[],create,verifyContext,onCreat
 #gr-ma-location-create .panel{width:min(510px,100%);max-height:calc(100dvh - 24px);overflow:hidden;display:flex;flex-direction:column;border:2px solid #d5b16b;border-radius:18px;background:linear-gradient(170deg,#26394a,#0a1823);color:#f6e8cd;padding:16px;box-sizing:border-box;font:14px/1.5 system-ui}
 #gr-ma-location-create header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #a88958;padding-bottom:10px;flex:none}
 #gr-ma-location-create header strong{font:23px Georgia,serif;color:#ffe1a0}
+#gr-ma-location-create .close-premium{width:44px;min-width:44px;border:0!important;background:transparent!important;padding:0!important;display:grid;place-items:center}#gr-ma-location-create .close-premium img{width:34px;height:34px;object-fit:contain;pointer-events:none}
 #gr-ma-location-create .body{min-height:0;overflow:auto;display:grid;gap:12px;padding-top:10px}
 #gr-ma-location-create label{display:grid;gap:4px}#gr-ma-location-create input,#gr-ma-location-create button{font:inherit;min-height:44px;background:#122b3b;color:#ffe6bb;border:1px solid #b39156;border-radius:9px;padding:9px;box-sizing:border-box}
 #gr-ma-location-create .actions{display:flex;gap:8px;flex-wrap:wrap}#gr-ma-location-create p{margin:4px 0;overflow-wrap:anywhere}#gr-ma-location-create button:disabled{opacity:.45}
 `;
   const panel=node('section');panel.className='panel';panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',t.title);
-  const head=node('header'),title=node('strong',t.title),exit=button(t.close,()=>root.remove());head.append(title,exit);
+  const head=node('header'),title=node('strong',t.title),exit=button('',()=>root.remove());
+  exit.setAttribute('aria-label',t.close);exit.className='close-premium';
+  const closeIcon=node('img');closeIcon.src=owner.shadow.getElementById('settings-close')?.querySelector('img')?.src||new URL('../../assets/gewitterradar-about-close-premium.webp',import.meta.url).href;
+  closeIcon.alt='';closeIcon.draggable=false;exit.append(closeIcon);head.append(title,exit);
   const body=node('div');body.className='body';
   const nameLabel=node('label',t.name),nameInput=node('input');nameInput.type='text';nameInput.maxLength=120;
   nameLabel.append(nameInput);
