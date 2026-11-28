@@ -1743,6 +1743,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
             places:loaded ? [...(this._v407SavedPlaces || [])] : [],
             removed:loaded ? [...(this._v407RemovedPlaces || [])] : [],
             refresh:reload,
+            verifyContext:()=>sameProfile()&&this._maSavedMode==='db_active',
             // MA-022: batch share/transfer UI can only open after the
             // server-authoritative SQLite cutover and Vault-user revalidation.
             openProfiles:loaded && mode==='db_active' ? async ({places,mode:profileMode,refreshManager,initialLocationIds=[]})=>{

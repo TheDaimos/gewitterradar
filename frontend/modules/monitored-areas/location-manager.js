@@ -107,7 +107,7 @@ const GEOPOINT_BUTTON_STYLES=".gr-ma-batch-toolbar{display:flex;flex-wrap:wrap;a
 const RESPONSIVE_DETAIL_STYLES="\n/* MA-021 responsive Havanna extension: broad desktop and iPad landscape layouts. */\n.gr-ma-detail{width:min(920px,calc(100vw - 48px));min-width:0}\n.gr-ma-detail-head{padding:16px 16px 13px 22px;gap:14px}\n.gr-ma-detail-head strong{font-size:clamp(21px,2.4vw,27px);line-height:1.15}\n.gr-ma-detail-head-copy{min-width:0;display:flex;flex-direction:column;gap:4px}\n.gr-ma-detail-head-copy small{color:#d6b57d;font-size:12px;letter-spacing:.035em}\n.gr-ma-detail-state{align-self:flex-start;border:1px solid #a68a5780;border-radius:20px;padding:3px 10px;\n background:linear-gradient(180deg,#394a52,#14232c);color:#e9cf9b;font-size:12px;font-weight:650}\n.gr-ma-detail-details{padding:14px 22px 18px}\n.gr-ma-detail-intro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;\n margin-bottom:12px}\n.gr-ma-detail-plate{border:1px solid #9777498c;border-radius:13px;\n background:linear-gradient(160deg,#2c3f4b,#122330 72%,#14232d);\n box-shadow:inset 0 1px #fff3,0 6px 12px #0005;padding:12px 14px;min-width:0}\n.gr-ma-detail-plate small{display:block;color:#abc2d1;letter-spacing:.035em;font-size:11px}\n.gr-ma-detail-plate strong{display:block;color:#f5dcad;margin-top:3px;\n font-size:clamp(14px,1.7vw,18px);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}\n.gr-ma-detail-details details{border:1px solid #896d4388;border-radius:12px;\n background:linear-gradient(180deg,#122533,#091924);overflow:hidden}\n.gr-ma-detail-details summary{padding:12px 16px;min-height:44px;box-sizing:border-box;\n background:linear-gradient(180deg,#293641,#12212d);border-bottom:1px solid transparent}\n.gr-ma-detail-details details[open]>summary{border-bottom-color:#96774a77}\n.gr-ma-detail-grid-wrap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;padding:8px 14px}\n.gr-ma-detail-grid{grid-template-columns:110px minmax(0,1fr);align-content:start}\n.gr-ma-detail-actions{padding:4px 14px 14px;margin-top:4px}\n.gr-ma-detail-message{margin:0;padding:0 14px 12px}\n.gr-ma-detail-hint{margin:0;padding:0 14px 14px;color:#b8c8d2;font-size:12px}\n.gr-ma-detail-head:focus-visible,.gr-ma-detail-details summary:focus-visible{outline:2px solid #f5ce83;outline-offset:-3px}\n@media(min-width:680px) and (max-width:1179px){\n .gr-ma-detail{width:min(810px,calc(100vw - 32px))}\n .gr-ma-detail-head{padding-inline:19px}\n .gr-ma-detail-details{padding-inline:18px}\n .gr-ma-detail-grid-wrap{gap:0 10px}\n}\n@media(max-width:679px){\n .gr-ma-detail{width:calc(100vw - 20px)}\n .gr-ma-detail-head{padding:10px 10px 10px 14px}\n .gr-ma-detail-head strong{font-size:21px}\n .gr-ma-detail-details{padding:10px 12px 13px}\n .gr-ma-detail-intro{grid-template-columns:minmax(0,1fr);gap:8px}\n .gr-ma-detail-plate{padding:9px 11px}\n .gr-ma-detail-grid-wrap{grid-template-columns:minmax(0,1fr);padding:4px 10px}\n .gr-ma-detail-grid{grid-template-columns:95px minmax(0,1fr)}\n .gr-ma-detail-actions{padding-inline:10px}\n}\n@media(max-height:500px){\n .gr-ma-detail-head{padding-block:7px}\n .gr-ma-detail-details{padding-block:7px}\n .gr-ma-detail-intro{gap:6px;margin-bottom:6px}\n .gr-ma-detail-plate{padding-block:7px}\n}\n";
 const node=(tag,value,cls)=>{const x=document.createElement(tag);x.textContent=String(value??'');if(cls)x.className=cls;return x;};
 const button=(text,handler)=>{const x=node('button',text);x.type='button';x.addEventListener('click',handler);return x;};
-export function openLocationManager(owner,{enabled=false,mode='legacy',places=[],removed=[],refresh,readDetails,openGeoPoint,openProfiles,createPlace,rename,archive,restore,focus,migrate}={}){
+export function openLocationManager(owner,{enabled=false,mode='legacy',places=[],removed=[],refresh,readDetails,openGeoPoint,openProfiles,createPlace,verifyContext,rename,archive,restore,focus,migrate}={}){
   if(!owner?.shadow||typeof refresh!=='function')return null;
   const previous=owner.shadow.getElementById('gr-ma-location-manager');
   if(previous){previous.__dispose?.();previous.remove();}
@@ -117,7 +117,11 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
   const panel=document.createElement('section');panel.className='gr-ma-panel';
   panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',t.title);
   let detailWindow=null,disposeDetail=()=>{};
-  const close=()=>{disposeDetail();detailWindow?.remove();detailWindow=null;root.remove();};
+  const close=()=>{
+    owner.shadow.getElementById('gr-ma-location-overview')?.remove();
+    owner.shadow.getElementById('gr-ma-location-create')?.remove();
+    disposeDetail();detailWindow?.remove();detailWindow=null;root.remove();
+  };
   root.__dispose=close;
   const header=document.createElement('header'),heading=document.createElement('div');
   heading.append(node('h2',t.title),node('small',t.subtitle));
@@ -238,14 +242,14 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     if(!feedback.textContent)notice(!state.enabled?t.setupHint:plan.canRename?t.dbHint:t.legacyHint);
   };
   const openOverview=async()=>{
-    if(state.busy||!root.isConnected)return;
+    if(state.busy||!root.isConnected||typeof verifyContext!=='function'||!verifyContext())return;
     const profileAtOpen=String(owner._settingsVault?.profile?.id||'legacy');
     const before=planLocations(state);
     const module=await import('./location-overview.js?v=41424r1');
-    if(!root.isConnected||state.busy||String(owner._settingsVault?.profile?.id||'legacy')!==profileAtOpen)return;
+    if(!root.isConnected||state.busy||!verifyContext()||String(owner._settingsVault?.profile?.id||'legacy')!==profileAtOpen)return;
     module.openLocationOverview(owner,{
       places:[...before.active,...before.archived],
-      verifyContext:()=>root.isConnected&&String(owner._settingsVault?.profile?.id||'legacy')===profileAtOpen,
+      verifyContext:()=>root.isConnected&&verifyContext()&&String(owner._settingsVault?.profile?.id||'legacy')===profileAtOpen,
       onDetails:place=>showDetails(place),
       onMap:place=>{
         if(typeof focus==='function'){focus({latitude:place.latitude,longitude:place.longitude});close();}
@@ -255,13 +259,13 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
     });
   };
   const openCreator=async()=>{
-    if(state.busy||state.mode!=='db_active'||typeof createPlace!=='function'||!root.isConnected)return;
+    if(state.busy||state.mode!=='db_active'||typeof createPlace!=='function'||!root.isConnected||typeof verifyContext!=='function'||!verifyContext())return;
     const profileAtOpen=String(owner._settingsVault?.profile?.id||'legacy');
     const module=await import('./location-create.js?v=41424r1');
-    if(!root.isConnected||state.busy||String(owner._settingsVault?.profile?.id||'legacy')!==profileAtOpen)return;
+    if(!root.isConnected||state.busy||!verifyContext()||String(owner._settingsVault?.profile?.id||'legacy')!==profileAtOpen)return;
     module.openLocationCreate(owner,{
       places:[...planLocations(state).active,...planLocations(state).archived],
-      verifyContext:()=>root.isConnected&&!state.busy&&state.mode==='db_active'&&
+      verifyContext:()=>root.isConnected&&!state.busy&&state.mode==='db_active'&&verifyContext()&&
         String(owner._settingsVault?.profile?.id||'legacy')===profileAtOpen,
       create:async candidate=>{
         if(state.busy)throw Error('MA_BUSY');
