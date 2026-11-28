@@ -34,14 +34,14 @@ export function openLocationOverview(owner,{places=[],onDetails,onMap,onGeoPoint
   const german=/Deutsch|Boarisch|Platt|Sächs|Schwäb/i.test(owner._languageValue?.()||'Deutsch');
   const t=german?{
     title:'Standort-Sichtfenster',subtitle:'Geografische Übersicht · schematische Projektion (keine Straßenkarte)',
-    active:'Aktiv',archived:'Archiviert',all:'Alle',filter:'Standort suchen',close:'Schließen',
+    back:'Zurück',active:'Aktiv',archived:'Archiviert',all:'Alle',filter:'Standort suchen',close:'Schließen',
     map:'Auf Hauptkarte',inspector:'GeoPoint',details:'Details',locations:'Standorte',
     doubles:'Mehrere Einträge an gleichen Koordinaten',empty:'Keine passenden Standorte',
     unselected:'Standort auswählen',origin:'Herkunft',coords:'Koordinaten',noMap:'Standortkarte nicht verfügbar',
     noGeo:'GeoPoint nicht verfügbar',readOnly:'Nur Übersicht – keine Standort- oder Tracker-Änderung'
   }:{
     title:'Location overview',subtitle:'Geographic overview · schematic projection (not a street map)',
-    active:'Active',archived:'Archived',all:'All',filter:'Search locations',close:'Close',
+    back:'Back',active:'Active',archived:'Archived',all:'All',filter:'Search locations',close:'Close',
     map:'Show on main map',inspector:'GeoPoint',details:'Details',locations:'Locations',
     doubles:'Multiple records at the same coordinates',empty:'No matching locations',
     unselected:'Select a location',origin:'Origin',coords:'Coordinates',noMap:'Map unavailable',
@@ -58,7 +58,7 @@ export function openLocationOverview(owner,{places=[],onDetails,onMap,onGeoPoint
 #gr-ma-location-overview button{cursor:pointer}#gr-ma-location-overview button:disabled{opacity:.45}
 #gr-ma-location-overview button:focus-visible,#gr-ma-location-overview input:focus-visible,#gr-ma-location-overview select:focus-visible{outline:2px solid #ffe4a0;outline-offset:2px}
 #gr-ma-location-overview .close-premium{width:44px;min-width:44px;border:0!important;background:transparent!important;padding:0!important;display:grid;place-items:center}#gr-ma-location-overview .close-premium img{width:34px;height:34px;object-fit:contain;pointer-events:none}
-#gr-ma-location-overview .toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:12px 0;align-items:center;flex:0 0 auto}
+\n#gr-ma-location-overview .ma-back,#gr-ma-location-create .ma-back{appearance:none!important;background:transparent!important;border:0!important;box-shadow:none!important;display:inline-flex;align-items:center;gap:14px;padding:5px 13px;min-height:44px;color:#eed08a;font:700 14px system-ui;cursor:pointer;align-self:flex-start}\n#gr-ma-location-overview .ma-back span:first-child,#gr-ma-location-create .ma-back span:first-child{width:11px;height:11px;display:inline-block;border-left:3px solid #e6b961;border-bottom:3px solid #e6b961;transform:rotate(45deg);filter:drop-shadow(0 0 3px #d8a74a44)}\n#gr-ma-location-overview .ma-back:focus-visible,#gr-ma-location-create .ma-back:focus-visible{outline:2px solid #ffe4a0;outline-offset:2px}\n#gr-ma-location-overview .toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:12px 0;align-items:center;flex:0 0 auto}
 #gr-ma-location-overview .toolbar input{flex:1;min-width:135px}#gr-ma-location-overview .main{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(260px,1fr);gap:12px;flex:1 1 auto;min-height:0}
 #gr-ma-location-overview .plot{position:relative;min-height:200px;background:radial-gradient(ellipse at 50% 40%,#1d3b4c,#071721 80%);border:1px solid #9a794d;border-radius:14px;overflow:hidden}
 #gr-ma-location-overview svg{width:100%;height:100%;display:block}
@@ -80,6 +80,8 @@ export function openLocationOverview(owner,{places=[],onDetails,onMap,onGeoPoint
   const closeIcon=node('img');closeIcon.src=owner.shadow.getElementById('settings-close')?.querySelector('img')?.src||new URL('../../assets/gewitterradar-about-close-premium.webp',import.meta.url).href;
   closeIcon.alt='';closeIcon.draggable=false;exit.append(closeIcon);
   heading.append(node('strong',t.title),node('small',t.subtitle));header.append(heading,exit);
+  const back=button('',()=>root.remove());back.className='ma-back';back.setAttribute('aria-label',t.back);
+  const chevron=node('span');chevron.setAttribute('aria-hidden','true');back.append(chevron,node('span',t.back));
   const toolbar=node('div');toolbar.className='toolbar';
   const filter=node('input');filter.type='search';filter.placeholder=t.filter;filter.setAttribute('aria-label',t.filter);
   const scope=node('select');scope.setAttribute('aria-label',t.locations);
@@ -95,7 +97,7 @@ export function openLocationOverview(owner,{places=[],onDetails,onMap,onGeoPoint
   const results=node('div');results.className='results';results.setAttribute('role','region');results.setAttribute('aria-label',t.locations);
   const detail=node('div');detail.className='details';sidebar.append(results,detail);main.append(plot,sidebar);
   const footer=node('p',t.readOnly);footer.className='foot';
-  panel.append(header,toolbar,main,footer);root.append(style,panel);
+  panel.append(header,back,toolbar,main,footer);root.append(style,panel);
   const host=owner.shadow.getElementById('map-fullscreen-dialog');
   (host?.open?host:owner.shadow).append(root);
   let current=clean[0]?.uid||null;
