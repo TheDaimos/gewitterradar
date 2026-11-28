@@ -1187,7 +1187,7 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
                 status:place.archived?'completed':'needs_action',
                 provider:'monitored_areas_sqlite',name:place.name,displayLabel:place.displayLabel||place.name,
                 latitude:place.latitude,longitude:place.longitude,revision:place.revision,
-                location_origin:place.location_origin});
+                location_origin:place.location_origin,updated_at:place.updated_at});
             }
             if(!result.next_cursor) {cursor=null;break;}
             if(result.next_cursor===cursor)throw new Error('MA_INVALID_CURSOR');
@@ -1801,8 +1801,6 @@ export const installControls=defineModule(MODULE_META,(deps)=>{const { CARD_VERS
               const port=await v407MonitoredAreasPort();
               if(port?.mode!=='db_active')throw new Error('MA_PLACE_DB_NOT_ACTIVE');
               const result=await port.saveCandidate(candidate,migrationRequestUUID());
-              if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
-              await v407LoadSavedPlaces({force:true});
               if(!sameProfile())throw new Error('MA_PROFILE_CHANGED');
               return result;
             } : undefined,

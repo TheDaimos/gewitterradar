@@ -176,7 +176,8 @@ export function openLocationManager(owner,{enabled=false,mode='legacy',places=[]
   panel.insertBefore(selectionToolbar,list);
   const visibleRows=()=>{
     const p=planLocations(state),q=filter.value.trim().toLocaleLowerCase();
-    return [...p.active,...p.archived].filter(item=>String(item.name||item.summary||'').toLocaleLowerCase().includes(q));
+    return [...(expanded.active?p.active:[]),...(expanded.archived?p.archived:[])].filter(item=>
+      String(item.name||item.summary||'').toLocaleLowerCase().includes(q));
   };
   const expanded={active:true,archived:false};
   const notice=(message,error=false)=>{feedback.textContent=message;feedback.classList.toggle('gr-ma-error',error);};

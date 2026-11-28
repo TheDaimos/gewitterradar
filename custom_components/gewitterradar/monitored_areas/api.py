@@ -382,7 +382,7 @@ class Api:
                     raise ApiError("invalid_cursor")
                 escaped=query.replace("!","!!").replace("%","!%").replace("_","!_")
                 rows=c.execute(
-                    "SELECT l.location_id,l.name,l.lat,l.lon,l.revision,l.location_origin, "
+                    "SELECT l.location_id,l.name,l.lat,l.lon,l.revision,l.location_origin,l.updated_at, "
                     "CASE WHEN a.link_id IS NULL THEN 0 ELSE 1 END "
                     "FROM locations l JOIN profile_links p ON p.location_id=l.location_id "
                     "LEFT JOIN archived_profile_links a ON a.link_id=p.link_id "
@@ -394,10 +394,10 @@ class Api:
                     (actor_user_id,profile,int(include_archived),query,"%"+escaped+"%",cursor_id,cursor_id,limit+1)).fetchall()
                 more=len(rows)>limit
                 places=[{"location_id":lid,"name":name,"displayLabel":name,"location_origin":origin,
-                         "latitude":lat,"longitude":lon,"revision":revision,
+                         "latitude":lat,"longitude":lon,"revision":revision,"updated_at":updated_at,
                          "archived":bool(archived),
                          "provider":"monitored_areas_sqlite"}
-                        for lid,name,lat,lon,revision,origin,archived in rows[:limit]]
+                        for lid,name,lat,lon,revision,origin,updated_at,archived in rows[:limit]]
                 return {"mode":active_mode,"places":places,
                         "next_cursor":places[-1]["location_id"] if more else None}
             return await self._repo._db.async_execute(read_places,kind="read")
